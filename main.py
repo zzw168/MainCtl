@@ -126,6 +126,40 @@ class ColorThead(QThread):
             time.sleep(1)
 
 
+class CmdThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(CmdThead, self).__init__()
+        self.run_flg = ''
+
+    def run(self) -> None:
+        try:
+            self._signal.emit(succeed("运动流程：开始！"))
+            for item in plan_list:
+                if item[0] == '1':
+                    sc.card_setpos(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                   dVelStart=0.1, dSmoothTime=0)
+                    sc.card_setpos(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                   dVelStart=0.1, dSmoothTime=0)
+                    sc.card_setpos(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                   dVelStart=0.1, dSmoothTime=0)
+                    sc.card_setpos(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                   dVelStart=0.1, dSmoothTime=0)
+                    sc.card_setpos(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                   dVelStart=0.1, dSmoothTime=0)
+                    sc.card_update()
+                    time.sleep(10)
+            self._signal.emit(succeed("运动流程：完成！"))
+        except:
+            self._signal.emit(fail("运动卡运行：出错！"))
+
+
+def signal_accept(message):
+    print(message)
+    ui.textBrowser.append(message)
+
+
 class KeyListenerThead(QThread):
     _signal = pyqtSignal(object)
 
@@ -177,15 +211,17 @@ def save_plan():
     if os.path.exists(file):
         plan_all['plans']['plan%d' % (plan_num + 1)]['plan_name'] = plan_name
         plan_all['plans']['plan%d' % (plan_num + 1)]['plan_list'] = plan_list
-
-        with open(file, "w", encoding="utf-8") as f:
-            yaml.dump(plan_all, f, allow_unicode=True)
-        f.close()
+        try:
+            with open(file, "w", encoding="utf-8") as f:
+                yaml.dump(plan_all, f, allow_unicode=True)
+            f.close()
+            ui.textBrowser.append(succeed('方案保存：成功'))
+        except:
+            ui.textBrowser.append(fail('方案保存：失败'))
 
 
 # 载入方案
 def deal_yaml():
-    global plan_list
     global plan_names
     global plan_all
     file = "./Robot.yml"
@@ -224,6 +260,7 @@ def sel_all():
 
 
 def plan_change():
+    global plan_list
     comb = ui.comboBox_plan
     _index = comb.currentIndex()
     plan_list = plan_all['plans']['plan%d' % (_index + 1)]['plan_list']
@@ -271,33 +308,49 @@ def card_start():
     res = sc.card_open(10)
     print(res)
     if res == 0:
-        ui.textBrowser.append(succeed(card_res[res]))
+        ui.textBrowser.append(succeed('启动板卡：%s' % card_res[res]))
     else:
         ui.textBrowser.append(res)
 
 
 def card_run():
-    res = sc.card_pos(1, pos=1000000)
-    print(res)
-    res = sc.card_pos(2, pos=1000000)
-    print(res)
-    res = sc.card_update()
-    if res == 0:
-        ui.textBrowser.append(succeed(card_res[res]))
-    else:
-        ui.textBrowser.append(res)
-    (res, pValue, pClock) = sc.get_pos()
-    print("%s %s %s" % (res, pValue, pClock))
+    for item in plan_list:
+        if item[0] == '1':
+            sc.card_setpos(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+                           dSmoothTime=0)
+            sc.card_setpos(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+                           dSmoothTime=0)
+            sc.card_setpos(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+                           dSmoothTime=0)
+            sc.card_setpos(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+                           dSmoothTime=0)
+            sc.card_setpos(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+                           dSmoothTime=0)
+            sc.card_update()
+            time.sleep(10)
+    # if res == 0:
+    #     ui.textBrowser.append(succeed('位置更新：%s' % card_res[res]))
+    # else:
+    #     ui.textBrowser.append(res)
+    # (res, pValue, pClock) = sc.get_pos()
+    # print("%s %s %s" % (res, pValue, pClock))
+
+
+def cmd_run():
+    Cmd_Thead.start()
+
+
 def card_reset():
     (res, pValue, pClock) = sc.get_pos()
     print("%s %s %s" % (res, pValue, pClock))
     res = sc.card_reset()
     if res == 0:
-        ui.textBrowser.append(succeed(card_res[res]))
+        ui.textBrowser.append(succeed('复位：%s' % card_res[res]))
     else:
         ui.textBrowser.append(res)
     # (res, pValue, pClock) = sc.get_pos()
     # print("%s %s %s" % (res, pValue, pClock))
+
 
 def test():
     ui.textBrowser.append("<font color='green'> okok </font>")
@@ -325,6 +378,9 @@ if __name__ == '__main__':
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()
 
+    Cmd_Thead = CmdThead()
+    Cmd_Thead._signal.connect(signal_accept)
+
     Color_Thead = ColorThead()  # 更新状态信息线程
     Color_Thead._signal.connect(flashsignal_accept)
     Color_Thead.start()
@@ -332,7 +388,7 @@ if __name__ == '__main__':
     ui.pushButton_fsave.clicked.connect(save_plan)
     ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
-    ui.pushButton_CardRun.clicked.connect(card_run)
+    ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_change)

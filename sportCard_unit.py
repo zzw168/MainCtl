@@ -39,7 +39,7 @@ class SportCard:
         return card_res[self.card_dll.GA_Close()]
 
     # 设置位置
-    def card_pos(self, nAxisNum, pos=0, vel=100, dAcc=0.3, dDec=0.2, dVelStart=0.1, dSmoothTime=0):
+    def card_setpos(self, nAxisNum, pos=0, vel=100, dAcc=0.3, dDec=0.2, dVelStart=0.1, dSmoothTime=0):
         nAxisNum_c = ctypes.c_short(nAxisNum)
         dAcc_c = ctypes.c_double(dAcc)
         dDec_c = ctypes.c_double(dDec)
@@ -92,5 +92,7 @@ class SportCard:
     def card_reset(self):
         for i in range(1, 6):
             (res, pValue, pClock) = self.get_pos(i, 0, 1, 0)
-            self.card_pos(i, 0)
+            self.card_setpos(i, 0)
         return self.card_update()
+
+
