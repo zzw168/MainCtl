@@ -146,7 +146,7 @@ class PosThead(QThread):
                     for i in range(0, 5):
                         (res, pValue[i], pClock) = sc.get_pos(i + 1)
                     self._signal.emit(pValue)
-                    time.sleep(0.01)
+                    # time.sleep(0.01)
             except:
                 pass
 
@@ -172,16 +172,16 @@ class CmdThead(QThread):
                 self._signal.emit(succeed("运动流程：开始！"))
                 for item in plan_list:
                     if item[0] == '1':  # 是否勾选
-                        sc.card_setpos(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                       dVelStart=0.1, dSmoothTime=0)
-                        sc.card_setpos(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                       dVelStart=0.1, dSmoothTime=0)
-                        sc.card_setpos(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                       dVelStart=0.1, dSmoothTime=0)
-                        sc.card_setpos(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                       dVelStart=0.1, dSmoothTime=0)
-                        sc.card_setpos(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                       dVelStart=0.1, dSmoothTime=0)
+                        sc.card_move(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                     dVelStart=0.1, dSmoothTime=0)
+                        sc.card_move(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                     dVelStart=0.1, dSmoothTime=0)
+                        sc.card_move(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                     dVelStart=0.1, dSmoothTime=0)
+                        sc.card_move(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                     dVelStart=0.1, dSmoothTime=0)
+                        sc.card_move(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                     dVelStart=0.1, dSmoothTime=0)
                         sc.card_update()
                         time.sleep(10)
                 self._signal.emit(succeed("运动流程：完成！"))
@@ -210,8 +210,53 @@ def keyboard_release(key):
     if ui.checkBox_key.isChecked() and flag_start:
         if key == key.up:
             print('前')
-            res = sc.card_stop(2)
-            print(res)
+            sc.card_stop(2)
+            sc.card_setpos(2, pValue[1])
+            flag_run = True
+        if key == key.down:
+            print('后')
+            sc.card_stop(2)
+            sc.card_setpos(2, pValue[1])
+            flag_run = True
+        if key == key.left:
+            print('左')
+            sc.card_stop(1)
+            sc.card_setpos(1, pValue[0])
+            flag_run = True
+        if key == key.right:
+            print('右')
+            sc.card_stop(1)
+            sc.card_setpos(1, pValue[0])
+            flag_run = True
+        if key == key.insert:
+            print('上')
+            sc.card_stop(3)
+            sc.card_setpos(3, pValue[2])
+            flag_run = True
+        if key == key.delete:
+            print('下')
+            sc.card_stop(3)
+            sc.card_setpos(3, pValue[2])
+            flag_run = True
+        if key == key.home:
+            print('头左')
+            sc.card_stop(4)
+            sc.card_setpos(4, pValue[3])
+            flag_run = True
+        if key == key.end:
+            print('头右')
+            sc.card_stop(4)
+            sc.card_setpos(4, pValue[3])
+            flag_run = True
+        if key == key.page_up:
+            print('头上')
+            sc.card_stop(5)
+            sc.card_setpos(5, pValue[4])
+            flag_run = True
+        if key == key.page_down:
+            print('头下')
+            sc.card_stop(5)
+            sc.card_setpos(5, pValue[4])
             flag_run = True
 
 
@@ -222,28 +267,64 @@ def keyboard_press(key):
             if key == key.up:
                 print('前')
                 if flag_run:
-                    sc.card_setpos(2, pos=2000000)
+                    sc.card_move(2, pos=2000000)
                     sc.card_update()
                     flag_run = False
 
             if key == key.down:
                 print('后')
+                if flag_run:
+                    sc.card_move(2, pos=0)
+                    sc.card_update()
+                    flag_run = False
             if key == key.left:
                 print('左')
+                if flag_run:
+                    sc.card_move(1, pos=2000000)
+                    sc.card_update()
+                    flag_run = False
             if key == key.right:
                 print('右')
+                if flag_run:
+                    sc.card_move(1, pos=0)
+                    sc.card_update()
+                    flag_run = False
             if key == key.insert:
                 print('上')
+                if flag_run:
+                    sc.card_move(3, pos=0)
+                    sc.card_update()
+                    flag_run = False
             if key == key.delete:
                 print('下')
+                if flag_run:
+                    sc.card_move(3, pos=2000000)
+                    sc.card_update()
+                    flag_run = False
             if key == key.home:
                 print('头左')
+                if flag_run:
+                    sc.card_move(4, pos=2000000)
+                    sc.card_update()
+                    flag_run = False
             if key == key.end:
                 print('头右')
+                if flag_run:
+                    sc.card_move(4, pos=0)
+                    sc.card_update()
+                    flag_run = False
             if key == key.page_up:
                 print('头上')
+                if flag_run:
+                    sc.card_move(5, pos=2000000)
+                    sc.card_update()
+                    flag_run = False
             if key == key.page_down:
                 print('头下')
+                if flag_run:
+                    sc.card_move(5, pos=0)
+                    sc.card_update()
+                    flag_run = False
         except AttributeError:
             print(key)
 
@@ -392,16 +473,16 @@ def card_run():
         item = plan_list[i]
         # get_pos(self, nAxisNum=1, pValue=0, nCount=1, pClock=0):
         if item[0] == '1':
-            sc.card_setpos(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-                           dSmoothTime=0)
-            sc.card_setpos(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-                           dSmoothTime=0)
-            sc.card_setpos(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-                           dSmoothTime=0)
-            sc.card_setpos(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-                           dSmoothTime=0)
-            sc.card_setpos(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-                           dSmoothTime=0)
+            sc.card_move(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+                         dSmoothTime=0)
+            sc.card_move(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+                         dSmoothTime=0)
+            sc.card_move(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+                         dSmoothTime=0)
+            sc.card_move(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+                         dSmoothTime=0)
+            sc.card_move(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+                         dSmoothTime=0)
             sc.card_update()
             time.sleep(10)
     # if res == 0:
