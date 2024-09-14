@@ -262,25 +262,35 @@ def flashsignal_accept(status_color):  # 更改颜色
 
 def bt_start():
     global z_status
-    ui.widget_9.setVisible(not (ui.widget_9.isVisible()))
+    # ui.widget_9.setVisible(not (ui.widget_9.isVisible()))
     z_status = not (z_status)
 
 
-def test_cart():
+# 打开运动卡
+def card_start():
     res = sc.card_open(10)
     print(res)
-    # res = sc.card_pos(1, pos=1000000)
-    # print(res)
-    # res = sc.card_pos(2, pos=1000000)
-    # print(res)
-    # res = sc.card_update()
-    # print(res)
+    if res == 0:
+        ui.textBrowser.append(succeed(card_res[res]))
+    else:
+        ui.textBrowser.append(res)
+
+
+def card_run():
+    res = sc.card_pos(1, pos=1000000)
+    print(res)
+    res = sc.card_pos(2, pos=1000000)
+    print(res)
+    res = sc.card_update()
+    print(res)
+    (res, pValue, pClock) = sc.get_pos()
+    print("%s %s %s" % (res, pValue, pClock))
+def card_reset():
     (res, pValue, pClock) = sc.get_pos()
     print("%s %s %s" % (res, pValue, pClock))
     sc.card_reset()
     # (res, pValue, pClock) = sc.get_pos()
     # print("%s %s %s" % (res, pValue, pClock))
-
 
 def test():
     ui.textBrowser.append("<font color='green'> okok </font>")
@@ -305,7 +315,7 @@ if __name__ == '__main__':
 
     deal_yaml()
 
-    KeyListener_Thead = KeyListenerThead()
+    KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()
 
     Color_Thead = ColorThead()  # 更新状态信息线程
@@ -314,6 +324,9 @@ if __name__ == '__main__':
 
     ui.pushButton_fsave.clicked.connect(save_plan)
     ui.pushButton_rename.clicked.connect(plan_rename)
+    ui.pushButton_CardStart.clicked.connect(card_start)
+    ui.pushButton_CardRun.clicked.connect(card_run)
+    ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_change)
 

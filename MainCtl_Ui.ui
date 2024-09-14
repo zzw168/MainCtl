@@ -1775,364 +1775,6 @@
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QGridLayout" name="gridLayout_18">
-             <item row="3" column="0">
-              <widget class="QGroupBox" name="groupBox_6">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="title">
-                <string>摄像方案</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_19">
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="lineEdit_18"/>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QPushButton" name="pushButton_20">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>编辑</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QComboBox" name="comboBox">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="2">
-                 <widget class="QPushButton" name="pushButton_24">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>新建</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_20">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>选择方案：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_21">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>新方案名称：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0" rowspan="2" colspan="3">
-                 <widget class="QPushButton" name="pushButton_25">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>30</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>保存当前方案</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QFrame" name="frame_11">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_14">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_6">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>录图：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1" colspan="5">
-                 <widget class="QLineEdit" name="lineEdit_9"/>
-                </item>
-                <item row="0" column="6" colspan="2">
-                 <widget class="QLabel" name="label_7">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>数量：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="8">
-                 <widget class="QLineEdit" name="lineEdit_10"/>
-                </item>
-                <item row="1" column="0" colspan="3">
-                 <widget class="QPushButton" name="pushButton_4">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>图像开</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="3" colspan="2">
-                 <widget class="QPushButton" name="pushButton_5">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>图像关</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="5" colspan="4">
-                 <widget class="QPushButton" name="pushButton_6">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>画中画</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0" colspan="2">
-                 <widget class="QPushButton" name="pushButton_9">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>主机1</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2" colspan="2">
-                 <widget class="QPushButton" name="pushButton_8">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>主机2</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="4" colspan="3">
-                 <widget class="QPushButton" name="pushButton_7">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>主机3</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="7" colspan="2">
-                 <widget class="QPushButton" name="pushButton_10">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">background:rgb(255,0,0)</string>
-                  </property>
-                  <property name="text">
-                   <string>保存</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QGroupBox" name="groupBox_4">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="title">
-                <string>圈数选择</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_6">
-                <item row="0" column="0">
-                 <widget class="QRadioButton" name="radioButton_4">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>圈数1</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QRadioButton" name="radioButton_5">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>圈数2</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QRadioButton" name="radioButton_6">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>圈数3</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
              <item row="2" column="0">
               <widget class="QFrame" name="frame_12">
                <property name="frameShape">
@@ -2391,8 +2033,456 @@
                </layout>
               </widget>
              </item>
-             <item row="4" column="0">
+             <item row="0" column="0">
+              <widget class="QFrame" name="frame_11">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_14">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_6">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>录图：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1" colspan="5">
+                 <widget class="QLineEdit" name="lineEdit_9"/>
+                </item>
+                <item row="0" column="6" colspan="2">
+                 <widget class="QLabel" name="label_7">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>数量：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="8">
+                 <widget class="QLineEdit" name="lineEdit_10"/>
+                </item>
+                <item row="1" column="0" colspan="3">
+                 <widget class="QPushButton" name="pushButton_4">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>图像开</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3" colspan="2">
+                 <widget class="QPushButton" name="pushButton_5">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>图像关</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="5" colspan="4">
+                 <widget class="QPushButton" name="pushButton_6">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>画中画</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0" colspan="2">
+                 <widget class="QPushButton" name="pushButton_9">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>主机1</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2" colspan="2">
+                 <widget class="QPushButton" name="pushButton_8">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>主机2</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="4" colspan="3">
+                 <widget class="QPushButton" name="pushButton_7">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>主机3</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="7" colspan="2">
+                 <widget class="QPushButton" name="pushButton_10">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background:rgb(255,0,0)</string>
+                  </property>
+                  <property name="text">
+                   <string>保存</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QGroupBox" name="groupBox_4">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>圈数选择</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_6">
+                <item row="0" column="0">
+                 <widget class="QRadioButton" name="radioButton_4">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>圈数1</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QRadioButton" name="radioButton_5">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>圈数2</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QRadioButton" name="radioButton_6">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>圈数3</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QGroupBox" name="groupBox_6">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>摄像方案</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_19">
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="lineEdit_18"/>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="pushButton_20">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>编辑</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QComboBox" name="comboBox">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2">
+                 <widget class="QPushButton" name="pushButton_24">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>新建</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_20">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>选择方案：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_21">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>新方案名称：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0" rowspan="2" colspan="3">
+                 <widget class="QPushButton" name="pushButton_25">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>保存当前方案</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="6" column="0">
               <widget class="QTextBrowser" name="textBrowser"/>
+             </item>
+             <item row="5" column="0">
+              <widget class="QFrame" name="frame_15">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_21">
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="pushButton_CardStart">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>启动运动卡</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="pushButton_CardRun">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>运动开启</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QPushButton" name="pushButton_CardReset">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>复位</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </item>
             </layout>
            </widget>
