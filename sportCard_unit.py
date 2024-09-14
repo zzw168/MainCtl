@@ -93,4 +93,4 @@ class SportCard:
         for i in range(1, 6):
             (res, pValue, pClock) = self.get_pos(i, 0, 1, 0)
             self.card_pos(i, 0)
-        self.card_update()
+        return self.card_update()

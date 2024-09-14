@@ -282,13 +282,20 @@ def card_run():
     res = sc.card_pos(2, pos=1000000)
     print(res)
     res = sc.card_update()
-    print(res)
+    if res == 0:
+        ui.textBrowser.append(succeed(card_res[res]))
+    else:
+        ui.textBrowser.append(res)
     (res, pValue, pClock) = sc.get_pos()
     print("%s %s %s" % (res, pValue, pClock))
 def card_reset():
     (res, pValue, pClock) = sc.get_pos()
     print("%s %s %s" % (res, pValue, pClock))
-    sc.card_reset()
+    res = sc.card_reset()
+    if res == 0:
+        ui.textBrowser.append(succeed(card_res[res]))
+    else:
+        ui.textBrowser.append(res)
     # (res, pValue, pClock) = sc.get_pos()
     # print("%s %s %s" % (res, pValue, pClock))
 
