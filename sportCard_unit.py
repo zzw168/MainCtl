@@ -94,5 +94,3 @@ class SportCard:
             (res, pValue, pClock) = self.get_pos(i, 0, 1, 0)
             self.card_setpos(i, 0)
         return self.card_update()
-
-

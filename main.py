@@ -126,6 +126,38 @@ class ColorThead(QThread):
             time.sleep(1)
 
 
+'''
+    PosThead(QThread) 检测各轴位置
+'''
+
+
+class PosThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(PosThead, self).__init__()
+        self.run_flg = ''
+
+    def run(self) -> None:
+        pValue = [0, 0, 0, 0, 0]
+        try:
+            while True:
+                for i in range(0, 5):
+                    (res, pValue[i], pClock) = sc.get_pos(i + 1)
+                self._signal.emit(pValue)
+                time.sleep(0.01)
+        except:
+            pass
+
+
+def pos_signal_accept(message):
+    if len(message) == 5:
+        for i in range(0, len(message)):
+            getattr(ui, 'lineEdit_axis%s' % i).setText(str(message[i]))
+    else:
+        pass
+
+
 class CmdThead(QThread):
     _signal = pyqtSignal(object)
 
@@ -175,6 +207,26 @@ def on_press(key):
     try:
         if key == key.esc:
             print(key)
+        if key == key.up:
+            print('前')
+        if key == key.down:
+            print('后')
+        if key == key.left:
+            print('左')
+        if key == key.right:
+            print('右')
+        if key == key.insert:
+            print('上')
+        if key == key.delete:
+            print('下')
+        if key == key.home:
+            print('头左')
+        if key == key.end:
+            print('头右')
+        if key == key.page_up:
+            print('头上')
+        if key == key.page_down:
+            print('头下')
     except AttributeError:
         print(key)
 
@@ -309,12 +361,15 @@ def card_start():
     print(res)
     if res == 0:
         ui.textBrowser.append(succeed('启动板卡：%s' % card_res[res]))
+        Pos_Thead.start()
     else:
         ui.textBrowser.append(res)
 
 
 def card_run():
-    for item in plan_list:
+    for i in range(0, len(plan_list)):
+        item = plan_list[i]
+        # get_pos(self, nAxisNum=1, pValue=0, nCount=1, pClock=0):
         if item[0] == '1':
             sc.card_setpos(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
                            dSmoothTime=0)
@@ -332,8 +387,8 @@ def card_run():
     #     ui.textBrowser.append(succeed('位置更新：%s' % card_res[res]))
     # else:
     #     ui.textBrowser.append(res)
-    # (res, pValue, pClock) = sc.get_pos()
-    # print("%s %s %s" % (res, pValue, pClock))
+    (res, pValue, pClock) = sc.get_pos()
+    print("%s %s %s" % (res, pValue, pClock))
 
 
 def cmd_run():
@@ -353,7 +408,9 @@ def card_reset():
 
 
 def test():
-    ui.textBrowser.append("<font color='green'> okok </font>")
+    # ui.textBrowser.append("<font color='green'> okok </font>")
+    res = sc.get_pos(nAxisNum=1, pValue=0, nCount=1, pClock=0)
+    print(res)
 
 
 if __name__ == '__main__':
@@ -378,15 +435,19 @@ if __name__ == '__main__':
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()
 
-    Cmd_Thead = CmdThead()
+    Cmd_Thead = CmdThead()  # 运行方案
     Cmd_Thead._signal.connect(signal_accept)
+
+    Pos_Thead = PosThead()  # 实时监控摄像头位置
+    Pos_Thead._signal.connect(pos_signal_accept)
 
     Color_Thead = ColorThead()  # 更新状态信息线程
     Color_Thead._signal.connect(flashsignal_accept)
     Color_Thead.start()
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    ui.pushButton_rename.clicked.connect(plan_rename)
+    ui.pushButton_rename.clicked.connect(test)
+    # ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
