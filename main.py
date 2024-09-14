@@ -46,13 +46,14 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb = self.tableWidget_Step
 
         menu = QMenu()
-        item1 = menu.addAction("刷新")
+        item1 = menu.addAction("插入")
         item2 = menu.addAction("删除")
-        item3 = menu.addAction("插入")
+        item3 = menu.addAction("刷新")
+
         screenPos = tb.mapToGlobal(pos)
 
         action = menu.exec(screenPos)
-        if action == item1:
+        if action == item3:
             pass
             # Color_Thead.start()
         if action == item2:
@@ -74,7 +75,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
                             item.setTextAlignment(Qt.AlignCenter)
                             tb.setItem(i, j, item)
                 tb.setRowCount(num - 1)
-        if action == item3:
+        if action == item1:
             table = self.tableWidget_Step
             num = table.rowCount()
             table.setRowCount(num + 1)
@@ -107,41 +108,6 @@ class MyUi(QMainWindow, Ui_MainWindow):
                     item.setTextAlignment(Qt.AlignCenter)
                     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
                     table.setItem(0, i, item)
-
-
-class FlashThead(QThread):
-    _signal = pyqtSignal(object)
-
-    def __init__(self):
-        super(FlashThead, self).__init__()
-
-    def run(self) -> None:
-        global host_list1
-        global host_list2
-        global host_list3
-        global d_time1
-        global d_time2
-        global d_time3
-        global ischecked1
-        global ischecked2
-        global ischecked3
-        file = "./Robot.yml"
-        if os.path.exists(file):
-            f = open(file, 'r', encoding='utf-8')
-            f_ = yaml.safe_load(f)
-            d_time1 = f_['d_time']
-            d_time2 = f_['d_time2']
-            d_time3 = f_['d_time3']
-            host_list1 = f_['Tasks']
-            host_list2 = f_['Tasks2']
-            host_list3 = f_['Tasks3']
-            ischecked1 = f_['ischecked']
-            ischecked2 = f_['ischecked2']
-            ischecked3 = f_['ischecked3']
-            self._signal.emit('ok')
-            f.close()
-        else:
-            print("文件不存在")
 
 
 class ColorThead(QThread):
@@ -181,7 +147,7 @@ def on_press(key):
 
 
 # 保存方案
-def save_host():
+def save_plan():
     global plan_list
     table = ui.tableWidget_Step
     row_num = table.rowCount()
@@ -213,8 +179,8 @@ def save_host():
         save_list = yaml.safe_load(f)
         f.close()
 
-        save_list['plans']['plan%d' % (plan_num+1)]['plan_name'] = plan_name
-        save_list['plans']['plan%d' % (plan_num+1)]['plan_list'] = plan_list
+        save_list['plans']['plan%d' % (plan_num + 1)]['plan_name'] = plan_name
+        save_list['plans']['plan%d' % (plan_num + 1)]['plan_list'] = plan_list
 
         with open(file, "w", encoding="utf-8") as f:
             yaml.dump(save_list, f, allow_unicode=True)
@@ -225,40 +191,82 @@ def save_host():
 def deal_yaml():
     global plan_list
     global plan_names
+    global plan_all
     file = "./Robot.yml"
     if os.path.exists(file):
         try:
             f = open(file, 'r', encoding='utf-8')
-            f_ = yaml.safe_load(f)
+            plan_all = yaml.safe_load(f)
             f.close()
-            for plan in f_['plans']:
-                plan_names.append(f_['plans'][plan]['plan_name'])
+            for plan in plan_all['plans']:
+                plan_names.append(plan_all['plans'][plan]['plan_name'])
 
             comb = ui.comboBox_plan
             comb.addItems(plan_names)
-            _index = comb.currentIndex()
-            plan_list = f_['plans']['plan%d' % (_index + 1)]['plan_list']
-
-            table = ui.tableWidget_Step
-            num = 0
-            for task in plan_list:
-                table.setRowCount(num + 1)
-                cb = QCheckBox()
-                cb.setStyleSheet('QCheckBox{margin:6px};')
-                table.setCellWidget(num, 0, cb)
-                if task[0] == '1':
-                    table.cellWidget(num, 0).setChecked(True)
-
-                for i in range(1, len(task)):
-                    item = QTableWidgetItem(str(task[i]))
-                    item.setTextAlignment(Qt.AlignCenter)
-                    # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                    table.setItem(num, i, item)
-                num += 1
+            plan_change()
+            # _index = comb.currentIndex()
+            # plan_list = plan_all['plans']['plan%d' % (_index + 1)]['plan_list']
+            #
+            # table = ui.tableWidget_Step
+            # num = 0
+            # for task in plan_list:
+            #     table.setRowCount(num + 1)
+            #     cb = QCheckBox()
+            #     cb.setStyleSheet('QCheckBox{margin:6px};')
+            #     table.setCellWidget(num, 0, cb)
+            #     if task[0] == '1':
+            #         table.cellWidget(num, 0).setChecked(True)
+            #
+            #     for i in range(1, len(task)):
+            #         item = QTableWidgetItem(str(task[i]))
+            #         item.setTextAlignment(Qt.AlignCenter)
+            #         # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+            #         table.setItem(num, i, item)
+            #     num += 1
         except:
             pass
     else:
         print("文件不存在")
+
+
+# 重命名方案
+def plan_rename():
+    text = ui.lineEdit_rename.text()
+    comb = ui.comboBox_plan
+    comb.setItemText(comb.currentIndex(), text)
+
+
+def sel_all():
+    table = ui.tableWidget_Step
+    num = table.rowCount()
+    for i in range(0, num):
+        if ui.checkBox_selectall.isChecked():
+            table.cellWidget(i, 0).setChecked(True)
+        else:
+            table.cellWidget(i, 0).setChecked(False)
+
+
+def plan_change():
+    comb = ui.comboBox_plan
+    _index = comb.currentIndex()
+    plan_list = plan_all['plans']['plan%d' % (_index + 1)]['plan_list']
+
+    table = ui.tableWidget_Step
+    num = 0
+    for task in plan_list:
+        table.setRowCount(num + 1)
+        cb = QCheckBox()
+        cb.setStyleSheet('QCheckBox{margin:6px};')
+        table.setCellWidget(num, 0, cb)
+        if task[0] == '1':
+            table.cellWidget(num, 0).setChecked(True)
+
+        for i in range(1, len(task)):
+            item = QTableWidgetItem(str(task[i]))
+            item.setTextAlignment(Qt.AlignCenter)
+            # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+            table.setItem(num, i, item)
+        num += 1
 
 
 def flashsignal_accept(status_color):  # 更改颜色
@@ -314,10 +322,11 @@ if __name__ == '__main__':
     z_status = True
     sc = SportCard()
 
-    plan_list = []
-    plan_names = []
+    plan_list = []  # 当前方案列表
+    plan_names = []  # 当前方案名称
+    plan_all = {}  # 所有方案资料
 
-    # test()
+    deal_yaml()
 
     KeyListener_Thead = KeyListenerThead()
     KeyListener_Thead.start()
@@ -326,7 +335,9 @@ if __name__ == '__main__':
     Color_Thead._signal.connect(flashsignal_accept)
     Color_Thead.start()
 
-    ui.pushButton_fsave.clicked.connect(deal_yaml)
-    ui.pushButton_rename.clicked.connect(save_host)
+    ui.pushButton_fsave.clicked.connect(save_plan)
+    ui.pushButton_rename.clicked.connect(plan_rename)
+    ui.checkBox_selectall.clicked.connect(sel_all)
+    ui.comboBox_plan.currentIndexChanged.connect(plan_change)
 
     sys.exit(app.exec_())
