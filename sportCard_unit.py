@@ -68,13 +68,13 @@ class SportCard:
             return fail(("更新位置: %s" % (card_res[res])))
 
     # 停止轴运动
-    def card_stop(self, nAxisNum):
-        nAxisNum_c = ctypes.c_short(nAxisNum - 1)
-        res = self.card_dll.GA_Stop((0x001 << (nAxisNum_c)), 0)
-        if res == 0:
-            return res
-        else:
-            return fail(("停止运动: %s" % (card_res[res])))
+    def card_stop(self, nAxisNum: int, lOption: int = 2):
+        self.card_dll.GA_Stop.argtypes = [ctypes.c_long, ctypes.c_long]
+        self.card_dll.GA_Stop.restype = ctypes.c_int
+        nAxisNum = 2 ** (nAxisNum - 1)
+        lMask_c = ctypes.c_long(nAxisNum)
+        lOption_c = ctypes.c_long(lOption)
+        return self.card_dll.GA_Stop(lMask_c, lOption_c)
 
     def get_pos(self, nAxisNum=1, pValue=0, nCount=1, pClock=0):
         self.card_dll.GA_GetPrfPos.argtypes = [ctypes.c_short, ctypes.POINTER(ctypes.c_double), ctypes.c_short,

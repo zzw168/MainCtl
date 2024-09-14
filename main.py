@@ -139,15 +139,16 @@ class PosThead(QThread):
         self.run_flg = ''
 
     def run(self) -> None:
-        pValue = [0, 0, 0, 0, 0]
-        try:
-            while True:
-                for i in range(0, 5):
-                    (res, pValue[i], pClock) = sc.get_pos(i + 1)
-                self._signal.emit(pValue)
-                time.sleep(0.01)
-        except:
-            pass
+        global pValue
+        if flag_start:
+            try:
+                while True:
+                    for i in range(0, 5):
+                        (res, pValue[i], pClock) = sc.get_pos(i + 1)
+                    self._signal.emit(pValue)
+                    time.sleep(0.01)
+            except:
+                pass
 
 
 def pos_signal_accept(message):
@@ -166,25 +167,26 @@ class CmdThead(QThread):
         self.run_flg = ''
 
     def run(self) -> None:
-        try:
-            self._signal.emit(succeed("运动流程：开始！"))
-            for item in plan_list:
-                if item[0] == '1':
-                    sc.card_setpos(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                   dVelStart=0.1, dSmoothTime=0)
-                    sc.card_setpos(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                   dVelStart=0.1, dSmoothTime=0)
-                    sc.card_setpos(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                   dVelStart=0.1, dSmoothTime=0)
-                    sc.card_setpos(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                   dVelStart=0.1, dSmoothTime=0)
-                    sc.card_setpos(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                   dVelStart=0.1, dSmoothTime=0)
-                    sc.card_update()
-                    time.sleep(10)
-            self._signal.emit(succeed("运动流程：完成！"))
-        except:
-            self._signal.emit(fail("运动卡运行：出错！"))
+        if flag_start:
+            try:
+                self._signal.emit(succeed("运动流程：开始！"))
+                for item in plan_list:
+                    if item[0] == '1':  # 是否勾选
+                        sc.card_setpos(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                       dVelStart=0.1, dSmoothTime=0)
+                        sc.card_setpos(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                       dVelStart=0.1, dSmoothTime=0)
+                        sc.card_setpos(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                       dVelStart=0.1, dSmoothTime=0)
+                        sc.card_setpos(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                       dVelStart=0.1, dSmoothTime=0)
+                        sc.card_setpos(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
+                                       dVelStart=0.1, dSmoothTime=0)
+                        sc.card_update()
+                        time.sleep(10)
+                self._signal.emit(succeed("运动流程：完成！"))
+            except:
+                self._signal.emit(fail("运动卡运行：出错！"))
 
 
 def signal_accept(message):
@@ -199,36 +201,51 @@ class KeyListenerThead(QThread):
         super(KeyListenerThead, self).__init__()
 
     def run(self) -> None:
-        with pynput.keyboard.Listener(on_press=on_press) as lsn:
+        with pynput.keyboard.Listener(on_press=keyboard_press, on_release=keyboard_release) as lsn:
             lsn.join()
 
 
-def on_press(key):
-    try:
-        if key == key.esc:
-            print(key)
+def keyboard_release(key):
+    global flag_run
+    if ui.checkBox_key.isChecked() and flag_start:
         if key == key.up:
             print('前')
-        if key == key.down:
-            print('后')
-        if key == key.left:
-            print('左')
-        if key == key.right:
-            print('右')
-        if key == key.insert:
-            print('上')
-        if key == key.delete:
-            print('下')
-        if key == key.home:
-            print('头左')
-        if key == key.end:
-            print('头右')
-        if key == key.page_up:
-            print('头上')
-        if key == key.page_down:
-            print('头下')
-    except AttributeError:
-        print(key)
+            res = sc.card_stop(2)
+            print(res)
+            flag_run = True
+
+
+def keyboard_press(key):
+    global flag_run
+    if ui.checkBox_key.isChecked() and flag_start:
+        try:
+            if key == key.up:
+                print('前')
+                if flag_run:
+                    sc.card_setpos(2, pos=2000000)
+                    sc.card_update()
+                    flag_run = False
+
+            if key == key.down:
+                print('后')
+            if key == key.left:
+                print('左')
+            if key == key.right:
+                print('右')
+            if key == key.insert:
+                print('上')
+            if key == key.delete:
+                print('下')
+            if key == key.home:
+                print('头左')
+            if key == key.end:
+                print('头右')
+            if key == key.page_up:
+                print('头上')
+            if key == key.page_down:
+                print('头下')
+        except AttributeError:
+            print(key)
 
 
 # 保存方案
@@ -357,9 +374,11 @@ def bt_start():
 
 # 打开运动卡
 def card_start():
+    global flag_start
     res = sc.card_open(10)
     print(res)
     if res == 0:
+        flag_start = True
         ui.textBrowser.append(succeed('启动板卡：%s' % card_res[res]))
         Pos_Thead.start()
     else:
@@ -367,6 +386,8 @@ def card_start():
 
 
 def card_run():
+    if not flag_start:
+        return
     for i in range(0, len(plan_list)):
         item = plan_list[i]
         # get_pos(self, nAxisNum=1, pValue=0, nCount=1, pClock=0):
@@ -429,6 +450,9 @@ if __name__ == '__main__':
     plan_list = []  # 当前方案列表
     plan_names = []  # 当前方案名称
     plan_all = {}  # 所有方案资料
+    pValue = [0, 0, 0, 0, 0]  # 各轴位置
+    flag_run = True
+    flag_start = False
 
     deal_yaml()
 

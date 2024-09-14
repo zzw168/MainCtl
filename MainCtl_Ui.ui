@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1391</width>
-    <height>866</height>
+    <height>885</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -2464,7 +2464,7 @@
                  </widget>
                 </item>
                 <item row="0" column="0" colspan="2">
-                 <widget class="QCheckBox" name="checkBox_14">
+                 <widget class="QCheckBox" name="checkBox_key">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
