@@ -146,7 +146,7 @@ class PosThead(QThread):
                     for i in range(0, 5):
                         (res, pValue[i], pClock) = sc.get_pos(i + 1)
                     self._signal.emit(pValue)
-                    # time.sleep(0.01)
+                    time.sleep(0.01)
             except:
                 pass
 
@@ -211,53 +211,73 @@ def keyboard_release(key):
         if key == key.up:
             print('前')
             sc.card_stop(2)
-            sc.card_setpos(2, pValue[1])
             flag_run = True
+            time.sleep(1)
+            sc.card_setpos(2, pValue[1])
+
         if key == key.down:
             print('后')
             sc.card_stop(2)
-            sc.card_setpos(2, pValue[1])
             flag_run = True
+            time.sleep(1)
+            sc.card_setpos(2, pValue[1])
+
         if key == key.left:
             print('左')
             sc.card_stop(1)
-            sc.card_setpos(1, pValue[0])
             flag_run = True
+            time.sleep(1)
+            sc.card_setpos(1, pValue[0])
+
         if key == key.right:
             print('右')
             sc.card_stop(1)
-            sc.card_setpos(1, pValue[0])
             flag_run = True
+            time.sleep(1)
+            sc.card_setpos(1, pValue[0])
+
         if key == key.insert:
             print('上')
             sc.card_stop(3)
-            sc.card_setpos(3, pValue[2])
             flag_run = True
+            time.sleep(1)
+            sc.card_setpos(3, pValue[2])
+
         if key == key.delete:
             print('下')
             sc.card_stop(3)
-            sc.card_setpos(3, pValue[2])
             flag_run = True
+            time.sleep(1)
+            sc.card_setpos(3, pValue[2])
+
         if key == key.home:
             print('头左')
             sc.card_stop(4)
-            sc.card_setpos(4, pValue[3])
             flag_run = True
+            time.sleep(1)
+            sc.card_setpos(4, pValue[3])
+
         if key == key.end:
             print('头右')
             sc.card_stop(4)
+            flag_run = True
+            time.sleep(1)
             sc.card_setpos(4, pValue[3])
-            flag_run = True
+
         if key == key.page_up:
-            print('头上')
+            print('头下')
             sc.card_stop(5)
-            sc.card_setpos(5, pValue[4])
             flag_run = True
+            time.sleep(1)
+            sc.card_setpos(5, pValue[4])
+
         if key == key.page_down:
             print('头下')
             sc.card_stop(5)
-            sc.card_setpos(5, pValue[4])
             flag_run = True
+            time.sleep(1)
+            sc.card_setpos(5, pValue[4])
+
 
 
 def keyboard_press(key):
@@ -314,15 +334,15 @@ def keyboard_press(key):
                     sc.card_update()
                     flag_run = False
             if key == key.page_up:
-                print('头上')
-                if flag_run:
-                    sc.card_move(5, pos=2000000)
-                    sc.card_update()
-                    flag_run = False
-            if key == key.page_down:
                 print('头下')
                 if flag_run:
                     sc.card_move(5, pos=0)
+                    sc.card_update()
+                    flag_run = False
+            if key == key.page_down:
+                print('头上')
+                if flag_run:
+                    sc.card_move(5, pos=2000000)
                     sc.card_update()
                     flag_run = False
         except AttributeError:
