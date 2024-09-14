@@ -43,57 +43,56 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb_Step.customContextMenuRequested.connect(self.generateMenu)
 
     def generateMenu(self, pos):
-        tb = self.tableWidget_Step
+        tb_step = self.tableWidget_Step
 
         menu = QMenu()
         item1 = menu.addAction("插入")
         item2 = menu.addAction("删除")
         item3 = menu.addAction("刷新")
 
-        screenPos = tb.mapToGlobal(pos)
+        screenPos = tb_step.mapToGlobal(pos)
 
         action = menu.exec(screenPos)
         if action == item3:
-            pass
-            # Color_Thead.start()
+            plan_change()
         if action == item2:
             # del_host()
-            num = tb.rowCount()
-            print(num)
-            if num != 0:
-                p = tb.currentRow()
-                for i in range(p, num - 1):
-                    # print('%d' % i)
-                    for j in range(0, tb.columnCount()):
+            rownum = tb_step.rowCount()
+            print(rownum)
+            if rownum != 0:
+                p = tb_step.currentRow()
+                for i in range(p, rownum - 1):
+                    print('%d' % i)
+                    for j in range(0, tb_step.columnCount() - 1):
                         if j == 0:
                             cb = QCheckBox()
                             cb.setStyleSheet('QCheckBox{margin:6px};')
-                            cb.setChecked(tb.cellWidget(i + 1, j).isChecked())
-                            tb.setCellWidget(i, j, cb)
+                            cb.setChecked(tb_step.cellWidget(i + 1, j).isChecked())
+                            tb_step.setCellWidget(i, j, cb)
                         else:
-                            item = QTableWidgetItem(tb.item(i + 1, j).text())
+                            item = QTableWidgetItem(tb_step.item(i + 1, j).text())
                             item.setTextAlignment(Qt.AlignCenter)
-                            tb.setItem(i, j, item)
-                tb.setRowCount(num - 1)
+                            tb_step.setItem(i, j, item)
+                tb_step.setRowCount(rownum - 1)
         if action == item1:
             table = self.tableWidget_Step
-            num = table.rowCount()
-            table.setRowCount(num + 1)
+            rownum = table.rowCount()
+            table.setRowCount(rownum + 1)
             row = table.currentRow()
-            if num > 0:  # 下移表格
-                for r in range(num, row, -1):
+            if rownum > 0:  # 下移表格
+                for r in range(rownum, row, -1):
                     cb = QCheckBox()
                     cb.setStyleSheet('QCheckBox{margin:6px};')
                     table.setCellWidget(r, 0, cb)
                     table.cellWidget(r, 0).setChecked(table.cellWidget(r - 1, 0).isChecked())
-                    for i in range(1, table.columnCount()):
+                    for i in range(1, table.columnCount() - 1):
                         item = QTableWidgetItem(table.item(r - 1, i).text())
                         item.setTextAlignment(Qt.AlignCenter)
                         # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
                         table.setItem(r, i, item)
 
                 table.cellWidget(row, 0).setChecked(False)
-                for i in range(1, table.columnCount()):
+                for i in range(1, table.columnCount() - 1):
                     item = QTableWidgetItem('0')
                     item.setTextAlignment(Qt.AlignCenter)
                     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
@@ -103,7 +102,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
                 cb.setStyleSheet('QCheckBox{margin:6px};')
                 table.setCellWidget(0, 0, cb)
 
-                for i in range(1, table.columnCount()):
+                for i in range(1, table.columnCount() - 1):
                     item = QTableWidgetItem('0')
                     item.setTextAlignment(Qt.AlignCenter)
                     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
@@ -149,6 +148,7 @@ def on_press(key):
 # 保存方案
 def save_plan():
     global plan_list
+    global plan_all
     table = ui.tableWidget_Step
     row_num = table.rowCount()
     col_num = table.columnCount()
@@ -175,15 +175,11 @@ def save_plan():
 
     file = "./Robot.yml"
     if os.path.exists(file):
-        f = open(file, 'r', encoding='utf-8')
-        save_list = yaml.safe_load(f)
-        f.close()
-
-        save_list['plans']['plan%d' % (plan_num + 1)]['plan_name'] = plan_name
-        save_list['plans']['plan%d' % (plan_num + 1)]['plan_list'] = plan_list
+        plan_all['plans']['plan%d' % (plan_num + 1)]['plan_name'] = plan_name
+        plan_all['plans']['plan%d' % (plan_num + 1)]['plan_list'] = plan_list
 
         with open(file, "w", encoding="utf-8") as f:
-            yaml.dump(save_list, f, allow_unicode=True)
+            yaml.dump(plan_all, f, allow_unicode=True)
         f.close()
 
 
@@ -204,25 +200,6 @@ def deal_yaml():
             comb = ui.comboBox_plan
             comb.addItems(plan_names)
             plan_change()
-            # _index = comb.currentIndex()
-            # plan_list = plan_all['plans']['plan%d' % (_index + 1)]['plan_list']
-            #
-            # table = ui.tableWidget_Step
-            # num = 0
-            # for task in plan_list:
-            #     table.setRowCount(num + 1)
-            #     cb = QCheckBox()
-            #     cb.setStyleSheet('QCheckBox{margin:6px};')
-            #     table.setCellWidget(num, 0, cb)
-            #     if task[0] == '1':
-            #         table.cellWidget(num, 0).setChecked(True)
-            #
-            #     for i in range(1, len(task)):
-            #         item = QTableWidgetItem(str(task[i]))
-            #         item.setTextAlignment(Qt.AlignCenter)
-            #         # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-            #         table.setItem(num, i, item)
-            #     num += 1
         except:
             pass
     else:
