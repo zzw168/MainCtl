@@ -175,8 +175,9 @@ class CmdThead(QThread):
         if flag_start:
             try:
                 self._signal.emit(succeed("运动流程：开始！"))
-                for item in plan_list:
+                for i, item in enumerate(plan_list):
                     if item[0] == '1':  # 是否勾选
+                        self._signal.emit(i)
                         sc.card_move(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
                                      dVelStart=0.1, dSmoothTime=0)
                         sc.card_move(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
@@ -201,8 +202,19 @@ class CmdThead(QThread):
 
 
 def signal_accept(message):
+    global p_now
     print(message)
-    ui.textBrowser.append(message)
+    if isinstance(message, int):
+        print(message)
+        tb_step = ui.tableWidget_Step
+        col_num = tb_step.columnCount()
+        print(col_num)
+        for i in range(1, col_num-1):
+            tb_step.item(p_now, i).setBackground(QBrush(QColor(255, 255, 255)))
+            tb_step.item(message, i).setBackground(QBrush(QColor(255, 0, 255)))
+        p_now = message
+    else:
+        ui.textBrowser.append(message)
 
 
 class KeyListenerThead(QThread):
@@ -510,6 +522,7 @@ def card_run():
 
 
 def cmd_run():
+    save_plan()
     Cmd_Thead.start()
 
 
@@ -535,8 +548,8 @@ def p_to_table():
 
 def test():
     # ui.textBrowser.append("<font color='green'> okok </font>")
-    res = sc.get_pos(nAxisNum=1, pValue=0, nCount=1, pClock=0)
-    print(res)
+    for item in enumerate(plan_list):
+        print(item)
 
 
 if __name__ == '__main__':
@@ -556,6 +569,7 @@ if __name__ == '__main__':
     plan_names = []  # 当前方案名称
     plan_all = {}  # 所有方案资料
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
+    p_now = 0   # 保存方案运行位置
     flag_run = True
     flag_start = False
 
