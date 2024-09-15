@@ -210,74 +210,59 @@ def keyboard_release(key):
     if ui.checkBox_key.isChecked() and flag_start:
         if key == key.up:
             print('前')
-            sc.card_stop(2)
+            # sc.card_stop(2)
             flag_run = True
-            time.sleep(1)
-            sc.card_setpos(2, pValue[1])
+            sc.card_setpos(2, pValue[1]+30000)
 
         if key == key.down:
             print('后')
-            sc.card_stop(2)
+            # sc.card_stop(2)
             flag_run = True
-            time.sleep(1)
-            sc.card_setpos(2, pValue[1])
+            sc.card_setpos(2, pValue[1]-30000)
 
         if key == key.left:
             print('左')
-            sc.card_stop(1)
+            # sc.card_stop(1)
             flag_run = True
-            time.sleep(1)
-            sc.card_setpos(1, pValue[0])
+            sc.card_setpos(1, pValue[0]+30000)
 
         if key == key.right:
             print('右')
-            sc.card_stop(1)
+            # sc.card_stop(1)
             flag_run = True
-            time.sleep(1)
-            sc.card_setpos(1, pValue[0])
+            sc.card_setpos(1, pValue[0]-30000)
 
         if key == key.insert:
             print('上')
-            sc.card_stop(3)
             flag_run = True
-            time.sleep(1)
-            sc.card_setpos(3, pValue[2])
+            sc.card_setpos(3, pValue[2]-30000)
 
         if key == key.delete:
             print('下')
-            sc.card_stop(3)
             flag_run = True
-            time.sleep(1)
-            sc.card_setpos(3, pValue[2])
+            sc.card_setpos(3, pValue[2]+30000)
 
         if key == key.home:
             print('头左')
-            sc.card_stop(4)
             flag_run = True
-            time.sleep(1)
-            sc.card_setpos(4, pValue[3])
+            sc.card_setpos(4, pValue[3]+30000)
 
         if key == key.end:
             print('头右')
-            sc.card_stop(4)
             flag_run = True
-            time.sleep(1)
-            sc.card_setpos(4, pValue[3])
+            sc.card_setpos(4, pValue[3]-30000)
 
         if key == key.page_up:
             print('头下')
-            sc.card_stop(5)
             flag_run = True
-            time.sleep(1)
-            sc.card_setpos(5, pValue[4])
+            sc.card_setpos(5, pValue[4]-30000)
 
         if key == key.page_down:
             print('头下')
-            sc.card_stop(5)
             flag_run = True
-            time.sleep(1)
-            sc.card_setpos(5, pValue[4])
+            sc.card_setpos(5, pValue[4]+30000)
 
+        sc.card_update()
 
 
 def keyboard_press(key):
@@ -294,7 +279,7 @@ def keyboard_press(key):
             if key == key.down:
                 print('后')
                 if flag_run:
-                    sc.card_move(2, pos=0)
+                    sc.card_move(2, pos=-2000000)
                     sc.card_update()
                     flag_run = False
             if key == key.left:
@@ -306,13 +291,13 @@ def keyboard_press(key):
             if key == key.right:
                 print('右')
                 if flag_run:
-                    sc.card_move(1, pos=0)
+                    sc.card_move(1, pos=-2000000)
                     sc.card_update()
                     flag_run = False
             if key == key.insert:
                 print('上')
                 if flag_run:
-                    sc.card_move(3, pos=0)
+                    sc.card_move(3, pos=-2000000)
                     sc.card_update()
                     flag_run = False
             if key == key.delete:
@@ -330,13 +315,13 @@ def keyboard_press(key):
             if key == key.end:
                 print('头右')
                 if flag_run:
-                    sc.card_move(4, pos=0)
+                    sc.card_move(4, pos=-2000000)
                     sc.card_update()
                     flag_run = False
             if key == key.page_up:
                 print('头下')
                 if flag_run:
-                    sc.card_move(5, pos=0)
+                    sc.card_move(5, pos=-2000000)
                     sc.card_update()
                     flag_run = False
             if key == key.page_down:
