@@ -159,6 +159,11 @@ def pos_signal_accept(message):
         pass
 
 
+'''
+    CmdThead(QThread) 执行运动方案线程
+'''
+
+
 class CmdThead(QThread):
     _signal = pyqtSignal(object)
 
@@ -183,7 +188,13 @@ class CmdThead(QThread):
                         sc.card_move(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
                                      dVelStart=0.1, dSmoothTime=0)
                         sc.card_update()
-                        time.sleep(10)
+                        while True:
+                            k = 0
+                            for i in range(0, len(pValue)):
+                                if pValue[i] == int(item[i + 2]):
+                                    k += 1
+                            if k == 5:
+                                break
                 self._signal.emit(succeed("运动流程：完成！"))
             except:
                 self._signal.emit(fail("运动卡运行：出错！"))
@@ -212,55 +223,55 @@ def keyboard_release(key):
             print('前')
             # sc.card_stop(2)
             flag_run = True
-            sc.card_setpos(2, pValue[1]+30000)
+            sc.card_setpos(2, pValue[1] + 30000)
 
         if key == key.down:
             print('后')
             # sc.card_stop(2)
             flag_run = True
-            sc.card_setpos(2, pValue[1]-30000)
+            sc.card_setpos(2, pValue[1] - 30000)
 
         if key == key.left:
             print('左')
             # sc.card_stop(1)
             flag_run = True
-            sc.card_setpos(1, pValue[0]+30000)
+            sc.card_setpos(1, pValue[0] + 30000)
 
         if key == key.right:
             print('右')
             # sc.card_stop(1)
             flag_run = True
-            sc.card_setpos(1, pValue[0]-30000)
+            sc.card_setpos(1, pValue[0] - 30000)
 
         if key == key.insert:
             print('上')
             flag_run = True
-            sc.card_setpos(3, pValue[2]-30000)
+            sc.card_setpos(3, pValue[2] - 30000)
 
         if key == key.delete:
             print('下')
             flag_run = True
-            sc.card_setpos(3, pValue[2]+30000)
+            sc.card_setpos(3, pValue[2] + 30000)
 
         if key == key.home:
             print('头左')
             flag_run = True
-            sc.card_setpos(4, pValue[3]+30000)
+            sc.card_setpos(4, pValue[3] + 30000)
 
         if key == key.end:
             print('头右')
             flag_run = True
-            sc.card_setpos(4, pValue[3]-30000)
+            sc.card_setpos(4, pValue[3] - 30000)
 
         if key == key.page_up:
             print('头下')
             flag_run = True
-            sc.card_setpos(5, pValue[4]-30000)
+            sc.card_setpos(5, pValue[4] - 30000)
 
         if key == key.page_down:
             print('头下')
             flag_run = True
-            sc.card_setpos(5, pValue[4]+30000)
+            sc.card_setpos(5, pValue[4] + 30000)
 
         sc.card_update()
 
@@ -514,6 +525,14 @@ def card_reset():
     # print("%s %s %s" % (res, pValue, pClock))
 
 
+# 实时轴位置入表
+def p_to_table():
+    tb_step = ui.tableWidget_Step
+    for i in range(0, len(pValue)):
+        row_num = tb_step.currentRow()
+        tb_step.item(row_num, i + 2).setText(str(pValue[i]))
+
+
 def test():
     # ui.textBrowser.append("<font color='green'> okok </font>")
     res = sc.get_pos(nAxisNum=1, pValue=0, nCount=1, pClock=0)
@@ -556,11 +575,12 @@ if __name__ == '__main__':
     Color_Thead.start()
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    ui.pushButton_rename.clicked.connect(test)
-    # ui.pushButton_rename.clicked.connect(plan_rename)
+    # ui.pushButton_rename.clicked.connect(test)
+    ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
+    ui.pushButton_ToTable.clicked.connect(p_to_table)
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_change)
 
