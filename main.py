@@ -46,15 +46,18 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb_step = self.tableWidget_Step
 
         menu = QMenu()
-        item1 = menu.addAction("插入")
+        item0 = menu.addAction("运行")
+        item3 = menu.addAction("插入")
         item2 = menu.addAction("删除")
-        item3 = menu.addAction("刷新")
+        item1 = menu.addAction("刷新")
 
         screenPos = tb_step.mapToGlobal(pos)
 
         action = menu.exec(screenPos)
-        if action == item3:
-            plan_change()
+        if action == item1:
+            cmd_run()
+        if action == item1:
+            plan_refresh()
         if action == item2:
             # del_host()
             rownum = tb_step.rowCount()
@@ -74,7 +77,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
                             item.setTextAlignment(Qt.AlignCenter)
                             tb_step.setItem(i, j, item)
                 tb_step.setRowCount(rownum - 1)
-        if action == item1:
+        if action == item3:
             table = self.tableWidget_Step
             rownum = table.rowCount()
             table.setRowCount(rownum + 1)
@@ -417,7 +420,7 @@ def deal_yaml():
 
             comb = ui.comboBox_plan
             comb.addItems(plan_names)
-            plan_change()
+            plan_refresh()
         except:
             pass
     else:
@@ -441,7 +444,7 @@ def sel_all():
             table.cellWidget(i, 0).setChecked(False)
 
 
-def plan_change():
+def plan_refresh():
     global plan_list
     comb = ui.comboBox_plan
     _index = comb.currentIndex()
@@ -554,6 +557,18 @@ def p_to_table():
         tb_step.item(row_num, i + 2).setText(str(pValue[i]))
 
 
+# 禁止输入非数字
+def table_change():
+    global plan_list
+    tb_step = ui.tableWidget_Step
+    row = tb_step.currentRow()
+    col = tb_step.currentColumn()
+    if not (tb_step.item(row, col).text().isdigit()):
+        comb = ui.comboBox_plan
+        _index = comb.currentIndex()
+        tb_step.item(row, col).setText(plan_list[row][col])
+
+
 def test():
     # ui.textBrowser.append("<font color='green'> okok </font>")
     for item in enumerate(plan_list):
@@ -605,6 +620,7 @@ if __name__ == '__main__':
     ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.pushButton_ToTable.clicked.connect(p_to_table)
     ui.checkBox_selectall.clicked.connect(sel_all)
-    ui.comboBox_plan.currentIndexChanged.connect(plan_change)
+    ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
+    ui.tableWidget_Step.itemChanged.connect(table_change)
 
     sys.exit(app.exec_())
