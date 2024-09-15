@@ -209,7 +209,7 @@ def signal_accept(message):
         tb_step = ui.tableWidget_Step
         col_num = tb_step.columnCount()
         print(col_num)
-        for i in range(1, col_num-1):
+        for i in range(1, col_num - 1):
             tb_step.item(p_now, i).setBackground(QBrush(QColor(255, 255, 255)))
             tb_step.item(message, i).setBackground(QBrush(QColor(255, 0, 255)))
         p_now = message
@@ -231,61 +231,63 @@ class KeyListenerThead(QThread):
 def keyboard_release(key):
     global flag_run
     if ui.checkBox_key.isChecked() and flag_start:
-        if key == key.up:
-            print('前')
-            # sc.card_stop(2)
-            flag_run = True
-            sc.card_setpos(2, pValue[1] + 30000)
+        try:
+            if key == key.up:
+                print('前')
+                # sc.card_stop(2)
+                flag_run = True
+                sc.card_setpos(2, pValue[1] + 30000)
 
-        if key == key.down:
-            print('后')
-            # sc.card_stop(2)
-            flag_run = True
-            sc.card_setpos(2, pValue[1] - 30000)
+            if key == key.down:
+                print('后')
+                # sc.card_stop(2)
+                flag_run = True
+                sc.card_setpos(2, pValue[1] - 30000)
 
-        if key == key.left:
-            print('左')
-            # sc.card_stop(1)
-            flag_run = True
-            sc.card_setpos(1, pValue[0] + 30000)
+            if key == key.left:
+                print('左')
+                # sc.card_stop(1)
+                flag_run = True
+                sc.card_setpos(1, pValue[0] + 30000)
 
-        if key == key.right:
-            print('右')
-            # sc.card_stop(1)
-            flag_run = True
-            sc.card_setpos(1, pValue[0] - 30000)
+            if key == key.right:
+                print('右')
+                # sc.card_stop(1)
+                flag_run = True
+                sc.card_setpos(1, pValue[0] - 30000)
 
-        if key == key.insert:
-            print('上')
-            flag_run = True
-            sc.card_setpos(3, pValue[2] - 30000)
+            if key == key.insert:
+                print('上')
+                flag_run = True
+                sc.card_setpos(3, pValue[2] - 30000)
 
-        if key == key.delete:
-            print('下')
-            flag_run = True
-            sc.card_setpos(3, pValue[2] + 30000)
+            if key == key.delete:
+                print('下')
+                flag_run = True
+                sc.card_setpos(3, pValue[2] + 30000)
 
-        if key == key.home:
-            print('头左')
-            flag_run = True
-            sc.card_setpos(4, pValue[3] + 30000)
+            if key == key.home:
+                print('头左')
+                flag_run = True
+                sc.card_setpos(4, pValue[3] + 30000)
 
-        if key == key.end:
-            print('头右')
-            flag_run = True
-            sc.card_setpos(4, pValue[3] - 30000)
+            if key == key.end:
+                print('头右')
+                flag_run = True
+                sc.card_setpos(4, pValue[3] - 30000)
 
-        if key == key.page_up:
-            print('头下')
-            flag_run = True
-            sc.card_setpos(5, pValue[4] - 30000)
+            if key == key.page_up:
+                print('头下')
+                flag_run = True
+                sc.card_setpos(5, pValue[4] - 30000)
 
-        if key == key.page_down:
-            print('头下')
-            flag_run = True
-            sc.card_setpos(5, pValue[4] + 30000)
-
-        sc.card_update()
+            if key == key.page_down:
+                print('头下')
+                flag_run = True
+                sc.card_setpos(5, pValue[4] + 30000)
+            sc.card_update()
+        except AttributeError:
+            print(key)
 
 
 def keyboard_press(key):
@@ -569,7 +571,7 @@ if __name__ == '__main__':
     plan_names = []  # 当前方案名称
     plan_all = {}  # 所有方案资料
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
-    p_now = 0   # 保存方案运行位置
+    p_now = 0  # 保存方案运行位置
     flag_run = True
     flag_start = False
 
