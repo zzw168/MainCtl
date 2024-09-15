@@ -199,6 +199,8 @@ class CmdThead(QThread):
                 self._signal.emit(succeed("运动流程：完成！"))
             except:
                 self._signal.emit(fail("运动卡运行：出错！"))
+        else:
+            self._signal.emit(fail("运动卡未链接！"))
 
 
 def signal_accept(message):
