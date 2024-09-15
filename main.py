@@ -486,41 +486,45 @@ def bt_start():
 # 打开运动卡
 def card_start():
     global flag_start
-    res = sc.card_open(10)
-    print(res)
-    if res == 0:
-        flag_start = True
-        ui.textBrowser.append(succeed('启动板卡：%s' % card_res[res]))
-        Pos_Thead.start()
+    cardnum = ui.lineEdit_CarNo.text()
+    if cardnum.isdigit():
+        res = sc.card_open(int(cardnum))
+        print(res)
+        if res == 0:
+            flag_start = True
+            ui.textBrowser.append(succeed('启动板卡：%s' % card_res[res]))
+            Pos_Thead.start()
+        else:
+            ui.textBrowser.append(res)
     else:
-        ui.textBrowser.append(res)
+        ui.textBrowser.append(fail('请输入正确的卡号~！'))
 
 
-def card_run():
-    if not flag_start:
-        return
-    for i in range(0, len(plan_list)):
-        item = plan_list[i]
-        # get_pos(self, nAxisNum=1, pValue=0, nCount=1, pClock=0):
-        if item[0] == '1':
-            sc.card_move(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-                         dSmoothTime=0)
-            sc.card_move(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-                         dSmoothTime=0)
-            sc.card_move(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-                         dSmoothTime=0)
-            sc.card_move(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-                         dSmoothTime=0)
-            sc.card_move(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-                         dSmoothTime=0)
-            sc.card_update()
-            time.sleep(10)
-    # if res == 0:
-    #     ui.textBrowser.append(succeed('位置更新：%s' % card_res[res]))
-    # else:
-    #     ui.textBrowser.append(res)
-    (res, pValue, pClock) = sc.get_pos()
-    print("%s %s %s" % (res, pValue, pClock))
+# def card_run():
+#     if not flag_start:
+#         return
+#     for i in range(0, len(plan_list)):
+#         item = plan_list[i]
+#         # get_pos(self, nAxisNum=1, pValue=0, nCount=1, pClock=0):
+#         if item[0] == '1':
+#             sc.card_move(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+#                          dSmoothTime=0)
+#             sc.card_move(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+#                          dSmoothTime=0)
+#             sc.card_move(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+#                          dSmoothTime=0)
+#             sc.card_move(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+#                          dSmoothTime=0)
+#             sc.card_move(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
+#                          dSmoothTime=0)
+#             sc.card_update()
+#             time.sleep(10)
+#     # if res == 0:
+#     #     ui.textBrowser.append(succeed('位置更新：%s' % card_res[res]))
+#     # else:
+#     #     ui.textBrowser.append(res)
+#     (res, pValue, pClock) = sc.get_pos()
+#     print("%s %s %s" % (res, pValue, pClock))
 
 
 def cmd_run():
@@ -576,6 +580,7 @@ if __name__ == '__main__':
     flag_start = False
 
     deal_yaml()
+    ui.lineEdit_CarNo.setText(str(plan_all['cardNo']))
 
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()
