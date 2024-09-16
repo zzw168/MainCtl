@@ -54,7 +54,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
         screenPos = tb_step.mapToGlobal(pos)
 
         action = menu.exec(screenPos)
-        if action == item1:
+        if action == item0:
             cmd_run()
         if action == item1:
             plan_refresh()
@@ -143,7 +143,7 @@ class PosThead(QThread):
 
     def run(self) -> None:
         global pValue
-        if flag_start:
+        if flag_card_start:
             try:
                 while True:
                     for i in range(0, 5):
@@ -175,7 +175,7 @@ class CmdThead(QThread):
         self.run_flg = ''
 
     def run(self) -> None:
-        if flag_start:
+        if flag_card_start:
             try:
                 self._signal.emit(succeed("运动流程：开始！"))
                 for i, item in enumerate(plan_list):
@@ -193,6 +193,7 @@ class CmdThead(QThread):
                         sc.card_move(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
                                      dVelStart=0.1, dSmoothTime=0)
                         sc.card_update()
+                        # time.sleep(2)
                         while True:
                             k = 0
                             for i in range(0, len(pValue)):
@@ -235,61 +236,61 @@ class KeyListenerThead(QThread):
 
 
 def keyboard_release(key):
-    global flag_run
-    if ui.checkBox_key.isChecked() and flag_start:
+    global flag_key_run
+    if ui.checkBox_key.isChecked() and flag_card_start:
         try:
             if key == key.up:
                 print('前')
                 # sc.card_stop(2)
-                flag_run = True
+                flag_key_run = True
                 sc.card_setpos(2, pValue[1] + 30000)
 
             if key == key.down:
                 print('后')
                 # sc.card_stop(2)
-                flag_run = True
+                flag_key_run = True
                 sc.card_setpos(2, pValue[1] - 30000)
 
             if key == key.left:
                 print('左')
                 # sc.card_stop(1)
-                flag_run = True
+                flag_key_run = True
                 sc.card_setpos(1, pValue[0] + 30000)
 
             if key == key.right:
                 print('右')
                 # sc.card_stop(1)
-                flag_run = True
+                flag_key_run = True
                 sc.card_setpos(1, pValue[0] - 30000)
 
             if key == key.insert:
                 print('上')
-                flag_run = True
+                flag_key_run = True
                 sc.card_setpos(3, pValue[2] - 30000)
 
             if key == key.delete:
                 print('下')
-                flag_run = True
+                flag_key_run = True
                 sc.card_setpos(3, pValue[2] + 30000)
 
             if key == key.home:
                 print('头左')
-                flag_run = True
+                flag_key_run = True
                 sc.card_setpos(4, pValue[3] + 30000)
 
             if key == key.end:
                 print('头右')
-                flag_run = True
+                flag_key_run = True
                 sc.card_setpos(4, pValue[3] - 30000)
 
             if key == key.page_up:
                 print('头下')
-                flag_run = True
+                flag_key_run = True
                 sc.card_setpos(5, pValue[4] - 30000)
 
             if key == key.page_down:
                 print('头下')
-                flag_run = True
+                flag_key_run = True
                 sc.card_setpos(5, pValue[4] + 30000)
             sc.card_update()
         except AttributeError:
@@ -297,70 +298,70 @@ def keyboard_release(key):
 
 
 def keyboard_press(key):
-    global flag_run
-    if ui.checkBox_key.isChecked() and flag_start:
+    global flag_key_run
+    if ui.checkBox_key.isChecked() and flag_card_start:
         try:
             if key == key.up:
                 print('前')
-                if flag_run:
+                if flag_key_run:
                     sc.card_move(2, pos=2000000)
                     sc.card_update()
-                    flag_run = False
+                    flag_key_run = False
 
             if key == key.down:
                 print('后')
-                if flag_run:
+                if flag_key_run:
                     sc.card_move(2, pos=-2000000)
                     sc.card_update()
-                    flag_run = False
+                    flag_key_run = False
             if key == key.left:
                 print('左')
-                if flag_run:
+                if flag_key_run:
                     sc.card_move(1, pos=2000000)
                     sc.card_update()
-                    flag_run = False
+                    flag_key_run = False
             if key == key.right:
                 print('右')
-                if flag_run:
+                if flag_key_run:
                     sc.card_move(1, pos=-2000000)
                     sc.card_update()
-                    flag_run = False
+                    flag_key_run = False
             if key == key.insert:
                 print('上')
-                if flag_run:
+                if flag_key_run:
                     sc.card_move(3, pos=-2000000)
                     sc.card_update()
-                    flag_run = False
+                    flag_key_run = False
             if key == key.delete:
                 print('下')
-                if flag_run:
+                if flag_key_run:
                     sc.card_move(3, pos=2000000)
                     sc.card_update()
-                    flag_run = False
+                    flag_key_run = False
             if key == key.home:
                 print('头左')
-                if flag_run:
+                if flag_key_run:
                     sc.card_move(4, pos=2000000)
                     sc.card_update()
-                    flag_run = False
+                    flag_key_run = False
             if key == key.end:
                 print('头右')
-                if flag_run:
+                if flag_key_run:
                     sc.card_move(4, pos=-2000000)
                     sc.card_update()
-                    flag_run = False
+                    flag_key_run = False
             if key == key.page_up:
                 print('头下')
-                if flag_run:
+                if flag_key_run:
                     sc.card_move(5, pos=-2000000)
                     sc.card_update()
-                    flag_run = False
+                    flag_key_run = False
             if key == key.page_down:
                 print('头上')
-                if flag_run:
+                if flag_key_run:
                     sc.card_move(5, pos=2000000)
                     sc.card_update()
-                    flag_run = False
+                    flag_key_run = False
         except AttributeError:
             print(key)
 
@@ -491,13 +492,13 @@ def bt_start():
 
 # 打开运动卡
 def card_start():
-    global flag_start
+    global flag_card_start
     cardnum = ui.lineEdit_CarNo.text()
     if cardnum.isdigit():
         res = sc.card_open(int(cardnum))
         print(res)
         if res == 0:
-            flag_start = True
+            flag_card_start = True
             ui.textBrowser.append(succeed('启动板卡：%s' % card_res[res]))
             Pos_Thead.start()
         else:
@@ -573,6 +574,9 @@ def table_change():
         tb_step.item(row, col).setText(plan_list[row][col])
 
 
+def cmd_stop():
+    Cmd_Thead.terminate()
+
 def test():
     # ui.textBrowser.append("<font color='green'> okok </font>")
     for item in enumerate(plan_list):
@@ -597,8 +601,8 @@ if __name__ == '__main__':
     plan_all = {}  # 所有方案资料
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
     p_now = 0  # 保存方案运行位置
-    flag_run = True
-    flag_start = False
+    flag_key_run = True  # 键盘控制标志
+    flag_card_start = False  # 运动板卡启动标志
 
     deal_yaml()
     ui.lineEdit_CarNo.setText(str(plan_all['cardNo']))
@@ -623,6 +627,8 @@ if __name__ == '__main__':
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.pushButton_ToTable.clicked.connect(p_to_table)
+    ui.pushButton_cmd_stop.clicked.connect(cmd_stop)
+
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
     ui.tableWidget_Step.itemChanged.connect(table_change)

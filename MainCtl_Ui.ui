@@ -2058,7 +2058,7 @@
                  <number>0</number>
                 </property>
                 <item row="1" column="0" colspan="3">
-                 <widget class="QPushButton" name="pushButton_4">
+                 <widget class="QPushButton" name="pushButton_cmd_stop">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
