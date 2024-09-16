@@ -179,6 +179,7 @@ class CmdThead(QThread):
             try:
                 self._signal.emit(succeed("运动流程：开始！"))
                 for i, item in enumerate(plan_list):
+                    print(plan_list)
                     if item[0] == '1':  # 是否勾选
                         self._signal.emit(i)
                         sc.card_move(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
@@ -563,6 +564,9 @@ def table_change():
     tb_step = ui.tableWidget_Step
     row = tb_step.currentRow()
     col = tb_step.currentColumn()
+    print("%s %s" % (row, col))
+    if row < 0 or col < 0:
+        return
     if not (tb_step.item(row, col).text().isdigit()):
         comb = ui.comboBox_plan
         _index = comb.currentIndex()
