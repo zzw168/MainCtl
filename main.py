@@ -536,7 +536,8 @@ def card_start():
 
 def cmd_run():
     save_plan()
-    Cmd_Thead.terminate()
+    if Cmd_Thead.isRunning():
+        Cmd_Thead.terminate()
     Cmd_Thead.start()
 
 
