@@ -28,7 +28,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb = self.tableWidget_Results
         tb.horizontalHeader().resizeSection(0, 10)
         tb.horizontalHeader().resizeSection(1, 80)
-        tb.setColumnHidden(3, True)
+        # tb.setColumnHidden(3, True)
         tb.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
@@ -507,33 +507,6 @@ def card_start():
         ui.textBrowser.append(fail('请输入正确的卡号~！'))
 
 
-# def card_run():
-#     if not flag_start:
-#         return
-#     for i in range(0, len(plan_list)):
-#         item = plan_list[i]
-#         # get_pos(self, nAxisNum=1, pValue=0, nCount=1, pClock=0):
-#         if item[0] == '1':
-#             sc.card_move(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-#                          dSmoothTime=0)
-#             sc.card_move(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-#                          dSmoothTime=0)
-#             sc.card_move(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-#                          dSmoothTime=0)
-#             sc.card_move(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-#                          dSmoothTime=0)
-#             sc.card_move(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]), dVelStart=0.1,
-#                          dSmoothTime=0)
-#             sc.card_update()
-#             time.sleep(10)
-#     # if res == 0:
-#     #     ui.textBrowser.append(succeed('位置更新：%s' % card_res[res]))
-#     # else:
-#     #     ui.textBrowser.append(res)
-#     (res, pValue, pClock) = sc.get_pos()
-#     print("%s %s %s" % (res, pValue, pClock))
-
-
 def cmd_run():
     save_plan()
     if Cmd_Thead.isRunning():
@@ -578,6 +551,7 @@ def table_change():
 
 def cmd_stop():
     Cmd_Thead.terminate()
+
 
 def test():
     # ui.textBrowser.append("<font color='green'> okok </font>")
