@@ -11,6 +11,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckB
 
 # from My_Ui import *
 from main_controler.utils.SportCard_unit import *
+from utils.tools_util import *
 from MainCtl_Ui import *
 
 
@@ -23,14 +24,19 @@ class MyUi(QMainWindow, Ui_MainWindow):
 
         tb = self.tableWidget_Results
         tb.horizontalHeader().resizeSection(0, 10)
-        tb.horizontalHeader().resizeSection(1, 80)
+        tb.horizontalHeader().resizeSection(1, 5)
+        tb.horizontalHeader().resizeSection(2, 10)
+        # tb.horizontalHeader().resizeSection(1, 80)
         # tb.setColumnHidden(3, True)
         tb.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
         tb_Step = self.tableWidget_Step
         tb_Step.horizontalHeader().resizeSection(0, 10)
-        tb_Step.horizontalHeader().resizeSection(1, 80)
+        tb_Step.horizontalHeader().resizeSection(1, 30)
+        tb_Step.horizontalHeader().resizeSection(7, 50)
+        tb_Step.horizontalHeader().resizeSection(8, 50)
+        tb_Step.horizontalHeader().resizeSection(9, 50)
         # tb_Step.setColumnHidden(3, True)
         tb_Step.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_Step.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
@@ -539,7 +545,7 @@ def table_change():
     print("%s %s" % (row, col))
     if row < 0 or col < 0:
         return
-    if not (tb_step.item(row, col).text().isdigit()):
+    if not is_natural_num(tb_step.item(row, col).text()):
         comb = ui.comboBox_plan
         _index = comb.currentIndex()
         tb_step.item(row, col).setText(plan_list[row][col])

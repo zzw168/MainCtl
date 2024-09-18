@@ -2788,6 +2788,21 @@
             </column>
             <column>
              <property name="text">
+              <string>镜头缩放</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>缩放时长</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>机关</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
               <string/>
              </property>
             </column>
