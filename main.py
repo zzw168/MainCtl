@@ -166,6 +166,24 @@ def pos_signal_accept(message):
 
 
 '''
+    CamThead(QThread) 摄像头运动方案线程
+'''
+
+
+class CamThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(CamThead, self).__init__()
+        self.camitem = [5, 5]
+
+    def run(self) -> None:
+        s485.cam_zoom_move(self.camitem[0])
+        time.sleep(self.camitem[1])
+        s485.cam_zoom_on_off()
+
+
+'''
     CmdThead(QThread) 执行运动方案线程
 '''
 
@@ -196,6 +214,7 @@ class CmdThead(QThread):
                         sc.card_move(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
                                      dVelStart=0.1, dSmoothTime=0)
                         sc.card_update()
+
                         # time.sleep(2)
                         while True:
                             k = 0
@@ -204,6 +223,11 @@ class CmdThead(QThread):
                                     k += 1
                             if k == 5:
                                 break
+
+                        if int(item[10]) != 0 and int(item[10]) != 0:
+                            Cam_Thead.camitem = [int(item[10]), int(item[11])]
+                            Cam_Thead.start()
+
                 self._signal.emit(succeed("运动流程：完成！"))
             except:
                 self._signal.emit(fail("运动卡运行：出错！"))
@@ -242,6 +266,12 @@ def keyboard_release(key):
     global flag_key_run
     if ui.checkBox_key.isChecked() and flag_card_start:
         try:
+            if key.char == '-':
+                s485.cam_zoom_on_off()
+
+            if key.char == '+':
+                s485.cam_zoom_on_off()
+
             if key == key.up:
                 print('前')
                 # sc.card_stop(2)
@@ -304,6 +334,12 @@ def keyboard_press(key):
     global flag_key_run
     if ui.checkBox_key.isChecked() and flag_card_start:
         try:
+            if key.char == '+':
+                s485.cam_zoom_move(5)
+
+            if key.char == '-':
+                s485.cam_zoom_move(-5)
+
             if key == key.up:
                 print('前')
                 if flag_key_run:
@@ -598,6 +634,9 @@ if __name__ == '__main__':
 
     Cmd_Thead = CmdThead()  # 运行方案
     Cmd_Thead._signal.connect(signal_accept)
+
+    Cam_Thead = CamThead()  # 摄像头运行方案
+    Cam_Thead._signal.connect(signal_accept)
 
     Pos_Thead = PosThead()  # 实时监控摄像头位置
     Pos_Thead._signal.connect(pos_signal_accept)

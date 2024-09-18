@@ -25,10 +25,10 @@ class Serial485:
     def cam_zoom_move(self, in_out: int = 5):
         speed = abs(in_out)
         if self.ser.is_open:
-            if in_out < 0:
-                hexCmd = "81 01 04 07 2%d FF" % speed  # 拉远总共 7 挡 81代表 1号镜头
-            elif in_out > 0:
-                hexCmd = "81 01 04 07 3%d FF" % speed  # 拉近总共 7 挡 81代表 1号镜头
+            if in_out > 0:
+                hexCmd = "81 01 04 07 2%d FF" % speed  # 放大总共 7 挡 81代表 1号镜头
+            elif in_out < 0:
+                hexCmd = "81 01 04 07 3%d FF" % speed  # 缩小总共 7 挡 81代表 1号镜头
             hexCmd = hexCmd.replace(' ', '')  # 去除空格
             cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
             self.ser.write(cmd)  # 4. Hex发送
@@ -36,12 +36,9 @@ class Serial485:
             print('端口未链接！')
 
     # 镜头缩放开关
-    def cam_zoom_on_off(self, on_off=0):
+    def cam_zoom_on_off(self):
         if self.ser.is_open:
-            if on_off == 0:
-                hexCmd = "81 01 04 06 03 FF"  # 停止运动
-            else:
-                hexCmd = "81 01 04 06 02 FF"  # 开启运动
+            hexCmd = "81 01 04 07 00 FF"  # 停止运动
             hexCmd = hexCmd.replace(' ', '')  # 去除空格
             cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
             self.ser.write(cmd)  # 4. Hex发送
