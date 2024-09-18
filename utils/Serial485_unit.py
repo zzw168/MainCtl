@@ -8,21 +8,26 @@ import serial
 
 class Serial485:
     def __init__(self):
-        self.ser = serial.Serial('COM1', 9600, timeout=5)
+        self.ser = ''
+        try:
+            self.ser = serial.Serial('COM1', 9600, timeout=5)
+        except:
+            print('s485 启动失败')
 
     def cam_open(self, com='COM1'):
         try:
             self.ser = serial.Serial(com, 9600, timeout=5)
             print(self.ser.is_open)
         except:
-            print('%s 端口链接失败！' % com)
+            return '%s 端口链接失败！' % com
 
     # 发送镜头缩放指令
-    def cam_zoom_move(self, in_out=0, speed=5):
+    def cam_zoom_move(self, in_out: int = 5):
+        speed = abs(in_out)
         if self.ser.is_open:
-            if in_out == 0:
+            if in_out < 0:
                 hexCmd = "81 01 04 07 2%d FF" % speed  # 拉远总共 7 挡 81代表 1号镜头
-            else:
+            elif in_out > 0:
                 hexCmd = "81 01 04 07 3%d FF" % speed  # 拉近总共 7 挡 81代表 1号镜头
             hexCmd = hexCmd.replace(' ', '')  # 去除空格
             cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串

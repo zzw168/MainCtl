@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckB
 # from My_Ui import *
 from utils.SportCard_unit import *
 from utils.tool_unit import *
+from utils.Serial485_unit import *
 from MainCtl_Ui import *
 
 
@@ -386,8 +387,8 @@ def save_plan():
             local_list.append("0")
         for j in range(1, col_num - 1):
             # host.append(table.item(i, j).text())
-            local_list.append("0" if table.item(i, j).text() == "" else table.item(i, j).text())
-
+            local_list.append(
+                "0" if (table.item(i, j) == None or table.item(i, j).text() == '') else table.item(i, j).text())
         plan_list.append(local_list)
         local_list = []
     print(plan_list)
@@ -578,7 +579,8 @@ if __name__ == '__main__':
     MainWindow.show()
 
     z_status = True
-    sc = SportCard()
+    sc = SportCard()  # 运动卡
+    s485 = Serial485()  # 摄像头
 
     plan_list = []  # 当前方案列表
     plan_names = []  # 当前方案名称
