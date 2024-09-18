@@ -16,8 +16,9 @@ class Serial485:
 
     def cam_open(self, com='COM1'):
         try:
-            self.ser = serial.Serial(com, 9600, timeout=5)
-            print(self.ser.is_open)
+            if not self.ser.is_open:
+                self.ser = serial.Serial(com, 9600, timeout=5)
+            return self.ser.is_open
         except:
             return '%s 端口链接失败！' % com
 

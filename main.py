@@ -628,6 +628,7 @@ if __name__ == '__main__':
 
     deal_yaml()
     ui.lineEdit_CarNo.setText(str(plan_all['cardNo']))
+    ui.textBrowser.append(succeed('串口链接：%s' % s485.cam_open(plan_all['s485No'])))
 
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()
