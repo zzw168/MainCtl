@@ -1,20 +1,16 @@
 import os
-import socket
 import sys
 import time
 
 import pynput
 import yaml
 
-from PyQt5 import QtGui
 from PyQt5.QtCore import Qt, QThread, pyqtSignal
-from PyQt5.QtGui import QIcon, QBrush, QColor
+from PyQt5.QtGui import QBrush, QColor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu
-import requests
-import ctypes
 
 # from My_Ui import *
-from sportCard_unit import *
+from main_controler.utils.SportCard_unit import *
 from MainCtl_Ui import *
 
 
