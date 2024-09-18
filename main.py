@@ -10,8 +10,8 @@ from PyQt5.QtGui import QBrush, QColor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu
 
 # from My_Ui import *
-from main_controler.utils.SportCard_unit import *
-from utils.tools_util import *
+from utils.SportCard_unit import *
+from utils.tool_unit import *
 from MainCtl_Ui import *
 
 
@@ -546,9 +546,15 @@ def table_change():
     if row < 0 or col < 0:
         return
     if not is_natural_num(tb_step.item(row, col).text()):
-        comb = ui.comboBox_plan
-        _index = comb.currentIndex()
-        tb_step.item(row, col).setText(plan_list[row][col])
+        try:
+            if col > len(plan_list[row]) - 1:
+                tb_step.item(row, col).setText('0')
+            else:
+                comb = ui.comboBox_plan
+                _index = comb.currentIndex()
+                tb_step.item(row, col).setText(plan_list[row][col])
+        except:
+            pass
 
 
 def cmd_stop():

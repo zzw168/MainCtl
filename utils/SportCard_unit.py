@@ -1,6 +1,6 @@
 import ctypes
 import socket
-from utils.log_util import *
+from utils.tool_unit import *
 
 card_res = {
     0: '执行成功',
