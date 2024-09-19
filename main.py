@@ -301,12 +301,12 @@ class MyUi(QMainWindow, Ui_MainWindow):
                         # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
                         table.setItem(r, i, item)
 
-                table.cellWidget(row, 0).setChecked(False)
-                for i in range(1, table.columnCount() - 1):
-                    item = QTableWidgetItem('0')
-                    item.setTextAlignment(Qt.AlignCenter)
-                    # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                    table.setItem(row, i, item)
+                # table.cellWidget(row, 0).setChecked(False)
+                # for i in range(1, table.columnCount() - 1):
+                #     item = QTableWidgetItem('0')
+                #     item.setTextAlignment(Qt.AlignCenter)
+                #     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                #     table.setItem(row, i, item)
             else:
                 cb = QCheckBox()
                 cb.setStyleSheet('QCheckBox{margin:6px};')
@@ -382,9 +382,13 @@ class CamThead(QThread):
         self.camitem = [5, 5]
 
     def run(self) -> None:
-        s485.cam_zoom_move(self.camitem[0])
-        time.sleep(self.camitem[1])
-        s485.cam_zoom_on_off()
+        print('串口运行')
+        try:
+            s485.cam_zoom_move(self.camitem[0])
+            time.sleep(self.camitem[1])
+            s485.cam_zoom_on_off()
+        except:
+            print("485 运行出错！")
 
 
 '''
@@ -403,34 +407,51 @@ class CmdThead(QThread):
         if flag_card_start:
             try:
                 self._signal.emit(succeed("运动流程：开始！"))
-                for i, item in enumerate(plan_list):
-                    print(plan_list)
-                    if item[0] == '1':  # 是否勾选
+                for i in range(0, len(plan_list)):
+                    # print(plan_list)
+                    if plan_list[i][0] == '1':  # 是否勾选
                         self._signal.emit(i)
-                        sc.card_move(1, int(item[2]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                     dVelStart=0.1, dSmoothTime=0)
-                        sc.card_move(2, int(item[3]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                     dVelStart=0.1, dSmoothTime=0)
-                        sc.card_move(3, int(item[4]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                     dVelStart=0.1, dSmoothTime=0)
-                        sc.card_move(4, int(item[5]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                     dVelStart=0.1, dSmoothTime=0)
-                        sc.card_move(5, int(item[6]), vel=int(item[7]), dAcc=float(item[8]), dDec=float(item[9]),
-                                     dVelStart=0.1, dSmoothTime=0)
-                        sc.card_update()
+                        try:
+                            sc.card_move(1, int(plan_list[i][2]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
+                                         dDec=float(plan_list[i][9]),
+                                         dVelStart=0.1, dSmoothTime=0)
+                            sc.card_move(2, int(plan_list[i][3]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
+                                         dDec=float(plan_list[i][9]),
+                                         dVelStart=0.1, dSmoothTime=0)
+                            sc.card_move(3, int(plan_list[i][4]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
+                                         dDec=float(plan_list[i][9]),
+                                         dVelStart=0.1, dSmoothTime=0)
+                            sc.card_move(4, int(plan_list[i][5]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
+                                         dDec=float(plan_list[i][9]),
+                                         dVelStart=0.1, dSmoothTime=0)
+                            sc.card_move(5, int(plan_list[i][6]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
+                                         dDec=float(plan_list[i][9]),
+                                         dVelStart=0.1, dSmoothTime=0)
+                            sc.card_update()
 
-                        # time.sleep(2)
+                            print("开启机关")
+                            if int(plan_list[i][12]) != 0:
+                                if '-' in plan_list[i][12]:
+                                    sc.GASetExtDoBit(abs(int(plan_list[i][12])) - 1, 0)
+                                else:
+                                    sc.GASetExtDoBit(abs(int(plan_list[i][12])) - 1, 1)
+                        except:
+                            print("运动板运行出错！")
+
                         while True:
                             k = 0
-                            for i in range(0, len(pValue)):
-                                if pValue[i] == int(item[i + 2]):
+                            for j in range(0, len(pValue)):
+                                if pValue[j] == int(plan_list[i][j + 2]):
                                     k += 1
                             if k == 5:
                                 break
 
-                        if int(item[10]) != 0 and int(item[10]) != 0:
-                            Cam_Thead.camitem = [int(item[10]), int(item[11])]
+                        if int(plan_list[i][10]) != 0 and int(plan_list[i][10]) != 0:
+                            if Cam_Thead.isRunning():
+                                Cam_Thead.terminate()
+                            Cam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
                             Cam_Thead.start()
+                        time.sleep(int(plan_list[i][11]))
 
                 self._signal.emit(succeed("运动流程：完成！"))
             except:
@@ -441,18 +462,19 @@ class CmdThead(QThread):
 
 def signal_accept(message):
     global p_now
-    print(message)
-    if isinstance(message, int):
-        print(message)
+    # print(message)
+    if is_natural_num(message) and ui.checkBox_follow.isChecked():
+        # print(message)
         tb_step = ui.tableWidget_Step
         col_num = tb_step.columnCount()
-        print(col_num)
+        # print(col_num)
         for i in range(1, col_num - 1):
             tb_step.item(p_now, i).setBackground(QBrush(QColor(255, 255, 255)))
             tb_step.item(message, i).setBackground(QBrush(QColor(255, 0, 255)))
         p_now = message
     else:
-        ui.textBrowser.append(message)
+        if not is_natural_num(message):
+            ui.textBrowser.append(str(message))
 
 
 class KeyListenerThead(QThread):
@@ -631,7 +653,7 @@ def save_plan():
                 "0" if (table.item(i, j) == None or table.item(i, j).text() == '') else table.item(i, j).text())
         plan_list.append(local_list)
         local_list = []
-    print(plan_list)
+    # print(plan_list)
 
     comb = ui.comboBox_plan
     plan_num = comb.currentIndex()
@@ -648,6 +670,7 @@ def save_plan():
             ui.textBrowser.append(succeed('方案保存：成功'))
         except:
             ui.textBrowser.append(fail('方案保存：失败'))
+        print("保存成功~！")
 
 
 # 载入方案
@@ -760,7 +783,6 @@ def cmd_run():
     if Cmd_Thead.isRunning():
         Cmd_Thead.terminate()
     Cmd_Thead.start()
-    # ui.textBrowser.append(succeed('串口链接：%s' % s485.cam_open(plan_all['s485No'])))
 
 
 def card_reset():
@@ -789,7 +811,7 @@ def table_change():
     tb_step = ui.tableWidget_Step
     row = tb_step.currentRow()
     col = tb_step.currentColumn()
-    print("%s %s" % (row, col))
+    # print("%s %s" % (row, col))
     if row < 0 or col < 0:
         return
     if not is_natural_num(tb_step.item(row, col).text()):
@@ -801,7 +823,7 @@ def table_change():
                 _index = comb.currentIndex()
                 tb_step.item(row, col).setText(plan_list[row][col])
         except:
-            pass
+            print("数据表操作出错！")
 
 
 def cmd_stop():
@@ -809,9 +831,10 @@ def cmd_stop():
 
 
 def test():
-    # ui.textBrowser.append("<font color='green'> okok </font>")
-    for item in enumerate(plan_list):
-        print(item)
+    print("开启机关")
+    sc.GASetExtDoBit()
+    time.sleep(2)
+    sc.GASetExtDoBit(0, 0)
 
 
 if __name__ == '__main__':
@@ -854,8 +877,8 @@ if __name__ == '__main__':
     Color_Thead.start()
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    # ui.pushButton_rename.clicked.connect(test)
-    ui.pushButton_rename.clicked.connect(plan_rename)
+    ui.pushButton_rename.clicked.connect(test)
+    # ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
