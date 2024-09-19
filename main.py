@@ -9,11 +9,199 @@ from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from PyQt5.QtGui import QBrush, QColor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu
 
-# from My_Ui import *
+import obsws_python as obs
+
 from utils.SportCard_unit import *
 from utils.tool_unit import *
 from utils.Serial485_unit import *
 from MainCtl_Ui import *
+
+"""
+    OBS callback 回调函数
+    cl_event.callback.register(on_record_state_changed)  # 以这个形式调用，注册回调函数
+"""
+
+
+# 场景新建事件
+def on_scene_created(data):
+    print(data.scene_uuid)
+    print(data.scene_name)
+    print(data.is_group)
+
+
+# 场景切换事件
+def on_current_program_scene_changed(data):
+    print("程序场景变化")
+    print(data.scene_uuid)
+    print(data.scene_name)
+
+    get_source_list(data.scene_name)
+
+
+# 场景预览改变事件
+def on_current_preview_scene_changed(data):
+    print("预览场景变化")
+    print(data.scene_uuid)
+    print(data.scene_name)
+
+
+# 来源变化事件
+def on_scene_item_enable_state_changed(data):
+    print("来源元素变化")
+    print(data.scene_uuid)
+    print(data.scene_name)
+    print(data.scene_item_id)
+    print(data.scene_item_enabled)
+
+
+# 流状态改变事件
+def on_record_state_changed(data):
+    print("录制状态变化")
+    print(data.output_active)
+    print(data.output_state)
+    print(data.output_path)
+
+
+# 流状态改变事件
+def on_stream_state_changed(data):
+    print("流状态变化")
+    print(data.output_active)
+    print(data.output_state)
+
+
+# 来源变化事件
+def on_get_stream_status(data):
+    print("直播流状态")
+    print(data.output_active)
+    print(data.output_reconnecting)
+    print(data.output_timecode)
+    print(data.output_duration)
+    print(data.output_congestion)
+    print(data.output_bytes)
+    print(data.output_skipped_frames)
+    print(data.output_total_frames)
+
+
+"""
+    OBS callback 回调函数 结束
+"""
+
+"************************************OBS****************************************"
+
+
+class ObsThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(ObsThead, self).__init__()
+        self.run_flg = ''
+
+    def run(self) -> None:
+        global cl_requst
+        global cl_event
+        try:
+            cl_requst = obs.ReqClient()  # 请求
+            cl_event = obs.EventClient()  # 监听
+
+            cl_event.callback.register(on_current_program_scene_changed)  # 场景变化
+            cl_event.callback.register(on_scene_item_enable_state_changed)  # 来源变化
+            cl_event.callback.register(on_record_state_changed)  # 录制状态
+            cl_event.callback.register(on_stream_state_changed)  # 直播流状态
+            cl_event.callback.register(on_get_stream_status)  # 直播流状态
+            self._signal.emit(succeed('OBS 启动成功！'))
+        except:
+            self._signal.emit(fail('OBS 启动失败！'))
+
+
+def obs_signal_accept(msg):
+    print(msg)
+    ui.textBrowser.append(msg)
+    if '成功' in msg:
+        get_scenes_list()  # 获取所有场景
+        get_source_list(ui.comboBox_Scenes.currentText())
+
+
+def obs_open():
+    Obs_Thead.start()
+
+
+class SourceThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(SourceThead, self).__init__()
+        self.run_flg = ''
+
+    def run(self) -> None:
+        global source_list
+        self._signal.emit('写表')
+
+
+def source_signal_accept(msg):
+    print(msg)
+    source2table()
+
+
+def source2table():
+    global source_list
+    tb_sources = ui.tableWidget_Sources
+    tb_sources.setRowCount(len(source_list))
+    for i in range(0, len(source_list)):
+        cb = QCheckBox()
+        cb.setStyleSheet('QCheckBox{margin:6px};')
+        cb.clicked.connect(source_enable)
+        tb_sources.setCellWidget(i, 0, cb)
+        if source_list[i][0] == True:
+            tb_sources.cellWidget(i, 0).setChecked(True)
+        print(source_list[i][0])
+        for j in range(1, len(source_list[i])):
+            item = QTableWidgetItem(str(source_list[i][j]))
+            item.setTextAlignment(Qt.AlignCenter)
+            # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+            tb_sources.setItem(i, j, item)
+
+
+def source_enable():  # 开关来源
+    tb_source = ui.tableWidget_Sources
+    row_num = tb_source.currentRow()
+    source_list[row_num][0] = not (source_list[row_num][0])
+    source_enable = source_list[row_num][0]
+    cb_scene = ui.comboBox_Scenes
+    scene_name = cb_scene.currentText()
+    item_id = source_list[row_num][2]
+    print(source_list)
+    # 打开,关闭来源
+    cl_requst.set_scene_item_enabled(scene_name, item_id, source_enable)  # 打开视频来源
+
+
+def get_scenes_list():  # 刷新所有列表
+    res = cl_requst.get_scene_list()  # 获取场景列表
+    cb_scenes = ui.comboBox_Scenes
+    cb_scenes.clear()
+    for i, item in enumerate(res.scenes):
+        cb_scenes.addItem(item['sceneName'])
+    # res_name = cl_requst.get_current_program_scene()  # 获取激活的场景
+    # print(res_name.scene_name)
+    # scene_name = res_name.scene_name
+    # cb_scenes.setCurrentText(scene_name)
+
+
+def get_source_list(scene_name):  # 取得来源列表
+    global source_list
+    res = cl_requst.get_scene_item_list(scene_name)
+    source_list = []
+    for item in res.scene_items:
+        source_list.append([item['sceneItemEnabled'], item['sourceName'], item['sceneItemId']])
+        print(item)
+    Source_Thead.start()
+
+
+def scenes_change():  # 变换场景
+    scene_name = ui.comboBox_Scenes.currentText()
+    cl_requst.set_current_program_scene(scene_name)
+
+
+"******************************OBS结束*************************************"
 
 
 class MyUi(QMainWindow, Ui_MainWindow):
@@ -44,6 +232,14 @@ class MyUi(QMainWindow, Ui_MainWindow):
 
         tb_Step.setContextMenuPolicy(Qt.CustomContextMenu)
         tb_Step.customContextMenuRequested.connect(self.generateMenu)
+
+        tb_sources = self.tableWidget_Sources
+        tb_sources.horizontalHeader().resizeSection(0, 10)
+        tb_sources.horizontalHeader().resizeSection(1, 160)
+        # tb_sources.horizontalHeader().resizeSection(2, 30)
+        tb_sources.setColumnHidden(2, True)
+        tb_sources.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_sources.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
     def generateMenu(self, pos):
         tb_step = self.tableWidget_Step
@@ -605,8 +801,6 @@ def test():
 
 
 if __name__ == '__main__':
-    # sc = SportCard()
-    # test_cart()
     app = QApplication(sys.argv)
     MainWindow = QMainWindow()
 
@@ -653,10 +847,28 @@ if __name__ == '__main__':
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.pushButton_ToTable.clicked.connect(p_to_table)
-    ui.pushButton_cmd_stop.clicked.connect(cmd_stop)
+    # ui.pushButton_cmd_stop.clicked.connect(cmd_stop)
 
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
     ui.tableWidget_Step.itemChanged.connect(table_change)
+
+    """
+        OBS 处理
+    """
+    source_list = []  # OBS来源列表
+    cl_requst = ''  # 请求
+    cl_event = ''  # 监听
+
+    Obs_Thead = ObsThead()  # OBS启动线程
+    Obs_Thead._signal.connect(obs_signal_accept)
+
+    Source_Thead = SourceThead()  # OBS来源入表线程
+    Source_Thead._signal.connect(source_signal_accept)
+
+    ui.pushButton_ObsConnect.clicked.connect(obs_open)
+    ui.comboBox_Scenes.currentTextChanged.connect(scenes_change)
+
+    "**************************OBS*****************************"
 
     sys.exit(app.exec_())
