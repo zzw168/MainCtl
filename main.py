@@ -174,7 +174,7 @@ def source_enable():  # 开关来源
     try:
         cl_requst.set_scene_item_enabled(scene_name, item_id, source_enable)  # 打开视频来源
     except:
-        print('操作OBS来源失败！')
+        ui.textBrowser.append(fail("OBS 链接中断！"))
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -182,7 +182,7 @@ def get_scenes_list():  # 刷新所有列表
         res = cl_requst.get_scene_list()  # 获取场景列表
         res_name = cl_requst.get_current_program_scene()  # 获取激活的场景
     except:
-        print('获取场景失败！')
+        ui.textBrowser.append(fail("OBS 链接中断！"))
         return
     print('%s' % res_name.scene_name)
     scene_name = res_name.scene_name
@@ -206,7 +206,10 @@ def get_source_list(scene_name):  # 取得来源列表
 
 def scenes_change():  # 变换场景
     scene_name = ui.comboBox_Scenes.currentText()
-    cl_requst.set_current_program_scene(scene_name)
+    try:
+        cl_requst.set_current_program_scene(scene_name)
+    except:
+        ui.textBrowser.append(fail("OBS 链接中断！"))
 
 
 "******************************OBS结束*************************************"
@@ -492,80 +495,82 @@ def keyboard_release(key):
     global flag_key_run
     if ui.checkBox_key.isChecked() and flag_card_start:
         try:
-            if key.char == '-':
-                s485.cam_zoom_on_off()
-
-            if key.char == '+':
-                s485.cam_zoom_on_off()
-
             if key == key.up:
                 print('前')
                 # sc.card_stop(2)
                 flag_key_run = True
                 sc.card_setpos(2, pValue[1] + 30000)
+                sc.card_update()
 
             if key == key.down:
                 print('后')
                 # sc.card_stop(2)
                 flag_key_run = True
                 sc.card_setpos(2, pValue[1] - 30000)
+                sc.card_update()
 
             if key == key.left:
                 print('左')
                 # sc.card_stop(1)
                 flag_key_run = True
                 sc.card_setpos(1, pValue[0] + 30000)
+                sc.card_update()
 
             if key == key.right:
                 print('右')
                 # sc.card_stop(1)
                 flag_key_run = True
                 sc.card_setpos(1, pValue[0] - 30000)
+                sc.card_update()
 
             if key == key.insert:
                 print('上')
                 flag_key_run = True
                 sc.card_setpos(3, pValue[2] - 30000)
+                sc.card_update()
 
             if key == key.delete:
                 print('下')
                 flag_key_run = True
                 sc.card_setpos(3, pValue[2] + 30000)
+                sc.card_update()
 
             if key == key.home:
                 print('头左')
                 flag_key_run = True
                 sc.card_setpos(4, pValue[3] + 30000)
+                sc.card_update()
 
             if key == key.end:
                 print('头右')
                 flag_key_run = True
                 sc.card_setpos(4, pValue[3] - 30000)
+                sc.card_update()
 
             if key == key.page_up:
                 print('头下')
                 flag_key_run = True
                 sc.card_setpos(5, pValue[4] - 30000)
+                sc.card_update()
 
             if key == key.page_down:
                 print('头下')
                 flag_key_run = True
                 sc.card_setpos(5, pValue[4] + 30000)
-            sc.card_update()
+                sc.card_update()
+
         except AttributeError:
             print(key)
+            if key.char == '-':
+                s485.cam_zoom_on_off()
+            elif key.char == '+':
+                s485.cam_zoom_on_off()
 
 
 def keyboard_press(key):
     global flag_key_run
     if ui.checkBox_key.isChecked() and flag_card_start:
         try:
-            if key.char == '+':
-                s485.cam_zoom_move(5)
-
-            if key.char == '-':
-                s485.cam_zoom_move(-5)
-
             if key == key.up:
                 print('前')
                 if flag_key_run:
@@ -573,55 +578,55 @@ def keyboard_press(key):
                     sc.card_update()
                     flag_key_run = False
 
-            if key == key.down:
+            elif key == key.down:
                 print('后')
                 if flag_key_run:
                     sc.card_move(2, pos=-2000000)
                     sc.card_update()
                     flag_key_run = False
-            if key == key.left:
+            elif key == key.left:
                 print('左')
                 if flag_key_run:
                     sc.card_move(1, pos=2000000)
                     sc.card_update()
                     flag_key_run = False
-            if key == key.right:
+            elif key == key.right:
                 print('右')
                 if flag_key_run:
                     sc.card_move(1, pos=-2000000)
                     sc.card_update()
                     flag_key_run = False
-            if key == key.insert:
+            elif key == key.insert:
                 print('上')
                 if flag_key_run:
                     sc.card_move(3, pos=-2000000)
                     sc.card_update()
                     flag_key_run = False
-            if key == key.delete:
+            elif key == key.delete:
                 print('下')
                 if flag_key_run:
                     sc.card_move(3, pos=2000000)
                     sc.card_update()
                     flag_key_run = False
-            if key == key.home:
+            elif key == key.home:
                 print('头左')
                 if flag_key_run:
                     sc.card_move(4, pos=2000000)
                     sc.card_update()
                     flag_key_run = False
-            if key == key.end:
+            elif key == key.end:
                 print('头右')
                 if flag_key_run:
                     sc.card_move(4, pos=-2000000)
                     sc.card_update()
                     flag_key_run = False
-            if key == key.page_up:
+            elif key == key.page_up:
                 print('头下')
                 if flag_key_run:
                     sc.card_move(5, pos=-2000000)
                     sc.card_update()
                     flag_key_run = False
-            if key == key.page_down:
+            elif key == key.page_down:
                 print('头上')
                 if flag_key_run:
                     sc.card_move(5, pos=2000000)
@@ -629,6 +634,10 @@ def keyboard_press(key):
                     flag_key_run = False
         except AttributeError:
             print(key)
+            if key.char == '+':
+                s485.cam_zoom_move(5)
+            elif key.char == '-':
+                s485.cam_zoom_move(-5)
 
 
 # 保存方案
