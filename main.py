@@ -169,21 +169,29 @@ def source_enable():  # 开关来源
     cb_scene = ui.comboBox_Scenes
     scene_name = cb_scene.currentText()
     item_id = source_list[row_num][2]
-    print(source_list)
+    # print(source_list)
     # 打开,关闭来源
-    cl_requst.set_scene_item_enabled(scene_name, item_id, source_enable)  # 打开视频来源
+    try:
+        cl_requst.set_scene_item_enabled(scene_name, item_id, source_enable)  # 打开视频来源
+    except:
+        print('操作OBS来源失败！')
 
 
 def get_scenes_list():  # 刷新所有列表
-    res = cl_requst.get_scene_list()  # 获取场景列表
+    try:
+        res = cl_requst.get_scene_list()  # 获取场景列表
+        res_name = cl_requst.get_current_program_scene()  # 获取激活的场景
+    except:
+        print('获取场景失败！')
+        return
+    print('%s' % res_name.scene_name)
+    scene_name = res_name.scene_name
     cb_scenes = ui.comboBox_Scenes
     cb_scenes.clear()
     for i, item in enumerate(res.scenes):
+        print(item)
         cb_scenes.addItem(item['sceneName'])
-    # res_name = cl_requst.get_current_program_scene()  # 获取激活的场景
-    # print(res_name.scene_name)
-    # scene_name = res_name.scene_name
-    # cb_scenes.setCurrentText(scene_name)
+    cb_scenes.setCurrentText(scene_name)
 
 
 def get_source_list(scene_name):  # 取得来源列表
@@ -192,7 +200,7 @@ def get_source_list(scene_name):  # 取得来源列表
     source_list = []
     for item in res.scene_items:
         source_list.append([item['sceneItemEnabled'], item['sourceName'], item['sceneItemId']])
-        print(item)
+        # print(item)
     Source_Thead.start()
 
 
@@ -740,6 +748,11 @@ def card_start():
             ui.textBrowser.append(res)
     else:
         ui.textBrowser.append(fail('请输入正确的卡号~！'))
+    s485_flag = s485.cam_open(plan_all['s485No'])
+    if s485_flag == True:
+        ui.textBrowser.append(succeed('串口链接：%s' % s485_flag))
+    else:
+        ui.textBrowser.append(fail('串口链接：%s' % s485_flag))
 
 
 def cmd_run():
@@ -747,6 +760,7 @@ def cmd_run():
     if Cmd_Thead.isRunning():
         Cmd_Thead.terminate()
     Cmd_Thead.start()
+    # ui.textBrowser.append(succeed('串口链接：%s' % s485.cam_open(plan_all['s485No'])))
 
 
 def card_reset():
@@ -822,7 +836,6 @@ if __name__ == '__main__':
 
     deal_yaml()
     ui.lineEdit_CarNo.setText(str(plan_all['cardNo']))
-    ui.textBrowser.append(succeed('串口链接：%s' % s485.cam_open(plan_all['s485No'])))
 
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()
