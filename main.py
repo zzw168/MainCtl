@@ -561,10 +561,13 @@ def keyboard_release(key):
 
         except AttributeError:
             print(key)
+        try:
             if key.char == '-':
                 s485.cam_zoom_on_off()
             elif key.char == '+':
                 s485.cam_zoom_on_off()
+        except:
+            print(key)
 
 
 def keyboard_press(key):
@@ -634,10 +637,13 @@ def keyboard_press(key):
                     flag_key_run = False
         except AttributeError:
             print(key)
+        try:
             if key.char == '+':
                 s485.cam_zoom_move(5)
             elif key.char == '-':
                 s485.cam_zoom_move(-5)
+        except:
+            print(key)
 
 
 # 保存方案
