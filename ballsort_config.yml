@@ -1,0 +1,127 @@
+color_ch:
+  yellow: 黄
+  blue: 蓝
+  red: 红
+  purple: 紫
+  orange: 橙
+  green: 绿
+  Brown: 棕
+  black: 黑
+  pink: 粉
+  White: 白
+httpServer_addr:
+- 0.0.0.0
+- 8081
+init_array:
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - yellow
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - blue
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - red
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - purple
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - orange
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - green
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - Brown
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - black
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - pink
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - White
+  - 0
+  - 0
+  - 0
+  - 0
+max_lap_count: 2
+max_region_count: 38
+reset_time: 60
+tcpServer_addr:
+- 0.0.0.0
+- 2222
+udpClient_addr:
+- 192.168.0.161
+- 19733
+udpServer_addr:
+- 0.0.0.0
+- 19734

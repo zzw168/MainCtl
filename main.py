@@ -1,11 +1,16 @@
+import json
 import os
 import sys
+import threading
 import time
+from http.server import BaseHTTPRequestHandler, HTTPServer
 
+import cv2
+import numpy as np
 import pynput
 import yaml
 
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
+from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
 from PyQt5.QtGui import QBrush, QColor
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu
 
@@ -15,7 +20,9 @@ from utils.SportCard_unit import *
 from utils.tool_unit import *
 from utils.Serial485_unit import *
 from MainCtl_Ui import *
+from utils.pingpong_socket import *
 
+"************************************OBS_开始****************************************"
 """
     OBS callback 回调函数
     cl_event.callback.register(on_record_state_changed)  # 以这个形式调用，注册回调函数
@@ -85,8 +92,6 @@ def on_get_stream_status(data):
 """
     OBS callback 回调函数 结束
 """
-
-"************************************OBS****************************************"
 
 
 class ObsThead(QThread):
@@ -213,6 +218,426 @@ def scenes_change():  # 变换场景
 
 
 "******************************OBS结束*************************************"
+
+"************************************图像识别_开始****************************************"
+
+
+def deal_rank(integration_qiu_array):
+    global ranking_array
+    for r_index in range(0, len(ranking_array)):
+        replaced = False
+        for q_item in integration_qiu_array:
+            if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
+                if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
+                    result_count = ranking_array[r_index][6] - q_item[6]
+                    if result_count >= max_region_count - 6:
+                        ranking_array[r_index][8] += 1
+                        if ranking_array[r_index][8] > max_lap_count - 1:
+                            ranking_array[r_index][8] = 0
+                if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
+                        or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
+                            (q_item[6] - ranking_array[r_index][6] <= 3  # 新位置相差旧位置三个区域以内
+                             or ranking_array[0][6] - ranking_array[r_index][
+                                 6] > 5))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
+                        or (q_item[6] < 8 and ranking_array[r_index][6] >= max_region_count - 8)):  # 跨圈情况
+                    for r_i in range(0, len(q_item)):
+                        ranking_array[r_index][r_i] = q_item[r_i]  # 更新 ranking_array
+                    ranking_array[r_index][9] = 1
+                replaced = True
+                break
+        if not replaced:
+            ranking_array[r_index][9] = 0
+    sort_ranking()
+
+
+def sort_ranking():
+    global ranking_array
+    global ball_sort
+    # 1.排序区域
+    for i in range(0, len(ranking_array)):  # 冒泡排序
+        for j in range(0, len(ranking_array) - i - 1):
+            if ranking_array[j][6] < ranking_array[j + 1][6]:
+                ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+    # 2.区域内排序
+    for i in range(0, len(ranking_array)):  # 冒泡排序
+        for j in range(0, len(ranking_array) - i - 1):
+            if ranking_array[j][6] == ranking_array[j + 1][6]:
+                if ranking_array[j][7] == 0:  # (左后->右前)
+                    if ranking_array[j][0] < ranking_array[j + 1][0]:
+                        ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+                if ranking_array[j][7] == 1:  # (左前<-右后)
+                    if ranking_array[j][0] > ranking_array[j + 1][0]:
+                        ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+                if ranking_array[j][7] == 10:  # (上前 ↑ 下后)
+                    if ranking_array[j][1] > ranking_array[j + 1][1]:
+                        ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+                if ranking_array[j][7] == 11:  # (上后 ↓ 下前)
+                    if ranking_array[j][1] < ranking_array[j + 1][1]:
+                        ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+    # 3.圈数排序
+    for i in range(0, len(ranking_array)):  # 冒泡排序
+        for j in range(0, len(ranking_array) - i - 1):
+            if ranking_array[j][8] < ranking_array[j + 1][8]:
+                ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+    # 4.寄存器保存固定每个区域的最新排位（因为ranking_array 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
+    for i in range(0, len(ranking_array)):
+        if not (ranking_array[i][5] in ball_sort[ranking_array[i][6]][ranking_array[i][8]]):
+            ball_sort[ranking_array[i][6]][ranking_array[i][8]].append(ranking_array[i][5])  # 添加寄存器球排序
+            # if ranking_array[i][6] == 35 and ranking_array[i][8] == 1:
+            #     print(ball_sort[ranking_array[i][6]][ranking_array[i][8]])
+    # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
+    for i in range(0, len(ranking_array)):
+        for j in range(0, len(ranking_array) - i - 1):
+            if (ranking_array[j][6] == ranking_array[j + 1][6]) and (ranking_array[j][8] == ranking_array[j + 1][8]):
+                m = 0
+                n = 0
+                for k in range(0, len(ball_sort[ranking_array[j][6]][ranking_array[j][8]])):
+                    if ranking_array[j][5] == ball_sort[ranking_array[j][6]][ranking_array[j][8]][k]:
+                        n = k
+                    elif ranking_array[j + 1][5] == ball_sort[ranking_array[j][6]][ranking_array[j][8]][k]:
+                        m = k
+                if n > m:  # 把区域排位索引最小的球（即排名最前的球）放前面
+                    ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+
+
+def reset_ranking_array():
+    """
+    重置排名数组
+    # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
+    """
+    global ranking_array
+    global ball_sort
+    global con_data
+    # global previous_position
+    ranking_array = []  # 排名数组
+    for i in range(0, len(init_array)):
+        ranking_array.append([])
+        for j in range(0, len(init_array[i])):
+            ranking_array[i].append(init_array[i][j])
+    ball_sort = []  # 位置寄存器
+    for i in range(0, max_region_count + 1):
+        ball_sort.append([])
+        for j in range(0, max_lap_count):
+            ball_sort[i].append([])
+    for i in range(0, len(init_array)):
+        for j in range(0, 5):
+            if j == 0:
+                con_data[i][j] = init_array[i][5]  # con_data 数据表数组
+            else:
+                con_data[i][j] = 0
+    # print(ball_sort)
+
+
+def to_num(res):
+    global z_response
+    arr_res = []
+    for r in res:
+        for i in range(0, len(init_array)):
+            if r[0] == init_array[i][5]:
+                arr_res.append(i + 1)
+    for i in range(0, len(arr_res)):
+        for j in range(0, len(z_response)):
+            if arr_res[i] == z_response[j]:
+                z_response[i], z_response[j] = z_response[j], z_response[i]
+
+
+class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html; charset=utf-8')
+        self.end_headers()
+        self.wfile.write('你对HTTP服务端发送了POST'.encode('utf-8'))
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length).decode('utf-8')
+        print("客户端发送的post内容=" + post_data)
+        if post_data == "start":
+            self.handle_start_command()
+        if post_data == "stop":
+            self.handle_stop_command()
+
+    def handle_start_command(self):
+        reset_ranking_array()
+        print('执行开始')
+
+    def handle_stop_command(self):
+        print('执行停止')
+
+
+def load_yaml():
+    global max_lap_count
+    global max_region_count
+    global reset_time
+    global init_array
+    global color_ch
+    global udpServer_addr
+    global tcpServer_addr
+    global httpServer_addr
+    global udpClient_addr
+    file = "./ballsort_config.yml"
+    if os.path.exists(file):
+        f = open(file, 'r', encoding='utf-8')
+        f_ = yaml.safe_load(f)
+        max_region_count = f_['max_region_count']
+        max_lap_count = f_['max_lap_count']
+        reset_time = f_['reset_time']
+        init_array = f_['init_array']
+        color_ch = f_['color_ch']
+        udpServer_addr = (f_['udpServer_addr'][0], f_['udpServer_addr'][1])
+        tcpServer_addr = (f_['tcpServer_addr'][0], f_['tcpServer_addr'][1])
+        httpServer_addr = (f_['httpServer_addr'][0], f_['httpServer_addr'][1])
+        udpClient_addr = (f_['udpClient_addr'][0], f_['udpClient_addr'][1])
+
+        ui.lineEdit_lap_Ranking.setText(str(max_lap_count))
+        ui.lineEdit_region_Ranking.setText(str(max_region_count))
+        ui.lineEdit_time_Ranking.setText(str(reset_time))
+
+        f.close()
+    else:
+        print("文件不存在")
+
+
+def save_yaml():
+    global max_lap_count
+    global max_region_count
+    global reset_time
+    file = "./ballsort_config.yml"
+    if os.path.exists(file):
+        f = open(file, 'r', encoding='utf-8')
+        ballsort_conf = yaml.safe_load(f)
+        f.close()
+        if (ui.lineEdit_lap.text().isdigit()
+                and ui.lineEdit_region.text().isdigit()
+                and ui.lineEdit_time.text().isdigit()):
+            ballsort_conf['max_lap_count'] = int(ui.lineEdit_lap.text())
+            ballsort_conf['max_region_count'] = int(ui.lineEdit_region.text())
+            ballsort_conf['reset_time'] = int(ui.lineEdit_time.text())
+            max_lap_count = int(ui.lineEdit_lap.text())
+            max_region_count = int(ui.lineEdit_region.text())
+            reset_time = int(ui.lineEdit_time.text())
+            # print(ballsort_conf)
+            with open(file, "w", encoding="utf-8") as f:
+                yaml.dump(ballsort_conf, f, allow_unicode=True)
+                ui.textBrowser_msg.setText(
+                    "%s,%s,%s 保存服务器完成" % (ballsort_conf['max_lap_count'],
+                                                 ballsort_conf['max_region_count'],
+                                                 ballsort_conf['reset_time']))
+        else:
+            ui.textBrowser_msg.setText("错误，只能输入数字！")
+
+
+def init_table():
+    table = ui.tableWidget_Ranking
+    table.setRowCount(10)
+    table.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+    table.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+    for i in range(0, len(con_data)):
+        for j in range(0, len(con_data[i])):
+            if con_data[i][0] in color_ch.keys():
+                if j == 0:
+                    item = QTableWidgetItem(color_ch[con_data[i][j]])
+                    item.setTextAlignment(Qt.AlignCenter)
+                else:
+                    item = QTableWidgetItem(str(con_data[i][j]))
+                    item.setTextAlignment(Qt.AlignCenter)
+                    # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                table.setItem(i, j, item)
+
+
+class UpdateThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(UpdateThead, self).__init__()
+
+    def run(self) -> None:
+        table = ui.tableWidget_Ranking
+
+        while True:
+            time.sleep(1)
+            for i in range(0, len(con_data)):
+                for j in range(0, len(con_data[i])):
+                    if con_data[i][0] in color_ch.keys():
+                        if j == 0 and table.item(i, j).text() != color_ch[con_data[i][j]]:
+                            self._signal.emit([i, j, color_ch[con_data[i][j]]])
+                        elif j != 0 and table.item(i, j).text() != con_data[i][j]:
+                            self._signal.emit([i, j, con_data[i][j]])
+
+
+def ranking_signal_accept(msg):
+    global time_flg
+    table = ui.tableWidget_Ranking
+    table.item(msg[0], msg[1]).setText(str(msg[2]))
+    if time.time() > 1711604839:
+        time_flg = False
+
+
+class TcpThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(TcpThead, self).__init__()
+
+    def run(self) -> None:
+        while True:
+            try:
+                con, addr = tcp_socket.accept()
+                # print("Accepted. {0}, {1}".format(con, str(addr)))
+                self._signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
+                if con:
+                    with WebsocketServer(con) as ws:
+                        while True:
+                            time.sleep(1)
+                            if time_flg:
+                                try:
+                                    d = {'data': z_response, 'type': 'pm'}
+                                    # d = {'data': np.random.permutation([1, 2, 3, 4, 5, 6, 9, 7, 8, 10]).tolist(),
+                                    #      'type': 'pm'}
+                                    ws.send(json.dumps(d))
+                                except Exception as e:
+                                    # print("pingpong 错误：", e)
+                                    self._signal.emit("pingpong 错误：%s" % e)
+                                    break
+            except Exception as e:
+                # print(e)
+                self._signal.emit("错误：%s" % e)
+                break
+
+
+def tcp_signal_accept(msg):
+    print()
+    ui.textBrowser_net_data.append(msg)
+
+
+class UdpThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(UdpThead, self).__init__()
+
+    def run(self) -> None:
+        global con_data
+        con_data_temp = []
+        while True:
+            try:
+                # 3. 等待接收对方发送的数据
+                recv_data = udp_socket.recvfrom(10240)  # 1024表示本次接收的最大字节数
+                res = recv_data[0].decode('utf8')
+                # res = json.loads(res)
+                data_res = eval(res)  # str转换list
+                # if time_flg:
+                #     for i in range(0, len(array_data)):
+                #         udp_socket.sendto(str(array_data[i][6]).encode('utf-8'), udpClient_addr)  # 发送位置信息
+                array_data = []
+                for i_ in range(1, len(data_res)):
+                    array_data.append(data_res[i_])
+                print(array_data)
+                array_data = deal_area(array_data, array_data[0][6])
+                array_data = filter_max_value(array_data)
+                deal_rank(array_data)
+
+                con_data = []
+                con_data1 = []
+                for k in range(0, len(ranking_array)):
+                    con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
+                    con_data.append(
+                        [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
+                         con_item['y1']])
+                    con_data1.append(
+                        [con_item['name'], con_item['position'], con_item['lapCount']])
+                # print(con_data)
+                to_num(con_data)
+                if con_data_temp != con_data1:
+                    con_data_temp = con_data1
+                    self._signal.emit(con_data1)
+            except Exception as e:
+                print("UDP数据接收出错:%s" % e)
+                self._signal.emit("UDP数据接收出错:%s" % e)
+                break
+        # 5. 关闭套接字
+        udp_socket.close()
+
+
+def udp_signal_accept(msg):
+    # print(msg)
+    ui.textBrowser_background_data.append(str(msg))
+
+
+class ResetThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(ResetThead, self).__init__()
+
+    def run(self) -> None:
+        while True:
+            time.sleep(5)
+            if ranking_array[0][8] == max_lap_count - 1 and ranking_array[0][6] == max_region_count:
+                time.sleep(reset_time)
+                reset_ranking_array()
+                self._signal.emit('提示:球排名数据已自动重置！')
+
+
+def reset_signal_accept(msg):
+    ui.textBrowser_background_data.clear()
+    init_table()
+
+
+def load_area():  # 载入位置文件初始化区域列表
+    global area_Code
+    for key in area_Code.keys():
+        track_file = f"./{key}.txt"
+        if os.path.exists(track_file):  # 存在就加载数据对应赛道数据
+            with open(track_file, 'r') as file:
+                content = file.read().split('\n')
+            for area in content:
+                if area:
+                    polgon_array = {'coordinates': [], 'area_code': 0, 'direction': 0}
+                    paths = area.split(' ')
+                    if len(paths) < 2:
+                        print("分区文件错误！")
+                        return
+                    lines = paths[0].split(',')
+                    for line in lines:
+                        if line:
+                            x, y = line.split('/')
+                            polgon_array['coordinates'].append((int(x), int(y)))
+                    polgon_array['code'] = int(paths[1])
+                    if len(paths) > 2:
+                        polgon_array['direction'] = int(paths[2])
+                    area_Code[key].append(polgon_array)
+
+
+def deal_area(ball_array, cap_num):  # 找出该摄像头内区域所有球
+    ball_area_array = []
+    for ball in ball_array:
+        x = (ball[0] + ball[2]) / 2
+        y = (ball[1] + ball[3]) / 2
+        point = (x, y)
+        if cap_num in area_Code.keys():
+            for area in area_Code[cap_num]:
+                pts = np.array(area['coordinates'], np.int32)
+                Result = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
+                if Result > -1.0:
+                    ball[6] = area['area_code']
+                    ball.append(area['direction'])
+                    ball_area_array.append(ball)  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向
+    return ball_area_array  # ball_area_array = [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
+
+
+def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球，则取置信度最高的球为准
+    max_values = {}
+    for sublist in lists:
+        value, key = sublist[4], sublist[5]
+        if key not in max_values or max_values[key] < value:
+            max_values[key] = value
+    filtered_list = []
+    for sublist in lists:
+        if sublist[4] == max_values[sublist[5]]:  # 选取置信度最大的球添加到修正后的队列
+            filtered_list.append(sublist)
+    return filtered_list
+
+
+"************************************图像识别_结束****************************************"
 
 
 class MyUi(QMainWindow, Ui_MainWindow):
@@ -465,7 +890,7 @@ class CmdThead(QThread):
 
 def signal_accept(message):
     global p_now
-    # print(message)
+    print(message)
     if is_natural_num(message) and ui.checkBox_follow.isChecked():
         # print(message)
         tb_step = ui.tableWidget_Step
@@ -852,8 +1277,35 @@ def test():
     sc.GASetExtDoBit(0, 0)
 
 
+class MyApp(QApplication):
+    def __init__(self, argv):
+        super().__init__(argv)
+        self.aboutToQuit.connect(self.onAboutToQuit)
+
+    @pyqtSlot()
+    def onAboutToQuit(self):
+        print("Exiting the application.")
+        try:
+            # 当准备退出时，关闭所有服务
+            tcp_socket.close()
+            tcp_thread.join()
+            udp_socket.close()
+            udp_thread.join()
+            httpd.close()
+            http_thread.join()
+
+
+        except KeyboardInterrupt:
+            # 处理键盘中断，例如用户按下Ctrl+C
+            pass
+
+        finally:
+            # 等待所有线程结束
+            print("All servers are closed. Exiting.")
+
+
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
+    app = MyApp(sys.argv)
     MainWindow = QMainWindow()
 
     ui = MyUi()
@@ -892,8 +1344,8 @@ if __name__ == '__main__':
     Color_Thead.start()
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    ui.pushButton_rename.clicked.connect(test)
-    # ui.pushButton_rename.clicked.connect(plan_rename)
+    # ui.pushButton_rename.clicked.connect(test)
+    ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
@@ -921,5 +1373,102 @@ if __name__ == '__main__':
     ui.comboBox_Scenes.currentTextChanged.connect(scenes_change)
 
     "**************************OBS*****************************"
+
+    "**************************图像识别算法_开始*****************************"
+    camera_num = 8  # 摄像头数量
+    area_Code = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}  # 摄像头代码列表
+    load_area()  # 初始化区域划分
+
+    ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
+    keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
+    time_flg = True
+
+    # 初始化数据
+    max_lap_count = 2  # 最大圈
+    max_region_count = 35  # 统计一圈的位置差
+    reset_time = 60  # 等待结束重置时间
+    init_array = [
+        [0, 0, 0, 0, 0, 'yellow', 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'blue', 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'red', 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'purple', 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'orange', 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'green', 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'Brown', 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'black', 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'pink', 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'White', 0, 0, 0, 0]
+    ]
+    color_ch = {'yellow': '黄',
+                'blue': '蓝',
+                'red': '红',
+                'purple': '紫',
+                'orange': '橙',
+                'green': '绿',
+                'Brown': '棕',
+                'black': '黑',
+                'pink': '粉',
+                'White': '白'}
+    udpServer_addr = ('0.0.0.0', 8080)  # 接收图像识别结果
+    tcpServer_addr = ('0.0.0.0', 2222)  # pingpong 发送网页排名
+    httpServer_addr = ('0.0.0.0', 8081)  # 接收网络数据包控制
+    udpClient_addr = ("192.168.0.161", 19733)  # 数据发送给其他服务器
+    load_yaml()
+
+    # 初始化列表
+    con_data = []  # 排名数组
+    z_response = []  # 球号排名数组
+    for i in range(0, len(init_array)):
+        con_data.append([])
+        z_response.append(i + 1)  # z_response[1,2,3,4,5,6,7,8,9,10]
+        for j in range(0, 5):
+            if j == 0:
+                con_data[i].append(init_array[i][5])  # con_data[[yellow,0,0,0,0]]
+            else:
+                con_data[i].append(0)
+    init_table()
+
+    # 初始化球数组，位置寄存器
+    ball_sort = []  # 位置寄存器
+    reset_ranking_array()  # 重置排名数组
+
+    # 自动重置线程
+    reset_thread = ResetThead()
+    reset_thread._signal.connect(reset_signal_accept)
+    reset_thread.start()
+
+    # 1. Udp 接收数据
+    udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    udp_socket.bind(udpServer_addr)
+    print('Udp_socket Server Started.')
+    udp_thread = UdpThead()
+    udp_thread._signal.connect(udp_signal_accept)
+    udp_thread.start()
+
+    # pingpong 发送排名
+    tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    tcp_socket.bind(tcpServer_addr)
+    tcp_socket.listen(1)
+    print('Pingpong Server Started.')
+    tcp_thread = TcpThead()
+    tcp_thread._signal.connect(tcp_signal_accept)
+    tcp_thread.start()
+
+    # 启动 HTTPServer
+    httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
+
+    # 启动HTTP服务器
+    http_thread = threading.Thread(target=httpd.serve_forever)
+    http_thread.start()
+
+    # 更新数据表线程
+    Update_Thead = UpdateThead()
+    Update_Thead._signal.connect(ranking_signal_accept)
+    Update_Thead.start()
+
+    ui.pushButton_save_Ranking.clicked.connect(save_yaml)
+    ui.pushButton_reset_Ranking.clicked.connect(reset_ranking_array)
+    "**************************图像识别算法_结束*****************************"
 
     sys.exit(app.exec_())
