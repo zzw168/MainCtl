@@ -8,6 +8,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import cv2
 import numpy as np
 import pynput
+import requests
 import yaml
 
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
@@ -549,6 +550,7 @@ class UdpThead(QThread):
                 if con_data_temp != con_data1:
                     con_data_temp = con_data1
                     self._signal.emit(con_data1)
+
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
                 self._signal.emit("UDP数据接收出错:%s" % e)
@@ -891,14 +893,15 @@ class CmdThead(QThread):
 def signal_accept(message):
     global p_now
     print(message)
-    if is_natural_num(message) and ui.checkBox_follow.isChecked():
-        # print(message)
-        tb_step = ui.tableWidget_Step
-        col_num = tb_step.columnCount()
-        # print(col_num)
-        for i in range(1, col_num - 1):
-            tb_step.item(p_now, i).setBackground(QBrush(QColor(255, 255, 255)))
-            tb_step.item(message, i).setBackground(QBrush(QColor(255, 0, 255)))
+    if is_natural_num(message):
+        if ui.checkBox_follow.isChecked():
+            print(message)
+            tb_step = ui.tableWidget_Step
+            col_num = tb_step.columnCount()
+            # print(col_num)
+            for i in range(1, col_num - 1):
+                tb_step.item(p_now, i).setBackground(QBrush(QColor(255, 255, 255)))
+                tb_step.item(message, i).setBackground(QBrush(QColor(255, 0, 255)))
         p_now = message
     else:
         if not is_natural_num(message):
@@ -1219,7 +1222,9 @@ def card_start():
 
 
 def cmd_run():
+    global p_now
     save_plan()
+    p_now = 0
     if Cmd_Thead.isRunning():
         Cmd_Thead.terminate()
     Cmd_Thead.start()
@@ -1254,27 +1259,39 @@ def table_change():
     # print("%s %s" % (row, col))
     if row < 0 or col < 0:
         return
-    if not is_natural_num(tb_step.item(row, col).text()):
-        try:
+    try:
+        if not is_natural_num(tb_step.item(row, col).text()):
             if col > len(plan_list[row]) - 1:
                 tb_step.item(row, col).setText('0')
             else:
                 comb = ui.comboBox_plan
                 _index = comb.currentIndex()
                 tb_step.item(row, col).setText(plan_list[row][col])
-        except:
-            print("数据表操作出错！")
+    except:
+        print("数据表操作出错！")
 
 
 def cmd_stop():
     Cmd_Thead.terminate()
 
 
+def wakeup_server():
+    url = "http://192.168.0.110:8080"
+    form_data = {
+        'requestType': 'set_run_toggle',
+        'run_toggle': '1',
+    }
+    while True:
+        r = requests.post(url=url, data=form_data)
+        print(r.text)
+        time.sleep(60)
+
+
 def test():
-    print("开启机关")
-    sc.GASetExtDoBit()
-    time.sleep(2)
-    sc.GASetExtDoBit(0, 0)
+    url = "http://192.168.0.110:8080"
+    data = "set_run_toggle"
+    r = requests.post(url=url, data=data)
+    print(r.text)
 
 
 class MyApp(QApplication):
@@ -1344,8 +1361,8 @@ if __name__ == '__main__':
     Color_Thead.start()
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    # ui.pushButton_rename.clicked.connect(test)
-    ui.pushButton_rename.clicked.connect(plan_rename)
+    ui.pushButton_rename.clicked.connect(test)
+    # ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
@@ -1375,6 +1392,7 @@ if __name__ == '__main__':
     "**************************OBS*****************************"
 
     "**************************图像识别算法_开始*****************************"
+    # set_run_toggle 发送请求运行数据
     camera_num = 8  # 摄像头数量
     area_Code = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}  # 摄像头代码列表
     load_area()  # 初始化区域划分
@@ -1455,6 +1473,8 @@ if __name__ == '__main__':
     tcp_thread._signal.connect(tcp_signal_accept)
     tcp_thread.start()
 
+    wakeup_ser = threading.Thread(target=wakeup_server)
+    wakeup_ser.start()
     # 启动 HTTPServer
     httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
 
