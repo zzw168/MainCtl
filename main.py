@@ -248,6 +248,8 @@ def deal_rank(integration_qiu_array):
                 break
         if not replaced:
             ranking_array[r_index][9] = 0
+    # print(ranking_array)
+    # print('到这里~~~~')
     sort_ranking()
 
 
@@ -292,6 +294,7 @@ def sort_ranking():
             if (ranking_array[j][6] == ranking_array[j + 1][6]) and (ranking_array[j][8] == ranking_array[j + 1][8]):
                 m = 0
                 n = 0
+
                 for k in range(0, len(ball_sort[ranking_array[j][6]][ranking_array[j][8]])):
                     if ranking_array[j][5] == ball_sort[ranking_array[j][6]][ranking_array[j][8]][k]:
                         n = k
@@ -316,7 +319,7 @@ def reset_ranking_array():
         for j in range(0, len(init_array[i])):
             ranking_array[i].append(init_array[i][j])
     ball_sort = []  # 位置寄存器
-    for i in range(0, max_region_count + 1):
+    for i in range(0, max_region_count + 2):
         ball_sort.append([])
         for j in range(0, max_lap_count):
             ball_sort[i].append([])
@@ -531,11 +534,12 @@ class UdpThead(QThread):
                 array_data = []
                 for i_ in range(1, len(data_res)):
                     array_data.append(data_res[i_])
-                print(array_data)
+                # print(array_data)
                 array_data = deal_area(array_data, array_data[0][6])
+                if not array_data:
+                    continue
                 array_data = filter_max_value(array_data)
                 deal_rank(array_data)
-
                 con_data = []
                 con_data1 = []
                 for k in range(0, len(ranking_array)):
@@ -554,9 +558,8 @@ class UdpThead(QThread):
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
                 self._signal.emit("UDP数据接收出错:%s" % e)
-                break
         # 5. 关闭套接字
-        udp_socket.close()
+        # udp_socket.close()
 
 
 def udp_signal_accept(msg):
@@ -587,7 +590,8 @@ def reset_signal_accept(msg):
 def load_area():  # 载入位置文件初始化区域列表
     global area_Code
     for key in area_Code.keys():
-        track_file = f"./{key}.txt"
+        # track_file = f"./txts/{key}.txt"
+        track_file = "./txts/%s.txt" % key
         if os.path.exists(track_file):  # 存在就加载数据对应赛道数据
             with open(track_file, 'r') as file:
                 content = file.read().split('\n')
@@ -603,7 +607,7 @@ def load_area():  # 载入位置文件初始化区域列表
                         if line:
                             x, y = line.split('/')
                             polgon_array['coordinates'].append((int(x), int(y)))
-                    polgon_array['code'] = int(paths[1])
+                    polgon_array['area_code'] = int(paths[1])
                     if len(paths) > 2:
                         polgon_array['direction'] = int(paths[2])
                     area_Code[key].append(polgon_array)
@@ -612,6 +616,8 @@ def load_area():  # 载入位置文件初始化区域列表
 def deal_area(ball_array, cap_num):  # 找出该摄像头内区域所有球
     ball_area_array = []
     for ball in ball_array:
+        if ball[4] < 0.45:  # 置信度小于 0.45 的数据不处理
+            continue
         x = (ball[0] + ball[2]) / 2
         y = (ball[1] + ball[3]) / 2
         point = (x, y)
@@ -626,6 +632,7 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内区域所有球
     return ball_area_array  # ball_area_array = [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
 
 
+# 33 17 25 29
 def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球，则取置信度最高的球为准
     max_values = {}
     for sublist in lists:
@@ -636,6 +643,7 @@ def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球
     for sublist in lists:
         if sublist[4] == max_values[sublist[5]]:  # 选取置信度最大的球添加到修正后的队列
             filtered_list.append(sublist)
+    # print(filtered_list)
     return filtered_list
 
 
@@ -1285,9 +1293,10 @@ def wakeup_server():
         try:
             r = requests.post(url=url, data=form_data)
             print(r.text)
-            time.sleep(60)
+
         except:
             print('图像识别主机通信失败！')
+        time.sleep(60)
 
 
 def test():
@@ -1406,7 +1415,7 @@ if __name__ == '__main__':
 
     # 初始化数据
     max_lap_count = 2  # 最大圈
-    max_region_count = 35  # 统计一圈的位置差
+    max_region_count = 39  # 统计一圈的位置差
     reset_time = 60  # 等待结束重置时间
     init_array = [
         [0, 0, 0, 0, 0, 'yellow', 0, 0, 0, 0],
@@ -1476,8 +1485,10 @@ if __name__ == '__main__':
     tcp_thread._signal.connect(tcp_signal_accept)
     tcp_thread.start()
 
+    # 唤醒图像识别主机线程
     wakeup_ser = threading.Thread(target=wakeup_server)
     wakeup_ser.start()
+
     # 启动 HTTPServer
     httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
 
