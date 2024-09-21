@@ -1282,9 +1282,12 @@ def wakeup_server():
         'run_toggle': '1',
     }
     while True:
-        r = requests.post(url=url, data=form_data)
-        print(r.text)
-        time.sleep(60)
+        try:
+            r = requests.post(url=url, data=form_data)
+            print(r.text)
+            time.sleep(60)
+        except:
+            print('图像识别主机通信失败！')
 
 
 def test():
