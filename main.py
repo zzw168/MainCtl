@@ -519,6 +519,7 @@ class UdpThead(QThread):
         super(UdpThead, self).__init__()
 
     def run(self) -> None:
+        global action_location
         global con_data
         con_data_temp = []
         while True:
@@ -538,6 +539,7 @@ class UdpThead(QThread):
                 array_data = deal_area(array_data, array_data[0][6])
                 if not array_data:
                     continue
+                action_location = int(array_data[0][6])
                 array_data = filter_max_value(array_data)
                 deal_rank(array_data)
                 con_data = []
@@ -817,7 +819,7 @@ class CamThead(QThread):
 
     def __init__(self):
         super(CamThead, self).__init__()
-        self.camitem = [5, 5]
+        self.camitem = [5, 5]  # [运行挡位,持续时间]
 
     def run(self) -> None:
         print('串口运行')
@@ -876,20 +878,28 @@ class CmdThead(QThread):
                         except:
                             print("运动板运行出错！")
 
-                        while True:
+                        while True:  # 等待动作完成
                             k = 0
-                            for j in range(0, len(pValue)):
-                                if pValue[j] == int(plan_list[i][j + 2]):
-                                    k += 1
-                            if k == 5:
-                                break
-
-                        if int(plan_list[i][10]) != 0 and int(plan_list[i][10]) != 0:
-                            if Cam_Thead.isRunning():
-                                Cam_Thead.terminate()
-                            Cam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
-                            Cam_Thead.start()
-                        time.sleep(int(plan_list[i][11]))
+                            if int(plan_list[i][11]) != 0:
+                                for j in range(0, len(pValue)):
+                                    if pValue[j] == int(plan_list[i][j + 2]):
+                                        k += 1
+                                if k == 5:
+                                    # 摄像头缩放
+                                    if int(plan_list[i][10]) != 0 and int(plan_list[i][10]) != 0:
+                                        if Cam_Thead.isRunning():
+                                            Cam_Thead.terminate()
+                                        Cam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
+                                        Cam_Thead.start()
+                                    time.sleep(int(plan_list[i][11]))
+                                    if (int(plan_list[i][13]) == action_location or ui.checkBox_test.isChecked()
+                                            or int(plan_list[i][13]) == -1):
+                                        break
+                            else:
+                                time.sleep(float(plan_list[i][14]))
+                                if (int(plan_list[i][13]) == action_location or ui.checkBox_test.isChecked()
+                                        or int(plan_list[i][13]) == -1):
+                                    break
 
                 self._signal.emit(succeed("运动流程：完成！"))
             except:
@@ -1284,25 +1294,22 @@ def cmd_stop():
 
 
 def wakeup_server():
-    url = "http://192.168.0.110:8080"
     form_data = {
         'requestType': 'set_run_toggle',
         'run_toggle': '1',
     }
     while True:
         try:
-            r = requests.post(url=url, data=form_data)
+            r = requests.post(url=wakeup_addr, data=form_data)
             print(r.text)
-
         except:
             print('图像识别主机通信失败！')
         time.sleep(60)
 
 
 def test():
-    url = "http://192.168.0.110:8080"
     data = "set_run_toggle"
-    r = requests.post(url=url, data=data)
+    r = requests.post(url=wakeup_addr, data=data)
     print(r.text)
 
 
@@ -1345,7 +1352,7 @@ if __name__ == '__main__':
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
 
-    plan_list = []  # 当前方案列表
+    plan_list = []  # 当前方案列表 [选中,圈数,左右,前后,上下,头旋转,头上下,速度,加速,减速,镜头缩放,缩放时长,机关,运动位置,运动延时]
     plan_names = []  # 当前方案名称
     plan_all = {}  # 所有方案资料
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
@@ -1409,6 +1416,8 @@ if __name__ == '__main__':
     area_Code = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}  # 摄像头代码列表
     load_area()  # 初始化区域划分
 
+    action_location = 0  # 触发镜头向下一个位置活动的点位
+
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
     time_flg = True
@@ -1443,6 +1452,7 @@ if __name__ == '__main__':
     tcpServer_addr = ('0.0.0.0', 2222)  # pingpong 发送网页排名
     httpServer_addr = ('0.0.0.0', 8081)  # 接收网络数据包控制
     udpClient_addr = ("192.168.0.161", 19733)  # 数据发送给其他服务器
+    wakeup_addr = "http://192.168.0.110:8080"  # 唤醒服务器线程
     load_yaml()
 
     # 初始化列表

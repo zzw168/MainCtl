@@ -1635,11 +1635,8 @@
              <enum>QFrame::Raised</enum>
             </property>
             <layout class="QGridLayout" name="gridLayout_13">
-             <item row="0" column="8">
-              <widget class="QLineEdit" name="lineEdit_rename"/>
-             </item>
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="checkBox_selectall">
+             <item row="0" column="11">
+              <widget class="QPushButton" name="pushButton_rename">
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
@@ -1649,46 +1646,15 @@
                 </font>
                </property>
                <property name="text">
-                <string>全选</string>
+                <string>重命名方案</string>
+               </property>
+               <property name="default">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QComboBox" name="comboBox_plan">
-               <property name="minimumSize">
-                <size>
-                 <width>200</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="4">
-              <widget class="QFrame" name="frame_14">
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="7">
-              <widget class="QLabel" name="label_23">
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_22">
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
@@ -1698,7 +1664,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>方案名称：</string>
+                <string>选择方案：</string>
                </property>
               </widget>
              </item>
@@ -1726,39 +1692,6 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="label_22">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>选择方案：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="9">
-              <widget class="QPushButton" name="pushButton_rename">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>重命名方案</string>
-               </property>
-               <property name="default">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="5">
               <widget class="QCheckBox" name="checkBox_follow">
                <property name="font">
@@ -1774,11 +1707,109 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="6">
+             <item row="0" column="8">
               <widget class="QFrame" name="frame_19">
                <property name="minimumSize">
                 <size>
-                 <width>100</width>
+                 <width>50</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="10">
+              <widget class="QLineEdit" name="lineEdit_rename"/>
+             </item>
+             <item row="0" column="4">
+              <widget class="QFrame" name="frame_14">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QComboBox" name="comboBox_plan">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="7">
+              <widget class="QCheckBox" name="checkBox_test">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>测试模式</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="checkBox_selectall">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>全选</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="9">
+              <widget class="QLabel" name="label_23">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>方案名称：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="6">
+              <widget class="QFrame" name="frame_21">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
                  <height>0</height>
                 </size>
                </property>
@@ -2417,6 +2448,16 @@
             <column>
              <property name="text">
               <string>机关</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>运动位置</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>运动延时</string>
              </property>
             </column>
             <column>

@@ -30,7 +30,7 @@ def fail(msg: str):
 # 检测正负数
 def is_natural_num(z):
     try:
-        z = int(z)
-        return isinstance(z, int)
+        z = float(z)
+        return isinstance(z, float)
     except ValueError:
         return False
