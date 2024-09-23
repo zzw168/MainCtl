@@ -934,7 +934,7 @@ class CmdThead(QThread):
                                     break
                                 else:
                                     while True:
-                                        if int(plan_list[i][13]) == action_location:
+                                        if int(plan_list[i][13]) in [action_location, action_location + 1]:
                                             break
                                     break
 
