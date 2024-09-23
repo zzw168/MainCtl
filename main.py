@@ -832,6 +832,39 @@ class CamThead(QThread):
 
 
 '''
+    AxisThead(QThread) 轴复位线程
+'''
+
+
+class AxisThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(AxisThead, self).__init__()
+
+    def run(self) -> None:
+        print('串口运行')
+        try:
+            datas = s485.get_axis_pos()
+            print(datas)
+            if datas:
+                for data in datas:
+                    if data['nAxisNum'] in [1, 5]:
+                        data['highPos'] = -data['highPos']
+                    res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+                    if res == 0:
+                        sc.card_move(int(data['nAxisNum']), 0)
+                res = sc.card_update()
+                if res == 0:
+                    self._signal.emit(succeed('轴复位完成！'))
+                else:
+                    self._signal.emit(fail('运动卡链接出错！'))
+        except:
+            print("轴复位出错！")
+            self._signal.emit(fail('轴复位出错！'))
+
+
+'''
     CmdThead(QThread) 执行运动方案线程
 '''
 
@@ -1173,7 +1206,7 @@ def sel_all():
             table.cellWidget(i, 0).setChecked(False)
 
 
-def plan_refresh():
+def plan_refresh():  # 刷新方案列表
     global plan_list
     comb = ui.comboBox_plan
     _index = comb.currentIndex()
@@ -1249,15 +1282,7 @@ def cmd_run():
 
 
 def card_reset():
-    (res, pValue, pClock) = sc.get_pos()
-    print("%s %s %s" % (res, pValue, pClock))
-    res = sc.card_reset()
-    if res == 0:
-        ui.textBrowser.append(succeed('复位：%s' % card_res[res]))
-    else:
-        ui.textBrowser.append(res)
-    # (res, pValue, pClock) = sc.get_pos()
-    # print("%s %s %s" % (res, pValue, pClock))
+    Axis_Thead.start()
 
 
 # 实时轴位置入表
@@ -1308,9 +1333,17 @@ def wakeup_server():
 
 
 def test():
-    data = "set_run_toggle"
-    r = requests.post(url=wakeup_addr, data=data)
-    print(r.text)
+    datas = s485.get_axis_pos()
+    print(datas)
+    for data in datas:
+        res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+        print(res)
+        sc.card_move(int(data['nAxisNum']), 0)
+    res = sc.card_update()
+    # if res == 0:
+    #     ui.textBrowser.append(succeed('复位：%s' % card_res[res]))
+    # else:
+    #     ui.textBrowser.append(res)
 
 
 class MyApp(QApplication):
@@ -1368,6 +1401,9 @@ if __name__ == '__main__':
 
     Cmd_Thead = CmdThead()  # 运行方案
     Cmd_Thead._signal.connect(signal_accept)
+
+    Axis_Thead = AxisThead()  # 轴复位
+    Axis_Thead._signal.connect(signal_accept)
 
     Cam_Thead = CamThead()  # 摄像头运行方案
     Cam_Thead._signal.connect(signal_accept)

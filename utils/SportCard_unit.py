@@ -102,7 +102,6 @@ class SportCard:
     # 复位板卡
     def card_reset(self):
         for i in range(1, 6):
-            (res, pValue, pClock) = self.get_pos(i, 0, 1, 0)
             self.card_move(i, 0)
         return self.card_update()
 
@@ -133,3 +132,34 @@ class SportCard:
         nBitIndex_c = ctypes.c_int(nBitIndex)
         nValue_c = ctypes.c_ushort(nValue)
         return self.card_dll.GA_GetExtDiBit(nCardIndex_c, nBitIndex_c, nValue_c)
+
+    ''' 读取规划位置
+        nAxisNum 起始轴号，取值范围：[1,AXIS_MAX_COUNT]
+        pValue 规划位置
+        nCount 读取的规划轴数，默认为,1次最多可以读取多个轴的运动模式
+        pClock 读取控制器时钟，默认为：NULL，即不用读取控制器时钟
+    '''
+
+    def GAGetPrfPos(self, nAxisNum: int = 1, pValue=0, nCount=1, pClock=0):
+        self.card_dll.GA_GetPrfPos.argtypes = [ctypes.c_short, ctypes.POINTER(ctypes.c_double), ctypes.c_short,
+                                               ctypes.POINTER(ctypes.c_ulong)]
+        self.card_dll.GA_GetPrfPos.restype = ctypes.c_int
+        nAxisNum_c = ctypes.c_short(nAxisNum)
+        pValue_c = ctypes.c_double(pValue)
+        nCount_c = ctypes.c_short(nCount)
+        pClock_c = ctypes.c_ulong(pClock)
+        return (
+            self.card_dll.GA_GetPrfPos(nAxisNum_c, pValue_c, nCount_c, pClock_c), pValue_c, pClock_c)
+
+    ''' 修改规划（脉冲）位置，修改时，轴不能处于运动状态
+      nAxisNum 轴编号
+      lPrfPos 规划(脉冲)位置
+    '''
+
+    def GASetPrfPos(self, nAxisNum: int, lPrfPos):
+
+        self.card_dll.GA_SetPrfPos.argtypes = [ctypes.c_short, ctypes.c_long]
+        self.card_dll.GA_SetPrfPos.restype = ctypes.c_int
+        nAxisNum_c = ctypes.c_short(nAxisNum)
+        lPrfPos_c = ctypes.c_long(lPrfPos)
+        return self.card_dll.GA_SetPrfPos(nAxisNum_c, lPrfPos_c)
