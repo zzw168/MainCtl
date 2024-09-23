@@ -930,8 +930,12 @@ class CmdThead(QThread):
                                         break
                             else:
                                 time.sleep(float(plan_list[i][14]))
-                                if (int(plan_list[i][13]) == action_location or ui.checkBox_test.isChecked()
-                                        or int(plan_list[i][13]) == -1):
+                                if ui.checkBox_test.isChecked() or int(plan_list[i][13]) == -1:
+                                    break
+                                else:
+                                    while True:
+                                        if int(plan_list[i][13]) == action_location:
+                                            break
                                     break
 
                 self._signal.emit(succeed("运动流程：完成！"))
