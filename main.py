@@ -820,10 +820,10 @@ class AxisThead(QThread):
     def run(self) -> None:
         print('串口运行')
         try:
+            self._signal.emit(succeed('轴复位开始！'))
             datas = s485.get_axis_pos()
             print(datas)
             if datas:
-                self._signal.emit(succeed('轴复位开始！'))
                 for data in datas:
                     if data['nAxisNum'] in [1, 5]:
                         data['highPos'] = -data['highPos']
