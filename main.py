@@ -230,7 +230,7 @@ def deal_rank(integration_qiu_array):
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
                 if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
-                    if result_count >= max_region_count - 6:
+                    if result_count >= max_area_count - 6:
                         ranking_array[r_index][8] += 1
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = 0
@@ -239,7 +239,7 @@ def deal_rank(integration_qiu_array):
                             (q_item[6] - ranking_array[r_index][6] <= 3  # 新位置相差旧位置三个区域以内
                              or ranking_array[0][6] - ranking_array[r_index][
                                  6] > 5))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
-                        or (q_item[6] < 8 and ranking_array[r_index][6] >= max_region_count - 8)):  # 跨圈情况
+                        or (q_item[6] < 8 and ranking_array[r_index][6] >= max_area_count - 8)):  # 跨圈情况
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = q_item[r_i]  # 更新 ranking_array
                     ranking_array[r_index][9] = 1
@@ -318,7 +318,7 @@ def reset_ranking_array():
         for j in range(0, len(init_array[i])):
             ranking_array[i].append(init_array[i][j])
     ball_sort = []  # 位置寄存器
-    for i in range(0, max_region_count + 2):
+    for i in range(0, max_area_count + 2):
         ball_sort.append([])
         for j in range(0, max_lap_count):
             ball_sort[i].append([])
@@ -368,7 +368,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
 def load_yaml():
     global max_lap_count
-    global max_region_count
+    global max_area_count
     global reset_time
     global init_array
     global color_ch
@@ -380,7 +380,7 @@ def load_yaml():
     if os.path.exists(file):
         f = open(file, 'r', encoding='utf-8')
         f_ = yaml.safe_load(f)
-        max_region_count = f_['max_region_count']
+        max_area_count = f_['max_area_count']
         max_lap_count = f_['max_lap_count']
         reset_time = f_['reset_time']
         init_array = f_['init_array']
@@ -391,7 +391,7 @@ def load_yaml():
         udpClient_addr = (f_['udpClient_addr'][0], f_['udpClient_addr'][1])
 
         ui.lineEdit_lap_Ranking.setText(str(max_lap_count))
-        ui.lineEdit_region_Ranking.setText(str(max_region_count))
+        ui.lineEdit_region_Ranking.setText(str(max_area_count))
         ui.lineEdit_time_Ranking.setText(str(reset_time))
 
         f.close()
@@ -401,7 +401,7 @@ def load_yaml():
 
 def save_yaml():
     global max_lap_count
-    global max_region_count
+    global max_area_count
     global reset_time
     file = "./ballsort_config.yml"
     if os.path.exists(file):
@@ -412,17 +412,17 @@ def save_yaml():
                 and ui.lineEdit_region.text().isdigit()
                 and ui.lineEdit_time.text().isdigit()):
             ballsort_conf['max_lap_count'] = int(ui.lineEdit_lap.text())
-            ballsort_conf['max_region_count'] = int(ui.lineEdit_region.text())
+            ballsort_conf['max_area_count'] = int(ui.lineEdit_region.text())
             ballsort_conf['reset_time'] = int(ui.lineEdit_time.text())
             max_lap_count = int(ui.lineEdit_lap.text())
-            max_region_count = int(ui.lineEdit_region.text())
+            max_area_count = int(ui.lineEdit_region.text())
             reset_time = int(ui.lineEdit_time.text())
             # print(ballsort_conf)
             with open(file, "w", encoding="utf-8") as f:
                 yaml.dump(ballsort_conf, f, allow_unicode=True)
                 ui.textBrowser_msg.setText(
                     "%s,%s,%s 保存服务器完成" % (ballsort_conf['max_lap_count'],
-                                                 ballsort_conf['max_region_count'],
+                                                 ballsort_conf['max_area_count'],
                                                  ballsort_conf['reset_time']))
         else:
             ui.textBrowser_msg.setText("错误，只能输入数字！")
@@ -482,8 +482,8 @@ class TcpThead(QThread):
             try:
                 con, addr = tcp_socket.accept()
                 # print("Accepted. {0}, {1}".format(con, str(addr)))
-                self._signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
                 if con:
+                    self._signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
                     with WebsocketServer(con) as ws:
                         while True:
                             time.sleep(1)
@@ -570,7 +570,7 @@ class ResetThead(QThread):
     def run(self) -> None:
         while True:
             time.sleep(5)
-            if ranking_array[0][8] == max_lap_count - 1 and ranking_array[0][6] == max_region_count:
+            if ranking_array[0][8] == max_lap_count - 1 and ranking_array[0][6] == max_area_count:
                 time.sleep(reset_time)
                 reset_ranking_array()
                 self._signal.emit('提示:球排名数据已自动重置！')
@@ -1420,7 +1420,7 @@ if __name__ == '__main__':
 
     # 初始化数据
     max_lap_count = 2  # 最大圈
-    max_region_count = 39  # 统计一圈的位置差
+    max_area_count = 39  # 统计一圈的位置差
     reset_time = 60  # 等待结束重置时间
     init_array = [
         [0, 0, 0, 0, 0, 'yellow', 0, 0, 0, 0],
@@ -1453,7 +1453,7 @@ if __name__ == '__main__':
 
     # 初始化列表
     con_data = []  # 排名数组
-    z_response = []  # 球号排名数组
+    z_response = []  # 球号排名数组(发送给前端网页排名显示)
     for i in range(0, len(init_array)):
         con_data.append([])
         z_response.append(i + 1)  # z_response[1,2,3,4,5,6,7,8,9,10]
@@ -1487,7 +1487,7 @@ if __name__ == '__main__':
     tcp_socket.bind(tcpServer_addr)
     tcp_socket.listen(1)
     print('Pingpong Server Started.')
-    tcp_thread = TcpThead()
+    tcp_thread = TcpThead()  # 前端网页pingpong 形式发送排名数据
     tcp_thread._signal.connect(tcp_signal_accept)
     tcp_thread.start()
 
