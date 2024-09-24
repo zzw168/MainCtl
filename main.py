@@ -139,7 +139,6 @@ class SourceThead(QThread):
         self.run_flg = ''
 
     def run(self) -> None:
-        global source_list
         self._signal.emit('写表')
 
 
@@ -332,7 +331,7 @@ def reset_ranking_array():
     # print(ball_sort)
 
 
-def to_num(res):
+def to_num(res):  # 按最新排名排列数组
     global z_response
     arr_res = []
     for r in res:
@@ -468,11 +467,8 @@ class UpdateThead(QThread):
 
 
 def ranking_signal_accept(msg):
-    global time_flg
     table = ui.tableWidget_Ranking
     table.item(msg[0], msg[1]).setText(str(msg[2]))
-    if time.time() > 1711604839:
-        time_flg = False
 
 
 class TcpThead(QThread):
@@ -491,19 +487,18 @@ class TcpThead(QThread):
                     with WebsocketServer(con) as ws:
                         while True:
                             time.sleep(1)
-                            if time_flg:
-                                try:
-                                    d = {'data': z_response, 'type': 'pm'}
-                                    # d = {'data': np.random.permutation([1, 2, 3, 4, 5, 6, 9, 7, 8, 10]).tolist(),
-                                    #      'type': 'pm'}
-                                    ws.send(json.dumps(d))
-                                except Exception as e:
-                                    # print("pingpong 错误：", e)
-                                    self._signal.emit("pingpong 错误：%s" % e)
-                                    break
+                            try:
+                                d = {'data': z_response, 'type': 'pm'}
+                                # d = {'data': np.random.permutation([1, 2, 3, 4, 5, 6, 9, 7, 8, 10]).tolist(),
+                                #      'type': 'pm'}
+                                ws.send(json.dumps(d))
+                            except Exception as e:
+                                # print("pingpong 错误：", e)
+                                self._signal.emit("pingpong 错误：%s" % e)
+                                break
             except Exception as e:
                 # print(e)
-                self._signal.emit("错误：%s" % e)
+                self._signal.emit("pingpong 错误：%s" % e)
                 break
 
 
@@ -529,9 +524,6 @@ class UdpThead(QThread):
                 res = recv_data[0].decode('utf8')
                 # res = json.loads(res)
                 data_res = eval(res)  # str转换list
-                # if time_flg:
-                #     for i in range(0, len(array_data)):
-                #         udp_socket.sendto(str(array_data[i][6]).encode('utf-8'), udpClient_addr)  # 发送位置信息
                 array_data = []
                 for i_ in range(1, len(data_res)):
                     array_data.append(data_res[i_])
@@ -615,7 +607,7 @@ def load_area():  # 载入位置文件初始化区域列表
                     area_Code[key].append(polgon_array)
 
 
-def deal_area(ball_array, cap_num):  # 找出该摄像头内区域所有球
+def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
     ball_area_array = []
     for ball in ball_array:
         if ball[4] < 0.45:  # 置信度小于 0.45 的数据不处理
@@ -759,23 +751,6 @@ class MyUi(QMainWindow, Ui_MainWindow):
                     table.setItem(0, i, item)
 
 
-class ColorThead(QThread):
-    _signal = pyqtSignal(object)
-
-    def __init__(self):
-        super(ColorThead, self).__init__()
-
-    def run(self) -> None:
-        while True:
-            if z_status:
-                status_color = 'background:rgb(255, 0, 0)'
-            else:
-                status_color = 'background:rgb(0, 255, 0)'
-                pass
-            self._signal.emit(status_color)
-            time.sleep(1)
-
-
 '''
     PosThead(QThread) 检测各轴位置
 '''
@@ -848,6 +823,7 @@ class AxisThead(QThread):
             datas = s485.get_axis_pos()
             print(datas)
             if datas:
+                self._signal.emit(succeed('轴复位开始！'))
                 for data in datas:
                     if data['nAxisNum'] in [1, 5]:
                         data['highPos'] = -data['highPos']
@@ -930,7 +906,7 @@ class CmdThead(QThread):
                                         break
                             else:
                                 time.sleep(float(plan_list[i][14]))
-                                if ui.checkBox_test.isChecked() or int(plan_list[i][13]) == -1:
+                                if ui.checkBox_test.isChecked() or int(plan_list[i][13]) <= 0:
                                     break
                                 else:
                                     while True:
@@ -1234,26 +1210,6 @@ def plan_refresh():  # 刷新方案列表
         num += 1
 
 
-def flashsignal_accept(status_color):  # 更改颜色
-    ui.status_server1.setStyleSheet(status_color)
-    ui.status_obs.setStyleSheet(status_color)
-    ui.status_server2.setStyleSheet(status_color)
-    ui.status_live.setStyleSheet(status_color)
-    ui.status_road.setStyleSheet(status_color)
-    ui.status_lenses.setStyleSheet(status_color)
-    ui.status_Extension.setStyleSheet(status_color)
-    ui.status_mainlenses.setStyleSheet(status_color)
-    ui.status_Recognition.setStyleSheet(status_color)
-    ui.status_track.setStyleSheet(status_color)
-    ui.status_sportsCards.setStyleSheet(status_color)
-
-
-def bt_start():
-    global z_status
-    # ui.widget_9.setVisible(not (ui.widget_9.isVisible()))
-    z_status = not (z_status)
-
-
 # 打开运动卡
 def card_start():
     global flag_card_start
@@ -1360,13 +1316,18 @@ class MyApp(QApplication):
         print("Exiting the application.")
         try:
             # 当准备退出时，关闭所有服务
+            tcp_socket.shutdown(socket.SHUT_RDWR)
             tcp_socket.close()
+
+            tcp_thread.close()
             tcp_thread.join()
+
+            udp_socket.shutdown(socket.SHUT_RDWR)
             udp_socket.close()
             udp_thread.join()
-            httpd.close()
-            http_thread.join()
 
+            httpd.shutdown()
+            httpd.server_close()
 
         except KeyboardInterrupt:
             # 处理键盘中断，例如用户按下Ctrl+C
@@ -1389,7 +1350,7 @@ if __name__ == '__main__':
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
 
-    plan_list = []  # 当前方案列表 [选中,圈数,左右,前后,上下,头旋转,头上下,速度,加速,减速,镜头缩放,缩放时长,机关,运动位置,运动延时]
+    plan_list = []  # 当前方案列表 [0.选中,1.圈数,2.左右,3.前后,4.上下,5.头旋转,6.头上下,7.速度,8.加速,9.减速,10.镜头缩放,11.缩放时长,12.机关,13.运动位置,14.运动延时]
     plan_names = []  # 当前方案名称
     plan_all = {}  # 所有方案资料
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
@@ -1412,16 +1373,12 @@ if __name__ == '__main__':
     Cam_Thead = CamThead()  # 摄像头运行方案
     Cam_Thead._signal.connect(signal_accept)
 
-    Pos_Thead = PosThead()  # 实时监控摄像头位置
+    Pos_Thead = PosThead()  # 实时监控各轴位置
     Pos_Thead._signal.connect(pos_signal_accept)
 
-    Color_Thead = ColorThead()  # 更新状态信息线程
-    Color_Thead._signal.connect(flashsignal_accept)
-    Color_Thead.start()
-
     ui.pushButton_fsave.clicked.connect(save_plan)
-    ui.pushButton_rename.clicked.connect(test)
-    # ui.pushButton_rename.clicked.connect(plan_rename)
+    # ui.pushButton_rename.clicked.connect(test)
+    ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
@@ -1460,7 +1417,6 @@ if __name__ == '__main__':
 
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
-    time_flg = True
 
     # 初始化数据
     max_lap_count = 2  # 最大圈
@@ -1506,13 +1462,13 @@ if __name__ == '__main__':
                 con_data[i].append(init_array[i][5])  # con_data[[yellow,0,0,0,0]]
             else:
                 con_data[i].append(0)
-    init_table()
+    init_table()  # 初始化排名数据表
 
     # 初始化球数组，位置寄存器
     ball_sort = []  # 位置寄存器
     reset_ranking_array()  # 重置排名数组
 
-    # 自动重置线程
+    # 自动重置排名线程
     reset_thread = ResetThead()
     reset_thread._signal.connect(reset_signal_accept)
     reset_thread.start()
@@ -1536,14 +1492,12 @@ if __name__ == '__main__':
     tcp_thread.start()
 
     # 唤醒图像识别主机线程
-    wakeup_ser = threading.Thread(target=wakeup_server)
+    wakeup_ser = threading.Thread(target=wakeup_server, daemon=True)
     wakeup_ser.start()
 
     # 启动 HTTPServer
     httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
-
-    # 启动HTTP服务器
-    http_thread = threading.Thread(target=httpd.serve_forever)
+    http_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
     http_thread.start()
 
     # 更新数据表线程
