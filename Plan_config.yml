@@ -709,4 +709,5 @@ plans:
         - '-1'
         - '0'
     plan_name: 方案三
-s485No: COM1
+s485_Cam_No: COM1
+s485_Axis_No: COM23

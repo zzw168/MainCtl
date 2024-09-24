@@ -1160,6 +1160,9 @@ def load_plan_yaml():
             for plan in plan_all['plans']:
                 plan_names.append(plan_all['plans'][plan]['plan_name'])
 
+            s485.s485_Cam_No = plan_all['s485_Cam_No']
+            s485.s485_Axis_No = plan_all['s485_Axis_No']
+
             comb = ui.comboBox_plan
             comb.addItems(plan_names)
             plan_refresh()
@@ -1225,7 +1228,7 @@ def card_start():
             ui.textBrowser.append(res)
     else:
         ui.textBrowser.append(fail('请输入正确的卡号~！'))
-    s485_flag = s485.cam_open(plan_all['s485No'])
+    s485_flag = s485.cam_open()
     if s485_flag == True:
         ui.textBrowser.append(succeed('串口链接：%s' % s485_flag))
     else:
@@ -1293,13 +1296,22 @@ def wakeup_server():
 
 
 def test():
-    datas = s485.get_axis_pos()
-    print(datas)
-    for data in datas:
-        res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
-        print(res)
-        sc.card_move(int(data['nAxisNum']), 0)
-    res = sc.card_update()
+    data = b'\x01\x03\x04\x06\x13\xff\xfcJ\xcf'
+    for index, byte in enumerate(data):
+        # print(byte)
+        if index == 3:
+            high1 = (hex(byte)[2:]).zfill(2)
+            print(high1)
+        if index == 4:
+            high2 = (hex(byte)[2:]).zfill(2)
+            print(high2)
+        if index == 5:
+            lowPos1 = (hex(byte)[2:]).zfill(2)
+            print(lowPos1)
+        if index == 6:
+            print(byte)
+            lowPos2 = (hex(byte)[2:]).zfill(2)
+            print(lowPos2)
     # if res == 0:
     #     ui.textBrowser.append(succeed('复位：%s' % card_res[res]))
     # else:
@@ -1377,8 +1389,8 @@ if __name__ == '__main__':
     Pos_Thead._signal.connect(pos_signal_accept)
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    # ui.pushButton_rename.clicked.connect(test)
-    ui.pushButton_rename.clicked.connect(plan_rename)
+    ui.pushButton_rename.clicked.connect(test)
+    # ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)

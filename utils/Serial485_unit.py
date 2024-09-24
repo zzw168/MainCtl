@@ -12,18 +12,20 @@ import serial
 class Serial485:
     def __init__(self):
         self.ser = ''
+        self.s485_Cam_No = 'COM1'
+        self.s485_Axis_No = 'COM23'
         try:
-            self.ser = serial.Serial('COM1', 9600, timeout=5)
+            self.ser = serial.Serial(self.s485_Cam_No, 9600, timeout=5)
         except:
             print('s485 启动失败')
 
-    def cam_open(self, com='COM1'):
+    def cam_open(self):
         try:
             if not self.ser.is_open:
-                self.ser = serial.Serial(com, 9600, timeout=5)
+                self.ser = serial.Serial(self.s485_Cam_No, 9600, timeout=5)
             return self.ser.is_open
         except:
-            return '%s 端口链接失败！' % com
+            return '%s 端口链接失败！' % self.s485_Cam_No
 
     # 发送镜头缩放指令
     def cam_zoom_move(self, in_out: int = 5):
@@ -57,7 +59,7 @@ class Serial485:
                      bytes.fromhex('04030B07000277BB'),
                      bytes.fromhex('05030B070002766A')]
         try:
-            sercol = serial.Serial(port='COM23', baudrate=57600, stopbits=2, timeout=1)
+            sercol = serial.Serial(port=self.s485_Axis_No, baudrate=57600, stopbits=2, timeout=1)
             datas = []
             if sercol.is_open:
                 print('端口已经打开')
@@ -104,6 +106,8 @@ class Serial485:
                 return (nAxisNum, int(highPos, 16))
         else:
             print('no~~~~~~')
+
+    " CRC16 校验"
 
     def calculate_crc16(self, data: bytes, value: bytes) -> bool:
         crc16 = 0XFFFF
