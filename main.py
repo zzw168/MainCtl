@@ -366,7 +366,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         print('执行停止')
 
 
-def load_yaml():
+def load_ballsort_yaml():
     global max_lap_count
     global max_area_count
     global reset_time
@@ -399,7 +399,7 @@ def load_yaml():
         print("文件不存在")
 
 
-def save_yaml():
+def save_ballsort_yaml():
     global max_lap_count
     global max_area_count
     global reset_time
@@ -1133,7 +1133,7 @@ def save_plan():
     plan_num = comb.currentIndex()
     plan_name = comb.currentText()
 
-    file = "./Robot.yml"
+    file = "Plan_config.yml"
     if os.path.exists(file):
         plan_all['plans']['plan%d' % (plan_num + 1)]['plan_name'] = plan_name
         plan_all['plans']['plan%d' % (plan_num + 1)]['plan_list'] = plan_list
@@ -1148,10 +1148,10 @@ def save_plan():
 
 
 # 载入方案
-def deal_yaml():
+def load_plan_yaml():
     global plan_names
     global plan_all
-    file = "./Robot.yml"
+    file = "Plan_config.yml"
     if os.path.exists(file):
         try:
             f = open(file, 'r', encoding='utf-8')
@@ -1358,7 +1358,7 @@ if __name__ == '__main__':
     flag_key_run = True  # 键盘控制标志
     flag_card_start = False  # 运动板卡启动标志
 
-    deal_yaml()
+    load_plan_yaml()
     ui.lineEdit_CarNo.setText(str(plan_all['cardNo']))
 
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
@@ -1449,7 +1449,7 @@ if __name__ == '__main__':
     httpServer_addr = ('0.0.0.0', 8081)  # 接收网络数据包控制
     udpClient_addr = ("192.168.0.161", 19733)  # 数据发送给其他服务器
     wakeup_addr = "http://192.168.0.110:8080"  # 唤醒服务器线程
-    load_yaml()
+    load_ballsort_yaml()
 
     # 初始化列表
     con_data = []  # 排名数组
@@ -1505,7 +1505,7 @@ if __name__ == '__main__':
     Update_Thread._signal.connect(ranking_signal_accept)
     Update_Thread.start()
 
-    ui.pushButton_save_Ranking.clicked.connect(save_yaml)
+    ui.pushButton_save_Ranking.clicked.connect(save_ballsort_yaml)
     ui.pushButton_reset_Ranking.clicked.connect(reset_ranking_array)
     "**************************图像识别算法_结束*****************************"
 
