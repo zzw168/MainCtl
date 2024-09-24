@@ -106,8 +106,8 @@ class ObsThead(QThread):
         global cl_requst
         global cl_event
         try:
-            cl_requst = obs.ReqClient()  # 请求
-            cl_event = obs.EventClient()  # 监听
+            cl_requst = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
+            cl_event = obs.EventClient()  # 监听 链接配置在 config.toml 文件中
 
             cl_event.callback.register(on_current_program_scene_changed)  # 场景变化
             cl_event.callback.register(on_scene_item_enable_state_changed)  # 来源变化
