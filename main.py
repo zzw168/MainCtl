@@ -318,7 +318,7 @@ def reset_ranking_array():
         for j in range(0, len(init_array[i])):
             ranking_array[i].append(init_array[i][j])
     ball_sort = []  # 位置寄存器
-    for i in range(0, max_area_count + 2):
+    for i in range(0, max_area_count + 1):
         ball_sort.append([])
         for j in range(0, max_lap_count):
             ball_sort[i].append([])
@@ -1499,7 +1499,7 @@ if __name__ == '__main__':
     tcp_socket.bind(tcpServer_addr)
     tcp_socket.listen(1)
     print('Pingpong Server Started.')
-    tcp_thread = TcpThead()  # 前端网页pingpong 形式发送排名数据
+    tcp_thread = TcpThead()  # 前端网页以pingpong形式发送排名数据
     tcp_thread._signal.connect(tcp_signal_accept)
     tcp_thread.start()
 
@@ -1507,7 +1507,7 @@ if __name__ == '__main__':
     wakeup_ser = threading.Thread(target=wakeup_server, daemon=True)
     wakeup_ser.start()
 
-    # 启动 HTTPServer
+    # 启动 HTTPServer 接收外部命令控制本程序
     httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
     http_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
     http_thread.start()
