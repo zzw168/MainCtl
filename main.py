@@ -1389,8 +1389,8 @@ if __name__ == '__main__':
     Pos_Thead._signal.connect(pos_signal_accept)
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    ui.pushButton_rename.clicked.connect(test)
-    # ui.pushButton_rename.clicked.connect(plan_rename)
+    # ui.pushButton_rename.clicked.connect(test)
+    ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
