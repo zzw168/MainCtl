@@ -446,11 +446,11 @@ def init_table():
                 table.setItem(i, j, item)
 
 
-class UpdateThead(QThread):
+class UpdateThread(QThread):
     _signal = pyqtSignal(object)
 
     def __init__(self):
-        super(UpdateThead, self).__init__()
+        super(UpdateThread, self).__init__()
 
     def run(self) -> None:
         table = ui.tableWidget_Ranking
@@ -1501,9 +1501,9 @@ if __name__ == '__main__':
     http_thread.start()
 
     # 更新数据表线程
-    Update_Thead = UpdateThead()
-    Update_Thead._signal.connect(ranking_signal_accept)
-    Update_Thead.start()
+    Update_Thread = UpdateThread()
+    Update_Thread._signal.connect(ranking_signal_accept)
+    Update_Thread.start()
 
     ui.pushButton_save_Ranking.clicked.connect(save_yaml)
     ui.pushButton_reset_Ranking.clicked.connect(reset_ranking_array)
