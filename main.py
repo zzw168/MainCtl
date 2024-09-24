@@ -825,7 +825,7 @@ class AxisThead(QThread):
             print(datas)
             if datas:
                 for data in datas:
-                    if data['nAxisNum'] in [1, 5]:
+                    if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
                         data['highPos'] = -data['highPos']
                     res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
                     if res == 0:
