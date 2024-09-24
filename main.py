@@ -428,7 +428,7 @@ def save_ballsort_yaml():
             ui.textBrowser_msg.setText("错误，只能输入数字！")
 
 
-def init_table():
+def init_ranking_table():
     table = ui.tableWidget_Ranking
     table.setRowCount(10)
     table.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
@@ -578,7 +578,7 @@ class ResetThead(QThread):
 
 def reset_signal_accept(msg):
     ui.textBrowser_background_data.clear()
-    init_table()
+    init_ranking_table()
 
 
 def load_area():  # 载入位置文件初始化区域列表
@@ -1474,7 +1474,7 @@ if __name__ == '__main__':
                 con_data[i].append(init_array[i][5])  # con_data[[yellow,0,0,0,0]]
             else:
                 con_data[i].append(0)
-    init_table()  # 初始化排名数据表
+    init_ranking_table()  # 初始化排名数据表
 
     # 初始化球数组，位置寄存器
     ball_sort = []  # 位置寄存器
