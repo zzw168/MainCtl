@@ -906,7 +906,7 @@ class CmdThead(QThread):
                                          dVelStart=0.1, dSmoothTime=0)
                             sc.card_update()
 
-                            # print("开启机关")
+                            print("开启机关")
                             if int(plan_list[i][12]) != 0:
                                 if '-' in plan_list[i][12]:
                                     sc.GASetExtDoBit(abs(int(plan_list[i][12])) - 1, 0)
@@ -917,39 +917,37 @@ class CmdThead(QThread):
 
                         while True:  # 等待动作完成
                             k = 0
-                            if int(plan_list[i][11]) != 0:  # 等待五轴到位,摄像头缩放
-                                for j in range(0, len(pValue)):
+                            if int(plan_list[i][11]) != 0:
+                                for j in range(0, len(pValue)):  # 等待五轴到位
                                     if pValue[j] == int(plan_list[i][j + 2]):
                                         k += 1
                                 if k == 5:
+                                    # 摄像头缩放
                                     if int(plan_list[i][10]) != 0 and int(plan_list[i][10]) != 0:
                                         if Cam_Thead.isRunning():
                                             Cam_Thead.terminate()
                                         Cam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
                                         Cam_Thead.start()
                                     time.sleep(int(plan_list[i][11]))
-                            else:  # 不用等待镜头缩放
+                                    if (int(plan_list[i][13]) == action_location or ui.checkBox_test.isChecked()
+                                            or int(plan_list[i][13]) == -1):
+                                        break
+                            else:
                                 if ui.checkBox_test.isChecked() or int(plan_list[i][13]) <= 0:
                                     time.sleep(2)
                                 else:
                                     while True:
                                         if int(plan_list[i][13]) in [action_location, action_location + 1]:
                                             break
-
-                            if '_' in plan_list[i][14]:  # OBS切换
-                                obs_check, obs_name = str.split(plan_list[i][14], '_')
-                                try:
-                                    cl_requst.set_current_program_scene(obs_name)
-                                except:
-                                    self._signal.emit(fail("OBS 切换场景出错！"))
-
-                                if int(obs_check) == 1:
-                                    try:
-                                        get_picture(obs_name)
-                                    except:
-                                        print('OBS 截图出错！')
-                                        self._signal.emit(fail('OBS 截图出错！'))
-                            break
+                                # if '_' in plan_list[i][14]:
+                                #     obs_check, obs_name = str.split(plan_list[i], '_')
+                                #     try:
+                                #         cl_requst.set_current_program_scene(obs_name)
+                                #     except:
+                                #         self._signal.emit(fail("OBS 链接中断！"))
+                                #     if int(obs_check) == 1:
+                                #         pass
+                                break
 
                 self._signal.emit(succeed("运动流程：完成！"))
             except:
