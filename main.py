@@ -850,13 +850,14 @@ class PlanObsThead(QThread):
         print('OBS运行')
         try:
             if '_' in self.plan_obs:  # 切换场景
-                obs_msg = str.split(plan_list[i][14], '_')
+                print()
+                obs_msg = str.split(self.plan_obs, '_')
                 print(obs_msg)
                 cl_requst.set_current_program_scene(obs_msg[1])
-                self._signal.emit(fail("OBS 场景切换完成！"))
+                self._signal.emit(succeed("OBS 场景切换完成！"))
                 if int(obs_msg[0]) == 1:
                     get_picture(obs_msg[1])
-                self._signal.emit(fail("OBS 截图完成！"))
+                self._signal.emit(succeed("OBS 截图完成！"))
             else:
                 print('没有切换的场景！')
         except:
