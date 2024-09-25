@@ -835,6 +835,34 @@ class CamThead(QThread):
 
 
 '''
+    PlanObsThead(QThread) 摄像头运动方案线程
+'''
+
+
+class PlanObsThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(PlanObsThead, self).__init__()
+        self.camitem = [5, 5]  # [运行挡位,持续时间]
+
+    def run(self) -> None:
+        print('OBS运行')
+        try:
+            if '_' in plan_list[p_now][14]:  # 切换场景
+                obs_msg = str.split(plan_list[i][14], '_')
+                print(obs_msg)
+                cl_requst.set_current_program_scene(obs_msg[1])
+                self._signal.emit(fail("OBS 场景切换完成！"))
+                if int(obs_msg[0]) == 1:
+                    get_picture(obs_msg[1])
+                self._signal.emit(fail("OBS 截图完成！"))
+        except:
+            print("OBS 链接中断！")
+            self._signal.emit(fail("OBS 场景切换中断！"))
+
+
+'''
     AxisThead(QThread) 轴复位线程
 '''
 
@@ -883,6 +911,19 @@ class CmdThead(QThread):
     def run(self) -> None:
         if flag_card_start:
             try:
+                self._signal.emit(succeed('轴复位开始！'))
+                datas = s485.get_axis_pos()
+                print(datas)
+                if datas:
+                    for data in datas:
+                        if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
+                            data['highPos'] = -data['highPos']
+                        res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+                        if res == 0:
+                            self._signal.emit(succeed('%s轴 复位完成！' % data['nAxisNum']))
+                        else:
+                            self._signal.emit(fail('%s轴 复位失败！' % data['nAxisNum']))
+                            return
                 self._signal.emit(succeed("运动流程：开始！"))
                 for i in range(0, len(plan_list)):
                     # print(plan_list)
@@ -917,6 +958,7 @@ class CmdThead(QThread):
 
                         while True:  # 等待动作完成
                             k = 0
+
                             if int(plan_list[i][11]) != 0:
                                 for j in range(0, len(pValue)):  # 等待五轴到位
                                     if pValue[j] == int(plan_list[i][j + 2]):
@@ -924,10 +966,10 @@ class CmdThead(QThread):
                                 if k == 5:
                                     # 摄像头缩放
                                     if int(plan_list[i][10]) != 0 and int(plan_list[i][10]) != 0:
-                                        if Cam_Thead.isRunning():
-                                            Cam_Thead.terminate()
-                                        Cam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
-                                        Cam_Thead.start()
+                                        if PlanCam_Thead.isRunning():
+                                            PlanCam_Thead.terminate()
+                                        PlanCam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
+                                        PlanCam_Thead.start()
                                     time.sleep(int(plan_list[i][11]))
                                     if (int(plan_list[i][13]) == action_location or ui.checkBox_test.isChecked()
                                             or int(plan_list[i][13]) == -1):
@@ -935,19 +977,14 @@ class CmdThead(QThread):
                             else:
                                 if ui.checkBox_test.isChecked() or int(plan_list[i][13]) <= 0:
                                     time.sleep(2)
+                                    break
                                 else:
                                     while True:
                                         if int(plan_list[i][13]) in [action_location, action_location + 1]:
                                             break
-                                # if '_' in plan_list[i][14]:
-                                #     obs_check, obs_name = str.split(plan_list[i], '_')
-                                #     try:
-                                #         cl_requst.set_current_program_scene(obs_name)
-                                #     except:
-                                #         self._signal.emit(fail("OBS 链接中断！"))
-                                #     if int(obs_check) == 1:
-                                #         pass
-                                break
+                                    break
+                        if '_' in plan_list[p_now][14]:  # 切换场景
+                            PlanObs_Thead.start()
 
                 self._signal.emit(succeed("运动流程：完成！"))
             except:
@@ -1162,12 +1199,14 @@ def save_plan():
                 "0" if (not table.item(i, j) or table.item(i, j).text() == '') else table.item(i, j).text())
         if table.cellWidget(i, 14):
             if table.cellWidget(i, 14).isChecked():
-                local_list.append("1_%s" % table.cellWidget(i, 14).text())
+                local_list.append(str("1_%s" % table.cellWidget(i, 14).text()))
             else:
-                local_list.append("0_%s" % table.cellWidget(i, 14).text())
+                local_list.append(str("0_%s" % table.cellWidget(i, 14).text()))
+        else:
+            local_list.append('0')
         plan_list.append(local_list)
         local_list = []
-    # print(plan_list)
+    print(plan_list)
 
     comb = ui.comboBox_plan
     plan_num = comb.currentIndex()
@@ -1284,9 +1323,9 @@ def cmd_run():
     global p_now
     save_plan()
     p_now = 0
-    if Cmd_Thead.isRunning():
-        Cmd_Thead.terminate()
-    Cmd_Thead.start()
+    if PlanCmd_Thead.isRunning():
+        PlanCmd_Thead.terminate()
+    PlanCmd_Thead.start()
 
 
 def card_reset():
@@ -1349,7 +1388,7 @@ def table_change():
 
 
 def cmd_stop():
-    Cmd_Thead.terminate()
+    PlanCmd_Thead.terminate()
 
 
 def wakeup_server():
@@ -1447,14 +1486,17 @@ if __name__ == '__main__':
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()
 
-    Cmd_Thead = CmdThead()  # 运行方案
-    Cmd_Thead._signal.connect(signal_accept)
+    PlanCmd_Thead = CmdThead()  # 总运行方案
+    PlanCmd_Thead._signal.connect(signal_accept)
+
+    PlanObs_Thead = PlanObsThead()  # OBS场景切换方案
+    PlanObs_Thead._signal.connect(signal_accept)
+
+    PlanCam_Thead = CamThead()  # 摄像头运行方案
+    PlanCam_Thead._signal.connect(signal_accept)
 
     Axis_Thead = AxisThead()  # 轴复位
     Axis_Thead._signal.connect(signal_accept)
-
-    Cam_Thead = CamThead()  # 摄像头运行方案
-    Cam_Thead._signal.connect(signal_accept)
 
     Pos_Thead = PosThead()  # 实时监控各轴位置
     Pos_Thead._signal.connect(pos_signal_accept)
