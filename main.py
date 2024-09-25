@@ -1285,13 +1285,25 @@ def obs_to_table():
     if scene:
         tb_step = ui.tableWidget_Step
         row_num = tb_step.currentRow()
-        tb_step.item(row_num, 14).setText('')
+        if tb_step.item(row_num, 14):
+            tb_step.item(row_num, 14).setText('')
         if row_num > -1:
-            cb = QCheckBox()
-            cb.setText(scene)
-            cb.setStyleSheet('QCheckBox{margin:6px};')
-            tb_step.setCellWidget(row_num, 14, cb)
-            # print(tb_step.cellWidget(row_num, 14).text())
+            if tb_step.cellWidget(row_num, 14):
+                tb_step.cellWidget(row_num, 14).setText(scene)
+                # tb_step.cellWidget(row_num, 14).setChecked(False)
+            else:
+                cb = QCheckBox()
+                cb.setText(scene)
+                cb.setStyleSheet('QCheckBox{margin:6px};')
+                tb_step.setCellWidget(row_num, 14, cb)
+                # print(tb_step.cellWidget(row_num, 14).text())
+
+
+def obs_remove_table():
+    tb_step = ui.tableWidget_Step
+    row_num = tb_step.currentRow()
+    if tb_step.cellWidget(row_num, 14):
+        tb_step.removeCellWidget(row_num, 14)
 
 
 # 禁止输入非数字
@@ -1434,6 +1446,7 @@ if __name__ == '__main__':
     ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.pushButton_ToTable.clicked.connect(p_to_table)
     ui.pushButton_Obs2Table.clicked.connect(obs_to_table)
+    ui.pushButton_Obs_delete.clicked.connect(obs_remove_table)
 
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
