@@ -703,18 +703,28 @@ class MyUi(QMainWindow, Ui_MainWindow):
             print(rownum)
             if rownum != 0:
                 p = tb_step.currentRow()
-                for i in range(p, rownum - 1):
-                    print('%d' % i)
-                    for j in range(0, tb_step.columnCount() - 1):
-                        if j == 0:
+                for row in range(p, rownum - 1):
+                    print('%d' % row)
+                    for col in range(0, tb_step.columnCount() - 1):
+                        if col == 0:
                             cb = QCheckBox()
                             cb.setStyleSheet('QCheckBox{margin:6px};')
-                            cb.setChecked(tb_step.cellWidget(i + 1, j).isChecked())
-                            tb_step.setCellWidget(i, j, cb)
+                            cb.setChecked(tb_step.cellWidget(row + 1, col).isChecked())
+                            tb_step.setCellWidget(row, col, cb)
+                        elif col == 14:
+                            if tb_step.cellWidget(row + 1, col):
+                                cb = QCheckBox()
+                                cb.setStyleSheet('QCheckBox{margin:6px};')
+                                cb.setText(tb_step.cellWidget(row + 1, col).text())
+                                cb.setChecked(tb_step.cellWidget(row + 1, col).isChecked())
+                                tb_step.setCellWidget(row, col, cb)
+                            else:
+                                if tb_step.cellWidget(row, col):
+                                    tb_step.removeCellWidget(row, col)
                         else:
-                            item = QTableWidgetItem(tb_step.item(i + 1, j).text())
+                            item = QTableWidgetItem(tb_step.item(row + 1, col).text())
                             item.setTextAlignment(Qt.AlignCenter)
-                            tb_step.setItem(i, j, item)
+                            tb_step.setItem(row, col, item)
                 tb_step.setRowCount(rownum - 1)
         if action == item3:
             table = self.tableWidget_Step
@@ -727,28 +737,32 @@ class MyUi(QMainWindow, Ui_MainWindow):
                     cb.setStyleSheet('QCheckBox{margin:6px};')
                     table.setCellWidget(r, 0, cb)
                     table.cellWidget(r, 0).setChecked(table.cellWidget(r - 1, 0).isChecked())
-                    for i in range(1, table.columnCount() - 1):
-                        item = QTableWidgetItem(table.item(r - 1, i).text())
-                        item.setTextAlignment(Qt.AlignCenter)
-                        # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                        table.setItem(r, i, item)
-
-                # table.cellWidget(row, 0).setChecked(False)
-                # for i in range(1, table.columnCount() - 1):
-                #     item = QTableWidgetItem('0')
-                #     item.setTextAlignment(Qt.AlignCenter)
-                #     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                #     table.setItem(row, i, item)
+                    for col in range(1, table.columnCount() - 1):
+                        if col == 14:
+                            if tb_step.cellWidget(r - 1, col):
+                                cb = QCheckBox()
+                                cb.setStyleSheet('QCheckBox{margin:6px};')
+                                cb.setText(tb_step.cellWidget(r - 1, col).text())
+                                cb.setChecked(tb_step.cellWidget(r - 1, col).isChecked())
+                                tb_step.setCellWidget(r, col, cb)
+                            else:
+                                if tb_step.cellWidget(r, col):
+                                    tb_step.removeCellWidget(r, col)
+                        else:
+                            item = QTableWidgetItem(table.item(r - 1, col).text())
+                            item.setTextAlignment(Qt.AlignCenter)
+                            # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                            table.setItem(r, col, item)
             else:
                 cb = QCheckBox()
                 cb.setStyleSheet('QCheckBox{margin:6px};')
                 table.setCellWidget(0, 0, cb)
 
-                for i in range(1, table.columnCount() - 1):
+                for r in range(1, table.columnCount() - 1):
                     item = QTableWidgetItem('0')
                     item.setTextAlignment(Qt.AlignCenter)
                     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                    table.setItem(0, i, item)
+                    table.setItem(0, r, item)
 
 
 '''
@@ -890,7 +904,7 @@ class CmdThead(QThread):
                         while True:  # 等待动作完成
                             k = 0
                             if int(plan_list[i][11]) != 0:
-                                for j in range(0, len(pValue)):
+                                for j in range(0, len(pValue)):  # 等待五轴到位
                                     if pValue[j] == int(plan_list[i][j + 2]):
                                         k += 1
                                 if k == 5:
@@ -905,8 +919,8 @@ class CmdThead(QThread):
                                             or int(plan_list[i][13]) == -1):
                                         break
                             else:
-                                time.sleep(float(plan_list[i][14]))
                                 if ui.checkBox_test.isChecked() or int(plan_list[i][13]) <= 0:
+                                    time.sleep(2)
                                     break
                                 else:
                                     while True:
@@ -1117,14 +1131,19 @@ def save_plan():
     plan_list = []
     local_list = []
     for i in range(0, row_num):
-        if table.cellWidget(i, 0).isChecked():
-            local_list.append("1")
-        else:
-            local_list.append("0")
-        for j in range(1, col_num - 1):
-            # host.append(table.item(i, j).text())
+        if table.cellWidget(i, 0):
+            if table.cellWidget(i, 0).isChecked():
+                local_list.append("1")
+            else:
+                local_list.append("0")
+        for j in range(1, 14):
             local_list.append(
-                "0" if (table.item(i, j) == None or table.item(i, j).text() == '') else table.item(i, j).text())
+                "0" if (not table.item(i, j) or table.item(i, j).text() == '') else table.item(i, j).text())
+        if table.cellWidget(i, 14):
+            if table.cellWidget(i, 14).isChecked():
+                local_list.append("1_%s" % table.cellWidget(i, 14).text())
+            else:
+                local_list.append("0_%s" % table.cellWidget(i, 14).text())
         plan_list.append(local_list)
         local_list = []
     # print(plan_list)
@@ -1196,21 +1215,26 @@ def plan_refresh():  # 刷新方案列表
     plan_list = plan_all['plans']['plan%d' % (_index + 1)]['plan_list']
 
     table = ui.tableWidget_Step
-    num = 0
-    for task in plan_list:
+    for num, plan in enumerate(plan_list):
         table.setRowCount(num + 1)
         cb = QCheckBox()
         cb.setStyleSheet('QCheckBox{margin:6px};')
         table.setCellWidget(num, 0, cb)
-        if task[0] == '1':
+        if plan[0] == '1':
             table.cellWidget(num, 0).setChecked(True)
-
-        for i in range(1, len(task)):
-            item = QTableWidgetItem(str(task[i]))
-            item.setTextAlignment(Qt.AlignCenter)
-            # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-            table.setItem(num, i, item)
-        num += 1
+        for i in range(1, len(plan)):
+            if i == 14 and ('_' in plan[i]):
+                cb = QCheckBox()
+                cb.setStyleSheet('QCheckBox{margin:6px};')
+                obs_check, obs_name = str.split(plan[i], '_')
+                cb.setText(obs_name)
+                if int(obs_check) == 1: cb.setChecked(True)
+                table.setCellWidget(num, 14, cb)
+            else:
+                item = QTableWidgetItem(str(plan[i]))
+                item.setTextAlignment(Qt.AlignCenter)
+                # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                table.setItem(num, i, item)
 
 
 # 打开运动卡
@@ -1251,9 +1275,23 @@ def card_reset():
 # 实时轴位置入表
 def p_to_table():
     tb_step = ui.tableWidget_Step
+    row_num = tb_step.currentRow()
     for i in range(0, len(pValue)):
-        row_num = tb_step.currentRow()
         tb_step.item(row_num, i + 2).setText(str(pValue[i]))
+
+
+def obs_to_table():
+    scene = ui.comboBox_Scenes.currentText()
+    if scene:
+        tb_step = ui.tableWidget_Step
+        row_num = tb_step.currentRow()
+        tb_step.item(row_num, 14).setText('')
+        if row_num > -1:
+            cb = QCheckBox()
+            cb.setText(scene)
+            cb.setStyleSheet('QCheckBox{margin:6px};')
+            tb_step.setCellWidget(row_num, 14, cb)
+            # print(tb_step.cellWidget(row_num, 14).text())
 
 
 # 禁止输入非数字
@@ -1395,7 +1433,7 @@ if __name__ == '__main__':
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.pushButton_ToTable.clicked.connect(p_to_table)
-    # ui.pushButton_cmd_stop.clicked.connect(cmd_stop)
+    ui.pushButton_Obs2Table.clicked.connect(obs_to_table)
 
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
