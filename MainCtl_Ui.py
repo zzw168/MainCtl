@@ -1250,6 +1250,12 @@ class Ui_MainWindow(object):
         self.frame_12.setFrameShape(QtWidgets.QFrame.StyledPanel)
         self.frame_12.setFrameShadow(QtWidgets.QFrame.Raised)
         self.frame_12.setObjectName("frame_12")
+        self.gridLayout_15 = QtWidgets.QGridLayout(self.frame_12)
+        self.gridLayout_15.setObjectName("gridLayout_15")
+        self.label_picture = QtWidgets.QLabel(self.frame_12)
+        self.label_picture.setText("")
+        self.label_picture.setObjectName("label_picture")
+        self.gridLayout_15.addWidget(self.label_picture, 0, 0, 1, 1)
         self.gridLayout_26.addWidget(self.frame_12, 1, 0, 1, 1)
         self.tabWidget_Ranking.addTab(self.tab_2, "")
         self.tab_4 = QtWidgets.QWidget()
@@ -1266,7 +1272,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget_Ranking.setCurrentIndex(1)
+        self.tabWidget_Ranking.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

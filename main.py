@@ -12,7 +12,7 @@ import requests
 import yaml
 
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QBrush, QColor
+from PyQt5.QtGui import QBrush, QColor, QPixmap
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu
 
 import obsws_python as obs
@@ -215,6 +215,20 @@ def scenes_change():  # 变换场景
         cl_requst.set_current_program_scene(scene_name)
     except:
         ui.textBrowser.append(fail("OBS 链接中断！"))
+
+
+# 截取OBS图片
+def get_picture(scence_current):
+    resp = cl_requst.get_source_screenshot(scence_current, "jpg", None, None, 100)
+    # print(resp.image_data)
+    img = str2image(resp.image_data)
+    pixmap = QPixmap()
+    pixmap.loadFromData(img)
+    pixmap = pixmap.scaled(ui.label_picture.size(), Qt.AspectRatioMode.KeepAspectRatio,
+                           Qt.TransformationMode.SmoothTransformation)
+    lab_p = ui.label_picture
+    lab_p.clear()
+    lab_p.setPixmap(pixmap)
 
 
 "******************************OBS结束*************************************"
@@ -892,7 +906,7 @@ class CmdThead(QThread):
                                          dVelStart=0.1, dSmoothTime=0)
                             sc.card_update()
 
-                            print("开启机关")
+                            # print("开启机关")
                             if int(plan_list[i][12]) != 0:
                                 if '-' in plan_list[i][12]:
                                     sc.GASetExtDoBit(abs(int(plan_list[i][12])) - 1, 0)
@@ -903,30 +917,34 @@ class CmdThead(QThread):
 
                         while True:  # 等待动作完成
                             k = 0
-                            if int(plan_list[i][11]) != 0:
-                                for j in range(0, len(pValue)):  # 等待五轴到位
+                            if int(plan_list[i][11]) != 0:  # 等待五轴到位,摄像头缩放
+                                for j in range(0, len(pValue)):
                                     if pValue[j] == int(plan_list[i][j + 2]):
                                         k += 1
                                 if k == 5:
-                                    # 摄像头缩放
                                     if int(plan_list[i][10]) != 0 and int(plan_list[i][10]) != 0:
                                         if Cam_Thead.isRunning():
                                             Cam_Thead.terminate()
                                         Cam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
                                         Cam_Thead.start()
                                     time.sleep(int(plan_list[i][11]))
-                                    if (int(plan_list[i][13]) == action_location or ui.checkBox_test.isChecked()
-                                            or int(plan_list[i][13]) == -1):
-                                        break
-                            else:
+                            else:  # 不用等待镜头缩放
                                 if ui.checkBox_test.isChecked() or int(plan_list[i][13]) <= 0:
                                     time.sleep(2)
-                                    break
                                 else:
                                     while True:
                                         if int(plan_list[i][13]) in [action_location, action_location + 1]:
                                             break
-                                    break
+
+                            if '_' in plan_list[i][14]:  # OBS切换
+                                obs_check, obs_name = str.split(plan_list[i][14], '_')
+                                try:
+                                    cl_requst.set_current_program_scene(obs_name)
+                                except:
+                                    self._signal.emit(fail("OBS 链接中断！"))
+                                if int(obs_check) == 1:
+                                    get_picture(obs_name)
+                            break
 
                 self._signal.emit(succeed("运动流程：完成！"))
             except:
