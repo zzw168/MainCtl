@@ -939,11 +939,16 @@ class CmdThead(QThread):
                             if '_' in plan_list[i][14]:  # OBS切换
                                 obs_check, obs_name = str.split(plan_list[i][14], '_')
                                 try:
-                                    cl_requst.set_current_program_scene(obs_name)
-                                except:
-                                    self._signal.emit(fail("OBS 链接中断！"))
-                                if int(obs_check) == 1:
                                     get_picture(obs_name)
+                                except:
+                                    print('OBS 截图出错！')
+                                    self._signal.emit(fail('OBS 截图出错！'))
+
+                                if int(obs_check) == 1:
+                                    try:
+                                        cl_requst.set_current_program_scene(obs_name)
+                                    except:
+                                        self._signal.emit(fail("OBS 切换场景出错！"))
                             break
 
                 self._signal.emit(succeed("运动流程：完成！"))
