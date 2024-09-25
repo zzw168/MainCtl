@@ -39,7 +39,7 @@ class SportCard:
         return card_res[self.card_dll.GA_Close()]
 
     # 设置位置
-    def card_move(self, nAxisNum, pos=0, vel=100, dAcc=0.3, dDec=0.3, dVelStart=0.1, dSmoothTime=0):
+    def card_move(self, nAxisNum, pos=0, vel=100, dAcc=0.3, dDec=0.2, dVelStart=0.1, dSmoothTime=0):
         nAxisNum_c = ctypes.c_short(nAxisNum)
         dAcc_c = ctypes.c_double(dAcc)
         dDec_c = ctypes.c_double(dDec)
