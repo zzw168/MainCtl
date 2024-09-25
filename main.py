@@ -844,12 +844,12 @@ class PlanObsThead(QThread):
 
     def __init__(self):
         super(PlanObsThead, self).__init__()
-        self.camitem = [5, 5]  # [运行挡位,持续时间]
+        self.plan_obs = '0'  # [运行挡位,持续时间]
 
     def run(self) -> None:
         print('OBS运行')
         try:
-            if '_' in plan_list[p_now][14]:  # 切换场景
+            if '_' in self.plan_obs:  # 切换场景
                 obs_msg = str.split(plan_list[i][14], '_')
                 print(obs_msg)
                 cl_requst.set_current_program_scene(obs_msg[1])
@@ -857,6 +857,8 @@ class PlanObsThead(QThread):
                 if int(obs_msg[0]) == 1:
                     get_picture(obs_msg[1])
                 self._signal.emit(fail("OBS 截图完成！"))
+            else:
+                print('没有切换的场景！')
         except:
             print("OBS 链接中断！")
             self._signal.emit(fail("OBS 场景切换中断！"))
@@ -983,7 +985,10 @@ class CmdThead(QThread):
                                         if int(plan_list[i][13]) in [action_location, action_location + 1]:
                                             break
                                     break
-                        if '_' in plan_list[p_now][14]:  # 切换场景
+                        if '_' in plan_list[i][14]:  # 切换场景
+                            if PlanObs_Thead.isRunning():
+                                PlanObs_Thead.terminate()
+                            PlanObs_Thead.plan_obs = plan_list[i][14]
                             PlanObs_Thead.start()
 
                 self._signal.emit(succeed("运动流程：完成！"))
