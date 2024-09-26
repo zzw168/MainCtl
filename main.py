@@ -1016,10 +1016,7 @@ class CmdThead(QThread):
                                         PlanCam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
                                         PlanCam_Thead.start()
                                     time.sleep(int(plan_list[i][11]))
-                                    if (int(plan_list[i][13]) in [action_location,
-                                                                  action_location + 1] or ui.checkBox_test.isChecked()
-                                            or int(plan_list[i][13]) == -1):
-                                        break
+                                    break
                         else:
                             if ui.checkBox_test.isChecked() or int(plan_list[i][13]) == 0:
                                 time.sleep(2)  # 测试期间停两秒切换下一个动作
