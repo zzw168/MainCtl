@@ -224,8 +224,7 @@ def get_picture(scence_current):
     img = str2image(resp.image_data)
     pixmap = QPixmap()
     pixmap.loadFromData(img)
-    pixmap = pixmap.scaled(ui.label_picture.size(), Qt.AspectRatioMode.KeepAspectRatio,
-                           Qt.TransformationMode.SmoothTransformation)
+    pixmap = pixmap.scaled(800, 450)
     lab_p = ui.label_picture
     lab_p.clear()
     lab_p.setPixmap(pixmap)
@@ -530,7 +529,6 @@ class UdpThead(QThread):
     def run(self) -> None:
         global action_location
         global con_data
-        con_data_temp = []
         while True:
             try:
                 # 3. 等待接收对方发送的数据
@@ -542,12 +540,14 @@ class UdpThead(QThread):
                 for i_ in range(1, len(data_res)):
                     array_data.append(data_res[i_])
                 # print(array_data)
-                array_data = deal_area(array_data, array_data[0][6])
+                array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
                 if not array_data:
                     continue
-                action_location = int(array_data[0][6])
                 array_data = filter_max_value(array_data)
                 deal_rank(array_data)
+                action_location = int(ranking_array[0][6])  # 排第一位的球所在区域
+                if action_location == max_area_count - 1:
+                    PlanBallNum_Thead.start()
                 con_data = []
                 con_data1 = []
                 for k in range(0, len(ranking_array)):
@@ -559,9 +559,7 @@ class UdpThead(QThread):
                         [con_item['name'], con_item['position'], con_item['lapCount']])
                 # print(con_data)
                 to_num(con_data)
-                if con_data_temp != con_data1:
-                    con_data_temp = con_data1
-                    self._signal.emit(con_data1)
+                self._signal.emit(con_data1)
 
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
@@ -789,16 +787,17 @@ class PosThead(QThread):
 
     def __init__(self):
         super(PosThead, self).__init__()
-        self.run_flg = ''
+        self.run_flg = False
 
     def run(self) -> None:
         global pValue
         if flag_card_start:
             try:
                 while True:
-                    for i in range(0, 5):
-                        (res, pValue[i], pClock) = sc.get_pos(i + 1)
-                    self._signal.emit(pValue)
+                    if self.run_flg:
+                        for i in range(0, 5):
+                            (res, pValue[i], pClock) = sc.get_pos(i + 1)
+                        self._signal.emit(pValue)
                     time.sleep(0.01)
             except:
                 pass
@@ -832,6 +831,47 @@ class CamThead(QThread):
             s485.cam_zoom_on_off()
         except:
             print("485 运行出错！")
+
+
+'''
+    PlanBallNumThead(QThread) 摄像头运动方案线程
+'''
+
+
+class PlanBallNumThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(PlanBallNumThead, self).__init__()
+        self.camitem = [5, 5]  # [运行挡位,持续时间]
+
+    def run(self) -> None:
+        print('接收运动卡输入信息！')
+        time_now = time.time()
+        try:
+            res = sc.GASetDiReverseCount()  # 输入次数归0
+            if res == 0:
+                while True:
+                    res, value = sc.GAGetDiReverseCount()
+                    # print(res, value)
+                    if res == 0:
+                        num = int(value[0] / 2)
+                        self._signal.emit(num)
+                        if num >= 10:
+                            break
+                        elif time.time() - time_now > 30:
+                            sc.GASetDiReverseCount()  # 输入次数归0
+                            break
+                    time.sleep(0.01)
+            else:
+                print("次数归0 失败！")
+        except:
+            print("接收运动卡输入 运行出错！")
+
+
+def PlanBallNum_signal_accept(msg):
+    print(msg)
+    ui.lineEdit_ball_num.setText(str(msg))
 
 
 '''
@@ -964,10 +1004,12 @@ class CmdThead(QThread):
                             k = 0
 
                             if int(plan_list[i][11]) != 0:
+                                Pos_Thead.run_flg = True
                                 for j in range(0, len(pValue)):  # 等待五轴到位
                                     if pValue[j] == int(plan_list[i][j + 2]):
                                         k += 1
                                 if k == 5:
+                                    Pos_Thead.run_flg = False
                                     # 摄像头缩放
                                     if int(plan_list[i][10]) != 0 and int(plan_list[i][10]) != 0:
                                         if PlanCam_Thead.isRunning():
@@ -1098,20 +1140,24 @@ def keyboard_release(key):
                 sc.card_update()
 
         except AttributeError:
-            print(key)
+            pass
+            # print(key)
         try:
             if key.char == '-':
                 s485.cam_zoom_on_off()
             elif key.char == '+':
                 s485.cam_zoom_on_off()
         except:
-            print(key)
+            pass
+            # print(key)
+        Pos_Thead.run_flg = False
 
 
 def keyboard_press(key):
     global flag_key_run
     if ui.checkBox_key.isChecked() and flag_card_start:
         try:
+            Pos_Thead.run_flg = True
             if key == key.up:
                 print('前')
                 if flag_key_run:
@@ -1174,14 +1220,16 @@ def keyboard_press(key):
                     sc.card_update()
                     flag_key_run = False
         except AttributeError:
-            print(key)
+            # print(key)
+            pass
         try:
             if key.char == '+':
                 s485.cam_zoom_move(5)
             elif key.char == '-':
                 s485.cam_zoom_move(-5)
         except:
-            print(key)
+            pass
+            # print(key)
 
 
 # 保存方案
@@ -1394,10 +1442,6 @@ def table_change():
         print("数据表操作出错！")
 
 
-def cmd_stop():
-    PlanCmd_Thead.terminate()
-
-
 def wakeup_server():
     form_data = {
         'requestType': 'set_run_toggle',
@@ -1409,16 +1453,18 @@ def wakeup_server():
             print(r.text)
         except:
             print('图像识别主机通信失败！')
-        time.sleep(60)
+        time.sleep(300)
 
 
 def test():
-    res, value = sc.GAGetDiReverseCount()
-    print(res, value)
-    res = sc.GASetDiReverseCount()
-    print(res)
-    res, value = sc.GAGetDiReverseCount()
-    print(res, value)
+    PlanBallNum_Thead.start()
+    # get_picture('终点')
+    # res, value = sc.GAGetDiReverseCount()
+    # print(res, value)
+    # res = sc.GASetDiReverseCount()
+    # print(res)
+    # res, value = sc.GAGetDiReverseCount()
+    # print(res, value)
     # data = b'\x01\x03\x04\x06\x13\xff\xfcJ\xcf'
     # for index, byte in enumerate(data):
     #     # print(byte)
@@ -1503,6 +1549,9 @@ if __name__ == '__main__':
 
     PlanCam_Thead = CamThead()  # 摄像头运行方案
     PlanCam_Thead._signal.connect(signal_accept)
+
+    PlanBallNum_Thead = PlanBallNumThead()  # 统计过终点的球数
+    PlanBallNum_Thead._signal.connect(PlanBallNum_signal_accept)
 
     Axis_Thead = AxisThead()  # 轴复位
     Axis_Thead._signal.connect(signal_accept)
