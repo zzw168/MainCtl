@@ -1413,26 +1413,28 @@ def wakeup_server():
 
 
 def test():
-    data = b'\x01\x03\x04\x06\x13\xff\xfcJ\xcf'
-    for index, byte in enumerate(data):
-        # print(byte)
-        if index == 3:
-            high1 = (hex(byte)[2:]).zfill(2)
-            print(high1)
-        if index == 4:
-            high2 = (hex(byte)[2:]).zfill(2)
-            print(high2)
-        if index == 5:
-            lowPos1 = (hex(byte)[2:]).zfill(2)
-            print(lowPos1)
-        if index == 6:
-            print(byte)
-            lowPos2 = (hex(byte)[2:]).zfill(2)
-            print(lowPos2)
-    # if res == 0:
-    #     ui.textBrowser.append(succeed('复位：%s' % card_res[res]))
-    # else:
-    #     ui.textBrowser.append(res)
+    res, value = sc.GAGetDiReverseCount()
+    print(res, value)
+    res = sc.GASetDiReverseCount()
+    print(res)
+    res, value = sc.GAGetDiReverseCount()
+    print(res, value)
+    # data = b'\x01\x03\x04\x06\x13\xff\xfcJ\xcf'
+    # for index, byte in enumerate(data):
+    #     # print(byte)
+    #     if index == 3:
+    #         high1 = (hex(byte)[2:]).zfill(2)
+    #         print(high1)
+    #     if index == 4:
+    #         high2 = (hex(byte)[2:]).zfill(2)
+    #         print(high2)
+    #     if index == 5:
+    #         lowPos1 = (hex(byte)[2:]).zfill(2)
+    #         print(lowPos1)
+    #     if index == 6:
+    #         print(byte)
+    #         lowPos2 = (hex(byte)[2:]).zfill(2)
+    #         print(lowPos2)
 
 
 class MyApp(QApplication):
@@ -1509,8 +1511,8 @@ if __name__ == '__main__':
     Pos_Thead._signal.connect(pos_signal_accept)
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    # ui.pushButton_rename.clicked.connect(test)
-    ui.pushButton_rename.clicked.connect(plan_rename)
+    ui.pushButton_rename.clicked.connect(test)
+    # ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)

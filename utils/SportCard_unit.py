@@ -119,20 +119,6 @@ class SportCard:
         nValue_c = ctypes.c_int(nValue)
         return self.card_dll.GA_SetExtDoBit(nCardIndex_c, nBitIndex_c, nValue_c)
 
-    ''' 指定位 输入
-     nBitIndex IO 位索引号(X0~X15)
-     pValue IO 输入值存放指针
-     nCardIndex 0 是主模块，扩展模块从 1 默认主模块
-    '''
-
-    def GAGetExtDiBit(self, nBitIndex: int = 1, nValue: int = 1, nCardIndex: int = 0):
-        self.card_dll.GA_GetExtDiBit.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.POINTER(ctypes.c_ushort)]
-        self.card_dll.GA_GetExtDiBit.restype = ctypes.c_int
-        nCardIndex_c = ctypes.c_int(nCardIndex)
-        nBitIndex_c = ctypes.c_int(nBitIndex)
-        nValue_c = ctypes.c_ushort(nValue)
-        return self.card_dll.GA_GetExtDiBit(nCardIndex_c, nBitIndex_c, nValue_c)
-
     ''' 读取规划位置
         nAxisNum 起始轴号，取值范围：[1,AXIS_MAX_COUNT]
         pValue 规划位置
@@ -163,3 +149,74 @@ class SportCard:
         nAxisNum_c = ctypes.c_short(nAxisNum)
         lPrfPos_c = ctypes.c_long(lPrfPos)
         return self.card_dll.GA_SetPrfPos(nAxisNum_c, lPrfPos_c)
+
+    """
+    GA_GetDiRaw 读取数字 IO 输入状态的原始值
+    GA_GetDiReverseCount 读取数字量输入信号的变化次数
+    GA_SetDiReverseCount 设置数字量输入信号的变化次数的初值
+    MC_GetExtDiValue 获取 IO 输入（包含主模块和扩展模块）
+    MC_GetExtDiBit 获取指定 IO 模块的指定位输入（包含主模块和扩展模块）
+    """
+
+    ''' GA_SetDiReverseCount 设置数字量输入信号的变化次数的初值
+    int GA_SetDiReverseCount(short nDiType,short diIndex,unsigned long ReserveCount,short
+        nCount)
+         nDiType 指定数字 IO 类型
+            MC_LIMIT_POSITIVE(该宏定义为 0) 正限位
+            MC_LIMIT_NEGATIVE(该宏定义为 1) 负限位
+            MC_ALARM(该宏定义为 2) 驱动报警
+            MC_HOME(该宏定义为 3) 原点开关
+            MC_GPI(该宏定义为 4) 通用输入
+            MC_ARRIVE(该宏定义为 5) 电机到位信号
+        diIndex 数字量输入的索引,取值范围：
+            nDiType= MC_LIMIT_POSITIVE 时：[0,7]
+            nDiType= MC_LIMIT_NEGATIVE 时：[0,7]
+            nDiType= MC_ALARM 时：[0,7]
+            nDiType= MC_HOME 时：[0,7]
+            nDiType= MC_GPI 时：[0,15]
+            nDiType= MC_ARRIVE 时：[0,7]
+        ReserveCount 设置的数字量输入的变化次数
+        nCount 设置变化次数的数字量输入的个数，默认为 1
+    '''
+
+    def GASetDiReverseCount(self, nDiType=4, diIndex=0, nReserveCount=0, nCount=1):
+        self.card_dll.GA_SetDiReverseCount.argtypes = [ctypes.c_short, ctypes.c_short, ctypes.c_ulong,
+                                                       ctypes.c_short]
+        self.card_dll.GA_SetDiReverseCount.restype = ctypes.c_int
+        nDiType_c = ctypes.c_short(nDiType)
+        diIndex_c = ctypes.c_short(diIndex)
+        nReserveCount_c = ctypes.c_ulong(nReserveCount)
+        nCount_c = ctypes.c_short(nCount)
+        return self.card_dll.GA_SetDiReverseCount(nDiType_c, diIndex_c, nReserveCount_c, nCount_c)
+
+    ''' GA_GetDiReverseCount 读取数字量输入信号的变化次数
+    int GA_GetDiReverseCount(short nDiType,short diIndex,unsigned long*pReserveCount,short
+        nCount=1)
+     diType 指定数字 IO 类型
+            MC_LIMIT_POSITIVE(该宏定义为 0) 正限位
+            MC_LIMIT_NEGATIVE(该宏定义为 1) 负限位
+            MC_ALARM(该宏定义为 2) 驱动报警
+            MC_HOME(该宏定义为 3) 原点开关
+            MC_GPI(该宏定义为 4) 通用输入
+            MC_ARRIVE(该宏定义为 5) 电机到位信号
+     diIndex 数字量输入的索引,取值范围：
+            nDiType= MC_LIMIT_POSITIVE 时：[0,7]
+            nDiType= MC_LIMIT_NEGATIVE 时：[0,7]
+            nDiType= MC_ALARM 时：[0,0]
+            nDiType= MC_HOME 时：[0,7]
+            nDiType= MC_GPI 时：[0,15]
+            nDiType= MC_ARRIVE 时：[0,7]
+    pReserveCount 读取的数字量输入的变化次数
+    nCount 读取变化次数的数字量输入的个数，默认为 1
+    '''
+
+    def GAGetDiReverseCount(self, nDiType=4, diIndex=0, nCount=1):
+        self.card_dll.GA_GetDiReverseCount.argtypes = [ctypes.c_short, ctypes.c_short, ctypes.POINTER(ctypes.c_ulong),
+                                                       ctypes.c_short]
+        self.card_dll.GA_GetDiReverseCount.restype = ctypes.c_int
+        nDiType_c = ctypes.c_short(nDiType)
+        diIndex_c = ctypes.c_short(diIndex)
+        pReserveCount_c = (ctypes.c_ulong * nCount)()
+        nCount_c = ctypes.c_short(nCount)
+        return self.card_dll.GA_GetDiReverseCount(nDiType_c, diIndex_c, pReserveCount_c, nCount_c), list(
+            pReserveCount_c)
