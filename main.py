@@ -1021,8 +1021,10 @@ class CmdThead(QThread):
                                             or int(plan_list[i][13]) == -1):
                                         break
                         else:
-                            if ui.checkBox_test.isChecked() or int(plan_list[i][13]) <= 0:
+                            if ui.checkBox_test.isChecked() or int(plan_list[i][13]) == 0:
                                 time.sleep(2)  # 测试期间停两秒切换下一个动作
+                            elif int(plan_list[i][13]) < 0:
+                                pass  # 负数则直接下一个动作
                             else:
                                 while True:  # 正式运行，等待球进入触发区域再进行下一个动作
                                     if int(plan_list[i][13]) in [action_location, action_location + 1]:
