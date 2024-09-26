@@ -1000,10 +1000,9 @@ class CmdThead(QThread):
                         except:
                             print("运动板运行出错！")
 
-                        while True:  # 等待动作完成
-                            k = 0
-
-                            if int(plan_list[i][11]) != 0:
+                        if int(plan_list[i][11]) != 0:
+                            while True:  # 等待动作完成
+                                k = 0
                                 Pos_Thead.run_flg = True
                                 for j in range(0, len(pValue)):  # 等待五轴到位
                                     if pValue[j] == int(plan_list[i][j + 2]):
@@ -1017,18 +1016,18 @@ class CmdThead(QThread):
                                         PlanCam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
                                         PlanCam_Thead.start()
                                     time.sleep(int(plan_list[i][11]))
-                                    if (int(plan_list[i][13]) == action_location or ui.checkBox_test.isChecked()
+                                    if (int(plan_list[i][13]) in [action_location,
+                                                                  action_location + 1] or ui.checkBox_test.isChecked()
                                             or int(plan_list[i][13]) == -1):
                                         break
+                        else:
+                            if ui.checkBox_test.isChecked() or int(plan_list[i][13]) <= 0:
+                                time.sleep(2)  # 测试期间停两秒切换下一个动作
                             else:
-                                if ui.checkBox_test.isChecked() or int(plan_list[i][13]) <= 0:
-                                    time.sleep(2)
-                                    break
-                                else:
-                                    while True:
-                                        if int(plan_list[i][13]) in [action_location, action_location + 1]:
-                                            break
-                                    break
+                                while True:  # 正式运行，等待球进入触发区域再进行下一个动作
+                                    if int(plan_list[i][13]) in [action_location, action_location + 1]:
+                                        break
+
                         if '_' in plan_list[i][14]:  # 切换场景
                             if PlanObs_Thead.isRunning():
                                 PlanObs_Thead.terminate()
