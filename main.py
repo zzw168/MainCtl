@@ -105,16 +105,19 @@ class ObsThead(QThread):
     def run(self) -> None:
         global cl_requst
         global cl_event
+        global flg_start
         try:
-            cl_requst = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
-            cl_event = obs.EventClient()  # 监听 链接配置在 config.toml 文件中
+            if not flg_start['obs']:
+                cl_requst = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
+                cl_event = obs.EventClient()  # 监听 链接配置在 config.toml 文件中
 
-            cl_event.callback.register(on_current_program_scene_changed)  # 场景变化
-            cl_event.callback.register(on_scene_item_enable_state_changed)  # 来源变化
-            cl_event.callback.register(on_record_state_changed)  # 录制状态
-            cl_event.callback.register(on_stream_state_changed)  # 直播流状态
-            cl_event.callback.register(on_get_stream_status)  # 直播流状态
-            self._signal.emit(succeed('OBS 启动成功！'))
+                cl_event.callback.register(on_current_program_scene_changed)  # 场景变化
+                cl_event.callback.register(on_scene_item_enable_state_changed)  # 来源变化
+                cl_event.callback.register(on_record_state_changed)  # 录制状态
+                cl_event.callback.register(on_stream_state_changed)  # 直播流状态
+                cl_event.callback.register(on_get_stream_status)  # 直播流状态
+                self._signal.emit(succeed('OBS 启动成功！'))
+                flg_start['obs'] = True
         except:
             self._signal.emit(fail('OBS 启动失败！'))
 
@@ -128,7 +131,8 @@ def obs_signal_accept(msg):
 
 
 def obs_open():
-    Obs_Thead.start()
+    if not Obs_Thead.isRunning():
+        Obs_Thead.start()
 
 
 class SourceThead(QThread):
@@ -206,7 +210,8 @@ def get_source_list(scene_name):  # 取得来源列表
     for item in res.scene_items:
         source_list.append([item['sceneItemEnabled'], item['sourceName'], item['sceneItemId']])
         # print(item)
-    Source_Thead.start()
+    if not Source_Thead.isRunning():
+        Source_Thead.start()
 
 
 def scenes_change():  # 变换场景
@@ -525,45 +530,42 @@ class UdpThead(QThread):
 
     def __init__(self):
         super(UdpThead, self).__init__()
-        self.run_flg = True
+        self.run_flg = False
 
     def run(self) -> None:
         global action_location
         global con_data
         while True:
             try:
-                if not self.run_flg:
-                    continue
                 # 3. 等待接收对方发送的数据
                 recv_data = udp_socket.recvfrom(10240)  # 1024表示本次接收的最大字节数
-                res = recv_data[0].decode('utf8')
-                # res = json.loads(res)
-                data_res = eval(res)  # str转换list
-                array_data = []
-                for i_ in range(1, len(data_res)):
-                    array_data.append(data_res[i_])
-                # print(array_data)
-                array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
-                if not array_data:
-                    continue
-                array_data = filter_max_value(array_data)
-                deal_rank(array_data)
-                action_location = int(ranking_array[0][6])  # 排第一位的球所在区域
-                if action_location == max_area_count - 2:
-                    print(action_location)
-                    PlanBallNum_Thead.start()
-                con_data = []
-                con_data1 = []
-                for k in range(0, len(ranking_array)):
-                    con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
-                    con_data.append(
-                        [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
-                         con_item['y1']])
-                    con_data1.append(
-                        [con_item['name'], con_item['position'], con_item['lapCount']])
-                # print(con_data)
-                to_num(con_data)
-                self._signal.emit(con_data1)
+                if self.run_flg:
+                    res = recv_data[0].decode('utf8')
+                    # res = json.loads(res)
+                    data_res = eval(res)  # str转换list
+                    self._signal.emit(data_res)
+                    array_data = []
+                    for i_ in range(1, len(data_res)):
+                        array_data.append(data_res[i_])
+                    # print(array_data)
+                    array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
+                    if not array_data:
+                        continue
+                    array_data = filter_max_value(array_data)
+                    deal_rank(array_data)
+                    action_location = int(ranking_array[0][6])  # 排第一位的球所在区域
+                    con_data = []
+                    # con_data1 = []
+                    for k in range(0, len(ranking_array)):
+                        con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
+                        con_data.append(
+                            [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
+                             con_item['y1']])
+                        # con_data1.append(
+                        #     [con_item['name'], con_item['position'], con_item['lapCount']])
+                    # print(con_data)
+                    to_num(con_data)
+                    # self._signal.emit(con_data1)
 
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
@@ -795,7 +797,7 @@ class PosThead(QThread):
 
     def run(self) -> None:
         global pValue
-        if flag_card_start:
+        if flg_start['card']:
             try:
                 while True:
                     if self.run_flg:
@@ -957,7 +959,7 @@ class CmdThead(QThread):
         self.run_flg = ''
 
     def run(self) -> None:
-        if flag_card_start:
+        if flg_start['card']:
             try:
                 if not ui.checkBox_test.isChecked():
                     self._signal.emit(succeed('轴复位开始！'))
@@ -974,10 +976,16 @@ class CmdThead(QThread):
                                 self._signal.emit(fail('%s轴 复位失败！' % data['nAxisNum']))
                                 return
                 self._signal.emit(succeed("运动流程：开始！"))
+                udp_thread.run_flg = True  # 开始处理图像识别数据
                 for i in range(0, len(plan_list)):
                     # print(plan_list)
                     if plan_list[i][0] == '1':  # 是否勾选
                         self._signal.emit(i)
+                        if ((action_location == max_area_count - 1)
+                                and (int(plan_list[i][13]) in [action_location, action_location + 1])):
+                            print(action_location)
+                            if not PlanBallNum_Thead.isRunning():  # 开启终点计数器
+                                PlanBallNum_Thead.start()
                         try:
                             sc.card_move(1, int(plan_list[i][2]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
                                          dDec=float(plan_list[i][9]),
@@ -1012,7 +1020,8 @@ class CmdThead(QThread):
                                 if PlanCam_Thead.isRunning():
                                     PlanCam_Thead.terminate()
                                 PlanCam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
-                                PlanCam_Thead.start()
+                                if not PlanCam_Thead.isRunning():
+                                    PlanCam_Thead.start()
                             time.sleep(int(plan_list[i][11]))
                             # while True:  # 等待动作完成
                             # k = 0
@@ -1041,11 +1050,11 @@ class CmdThead(QThread):
                                         break
 
                         if '_' in plan_list[i][14]:  # 切换场景
-                            if PlanObs_Thead.isRunning():
-                                PlanObs_Thead.terminate()
-                            PlanObs_Thead.plan_obs = plan_list[i][14]
-                            PlanObs_Thead.start()
+                            if not PlanObs_Thead.isRunning():
+                                PlanObs_Thead.plan_obs = plan_list[i][14]
+                                PlanObs_Thead.start()
 
+                udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
                 self._signal.emit(succeed("运动流程：完成！"))
             except:
                 self._signal.emit(fail("运动卡运行：出错！"))
@@ -1083,70 +1092,70 @@ class KeyListenerThead(QThread):
 
 
 def keyboard_release(key):
-    global flag_key_run
-    if ui.checkBox_key.isChecked() and flag_card_start:
+    global flg_key_run
+    if ui.checkBox_key.isChecked() and flg_start['card']:
         try:
             if key == key.up:
                 print('前')
                 # sc.card_stop(2)
-                flag_key_run = True
+                flg_key_run = True
                 sc.card_setpos(2, pValue[1] + 30000)
                 sc.card_update()
 
             if key == key.down:
                 print('后')
                 # sc.card_stop(2)
-                flag_key_run = True
+                flg_key_run = True
                 sc.card_setpos(2, pValue[1] - 30000)
                 sc.card_update()
 
             if key == key.left:
                 print('左')
                 # sc.card_stop(1)
-                flag_key_run = True
+                flg_key_run = True
                 sc.card_setpos(1, pValue[0] + 30000)
                 sc.card_update()
 
             if key == key.right:
                 print('右')
                 # sc.card_stop(1)
-                flag_key_run = True
+                flg_key_run = True
                 sc.card_setpos(1, pValue[0] - 30000)
                 sc.card_update()
 
             if key == key.insert:
                 print('上')
-                flag_key_run = True
+                flg_key_run = True
                 sc.card_setpos(3, pValue[2] - 30000)
                 sc.card_update()
 
             if key == key.delete:
                 print('下')
-                flag_key_run = True
+                flg_key_run = True
                 sc.card_setpos(3, pValue[2] + 30000)
                 sc.card_update()
 
             if key == key.home:
                 print('头左')
-                flag_key_run = True
+                flg_key_run = True
                 sc.card_setpos(4, pValue[3] + 30000)
                 sc.card_update()
 
             if key == key.end:
                 print('头右')
-                flag_key_run = True
+                flg_key_run = True
                 sc.card_setpos(4, pValue[3] - 30000)
                 sc.card_update()
 
             if key == key.page_up:
                 print('头下')
-                flag_key_run = True
+                flg_key_run = True
                 sc.card_setpos(5, pValue[4] - 30000)
                 sc.card_update()
 
             if key == key.page_down:
                 print('头下')
-                flag_key_run = True
+                flg_key_run = True
                 sc.card_setpos(5, pValue[4] + 30000)
                 sc.card_update()
 
@@ -1165,71 +1174,71 @@ def keyboard_release(key):
 
 
 def keyboard_press(key):
-    global flag_key_run
-    if ui.checkBox_key.isChecked() and flag_card_start:
+    global flg_key_run
+    if ui.checkBox_key.isChecked() and flg_start['card']:
         try:
             Pos_Thead.run_flg = True
             if key == key.up:
                 print('前')
-                if flag_key_run:
+                if flg_key_run:
                     sc.card_move(2, pos=2000000)
                     sc.card_update()
-                    flag_key_run = False
+                    flg_key_run = False
 
             elif key == key.down:
                 print('后')
-                if flag_key_run:
+                if flg_key_run:
                     sc.card_move(2, pos=-2000000)
                     sc.card_update()
-                    flag_key_run = False
+                    flg_key_run = False
             elif key == key.left:
                 print('左')
-                if flag_key_run:
+                if flg_key_run:
                     sc.card_move(1, pos=2000000)
                     sc.card_update()
-                    flag_key_run = False
+                    flg_key_run = False
             elif key == key.right:
                 print('右')
-                if flag_key_run:
+                if flg_key_run:
                     sc.card_move(1, pos=-2000000)
                     sc.card_update()
-                    flag_key_run = False
+                    flg_key_run = False
             elif key == key.insert:
                 print('上')
-                if flag_key_run:
+                if flg_key_run:
                     sc.card_move(3, pos=-2000000)
                     sc.card_update()
-                    flag_key_run = False
+                    flg_key_run = False
             elif key == key.delete:
                 print('下')
-                if flag_key_run:
+                if flg_key_run:
                     sc.card_move(3, pos=2000000)
                     sc.card_update()
-                    flag_key_run = False
+                    flg_key_run = False
             elif key == key.home:
                 print('头左')
-                if flag_key_run:
+                if flg_key_run:
                     sc.card_move(4, pos=2000000)
                     sc.card_update()
-                    flag_key_run = False
+                    flg_key_run = False
             elif key == key.end:
                 print('头右')
-                if flag_key_run:
+                if flg_key_run:
                     sc.card_move(4, pos=-2000000)
                     sc.card_update()
-                    flag_key_run = False
+                    flg_key_run = False
             elif key == key.page_up:
                 print('头下')
-                if flag_key_run:
+                if flg_key_run:
                     sc.card_move(5, pos=-2000000)
                     sc.card_update()
-                    flag_key_run = False
+                    flg_key_run = False
             elif key == key.page_down:
                 print('头上')
-                if flag_key_run:
+                if flg_key_run:
                     sc.card_move(5, pos=2000000)
                     sc.card_update()
-                    flag_key_run = False
+                    flg_key_run = False
         except AttributeError:
             # print(key)
             pass
@@ -1365,24 +1374,29 @@ def plan_refresh():  # 刷新方案列表
 
 # 打开运动卡
 def card_start():
-    global flag_card_start
+    global flg_start
     cardnum = ui.lineEdit_CarNo.text()
-    if cardnum.isdigit():
+    if cardnum.isdigit() and not (flg_start['card']):
         res = sc.card_open(int(cardnum))
         print(res)
         if res == 0:
-            flag_card_start = True
+            flg_start['card'] = True
             ui.textBrowser.append(succeed('启动板卡：%s' % card_res[res]))
-            Pos_Thead.start()
+            if not Pos_Thead.isRunning():
+                Pos_Thead.start()
         else:
             ui.textBrowser.append(res)
     else:
         ui.textBrowser.append(fail('请输入正确的卡号~！'))
-    s485_flag = s485.cam_open()
-    if s485_flag == True:
-        ui.textBrowser.append(succeed('串口链接：%s' % s485_flag))
+
+    if not flg_start['s485']:
+        flg_start['s485'] = s485.cam_open()
+        ui.textBrowser.append(succeed('串口链接：%s' % flg_start['s485']))
     else:
-        ui.textBrowser.append(fail('串口链接：%s' % s485_flag))
+        ui.textBrowser.append(fail('串口链接：%s' % flg_start['s485']))
+    if not flg_start['obs']:
+        if not Obs_Thead.isRunning():
+            Obs_Thead.start()
 
 
 def cmd_run():
@@ -1395,7 +1409,8 @@ def cmd_run():
 
 
 def card_reset():
-    Axis_Thead.start()
+    if not Axis_Thead.isRunning():
+        Axis_Thead.start()
 
 
 # 实时轴位置入表
@@ -1547,8 +1562,8 @@ if __name__ == '__main__':
     plan_all = {}  # 所有方案资料
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
     p_now = 0  # 保存方案运行位置
-    flag_key_run = True  # 键盘控制标志
-    flag_card_start = False  # 运动板卡启动标志
+    flg_key_run = True  # 键盘控制标志
+    flg_start = {'card': False, 's485': False, 'obs': False}  # 各硬件启动标志
 
     load_plan_yaml()
     ui.lineEdit_CarNo.setText(str(plan_all['cardNo']))
@@ -1575,8 +1590,8 @@ if __name__ == '__main__':
     Pos_Thead._signal.connect(pos_signal_accept)
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    ui.pushButton_rename.clicked.connect(test)
-    # ui.pushButton_rename.clicked.connect(plan_rename)
+    # ui.pushButton_rename.clicked.connect(test)
+    ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
