@@ -1345,19 +1345,31 @@ def plan_refresh():  # 刷新方案列表
         table.setCellWidget(num, 0, cb)
         if plan[0] == '1':
             table.cellWidget(num, 0).setChecked(True)
-        for i in range(1, len(plan)):
-            if i == 14 and ('_' in plan[i]):
-                cb = QCheckBox()
-                cb.setStyleSheet('QCheckBox{margin:6px};')
-                obs_check, obs_name = str.split(plan[i], '_')
-                cb.setText(obs_name)
-                if int(obs_check) == 1: cb.setChecked(True)
-                table.setCellWidget(num, 14, cb)
+        for col in range(1, len(plan)):
+            if col == 14 and ('_' in plan[col]):
+                obs_check, obs_name = str.split(plan[col], '_')
+                if table.cellWidget(num, col):
+                    table.cellWidget(num, col).setText(obs_name)
+                    if int(obs_check) == 1:
+                        table.cellWidget(num, col).setChecked(True)
+                    else:
+                        table.cellWidget(num, col).setChecked(False)
+                else:
+                    if table.item(num, col):
+                        table.item(num, col).setText('')
+                    cb = QCheckBox()
+                    cb.setStyleSheet('QCheckBox{margin:6px};')
+                    cb.setText(obs_name)
+                    if int(obs_check) == 1:
+                        cb.setChecked(True)
+                    table.setCellWidget(num, 14, cb)
             else:
-                item = QTableWidgetItem(str(plan[i]))
+                if table.cellWidget(num, col):
+                    table.removeCellWidget(num, col)
+                item = QTableWidgetItem(str(plan[col]))
                 item.setTextAlignment(Qt.AlignCenter)
                 # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                table.setItem(num, i, item)
+                table.setItem(num, col, item)
 
 
 # 打开运动卡
