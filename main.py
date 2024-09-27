@@ -680,10 +680,15 @@ class MyUi(QMainWindow, Ui_MainWindow):
 
         tb_Step = self.tableWidget_Step
         tb_Step.horizontalHeader().resizeSection(0, 10)
-        tb_Step.horizontalHeader().resizeSection(1, 30)
+        tb_Step.horizontalHeader().resizeSection(1, 50)
         tb_Step.horizontalHeader().resizeSection(7, 50)
         tb_Step.horizontalHeader().resizeSection(8, 50)
         tb_Step.horizontalHeader().resizeSection(9, 50)
+        tb_Step.horizontalHeader().resizeSection(10, 60)
+        tb_Step.horizontalHeader().resizeSection(11, 60)
+        tb_Step.horizontalHeader().resizeSection(12, 60)
+        tb_Step.horizontalHeader().resizeSection(13, 60)
+        tb_Step.horizontalHeader().resizeSection(14, 60)
         # tb_Step.setColumnHidden(3, True)
         tb_Step.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_Step.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
