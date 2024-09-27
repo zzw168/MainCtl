@@ -549,7 +549,8 @@ class UdpThead(QThread):
                 array_data = filter_max_value(array_data)
                 deal_rank(array_data)
                 action_location = int(ranking_array[0][6])  # 排第一位的球所在区域
-                if action_location == max_area_count - 1:
+                if action_location == max_area_count - 2:
+                    print(action_location)
                     PlanBallNum_Thead.start()
                 con_data = []
                 con_data1 = []
@@ -862,7 +863,7 @@ class PlanBallNumThead(QThread):
                         self._signal.emit(num)
                         if num >= 10:
                             break
-                        elif time.time() - time_now > 30:
+                        elif time.time() - time_now > 60:
                             sc.GASetDiReverseCount()  # 输入次数归0
                             break
                     time.sleep(0.01)
@@ -958,19 +959,20 @@ class CmdThead(QThread):
     def run(self) -> None:
         if flag_card_start:
             try:
-                self._signal.emit(succeed('轴复位开始！'))
-                datas = s485.get_axis_pos()
-                print(datas)
-                if datas:
-                    for data in datas:
-                        if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
-                            data['highPos'] = -data['highPos']
-                        res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
-                        if res == 0:
-                            self._signal.emit(succeed('%s轴 复位完成！' % data['nAxisNum']))
-                        else:
-                            self._signal.emit(fail('%s轴 复位失败！' % data['nAxisNum']))
-                            return
+                if not ui.checkBox_test.isChecked():
+                    self._signal.emit(succeed('轴复位开始！'))
+                    datas = s485.get_axis_pos()
+                    print(datas)
+                    if datas:
+                        for data in datas:
+                            if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
+                                data['highPos'] = -data['highPos']
+                            res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+                            if res == 0:
+                                self._signal.emit(succeed('%s轴 复位完成！' % data['nAxisNum']))
+                            else:
+                                self._signal.emit(fail('%s轴 复位失败！' % data['nAxisNum']))
+                                return
                 self._signal.emit(succeed("运动流程：开始！"))
                 for i in range(0, len(plan_list)):
                     # print(plan_list)
@@ -1060,7 +1062,7 @@ def signal_accept(message):
             tb_step = ui.tableWidget_Step
             col_num = tb_step.columnCount()
             # print(col_num)
-            for i in range(1, col_num - 1):
+            for i in range(1, col_num - 2):
                 tb_step.item(p_now, i).setBackground(QBrush(QColor(255, 255, 255)))
                 tb_step.item(message, i).setBackground(QBrush(QColor(255, 0, 255)))
         p_now = message
