@@ -1027,7 +1027,7 @@ class CmdThead(QThread):
                                 if int(plan_list[i][13]) in [action_location, action_location + 1]:
                                     break
 
-                        if int(plan_list[i][11]) != 0:
+                        if int(plan_list[i][11]) != 0:  # 摄像头延时，也可以用作动作延时
                             if int(plan_list[i][10]) != 0:  # 摄像头缩放
                                 PlanCam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
                                 if not PlanCam_Thead.isRunning():
