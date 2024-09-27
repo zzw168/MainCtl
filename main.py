@@ -861,13 +861,16 @@ class PlanBallNumThead(QThread):
         time_now = time.time()
         try:
             res = sc.GASetDiReverseCount()  # 输入次数归0
+            num_old = 0
             if res == 0:
                 while True:
                     res, value = sc.GAGetDiReverseCount()
                     # print(res, value)
                     if res == 0:
                         num = int(value[0] / 2)
-                        self._signal.emit(num)
+                        if num != num_old:
+                            self._signal.emit(num)
+                            num_old = num
                         if num >= 10:
                             break
                         elif time.time() - time_now > 60:
