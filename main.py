@@ -1426,13 +1426,13 @@ def obs_to_table():
     if scene:
         tb_step = ui.tableWidget_Step
         row_num = tb_step.currentRow()
-        if tb_step.item(row_num, 14):
-            tb_step.item(row_num, 14).setText('')
         if row_num > -1:
             if tb_step.cellWidget(row_num, 14):
                 tb_step.cellWidget(row_num, 14).setText(scene)
                 # tb_step.cellWidget(row_num, 14).setChecked(False)
             else:
+                if tb_step.item(row_num, 14):
+                    tb_step.item(row_num, 14).setText('')
                 cb = QCheckBox()
                 cb.setText(scene)
                 cb.setStyleSheet('QCheckBox{margin:6px};')
