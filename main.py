@@ -525,12 +525,15 @@ class UdpThead(QThread):
 
     def __init__(self):
         super(UdpThead, self).__init__()
+        self.run_flg = True
 
     def run(self) -> None:
         global action_location
         global con_data
         while True:
             try:
+                if not self.run_flg:
+                    continue
                 # 3. 等待接收对方发送的数据
                 recv_data = udp_socket.recvfrom(10240)  # 1024表示本次接收的最大字节数
                 res = recv_data[0].decode('utf8')
@@ -798,7 +801,7 @@ class PosThead(QThread):
                         for i in range(0, 5):
                             (res, pValue[i], pClock) = sc.get_pos(i + 1)
                         self._signal.emit(pValue)
-                    time.sleep(0.01)
+                    time.sleep(0.1)
             except:
                 pass
 
@@ -1001,22 +1004,30 @@ class CmdThead(QThread):
                             print("运动板运行出错！")
 
                         if int(plan_list[i][11]) != 0:
-                            while True:  # 等待动作完成
-                                k = 0
-                                Pos_Thead.run_flg = True
-                                for j in range(0, len(pValue)):  # 等待五轴到位
-                                    if pValue[j] == int(plan_list[i][j + 2]):
-                                        k += 1
-                                if k == 5:
-                                    Pos_Thead.run_flg = False
-                                    # 摄像头缩放
-                                    if int(plan_list[i][10]) != 0 and int(plan_list[i][10]) != 0:
-                                        if PlanCam_Thead.isRunning():
-                                            PlanCam_Thead.terminate()
-                                        PlanCam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
-                                        PlanCam_Thead.start()
-                                    time.sleep(int(plan_list[i][11]))
-                                    break
+                            # 摄像头缩放
+                            if int(plan_list[i][10]) != 0:
+                                time.sleep(3)  # 等待三秒动作走完
+                                if PlanCam_Thead.isRunning():
+                                    PlanCam_Thead.terminate()
+                                PlanCam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
+                                PlanCam_Thead.start()
+                            time.sleep(int(plan_list[i][11]))
+                            # while True:  # 等待动作完成
+                            # k = 0
+                            # Pos_Thead.run_flg = True
+                            # for j in range(0, len(pValue)):  # 等待五轴到位
+                            #     if pValue[j] == int(plan_list[i][j + 2]):
+                            #         k += 1
+                            # if k == 5:
+                            #     Pos_Thead.run_flg = False
+                            #     # 摄像头缩放
+                            #     if int(plan_list[i][10]) != 0 and int(plan_list[i][10]) != 0:
+                            #         if PlanCam_Thead.isRunning():
+                            #             PlanCam_Thead.terminate()
+                            #         PlanCam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
+                            #         PlanCam_Thead.start()
+                            #     time.sleep(int(plan_list[i][11]))
+                            #     break
                         else:
                             if ui.checkBox_test.isChecked() or int(plan_list[i][13]) == 0:
                                 time.sleep(2)  # 测试期间停两秒切换下一个动作
@@ -1454,6 +1465,10 @@ def wakeup_server():
         time.sleep(300)
 
 
+def ballnum2zero():
+    ui.lineEdit_ball_num.setText('0')
+
+
 def test():
     PlanBallNum_Thead.start()
     # get_picture('终点')
@@ -1566,6 +1581,7 @@ if __name__ == '__main__':
     ui.pushButton_ToTable.clicked.connect(p_to_table)
     ui.pushButton_Obs2Table.clicked.connect(obs_to_table)
     ui.pushButton_Obs_delete.clicked.connect(obs_remove_table)
+    ui.pushButton_ball_clean.clicked.connect(ballnum2zero)
 
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
