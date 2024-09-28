@@ -1346,8 +1346,11 @@ def plan_refresh():  # 刷新方案列表
                     table.removeCellWidget(num, col)
                 if table.item(num, col):
                     table.item(num, col).setText('')
-                if '_' in plan[col]:
-                    obs_check, obs_name = str.split(plan[col], '_')
+                s_num = str(plan[col]).find('_')
+                if s_num != -1:
+                    obs_check = str(plan[col])[0]
+                    obs_name = str(plan[col])[s_num + 1:]
+                    print(obs_check, obs_name)
                     cb = QCheckBox()
                     cb.setStyleSheet('QCheckBox{margin:6px};')
                     cb.setText(obs_name)
@@ -1355,7 +1358,7 @@ def plan_refresh():  # 刷新方案列表
                         cb.setChecked(True)
                     table.setCellWidget(num, 14, cb)
                 else:
-                    item = QTableWidgetItem(str(plan[col]))
+                    item = QTableWidgetItem('0')
                     item.setTextAlignment(Qt.AlignCenter)
                     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
                     table.setItem(num, col, item)
@@ -1463,6 +1466,7 @@ def table_change():
 
 
 def wakeup_server():
+    global flg_start
     form_data = {
         'requestType': 'set_run_toggle',
         'run_toggle': '1',
@@ -1471,6 +1475,8 @@ def wakeup_server():
         try:
             r = requests.post(url=wakeup_addr, data=form_data)
             print(r.text)
+            if r == 'ok':
+                flg_start['ai'] = True
         except:
             print('图像识别主机通信失败！')
         time.sleep(300)
@@ -1557,7 +1563,8 @@ if __name__ == '__main__':
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
     p_now = 0  # 保存方案运行位置
     flg_key_run = True  # 键盘控制标志
-    flg_start = {'card': False, 's485': False, 'obs': False}  # 各硬件启动标志
+    flg_start = {'card': False, 's485': False, 'obs': False, 'ai': False, 'ai_end': False, 'server1': False,
+                 'server2': False}  # 各硬件启动标志
 
     load_plan_yaml()
     ui.lineEdit_CarNo.setText(str(plan_all['cardNo']))
