@@ -1422,7 +1422,7 @@ def obs_to_table():
         if row_num > -1:
             if tb_step.cellWidget(row_num, 14):
                 tb_step.cellWidget(row_num, 14).setText(scene)
-                # tb_step.cellWidget(row_num, 14).setChecked(False)
+                tb_step.cellWidget(row_num, 14).setChecked(False)
             else:
                 if tb_step.item(row_num, 14):
                     tb_step.item(row_num, 14).setText('')
@@ -1583,8 +1583,8 @@ if __name__ == '__main__':
     Pos_Thead._signal.connect(pos_signal_accept)
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    ui.pushButton_rename.clicked.connect(test)
-    # ui.pushButton_rename.clicked.connect(plan_rename)
+    # ui.pushButton_rename.clicked.connect(test)
+    ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)

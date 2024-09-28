@@ -1254,10 +1254,12 @@ class Ui_MainWindow(object):
         self.gridLayout_28.addWidget(self.textBrowser_background_data, 0, 0, 1, 1)
         self.gridLayout_32.addWidget(self.groupBox_8, 0, 0, 1, 1)
         self.groupBox_7 = QtWidgets.QGroupBox(self.frame_11)
+        self.groupBox_7.setMaximumSize(QtCore.QSize(500, 16777215))
         self.groupBox_7.setObjectName("groupBox_7")
         self.gridLayout_4 = QtWidgets.QGridLayout(self.groupBox_7)
         self.gridLayout_4.setObjectName("gridLayout_4")
         self.tableWidget_Ranking = QtWidgets.QTableWidget(self.groupBox_7)
+        self.tableWidget_Ranking.setMinimumSize(QtCore.QSize(0, 330))
         self.tableWidget_Ranking.setMaximumSize(QtCore.QSize(500, 16777215))
         self.tableWidget_Ranking.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.tableWidget_Ranking.setObjectName("tableWidget_Ranking")
@@ -1287,6 +1289,7 @@ class Ui_MainWindow(object):
         self.textBrowser_msg_Ranking.setObjectName("textBrowser_msg_Ranking")
         self.gridLayout_29.addWidget(self.textBrowser_msg_Ranking, 10, 0, 1, 1)
         self.widget_12 = QtWidgets.QWidget(self.groupBox_20)
+        self.widget_12.setMinimumSize(QtCore.QSize(0, 180))
         self.widget_12.setObjectName("widget_12")
         self.gridLayout_30 = QtWidgets.QGridLayout(self.widget_12)
         self.gridLayout_30.setObjectName("gridLayout_30")
@@ -1338,7 +1341,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget_Ranking.setCurrentIndex(1)
+        self.tabWidget_Ranking.setCurrentIndex(2)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
