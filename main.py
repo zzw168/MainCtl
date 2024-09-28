@@ -1380,7 +1380,7 @@ def card_start():
         else:
             ui.textBrowser.append(res)
     else:
-        ui.textBrowser.append(fail('请输入正确的卡号~！'))
+        ui.textBrowser.append(fail('运动卡已链接~！'))
 
     if not flg_start['s485']:
         flg_start['s485'] = s485.cam_open()
