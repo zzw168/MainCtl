@@ -1119,13 +1119,13 @@ def keyboard_release(key):
             if key == key.home:
                 print('头左')
                 flg_key_run = True
-                sc.card_setpos(4, pValue[3] + 30000)
+                sc.card_setpos(4, pValue[3] - 30000)
                 sc.card_update()
 
             if key == key.end:
                 print('头右')
                 flg_key_run = True
-                sc.card_setpos(4, pValue[3] - 30000)
+                sc.card_setpos(4, pValue[3] + 30000)
                 sc.card_update()
 
             if key == key.page_up:
@@ -1199,13 +1199,13 @@ def keyboard_press(key):
             elif key == key.home:
                 print('头左')
                 if flg_key_run:
-                    sc.card_move(4, pos=2000000)
+                    sc.card_move(4, pos=-2000000)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.end:
                 print('头右')
                 if flg_key_run:
-                    sc.card_move(4, pos=-2000000)
+                    sc.card_move(4, pos=2000000)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_up:
