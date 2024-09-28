@@ -394,6 +394,7 @@ def load_ballsort_yaml():
     global tcpServer_addr
     global httpServer_addr
     global udpClient_addr
+    global wakeup_addr
     file = "./ballsort_config.yml"
     if os.path.exists(file):
         f = open(file, 'r', encoding='utf-8')
@@ -407,6 +408,7 @@ def load_ballsort_yaml():
         tcpServer_addr = (f_['tcpServer_addr'][0], f_['tcpServer_addr'][1])
         httpServer_addr = (f_['httpServer_addr'][0], f_['httpServer_addr'][1])
         udpClient_addr = (f_['udpClient_addr'][0], f_['udpClient_addr'][1])
+        wakeup_addr = (f_['wakeup_addr'])
 
         ui.lineEdit_lap_Ranking.setText(str(max_lap_count))
         ui.lineEdit_region_Ranking.setText(str(max_area_count))
@@ -426,24 +428,24 @@ def save_ballsort_yaml():
         f = open(file, 'r', encoding='utf-8')
         ballsort_conf = yaml.safe_load(f)
         f.close()
-        if (ui.lineEdit_lap.text().isdigit()
-                and ui.lineEdit_region.text().isdigit()
-                and ui.lineEdit_time.text().isdigit()):
-            ballsort_conf['max_lap_count'] = int(ui.lineEdit_lap.text())
-            ballsort_conf['max_area_count'] = int(ui.lineEdit_region.text())
-            ballsort_conf['reset_time'] = int(ui.lineEdit_time.text())
-            max_lap_count = int(ui.lineEdit_lap.text())
-            max_area_count = int(ui.lineEdit_region.text())
-            reset_time = int(ui.lineEdit_time.text())
+        if (ui.lineEdit_lap_Ranking.text().isdigit()
+                and ui.lineEdit_region_Ranking.text().isdigit()
+                and ui.lineEdit_time_Ranking.text().isdigit()):
+            ballsort_conf['max_lap_count'] = int(ui.lineEdit_lap_Ranking.text())
+            ballsort_conf['max_area_count'] = int(ui.lineEdit_region_Ranking.text())
+            ballsort_conf['reset_time'] = int(ui.lineEdit_time_Ranking.text())
+            max_lap_count = int(ui.lineEdit_lap_Ranking.text())
+            max_area_count = int(ui.lineEdit_region_Ranking.text())
+            reset_time = int(ui.lineEdit_time_Ranking.text())
             # print(ballsort_conf)
             with open(file, "w", encoding="utf-8") as f:
                 yaml.dump(ballsort_conf, f, allow_unicode=True)
-                ui.textBrowser_msg.setText(
-                    "%s,%s,%s 保存服务器完成" % (ballsort_conf['max_lap_count'],
-                                                 ballsort_conf['max_area_count'],
-                                                 ballsort_conf['reset_time']))
+                ui.textBrowser_msg_Ranking.setText(
+                    succeed("%s,%s,%s 保存服务器完成" % (ballsort_conf['max_lap_count'],
+                                                         ballsort_conf['max_area_count'],
+                                                         ballsort_conf['reset_time'])))
         else:
-            ui.textBrowser_msg.setText("错误，只能输入数字！")
+            ui.textBrowser_msg_Ranking.setText(fail("错误，只能输入数字！"))
 
 
 def init_ranking_table():

@@ -1,14 +1,14 @@
 color_ch:
-  yellow: 黄
-  blue: 蓝
-  red: 红
-  purple: 紫
-  orange: 橙
-  green: 绿
   Brown: 棕
-  black: 黑
-  pink: 粉
   White: 白
+  black: 黑
+  blue: 蓝
+  green: 绿
+  orange: 橙
+  pink: 粉
+  purple: 紫
+  red: 红
+  yellow: 黄
 httpServer_addr:
 - 0.0.0.0
 - 8081
@@ -113,8 +113,8 @@ init_array:
   - 0
   - 0
   - 0
-max_lap_count: 2
 max_area_count: 39
+max_lap_count: 2
 reset_time: 60
 tcpServer_addr:
 - 0.0.0.0
@@ -125,3 +125,4 @@ udpClient_addr:
 udpServer_addr:
 - 0.0.0.0
 - 19734
+wakeup_addr: http://192.168.0.110:8080
