@@ -1239,25 +1239,25 @@ def save_plan():
     global plan_all
     table = ui.tableWidget_Step
     row_num = table.rowCount()
-    col_num = table.columnCount()
+    # col_num = table.columnCount()
     if row_num == 0:
         return
     plan_list = []
     local_list = []
-    for i in range(0, row_num):
-        if table.cellWidget(i, 0):
-            if table.cellWidget(i, 0).isChecked():
+    for row in range(0, row_num):
+        if table.cellWidget(row, 0):
+            if table.cellWidget(row, 0).isChecked():
                 local_list.append("1")
             else:
                 local_list.append("0")
-        for j in range(1, 14):
+        for col in range(1, 14):
             local_list.append(
-                "0" if (not table.item(i, j) or table.item(i, j).text() == '') else table.item(i, j).text())
-        if table.cellWidget(i, 14):
-            if table.cellWidget(i, 14).isChecked():
-                local_list.append(str("1_%s" % table.cellWidget(i, 14).text()))
+                "0" if (not table.item(row, col) or table.item(row, col).text() == '') else table.item(row, col).text())
+        if table.cellWidget(row, 14):
+            if table.cellWidget(row, 14).isChecked():
+                local_list.append(str("1_%s" % table.cellWidget(row, 14).text()))
             else:
-                local_list.append(str("0_%s" % table.cellWidget(i, 14).text()))
+                local_list.append(str("0_%s" % table.cellWidget(row, 14).text()))
         else:
             local_list.append('0')
         plan_list.append(local_list)
