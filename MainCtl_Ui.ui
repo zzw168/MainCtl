@@ -2643,6 +2643,65 @@
           <string>图像识别</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_26">
+          <item row="1" column="0">
+           <widget class="QFrame" name="frame_12">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_33">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="groupBox_5">
+               <property name="title">
+                <string>截图显示</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_15">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_picture">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QGroupBox" name="groupBox_9">
+               <property name="maximumSize">
+                <size>
+                 <width>300</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="title">
+                <string>前端排名状态</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_27">
+                <item row="0" column="0">
+                 <widget class="QTextBrowser" name="textBrowser_net_data">
+                  <property name="maximumSize">
+                   <size>
+                    <width>300</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
           <item row="0" column="0">
            <widget class="QFrame" name="frame_11">
             <property name="maximumSize">
@@ -2651,13 +2710,7 @@
               <height>500</height>
              </size>
             </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_4">
+            <layout class="QGridLayout" name="gridLayout_32">
              <property name="topMargin">
               <number>0</number>
              </property>
@@ -2665,54 +2718,72 @@
               <number>0</number>
              </property>
              <item row="0" column="0">
-              <widget class="QTextBrowser" name="textBrowser_background_data"/>
-             </item>
-             <item row="0" column="1" rowspan="2">
-              <widget class="QTableWidget" name="tableWidget_Ranking">
-               <property name="maximumSize">
-                <size>
-                 <width>500</width>
-                 <height>16777215</height>
-                </size>
+              <widget class="QGroupBox" name="groupBox_8">
+               <property name="title">
+                <string>识别数据</string>
                </property>
-               <property name="selectionBehavior">
-                <enum>QAbstractItemView::SelectRows</enum>
-               </property>
-               <attribute name="horizontalHeaderDefaultSectionSize">
-                <number>80</number>
-               </attribute>
-               <attribute name="horizontalHeaderStretchLastSection">
-                <bool>true</bool>
-               </attribute>
-               <column>
-                <property name="text">
-                 <string>颜色</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>区域</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>圈数</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>x</string>
-                </property>
-               </column>
-               <column>
-                <property name="text">
-                 <string>y</string>
-                </property>
-               </column>
+               <layout class="QGridLayout" name="gridLayout_28">
+                <item row="0" column="0">
+                 <widget class="QTextBrowser" name="textBrowser_background_data"/>
+                </item>
+               </layout>
               </widget>
              </item>
-             <item row="0" column="2" rowspan="2">
-              <widget class="QFrame" name="frame_20">
+             <item row="0" column="1">
+              <widget class="QGroupBox" name="groupBox_7">
+               <property name="title">
+                <string>排名</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_4">
+                <item row="0" column="0">
+                 <widget class="QTableWidget" name="tableWidget_Ranking">
+                  <property name="maximumSize">
+                   <size>
+                    <width>500</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="selectionBehavior">
+                   <enum>QAbstractItemView::SelectRows</enum>
+                  </property>
+                  <attribute name="horizontalHeaderDefaultSectionSize">
+                   <number>80</number>
+                  </attribute>
+                  <attribute name="horizontalHeaderStretchLastSection">
+                   <bool>true</bool>
+                  </attribute>
+                  <column>
+                   <property name="text">
+                    <string>颜色</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>区域</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>圈数</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>x</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>y</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QGroupBox" name="groupBox_20">
                <property name="minimumSize">
                 <size>
                  <width>300</width>
@@ -2725,11 +2796,8 @@
                  <height>16777215</height>
                 </size>
                </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
+               <property name="title">
+                <string>排名设置</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_29">
                 <item row="10" column="0">
@@ -2813,35 +2881,6 @@
                  </widget>
                 </item>
                </layout>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QFrame" name="frame_12">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_15">
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_picture">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QTextBrowser" name="textBrowser_net_data">
-               <property name="maximumSize">
-                <size>
-                 <width>300</width>
-                 <height>16777215</height>
-                </size>
-               </property>
               </widget>
              </item>
             </layout>
