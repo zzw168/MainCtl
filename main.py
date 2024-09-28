@@ -555,23 +555,18 @@ class UdpThead(QThread):
                     deal_rank(array_data)
                     action_location = int(ranking_array[0][6])  # 排第一位的球所在区域
                     con_data = []
-                    # con_data1 = []
                     for k in range(0, len(ranking_array)):
                         con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
                         con_data.append(
                             [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
                              con_item['y1']])
-                        # con_data1.append(
-                        #     [con_item['name'], con_item['position'], con_item['lapCount']])
-                    # print(con_data)
                     to_num(con_data)
-                    # self._signal.emit(con_data1)
 
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
                 self._signal.emit("UDP数据接收出错:%s" % e)
         # 5. 关闭套接字
-        # udp_socket.close()
+        udp_socket.close()
 
 
 def udp_signal_accept(msg):
@@ -857,10 +852,10 @@ class PlanBallNumThead(QThread):
         self.camitem = [5, 5]  # [运行挡位,持续时间]
 
     def run(self) -> None:
-        print('接收运动卡输入信息！')
-        time_now = time.time()
+        print('正在接收运动卡输入信息！')
         try:
             res = sc.GASetDiReverseCount()  # 输入次数归0
+            time_now = time.time()
             num_old = 0
             if res == 0:
                 while True:
@@ -1588,8 +1583,8 @@ if __name__ == '__main__':
     Pos_Thead._signal.connect(pos_signal_accept)
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    # ui.pushButton_rename.clicked.connect(test)
-    ui.pushButton_rename.clicked.connect(plan_rename)
+    ui.pushButton_rename.clicked.connect(test)
+    # ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
