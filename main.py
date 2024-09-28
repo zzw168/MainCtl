@@ -1339,26 +1339,25 @@ def plan_refresh():  # 刷新方案列表
         if plan[0] == '1':
             table.cellWidget(num, 0).setChecked(True)
         for col in range(1, len(plan)):
-            if col == 14 and ('_' in plan[col]):
-                obs_check, obs_name = str.split(plan[col], '_')
+            if col == 14:
                 if table.cellWidget(num, col):
-                    table.cellWidget(num, col).setText(obs_name)
-                    if int(obs_check) == 1:
-                        table.cellWidget(num, col).setChecked(True)
-                    else:
-                        table.cellWidget(num, col).setChecked(False)
-                else:
-                    if table.item(num, col):
-                        table.item(num, col).setText('')
+                    table.removeCellWidget(num, col)
+                if table.item(num, col):
+                    table.item(num, col).setText('')
+                if '_' in plan[col]:
+                    obs_check, obs_name = str.split(plan[col], '_')
                     cb = QCheckBox()
                     cb.setStyleSheet('QCheckBox{margin:6px};')
                     cb.setText(obs_name)
                     if int(obs_check) == 1:
                         cb.setChecked(True)
                     table.setCellWidget(num, 14, cb)
+                else:
+                    item = QTableWidgetItem(str(plan[col]))
+                    item.setTextAlignment(Qt.AlignCenter)
+                    # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                    table.setItem(num, col, item)
             else:
-                if table.cellWidget(num, col):
-                    table.removeCellWidget(num, col)
                 item = QTableWidgetItem(str(plan[col]))
                 item.setTextAlignment(Qt.AlignCenter)
                 # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
