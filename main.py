@@ -1342,15 +1342,15 @@ def plan_refresh():  # 刷新方案列表
             table.cellWidget(num, 0).setChecked(True)
         for col in range(1, len(plan)):
             if col == 14:
-                if table.cellWidget(num, col):
-                    table.removeCellWidget(num, col)
                 if table.item(num, col):
                     table.item(num, col).setText('')
+                if table.cellWidget(num, col):
+                    table.removeCellWidget(num, col)
                 s_num = str(plan[col]).find('_')
                 if s_num != -1:
                     obs_check = str(plan[col])[0]
                     obs_name = str(plan[col])[s_num + 1:]
-                    print(obs_check, obs_name)
+                    # print(obs_check, obs_name)
                     cb = QCheckBox()
                     cb.setStyleSheet('QCheckBox{margin:6px};')
                     cb.setText(obs_name)
@@ -1424,17 +1424,15 @@ def obs_to_table():
         tb_step = ui.tableWidget_Step
         row_num = tb_step.currentRow()
         if row_num > -1:
+            if tb_step.item(row_num, 14):
+                tb_step.item(row_num, 14).setText('')
             if tb_step.cellWidget(row_num, 14):
-                tb_step.cellWidget(row_num, 14).setText(scene)
-                tb_step.cellWidget(row_num, 14).setChecked(False)
-            else:
-                if tb_step.item(row_num, 14):
-                    tb_step.item(row_num, 14).setText('')
-                cb = QCheckBox()
-                cb.setText(scene)
-                cb.setStyleSheet('QCheckBox{margin:6px};')
-                tb_step.setCellWidget(row_num, 14, cb)
-                # print(tb_step.cellWidget(row_num, 14).text())
+                tb_step.removeCellWidget(row_num, 14)
+            cb = QCheckBox()
+            cb.setText(scene)
+            cb.setStyleSheet('QCheckBox{margin:6px};')
+            tb_step.setCellWidget(row_num, 14, cb)
+            # print(tb_step.cellWidget(row_num, 14).text())
 
 
 def obs_remove_table():
@@ -1455,8 +1453,10 @@ def table_change():
         return
     try:
         if not is_natural_num(tb_step.item(row, col).text()):
+            if col == 14:
+                return
             if col > len(plan_list[row]) - 1:
-                tb_step.item(row, col).setText('0')
+                tb_step.item(row, col).setText('')
             else:
                 comb = ui.comboBox_plan
                 _index = comb.currentIndex()
