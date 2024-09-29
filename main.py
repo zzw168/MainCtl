@@ -929,21 +929,24 @@ class AxisThead(QThread):
     def run(self) -> None:
         print('串口运行')
         try:
-            self._signal.emit(succeed('轴复位开始！'))
-            datas = s485.get_axis_pos()
-            print(datas)
-            if datas:
-                for data in datas:
-                    if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
-                        data['highPos'] = -data['highPos']
-                    res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+            if flg_start['s485']:
+                self._signal.emit(succeed('轴复位开始！'))
+                datas = s485.get_axis_pos()
+                print(datas)
+                if datas:
+                    for data in datas:
+                        if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
+                            data['highPos'] = -data['highPos']
+                        res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+                        if res == 0:
+                            sc.card_move(int(data['nAxisNum']), 0)
+                    res = sc.card_update()
                     if res == 0:
-                        sc.card_move(int(data['nAxisNum']), 0)
-                res = sc.card_update()
-                if res == 0:
-                    self._signal.emit(succeed('轴复位完成！'))
-                else:
-                    self._signal.emit(fail('运动卡链接出错！'))
+                        self._signal.emit(succeed('轴复位完成！'))
+                    else:
+                        self._signal.emit(fail('运动卡链接出错！'))
+            else:
+                self._signal.emit(fail('复位串口未连接！'))
         except:
             print("轴复位出错！")
             self._signal.emit(fail('轴复位出错！'))
@@ -1312,8 +1315,9 @@ def load_plan_yaml():
 # 重命名方案
 def plan_rename():
     text = ui.lineEdit_rename.text()
-    comb = ui.comboBox_plan
-    comb.setItemText(comb.currentIndex(), text)
+    if text != '':
+        comb = ui.comboBox_plan
+        comb.setItemText(comb.currentIndex(), text)
 
 
 def sel_all():
@@ -1414,8 +1418,9 @@ def card_reset():
 def p_to_table():
     tb_step = ui.tableWidget_Step
     row_num = tb_step.currentRow()
-    for i in range(0, len(pValue)):
-        tb_step.item(row_num, i + 2).setText(str(pValue[i]))
+    if row_num > -1:
+        for i in range(0, len(pValue)):
+            tb_step.item(row_num, i + 2).setText(str(pValue[i]))
 
 
 def obs_to_table():
@@ -1438,7 +1443,7 @@ def obs_to_table():
 def obs_remove_table():
     tb_step = ui.tableWidget_Step
     row_num = tb_step.currentRow()
-    if tb_step.cellWidget(row_num, 14):
+    if row_num > -1 and tb_step.cellWidget(row_num, 14):
         tb_step.removeCellWidget(row_num, 14)
 
 
