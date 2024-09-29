@@ -573,7 +573,8 @@ class UdpThead(QThread):
 
 def udp_signal_accept(msg):
     # print(msg)
-    ui.textBrowser_background_data.append(str(msg))
+    if ui.checkBox_ShowUdp.isChecked():
+        ui.textBrowser_background_data.append(str(msg))
 
 
 class ResetThead(QThread):
@@ -980,7 +981,7 @@ class CmdThead(QThread):
 
     def __init__(self):
         super(CmdThead, self).__init__()
-        self.run_flg = ''
+        self.run_flg = True
 
     def run(self) -> None:
         if flg_start['card']:
@@ -988,7 +989,7 @@ class CmdThead(QThread):
                 if not ui.checkBox_test.isChecked():
                     self._signal.emit(succeed('轴复位开始！'))
                     datas = s485.get_axis_pos()
-                    print(datas)
+                    # print(datas)
                     if datas:
                         for data in datas:
                             if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
@@ -1002,7 +1003,9 @@ class CmdThead(QThread):
                 self._signal.emit(succeed("运动流程：开始！"))
                 udp_thread.run_flg = True  # 开始处理图像识别数据
                 for i in range(0, len(plan_list)):
-                    # print(plan_list)
+                    print('第 %s 个动作，识别在第 %s 区！' % (i + 1, action_location))
+                    if not self.run_flg:
+                        break
                     if plan_list[i][0] == '1':  # 是否勾选
                         self._signal.emit(i)
                         if ((action_location == max_area_count - 1)
@@ -1043,8 +1046,11 @@ class CmdThead(QThread):
                             pass  # 负数则直接下一个动作
                         else:
                             while True:  # 正式运行，等待球进入触发区域再进行下一个动作
+                                if not self.run_flg:
+                                    break
                                 if int(plan_list[i][13]) in [action_location, action_location + 1]:
                                     break
+                                time.sleep(0.1)
 
                         if int(plan_list[i][11]) != 0:  # 摄像头延时，也可以用作动作延时
                             if int(plan_list[i][10]) != 0:  # 摄像头缩放
@@ -1060,8 +1066,8 @@ class CmdThead(QThread):
 
                 udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
                 self._signal.emit(succeed("运动流程：完成！"))
-                ReStart_Thead.start()  # 1分钟后重启动作
-                print('1分钟后重启动作!')
+                # ReStart_Thead.start()  # 1分钟后重启动作
+                # print('1分钟后重启动作!')
             except:
                 self._signal.emit(fail("运动卡运行：出错！"))
         else:
@@ -1395,6 +1401,11 @@ def plan_refresh():  # 刷新方案列表
                 table.setItem(num, col, item)
 
 
+# 关闭运动卡
+def card_stop():
+    PlanCmd_Thead.run_flg = False
+
+
 # 打开运动卡
 def card_start():
     global flg_start
@@ -1428,6 +1439,8 @@ def cmd_run():
     p_now = 0
     if PlanCmd_Thead.isRunning():
         PlanCmd_Thead.terminate()
+    udp_thread.run_flg = True
+    PlanCmd_Thead.run_flg = True
     PlanCmd_Thead.start()
 
 
@@ -1476,12 +1489,12 @@ def table_change():
     row = tb_step.currentRow()
     col = tb_step.currentColumn()
     # print("%s %s" % (row, col))
+    if col == 14:
+        return
     if row < 0 or col < 0:
         return
     try:
         if not is_natural_num(tb_step.item(row, col).text()):
-            if col == 14:
-                return
             if col > len(plan_list[row]) - 1:
                 tb_step.item(row, col).setText('')
             else:
@@ -1624,6 +1637,7 @@ if __name__ == '__main__':
     # ui.pushButton_rename.clicked.connect(test)
     ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
+    ui.pushButton_CardStop.clicked.connect(card_stop)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.pushButton_ToTable.clicked.connect(p_to_table)

@@ -1946,12 +1946,6 @@
                    <enum>QFrame::Raised</enum>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_24">
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
                    <item row="0" column="0">
                     <widget class="QFrame" name="frame_18">
                      <property name="maximumSize">
@@ -2070,6 +2064,30 @@
                      </property>
                      <property name="text">
                       <string>复位</string>
+                     </property>
+                     <property name="default">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0" colspan="2">
+                    <widget class="QPushButton" name="pushButton_CardStop">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <weight>75</weight>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>停止</string>
                      </property>
                      <property name="default">
                       <bool>true</bool>
@@ -2722,8 +2740,15 @@
                 <string>识别数据</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_28">
-                <item row="0" column="0">
+                <item row="1" column="0">
                  <widget class="QTextBrowser" name="textBrowser_background_data"/>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="checkBox_ShowUdp">
+                  <property name="text">
+                   <string>显示服务器数据</string>
+                  </property>
+                 </widget>
                 </item>
                </layout>
               </widget>
