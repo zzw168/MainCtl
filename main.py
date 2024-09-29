@@ -786,6 +786,23 @@ class MyUi(QMainWindow, Ui_MainWindow):
 
 
 '''
+    ReStartThead(QThread) 重启动作
+'''
+
+
+class ReStartThead(QThread):
+    _signal = pyqtSignal(object)
+
+    def __init__(self):
+        super(ReStartThead, self).__init__()
+        self.run_flg = False
+
+    def run(self) -> None:
+        time.sleep(60)
+        cmd_run()
+
+
+'''
     PosThead(QThread) 检测各轴位置
 '''
 
@@ -1042,6 +1059,8 @@ class CmdThead(QThread):
 
                 udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
                 self._signal.emit(succeed("运动流程：完成！"))
+                ReStart_Thead.start()  # 1分钟后重启动作
+                print('1分钟后重启动作!')
             except:
                 self._signal.emit(fail("运动卡运行：出错！"))
         else:
@@ -1596,6 +1615,9 @@ if __name__ == '__main__':
 
     Pos_Thead = PosThead()  # 实时监控各轴位置
     Pos_Thead._signal.connect(pos_signal_accept)
+
+    ReStart_Thead = ReStartThead()  # 重启动作
+    ReStart_Thead._signal.connect(signal_accept)
 
     ui.pushButton_fsave.clicked.connect(save_plan)
     # ui.pushButton_rename.clicked.connect(test)
