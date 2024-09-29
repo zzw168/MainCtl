@@ -798,8 +798,9 @@ class ReStartThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        time.sleep(60)
-        cmd_run()
+        if ui.checkBox_restart.isChecked():
+            time.sleep(60)
+            cmd_run()
 
 
 '''
