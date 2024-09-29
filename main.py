@@ -1264,7 +1264,8 @@ def save_plan():
             else:
                 local_list.append(str("0_%s" % table.cellWidget(row, 14).text()))
         else:
-            local_list.append('0')
+            local_list.append(
+                "0" if (not table.item(row, 14) or table.item(row, 14).text() == '') else table.item(row, 14).text())
         plan_list.append(local_list)
         local_list = []
     print(plan_list)
@@ -1362,7 +1363,8 @@ def plan_refresh():  # 刷新方案列表
                         cb.setChecked(True)
                     table.setCellWidget(num, 14, cb)
                 else:
-                    item = QTableWidgetItem('0')
+                    item = QTableWidgetItem(
+                        "0" if not plan[col] else plan[col])
                     item.setTextAlignment(Qt.AlignCenter)
                     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
                     table.setItem(num, col, item)
