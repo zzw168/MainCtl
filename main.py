@@ -1683,9 +1683,9 @@ if __name__ == '__main__':
     load_area()  # 初始化区域划分
 
     action_location = 0  # 触发镜头向下一个位置活动的点位
-
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
+    ball_sort = []  # 位置寄存器
 
     # 初始化数据
     max_lap_count = 2  # 最大圈
@@ -1732,9 +1732,7 @@ if __name__ == '__main__':
             else:
                 con_data[i].append(0)
     init_ranking_table()  # 初始化排名数据表
-
     # 初始化球数组，位置寄存器
-    ball_sort = []  # 位置寄存器
     reset_ranking_array()  # 重置排名数组
 
     # 自动重置排名线程
