@@ -329,6 +329,7 @@ def reset_ranking_array():
     global ranking_array
     global ball_sort
     global con_data
+    global action_location
     # global previous_position
     ranking_array = []  # 排名数组
     for i in range(0, len(init_array)):
@@ -346,6 +347,7 @@ def reset_ranking_array():
                 con_data[i][j] = init_array[i][5]  # con_data 数据表数组
             else:
                 con_data[i][j] = 0
+    action_location = 0
     # print(ball_sort)
 
 
@@ -555,7 +557,11 @@ class UdpThead(QThread):
                         continue
                     array_data = filter_max_value(array_data)
                     deal_rank(array_data)
-                    action_location = int(ranking_array[0][6])  # 排第一位的球所在区域
+                    for rank_num in range(0, len(ranking_array)):
+                        if int(ranking_array[rank_num][6]) > action_location + 2 or int(
+                                ranking_array[rank_num][6]) < action_location:
+                            continue
+                        action_location = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
                     con_data = []
                     for k in range(0, len(ranking_array)):
                         con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
@@ -984,6 +990,7 @@ class CmdThead(QThread):
         self.run_flg = True
 
     def run(self) -> None:
+        global action_location
         if flg_start['card']:
             try:
                 if not ui.checkBox_test.isChecked():
@@ -1002,15 +1009,16 @@ class CmdThead(QThread):
                                 return
                 self._signal.emit(succeed("运动流程：开始！"))
                 udp_thread.run_flg = True  # 开始处理图像识别数据
+                reset_ranking_array()  # 初始化排名，位置变量
                 for i in range(0, len(plan_list)):
                     print('第 %s 个动作，识别在第 %s 区！' % (i + 1, action_location))
                     if not self.run_flg:
                         break
                     if plan_list[i][0] == '1':  # 是否勾选
                         self._signal.emit(i)
-                        if ((action_location == max_area_count - 1)
+                        if ((action_location >= max_area_count - 2)
                                 and (int(plan_list[i][13]) in [action_location, action_location + 1])):
-                            print(action_location)
+                            # print(action_location)
                             if not PlanBallNum_Thead.isRunning():  # 开启终点计数器
                                 PlanBallNum_Thead.start()
                         try:
@@ -1065,6 +1073,7 @@ class CmdThead(QThread):
                                 PlanObs_Thead.start()
 
                 udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
+
                 self._signal.emit(succeed("运动流程：完成！"))
                 # ReStart_Thead.start()  # 1分钟后重启动作
                 # print('1分钟后重启动作!')
