@@ -114,7 +114,7 @@ init_array:
   - 0
   - 0
 max_area_count: 39
-max_lap_count: 2
+max_lap_count: 1
 reset_time: 60
 tcpServer_addr:
 - 0.0.0.0
