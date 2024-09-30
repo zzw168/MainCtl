@@ -214,7 +214,7 @@ def get_source_list(scene_name):  # 取得来源列表
     source_list = []
     for item in res.scene_items:
         source_list.append([item['sceneItemEnabled'], item['sourceName'], item['sceneItemId']])
-        print('取得来源列表 %s' % item)
+        # print('取得来源列表 %s' % item)
     Source_Thead.run_flg = True
 
 
@@ -567,6 +567,7 @@ class UdpThead(QThread):
                                     ranking_array[rank_num][6]) < action_area)):
                             continue
                         action_area = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
+                        break
                     con_data = []
                     for k in range(0, len(ranking_array)):
                         con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
@@ -811,13 +812,20 @@ class ReStartThead(QThread):
 
     def run(self) -> None:
         while True:
-            time.sleep(0.1)
+            time.sleep(1)
             if not self.run_flg:
                 continue
             if ui.checkBox_restart.isChecked():
-                time.sleep(60)
+                for t in range(30, 0, -1):
+                    time.sleep(1)
+                    self._signal.emit(t)
                 cmd_run()
             self.run_flg = False
+
+
+def time_signal_accept(msg):
+    print(msg)
+    ui.lineEdit_time.setText(str(msg))
 
 
 '''
@@ -1034,20 +1042,20 @@ class CmdThead(QThread):
                 continue
             if flg_start['card']:
                 try:
-                    if not ui.checkBox_test.isChecked():
-                        self._signal.emit(succeed('轴复位开始！'))
-                        datas = s485.get_axis_pos()
-                        # print(datas)
-                        if datas:
-                            for data in datas:
-                                if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
-                                    data['highPos'] = -data['highPos']
-                                res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
-                                if res == 0:
-                                    self._signal.emit(succeed('%s轴 复位完成！' % data['nAxisNum']))
-                                else:
-                                    self._signal.emit(fail('%s轴 复位失败！' % data['nAxisNum']))
-                                    return
+                    # if (not ui.checkBox_test.isChecked()) or (not ui.checkBox_restart.isChecked()):
+                    #     self._signal.emit(succeed('轴复位开始！'))
+                    #     datas = s485.get_axis_pos()
+                    #     # print(datas)
+                    #     if datas:
+                    #         for data in datas:
+                    #             if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
+                    #                 data['highPos'] = -data['highPos']
+                    #             res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+                    #             if res == 0:
+                    #                 self._signal.emit(succeed('%s轴 复位完成！' % data['nAxisNum']))
+                    #             else:
+                    #                 self._signal.emit(fail('%s轴 复位失败！' % data['nAxisNum']))
+                    #                 return
                     self._signal.emit(succeed("运动流程：开始！"))
                     udp_thread.run_flg = True  # 开始处理图像识别数据
                     reset_ranking_array()  # 初始化排名，位置变量
@@ -1057,10 +1065,10 @@ class CmdThead(QThread):
                             break
                         if plan_list[plan_num][0] == '1':  # 是否勾选
                             self._signal.emit(plan_num)
-                            if ((action_area >= max_area_count - 2)
-                                    and (int(plan_list[plan_num][13]) in [action_area, action_area + 1])):
-                                # print(action_location)
-                                PlanBallNum_Thead.run_flg = True
+                            # if ((action_area >= max_area_count - 2)
+                            #         and (int(plan_list[plan_num][13]) in [action_area, action_area + 1])):
+                            #     # print(action_location)
+                            #     PlanBallNum_Thead.run_flg = True
                             try:
                                 sc.card_move(1, int(plan_list[plan_num][2]), vel=int(plan_list[plan_num][7]),
                                              dAcc=float(plan_list[plan_num][8]),
@@ -1101,7 +1109,7 @@ class CmdThead(QThread):
                                 while True:  # 正式运行，等待球进入触发区域再进行下一个动作
                                     if not self.run_flg:
                                         break
-                                    if int(plan_list[plan_num][13]) in [action_area, action_area + 1]:
+                                    if int(plan_list[plan_num][13]) in [action_area, action_area - 1, action_area - 2]:
                                         break
                                     time.sleep(0.1)
 
@@ -1118,32 +1126,36 @@ class CmdThead(QThread):
                     udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
 
                     self._signal.emit(succeed("运动流程：完成！"))
-                    if ui.checkBox_restart.isChecked():
-                        ReStart_Thead.run_flg = True  # 1分钟后重启动作
-                        print('1分钟后重启动作!')
+                    # 流程完成则打开终点开关，关闭闸门，关闭弹射
+                    sc.GASetExtDoBit(3, 1)
+                    sc.GASetExtDoBit(1, 0)
+                    sc.GASetExtDoBit(0, 0)
+
                 except:
                     self._signal.emit(fail("运动卡运行：出错！"))
             else:
                 self._signal.emit(fail("运动卡未链接！"))
             self.run_flg = False
+            if ui.checkBox_restart.isChecked():
+                ReStart_Thead.run_flg = True  # 1分钟后重启动作
+                print('1分钟后重启动作!')
 
 
 def signal_accept(message):
     global p_now
     print(message)
-    if is_natural_num(message):
+    if type(message) == int:
         if ui.checkBox_follow.isChecked():
-            print(message)
+            # print(message)
             tb_step = ui.tableWidget_Step
             col_num = tb_step.columnCount()
             # print(col_num)
             for i in range(1, col_num - 2):
                 tb_step.item(p_now, i).setBackground(QBrush(QColor(255, 255, 255)))
                 tb_step.item(message, i).setBackground(QBrush(QColor(255, 0, 255)))
-        p_now = message
+            p_now = message
     else:
-        if not is_natural_num(message):
-            ui.textBrowser.append(str(message))
+        ui.textBrowser.append(str(message))
 
 
 class KeyListenerThead(QThread):
@@ -1458,6 +1470,7 @@ def plan_refresh():  # 刷新方案列表
 # 关闭运动卡
 def card_stop():
     PlanCmd_Thead.run_flg = False
+    reset_ranking_array()
 
 
 # 打开运动卡
@@ -1576,7 +1589,11 @@ def ballnum2zero():
 
 
 def test():
-    PlanBallNum_Thead.run_flg = True
+    message = 1
+    if type(message) == int:
+        print('数字')
+    else:
+        print(type(message))
     # get_picture('终点')
     # res, value = sc.GAGetDiReverseCount()
     # print(res, value)
@@ -1686,12 +1703,12 @@ if __name__ == '__main__':
     Pos_Thead.start()
 
     ReStart_Thead = ReStartThead()  # 重启动作
-    ReStart_Thead._signal.connect(signal_accept)
+    ReStart_Thead._signal.connect(time_signal_accept)
     ReStart_Thead.start()
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    # ui.pushButton_rename.clicked.connect(test)
-    ui.pushButton_rename.clicked.connect(plan_rename)
+    ui.pushButton_rename.clicked.connect(test)
+    # ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardStop.clicked.connect(card_stop)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
