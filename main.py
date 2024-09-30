@@ -143,7 +143,10 @@ class SourceThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while self.run_flg:
+        while True:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
             self._signal.emit('写表')
             self.run_flg = False
 
@@ -211,7 +214,7 @@ def get_source_list(scene_name):  # 取得来源列表
     source_list = []
     for item in res.scene_items:
         source_list.append([item['sceneItemEnabled'], item['sourceName'], item['sceneItemId']])
-        # print(item)
+        print('取得来源列表 %s' % item)
     Source_Thead.run_flg = True
 
 
@@ -807,7 +810,10 @@ class ReStartThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while self.run_flg:
+        while True:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
             if ui.checkBox_restart.isChecked():
                 time.sleep(60)
                 cmd_run()
@@ -828,13 +834,16 @@ class PosThead(QThread):
 
     def run(self) -> None:
         global pValue
-        while self.run_flg:
+        while True:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
             if flg_start['card']:
                 try:
                     for i in range(0, 5):
                         (res, pValue[i], pClock) = sc.get_pos(i + 1)
                     self._signal.emit(pValue)
-                    time.sleep(0.1)
+                    # time.sleep(0.1)
                 except:
                     pass
             self.run_flg = False
@@ -862,7 +871,10 @@ class CamThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while self.run_flg:
+        while True:
+            time.sleep(0.01)
+            if not self.run_flg:
+                continue
             print('串口运行')
             try:
                 s485.cam_zoom_move(self.camitem[0])
@@ -887,7 +899,10 @@ class PlanBallNumThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while self.run_flg:
+        while True:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
             print('正在接收运动卡输入信息！')
             try:
                 res = sc.GASetDiReverseCount()  # 输入次数归0
@@ -934,7 +949,10 @@ class PlanObsThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while self.run_flg:
+        while True:
+            time.sleep(0.01)
+            if not self.run_flg:
+                continue
             print('OBS运行')
             try:
                 if '_' in self.plan_obs:  # 切换场景
@@ -966,7 +984,10 @@ class AxisThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while self.run_flg:
+        while True:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
             print('串口运行')
             try:
                 if flg_start['s485']:
@@ -1007,7 +1028,10 @@ class CmdThead(QThread):
 
     def run(self) -> None:
         global action_area
-        while self.run_flg:
+        while True:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
             if flg_start['card']:
                 try:
                     if not ui.checkBox_test.isChecked():
