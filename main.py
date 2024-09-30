@@ -158,21 +158,24 @@ def source_signal_accept(msg):
 
 def source2table():
     global source_list
-    tb_sources = ui.tableWidget_Sources
-    tb_sources.setRowCount(len(source_list))
-    for i in range(0, len(source_list)):
-        cb = QCheckBox()
-        cb.setStyleSheet('QCheckBox{margin:6px};')
-        cb.clicked.connect(source_enable)
-        tb_sources.setCellWidget(i, 0, cb)
-        if source_list[i][0] == True:
-            tb_sources.cellWidget(i, 0).setChecked(True)
-        print(source_list[i][0])
-        for j in range(1, len(source_list[i])):
-            item = QTableWidgetItem(str(source_list[i][j]))
-            item.setTextAlignment(Qt.AlignCenter)
-            # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-            tb_sources.setItem(i, j, item)
+    try:
+        tb_sources = ui.tableWidget_Sources
+        tb_sources.setRowCount(len(source_list))
+        for i in range(0, len(source_list)):
+            cb = QCheckBox()
+            cb.setStyleSheet('QCheckBox{margin:6px};')
+            cb.clicked.connect(source_enable)
+            tb_sources.setCellWidget(i, 0, cb)
+            if source_list[i][0] == True:
+                tb_sources.cellWidget(i, 0).setChecked(True)
+            print(source_list[i][0])
+            for j in range(1, len(source_list[i])):
+                item = QTableWidgetItem(str(source_list[i][j]))
+                item.setTextAlignment(Qt.AlignCenter)
+                # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                tb_sources.setItem(i, j, item)
+    except:
+        print("来源数据进表错误！")
 
 
 def source_enable():  # 开关来源
@@ -858,11 +861,14 @@ class PosThead(QThread):
 
 
 def pos_signal_accept(message):
-    if len(message) == 5:
-        for i in range(0, len(message)):
-            getattr(ui, 'lineEdit_axis%s' % i).setText(str(message[i]))
-    else:
-        pass
+    try:
+        if len(message) == 5:
+            for i in range(0, len(message)):
+                getattr(ui, 'lineEdit_axis%s' % i).setText(str(message[i]))
+        else:
+            pass
+    except:
+        print("轴数据显示错误！")
 
 
 '''
@@ -1130,18 +1136,21 @@ class CmdThead(QThread):
 def signal_accept(message):
     global p_now
     print(message)
-    if type(message) == int:
-        if ui.checkBox_follow.isChecked():
-            # print(message)
-            tb_step = ui.tableWidget_Step
-            col_num = tb_step.columnCount()
-            # print(col_num)
-            for i in range(1, col_num - 2):
-                tb_step.item(p_now, i).setBackground(QBrush(QColor(255, 255, 255)))
-                tb_step.item(message, i).setBackground(QBrush(QColor(255, 0, 255)))
-            p_now = message
-    else:
-        ui.textBrowser.append(str(message))
+    try:
+        if type(message) == int:
+            if ui.checkBox_follow.isChecked():
+                # print(message)
+                tb_step = ui.tableWidget_Step
+                col_num = tb_step.columnCount()
+                # print(col_num)
+                for i in range(1, col_num - 2):
+                    tb_step.item(p_now, i).setBackground(QBrush(QColor(255, 255, 255)))
+                    tb_step.item(message, i).setBackground(QBrush(QColor(255, 0, 255)))
+                p_now = message
+        else:
+            ui.textBrowser.append(str(message))
+    except:
+        print("运行数据处理出错！")
 
 
 class KeyListenerThead(QThread):
