@@ -1786,7 +1786,7 @@ if __name__ == '__main__':
     # 自动重置排名线程
     reset_thread = ResetThead()
     reset_thread._signal.connect(reset_signal_accept)
-    # reset_thread.start()
+    reset_thread.start()
 
     # 1. Udp 接收数据
     udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
