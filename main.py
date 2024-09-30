@@ -143,10 +143,9 @@ class SourceThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while True:
-            if self.run_flg:
-                self._signal.emit('写表')
-                self.run_flg = False
+        while self.run_flg:
+            self._signal.emit('写表')
+            self.run_flg = False
 
 
 def source_signal_accept(msg):
@@ -808,9 +807,7 @@ class ReStartThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while True:
-            if not self.run_flg:
-                continue
+        while self.run_flg:
             if ui.checkBox_restart.isChecked():
                 time.sleep(60)
                 cmd_run()
@@ -831,9 +828,7 @@ class PosThead(QThread):
 
     def run(self) -> None:
         global pValue
-        while True:
-            if not self.run_flg:
-                continue
+        while self.run_flg:
             if flg_start['card']:
                 try:
                     for i in range(0, 5):
@@ -867,9 +862,7 @@ class CamThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while True:
-            if not self.run_flg:
-                continue
+        while self.run_flg:
             print('串口运行')
             try:
                 s485.cam_zoom_move(self.camitem[0])
@@ -894,9 +887,7 @@ class PlanBallNumThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while True:
-            if not self.run_flg:
-                continue
+        while self.run_flg:
             print('正在接收运动卡输入信息！')
             try:
                 res = sc.GASetDiReverseCount()  # 输入次数归0
@@ -943,9 +934,7 @@ class PlanObsThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while True:
-            if not self.run_flg:
-                continue
+        while self.run_flg:
             print('OBS运行')
             try:
                 if '_' in self.plan_obs:  # 切换场景
@@ -977,9 +966,7 @@ class AxisThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        while True:
-            if not self.run_flg:
-                continue
+        while self.run_flg:
             print('串口运行')
             try:
                 if flg_start['s485']:
@@ -1020,9 +1007,7 @@ class CmdThead(QThread):
 
     def run(self) -> None:
         global action_area
-        while True:
-            if not self.run_flg:
-                continue
+        while self.run_flg:
             if flg_start['card']:
                 try:
                     if not ui.checkBox_test.isChecked():
@@ -1704,7 +1689,6 @@ if __name__ == '__main__':
 
     Obs_Thead = ObsThead()  # OBS启动线程
     Obs_Thead._signal.connect(obs_signal_accept)
-    Obs_Thead.start()
 
     Source_Thead = SourceThead()  # OBS来源入表线程
     Source_Thead._signal.connect(source_signal_accept)
