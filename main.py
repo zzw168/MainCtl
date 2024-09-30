@@ -1118,8 +1118,9 @@ class CmdThead(QThread):
                     udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
 
                     self._signal.emit(succeed("运动流程：完成！"))
-                    # ReStart_Thead.run_flg = True  # 1分钟后重启动作
-                    # print('1分钟后重启动作!')
+                    if ui.checkBox_restart.isChecked():
+                        ReStart_Thead.run_flg = True  # 1分钟后重启动作
+                        print('1分钟后重启动作!')
                 except:
                     self._signal.emit(fail("运动卡运行：出错！"))
             else:
