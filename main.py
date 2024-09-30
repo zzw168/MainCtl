@@ -140,10 +140,13 @@ class SourceThead(QThread):
 
     def __init__(self):
         super(SourceThead, self).__init__()
-        self.run_flg = ''
+        self.run_flg = False
 
     def run(self) -> None:
-        self._signal.emit('写表')
+        while True:
+            if self.run_flg:
+                self._signal.emit('写表')
+                self.run_flg = False
 
 
 def source_signal_accept(msg):
@@ -210,8 +213,7 @@ def get_source_list(scene_name):  # 取得来源列表
     for item in res.scene_items:
         source_list.append([item['sceneItemEnabled'], item['sourceName'], item['sceneItemId']])
         # print(item)
-    if not Source_Thead.isRunning():
-        Source_Thead.start()
+    Source_Thead.run_flg = True
 
 
 def scenes_change():  # 变换场景
@@ -806,9 +808,13 @@ class ReStartThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
-        if ui.checkBox_restart.isChecked():
-            time.sleep(60)
-            cmd_run()
+        while True:
+            if not self.run_flg:
+                continue
+            if ui.checkBox_restart.isChecked():
+                time.sleep(60)
+                cmd_run()
+            self.run_flg = False
 
 
 '''
@@ -825,16 +831,18 @@ class PosThead(QThread):
 
     def run(self) -> None:
         global pValue
-        if flg_start['card']:
-            try:
-                while True:
-                    if self.run_flg:
-                        for i in range(0, 5):
-                            (res, pValue[i], pClock) = sc.get_pos(i + 1)
-                        self._signal.emit(pValue)
+        while True:
+            if not self.run_flg:
+                continue
+            if flg_start['card']:
+                try:
+                    for i in range(0, 5):
+                        (res, pValue[i], pClock) = sc.get_pos(i + 1)
+                    self._signal.emit(pValue)
                     time.sleep(0.1)
-            except:
-                pass
+                except:
+                    pass
+            self.run_flg = False
 
 
 def pos_signal_accept(message):
@@ -856,15 +864,20 @@ class CamThead(QThread):
     def __init__(self):
         super(CamThead, self).__init__()
         self.camitem = [5, 5]  # [运行挡位,持续时间]
+        self.run_flg = False
 
     def run(self) -> None:
-        print('串口运行')
-        try:
-            s485.cam_zoom_move(self.camitem[0])
-            time.sleep(self.camitem[1])
-            s485.cam_zoom_on_off()
-        except:
-            print("485 运行出错！")
+        while True:
+            if not self.run_flg:
+                continue
+            print('串口运行')
+            try:
+                s485.cam_zoom_move(self.camitem[0])
+                time.sleep(self.camitem[1])
+                s485.cam_zoom_on_off()
+            except:
+                print("485 运行出错！")
+            self.run_flg = False
 
 
 '''
@@ -878,32 +891,37 @@ class PlanBallNumThead(QThread):
     def __init__(self):
         super(PlanBallNumThead, self).__init__()
         self.camitem = [5, 5]  # [运行挡位,持续时间]
+        self.run_flg = False
 
     def run(self) -> None:
-        print('正在接收运动卡输入信息！')
-        try:
-            res = sc.GASetDiReverseCount()  # 输入次数归0
-            time_now = time.time()
-            num_old = 0
-            if res == 0:
-                while True:
-                    res, value = sc.GAGetDiReverseCount()
-                    # print(res, value)
-                    if res == 0:
-                        num = int(value[0] / 2)
-                        if num != num_old:
-                            self._signal.emit(num)
-                            num_old = num
-                        if num >= 10:
-                            break
-                        elif time.time() - time_now > 60:
-                            sc.GASetDiReverseCount()  # 输入次数归0
-                            break
-                    time.sleep(0.01)
-            else:
-                print("次数归0 失败！")
-        except:
-            print("接收运动卡输入 运行出错！")
+        while True:
+            if not self.run_flg:
+                continue
+            print('正在接收运动卡输入信息！')
+            try:
+                res = sc.GASetDiReverseCount()  # 输入次数归0
+                time_now = time.time()
+                num_old = 0
+                if res == 0:
+                    while True:
+                        res, value = sc.GAGetDiReverseCount()
+                        # print(res, value)
+                        if res == 0:
+                            num = int(value[0] / 2)
+                            if num != num_old:
+                                self._signal.emit(num)
+                                num_old = num
+                            if num >= 10:
+                                break
+                            elif time.time() - time_now > 60:
+                                sc.GASetDiReverseCount()  # 输入次数归0
+                                break
+                        time.sleep(0.01)
+                else:
+                    print("次数归0 失败！")
+            except:
+                print("接收运动卡输入 运行出错！")
+            self.run_flg = False
 
 
 def PlanBallNum_signal_accept(msg):
@@ -922,23 +940,28 @@ class PlanObsThead(QThread):
     def __init__(self):
         super(PlanObsThead, self).__init__()
         self.plan_obs = '0'  # [运行挡位,持续时间]
+        self.run_flg = False
 
     def run(self) -> None:
-        print('OBS运行')
-        try:
-            if '_' in self.plan_obs:  # 切换场景
-                obs_msg = str.split(self.plan_obs, '_')
-                print(obs_msg)
-                get_picture(obs_msg[1])
-                self._signal.emit(succeed("OBS 截图完成！"))
-                if int(obs_msg[0]) == 1:
-                    cl_requst.set_current_program_scene(obs_msg[1])
-                    self._signal.emit(succeed("OBS 场景切换完成！"))
-            else:
-                print('没有切换的场景！')
-        except:
-            print("OBS 链接中断！")
-            self._signal.emit(fail("OBS 场景切换中断！"))
+        while True:
+            if not self.run_flg:
+                continue
+            print('OBS运行')
+            try:
+                if '_' in self.plan_obs:  # 切换场景
+                    obs_msg = str.split(self.plan_obs, '_')
+                    print(obs_msg)
+                    get_picture(obs_msg[1])
+                    self._signal.emit(succeed("OBS 截图完成！"))
+                    if int(obs_msg[0]) == 1:
+                        cl_requst.set_current_program_scene(obs_msg[1])
+                        self._signal.emit(succeed("OBS 场景切换完成！"))
+                else:
+                    print('没有切换的场景！')
+            except:
+                print("OBS 链接中断！")
+                self._signal.emit(fail("OBS 场景切换中断！"))
+            self.run_flg = False
 
 
 '''
@@ -951,31 +974,36 @@ class AxisThead(QThread):
 
     def __init__(self):
         super(AxisThead, self).__init__()
+        self.run_flg = False
 
     def run(self) -> None:
-        print('串口运行')
-        try:
-            if flg_start['s485']:
-                self._signal.emit(succeed('轴复位开始！'))
-                datas = s485.get_axis_pos()
-                print(datas)
-                if datas:
-                    for data in datas:
-                        if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
-                            data['highPos'] = -data['highPos']
-                        res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+        while True:
+            if not self.run_flg:
+                continue
+            print('串口运行')
+            try:
+                if flg_start['s485']:
+                    self._signal.emit(succeed('轴复位开始！'))
+                    datas = s485.get_axis_pos()
+                    print(datas)
+                    if datas:
+                        for data in datas:
+                            if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
+                                data['highPos'] = -data['highPos']
+                            res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+                            if res == 0:
+                                sc.card_move(int(data['nAxisNum']), 0)
+                        res = sc.card_update()
                         if res == 0:
-                            sc.card_move(int(data['nAxisNum']), 0)
-                    res = sc.card_update()
-                    if res == 0:
-                        self._signal.emit(succeed('轴复位完成！'))
-                    else:
-                        self._signal.emit(fail('运动卡链接出错！'))
-            else:
-                self._signal.emit(fail('复位串口未连接！'))
-        except:
-            print("轴复位出错！")
-            self._signal.emit(fail('轴复位出错！'))
+                            self._signal.emit(succeed('轴复位完成！'))
+                        else:
+                            self._signal.emit(fail('运动卡链接出错！'))
+                else:
+                    self._signal.emit(fail('复位串口未连接！'))
+            except:
+                print("轴复位出错！")
+                self._signal.emit(fail('轴复位出错！'))
+            self.run_flg = False
 
 
 '''
@@ -988,100 +1016,106 @@ class CmdThead(QThread):
 
     def __init__(self):
         super(CmdThead, self).__init__()
-        self.run_flg = True
+        self.run_flg = False
 
     def run(self) -> None:
         global action_area
-        if flg_start['card']:
-            try:
-                if not ui.checkBox_test.isChecked():
-                    self._signal.emit(succeed('轴复位开始！'))
-                    datas = s485.get_axis_pos()
-                    # print(datas)
-                    if datas:
-                        for data in datas:
-                            if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
-                                data['highPos'] = -data['highPos']
-                            res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
-                            if res == 0:
-                                self._signal.emit(succeed('%s轴 复位完成！' % data['nAxisNum']))
-                            else:
-                                self._signal.emit(fail('%s轴 复位失败！' % data['nAxisNum']))
-                                return
-                self._signal.emit(succeed("运动流程：开始！"))
-                udp_thread.run_flg = True  # 开始处理图像识别数据
-                reset_ranking_array()  # 初始化排名，位置变量
-                for i in range(0, len(plan_list)):
-                    print('第 %s 个动作，识别在第 %s 区！' % (i + 1, action_area))
-                    if not self.run_flg:
-                        break
-                    if plan_list[i][0] == '1':  # 是否勾选
-                        self._signal.emit(i)
-                        if ((action_area >= max_area_count - 2)
-                                and (int(plan_list[i][13]) in [action_area, action_area + 1])):
-                            # print(action_location)
-                            if not PlanBallNum_Thead.isRunning():  # 开启终点计数器
-                                PlanBallNum_Thead.start()
-                        try:
-                            sc.card_move(1, int(plan_list[i][2]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
-                                         dDec=float(plan_list[i][9]),
-                                         dVelStart=0.1, dSmoothTime=0)
-                            sc.card_move(2, int(plan_list[i][3]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
-                                         dDec=float(plan_list[i][9]),
-                                         dVelStart=0.1, dSmoothTime=0)
-                            sc.card_move(3, int(plan_list[i][4]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
-                                         dDec=float(plan_list[i][9]),
-                                         dVelStart=0.1, dSmoothTime=0)
-                            sc.card_move(4, int(plan_list[i][5]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
-                                         dDec=float(plan_list[i][9]),
-                                         dVelStart=0.1, dSmoothTime=0)
-                            sc.card_move(5, int(plan_list[i][6]), vel=int(plan_list[i][7]), dAcc=float(plan_list[i][8]),
-                                         dDec=float(plan_list[i][9]),
-                                         dVelStart=0.1, dSmoothTime=0)
-                            sc.card_update()
-
-                            print("开启机关")
-                            if int(plan_list[i][12]) != 0:
-                                if '-' in plan_list[i][12]:
-                                    sc.GASetExtDoBit(abs(int(plan_list[i][12])) - 1, 0)
+        while True:
+            if not self.run_flg:
+                continue
+            if flg_start['card']:
+                try:
+                    if not ui.checkBox_test.isChecked():
+                        self._signal.emit(succeed('轴复位开始！'))
+                        datas = s485.get_axis_pos()
+                        # print(datas)
+                        if datas:
+                            for data in datas:
+                                if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
+                                    data['highPos'] = -data['highPos']
+                                res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+                                if res == 0:
+                                    self._signal.emit(succeed('%s轴 复位完成！' % data['nAxisNum']))
                                 else:
-                                    sc.GASetExtDoBit(abs(int(plan_list[i][12])) - 1, 1)
-                        except:
-                            print("运动板运行出错！")
+                                    self._signal.emit(fail('%s轴 复位失败！' % data['nAxisNum']))
+                                    return
+                    self._signal.emit(succeed("运动流程：开始！"))
+                    udp_thread.run_flg = True  # 开始处理图像识别数据
+                    reset_ranking_array()  # 初始化排名，位置变量
+                    for plan_num in range(0, len(plan_list)):
+                        print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
+                        if not self.run_flg:
+                            break
+                        if plan_list[plan_num][0] == '1':  # 是否勾选
+                            self._signal.emit(plan_num)
+                            if ((action_area >= max_area_count - 2)
+                                    and (int(plan_list[plan_num][13]) in [action_area, action_area + 1])):
+                                # print(action_location)
+                                PlanBallNum_Thead.run_flg = True
+                            try:
+                                sc.card_move(1, int(plan_list[plan_num][2]), vel=int(plan_list[plan_num][7]),
+                                             dAcc=float(plan_list[plan_num][8]),
+                                             dDec=float(plan_list[plan_num][9]),
+                                             dVelStart=0.1, dSmoothTime=0)
+                                sc.card_move(2, int(plan_list[plan_num][3]), vel=int(plan_list[plan_num][7]),
+                                             dAcc=float(plan_list[plan_num][8]),
+                                             dDec=float(plan_list[plan_num][9]),
+                                             dVelStart=0.1, dSmoothTime=0)
+                                sc.card_move(3, int(plan_list[plan_num][4]), vel=int(plan_list[plan_num][7]),
+                                             dAcc=float(plan_list[plan_num][8]),
+                                             dDec=float(plan_list[plan_num][9]),
+                                             dVelStart=0.1, dSmoothTime=0)
+                                sc.card_move(4, int(plan_list[plan_num][5]), vel=int(plan_list[plan_num][7]),
+                                             dAcc=float(plan_list[plan_num][8]),
+                                             dDec=float(plan_list[plan_num][9]),
+                                             dVelStart=0.1, dSmoothTime=0)
+                                sc.card_move(5, int(plan_list[plan_num][6]), vel=int(plan_list[plan_num][7]),
+                                             dAcc=float(plan_list[plan_num][8]),
+                                             dDec=float(plan_list[plan_num][9]),
+                                             dVelStart=0.1, dSmoothTime=0)
+                                sc.card_update()
 
-                        if ui.checkBox_test.isChecked() or int(plan_list[i][13]) == 0:
-                            time.sleep(2)  # 测试期间停两秒切换下一个动作
-                        elif int(plan_list[i][13]) < 0:
-                            pass  # 负数则直接下一个动作
-                        else:
-                            while True:  # 正式运行，等待球进入触发区域再进行下一个动作
-                                if not self.run_flg:
-                                    break
-                                if int(plan_list[i][13]) in [action_area, action_area + 1]:
-                                    break
-                                time.sleep(0.1)
+                                print("开启机关")
+                                if int(plan_list[plan_num][12]) != 0:
+                                    if '-' in plan_list[plan_num][12]:
+                                        sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 0)
+                                    else:
+                                        sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 1)
+                            except:
+                                print("运动板运行出错！")
 
-                        if int(plan_list[i][11]) != 0:  # 摄像头延时，也可以用作动作延时
-                            if int(plan_list[i][10]) != 0:  # 摄像头缩放
-                                PlanCam_Thead.camitem = [int(plan_list[i][10]), int(plan_list[i][11])]
-                                if not PlanCam_Thead.isRunning():
-                                    PlanCam_Thead.start()
-                            time.sleep(int(plan_list[i][11]))
+                            if ui.checkBox_test.isChecked() or int(plan_list[plan_num][13]) == 0:
+                                time.sleep(2)  # 测试期间停两秒切换下一个动作
+                            elif int(plan_list[plan_num][13]) < 0:
+                                pass  # 负数则直接下一个动作
+                            else:
+                                while True:  # 正式运行，等待球进入触发区域再进行下一个动作
+                                    if not self.run_flg:
+                                        break
+                                    if int(plan_list[plan_num][13]) in [action_area, action_area + 1]:
+                                        break
+                                    time.sleep(0.1)
 
-                        if '_' in plan_list[i][14]:  # 切换场景
-                            if not PlanObs_Thead.isRunning():
-                                PlanObs_Thead.plan_obs = plan_list[i][14]
-                                PlanObs_Thead.start()
+                            if int(plan_list[plan_num][11]) != 0:  # 摄像头延时，也可以用作动作延时
+                                if int(plan_list[plan_num][10]) != 0:  # 摄像头缩放
+                                    PlanCam_Thead.camitem = [int(plan_list[plan_num][10]), int(plan_list[plan_num][11])]
+                                    PlanCam_Thead.run_flg = True
+                                time.sleep(int(plan_list[plan_num][11]))
 
-                udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
+                            if '_' in plan_list[plan_num][14]:  # 切换场景
+                                PlanObs_Thead.plan_obs = plan_list[plan_num][14]
+                                PlanObs_Thead.run_flg = True
 
-                self._signal.emit(succeed("运动流程：完成！"))
-                # ReStart_Thead.start()  # 1分钟后重启动作
-                # print('1分钟后重启动作!')
-            except:
-                self._signal.emit(fail("运动卡运行：出错！"))
-        else:
-            self._signal.emit(fail("运动卡未链接！"))
+                    udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
+
+                    self._signal.emit(succeed("运动流程：完成！"))
+                    # ReStart_Thead.run_flg = True  # 1分钟后重启动作
+                    # print('1分钟后重启动作!')
+                except:
+                    self._signal.emit(fail("运动卡运行：出错！"))
+            else:
+                self._signal.emit(fail("运动卡未链接！"))
+            self.run_flg = False
 
 
 def signal_accept(message):
@@ -1426,8 +1460,7 @@ def card_start():
         if res == 0:
             flg_start['card'] = True
             ui.textBrowser.append(succeed('启动板卡：%s' % card_res[res]))
-            if not Pos_Thead.isRunning():
-                Pos_Thead.start()
+            Pos_Thead.run_flg = True
         else:
             ui.textBrowser.append(res)
     else:
@@ -1447,16 +1480,12 @@ def cmd_run():
     global p_now
     save_plan()
     p_now = 0
-    if PlanCmd_Thead.isRunning():
-        PlanCmd_Thead.terminate()
     udp_thread.run_flg = True
     PlanCmd_Thead.run_flg = True
-    PlanCmd_Thead.start()
 
 
 def card_reset():
-    if not Axis_Thead.isRunning():
-        Axis_Thead.start()
+    Axis_Thead.run_flg = True
 
 
 # 实时轴位置入表
@@ -1537,7 +1566,7 @@ def ballnum2zero():
 
 
 def test():
-    PlanBallNum_Thead.start()
+    PlanBallNum_Thead.run_flg = True
     # get_picture('终点')
     # res, value = sc.GAGetDiReverseCount()
     # print(res, value)
@@ -1624,24 +1653,31 @@ if __name__ == '__main__':
 
     PlanCmd_Thead = CmdThead()  # 总运行方案
     PlanCmd_Thead._signal.connect(signal_accept)
+    PlanCmd_Thead.start()
 
     PlanObs_Thead = PlanObsThead()  # OBS场景切换方案
     PlanObs_Thead._signal.connect(signal_accept)
+    PlanObs_Thead.start()
 
     PlanCam_Thead = CamThead()  # 摄像头运行方案
     PlanCam_Thead._signal.connect(signal_accept)
+    PlanCam_Thead.start()
 
     PlanBallNum_Thead = PlanBallNumThead()  # 统计过终点的球数
     PlanBallNum_Thead._signal.connect(PlanBallNum_signal_accept)
+    PlanBallNum_Thead.start()
 
     Axis_Thead = AxisThead()  # 轴复位
     Axis_Thead._signal.connect(signal_accept)
+    Axis_Thead.start()
 
     Pos_Thead = PosThead()  # 实时监控各轴位置
     Pos_Thead._signal.connect(pos_signal_accept)
+    Pos_Thead.start()
 
     ReStart_Thead = ReStartThead()  # 重启动作
     ReStart_Thead._signal.connect(signal_accept)
+    ReStart_Thead.start()
 
     ui.pushButton_fsave.clicked.connect(save_plan)
     # ui.pushButton_rename.clicked.connect(test)
@@ -1668,9 +1704,11 @@ if __name__ == '__main__':
 
     Obs_Thead = ObsThead()  # OBS启动线程
     Obs_Thead._signal.connect(obs_signal_accept)
+    Obs_Thead.start()
 
     Source_Thead = SourceThead()  # OBS来源入表线程
     Source_Thead._signal.connect(source_signal_accept)
+    Source_Thead.start()
 
     ui.pushButton_ObsConnect.clicked.connect(obs_open)
     ui.comboBox_Scenes.currentTextChanged.connect(scenes_change)
