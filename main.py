@@ -1042,20 +1042,6 @@ class CmdThead(QThread):
                 continue
             if flg_start['card']:
                 try:
-                    # if (not ui.checkBox_test.isChecked()) or (not ui.checkBox_restart.isChecked()):
-                    #     self._signal.emit(succeed('轴复位开始！'))
-                    #     datas = s485.get_axis_pos()
-                    #     # print(datas)
-                    #     if datas:
-                    #         for data in datas:
-                    #             if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
-                    #                 data['highPos'] = -data['highPos']
-                    #             res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
-                    #             if res == 0:
-                    #                 self._signal.emit(succeed('%s轴 复位完成！' % data['nAxisNum']))
-                    #             else:
-                    #                 self._signal.emit(fail('%s轴 复位失败！' % data['nAxisNum']))
-                    #                 return
                     self._signal.emit(succeed("运动流程：开始！"))
                     udp_thread.run_flg = True  # 开始处理图像识别数据
                     reset_ranking_array()  # 初始化排名，位置变量
@@ -1497,6 +1483,7 @@ def card_start():
     if not flg_start['obs']:
         if not Obs_Thead.isRunning():
             Obs_Thead.start()
+    Axis_Thead.run_flg = True
 
 
 def cmd_run():
