@@ -1068,10 +1068,8 @@ class CmdThead(QThread):
                             break
                         if plan_list[plan_num][0] == '1':  # 是否勾选
                             self._signal.emit(plan_num)
-                            if ((action_area == 37)
-                                    and (int(plan_list[plan_num][13]) in [action_area, action_area - 1,
-                                                                          action_area + 1])):
-                                # print(action_location)
+                            if action_area == 37:
+                                print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
                                 PlanBallNum_Thead.run_flg = True
                             try:
                                 sc.card_move(1, int(plan_list[plan_num][2]), vel=int(plan_list[plan_num][7]),
