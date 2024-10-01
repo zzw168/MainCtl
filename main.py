@@ -932,7 +932,6 @@ class PlanBallNumThead(QThread):
                 time_now = time.time()
                 num_old = 0
                 if res == 0:
-                    print('计球 ~！')
                     while True:
                         res, value = sc.GAGetDiReverseCount()
                         # print(res, value)
@@ -945,6 +944,7 @@ class PlanBallNumThead(QThread):
                                 break
                             elif time.time() - time_now > 30:
                                 sc.GASetDiReverseCount()  # 输入次数归0
+                                self._signal.emit(0)
                                 break
                         time.sleep(0.01)
                 else:
@@ -955,7 +955,7 @@ class PlanBallNumThead(QThread):
 
 
 def PlanBallNum_signal_accept(msg):
-    print('球数 %s' % msg)
+    # print('球数 %s' % msg)
     if type(msg) == int:
         ui.lineEdit_ball_num.setText(str(msg))
 
