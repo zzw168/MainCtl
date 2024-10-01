@@ -1648,7 +1648,11 @@
             </property>
             <layout class="QGridLayout" name="gridLayout_18">
              <item row="9" column="0">
-              <widget class="QTextBrowser" name="textBrowser"/>
+              <widget class="QTextBrowser" name="textBrowser">
+               <property name="readOnly">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
              <item row="1" column="0">
               <widget class="QGroupBox" name="groupBox_6">
@@ -2796,6 +2800,9 @@
                     <height>16777215</height>
                    </size>
                   </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -2826,7 +2833,11 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_28">
                 <item row="1" column="0">
-                 <widget class="QTextBrowser" name="textBrowser_background_data"/>
+                 <widget class="QTextBrowser" name="textBrowser_background_data">
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="0" column="0">
                  <widget class="QCheckBox" name="checkBox_ShowUdp">
@@ -2922,7 +2933,11 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_29">
                 <item row="10" column="0">
-                 <widget class="QTextBrowser" name="textBrowser_msg_Ranking"/>
+                 <widget class="QTextBrowser" name="textBrowser_msg_Ranking">
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
                 </item>
                 <item row="3" column="0">
                  <widget class="QWidget" name="widget_12" native="true">
