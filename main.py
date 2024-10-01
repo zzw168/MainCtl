@@ -1068,7 +1068,7 @@ class CmdThead(QThread):
                             break
                         if plan_list[plan_num][0] == '1':  # 是否勾选
                             self._signal.emit(plan_num)
-                            if action_area == 37:
+                            if action_area in [36, 37, 38]:
                                 print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
                                 PlanBallNum_Thead.run_flg = True
                             try:
