@@ -823,7 +823,12 @@ class ReStartThead(QThread):
             if not self.run_flg:
                 continue
             if ui.checkBox_restart.isChecked():
-                for t in range(300, 0, -1):
+                countdown = ui.lineEdit_Countdown.text()
+                if countdown.isdigit():
+                    countdown = int(countdown)
+                else:
+                    countdown = 300
+                for t in range(countdown, 0, -1):
                     time.sleep(1)
                     self._signal.emit(t)
                 PlanCmd_Thead.run_flg = True
