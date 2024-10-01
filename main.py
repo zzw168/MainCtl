@@ -159,6 +159,8 @@ def source_signal_accept(msg):
 def source2table():
     global source_list
     try:
+        if scene_now != '':
+            ui.comboBox_Scenes.setCurrentText(scene_now)
         tb_sources = ui.tableWidget_Sources
         tb_sources.setRowCount(len(source_list))
         for i in range(0, len(source_list)):
@@ -213,6 +215,8 @@ def get_scenes_list():  # 刷新所有列表
 
 def get_source_list(scene_name):  # 取得来源列表
     global source_list
+    global scene_now
+    scene_now = scene_name
     res = cl_requst.get_scene_item_list(scene_name)
     source_list = []
     for item in res.scene_items:
@@ -354,7 +358,7 @@ def reset_ranking_array():
                 con_data[i][j] = init_array[i][5]  # con_data 数据表数组
             else:
                 con_data[i][j] = 0
-    action_area = 0
+    action_area = 1
     # print(ball_sort)
 
 
@@ -822,7 +826,8 @@ class ReStartThead(QThread):
                 for t in range(30, 0, -1):
                     time.sleep(1)
                     self._signal.emit(t)
-                cmd_run()
+                PlanCmd_Thead.run_flg = True
+                print("循环启动！")
             self.run_flg = False
 
 
@@ -909,7 +914,6 @@ class PlanBallNumThead(QThread):
 
     def __init__(self):
         super(PlanBallNumThead, self).__init__()
-        self.camitem = [5, 5]  # [运行挡位,持续时间]
         self.run_flg = False
 
     def run(self) -> None:
@@ -923,6 +927,7 @@ class PlanBallNumThead(QThread):
                 time_now = time.time()
                 num_old = 0
                 if res == 0:
+                    print('计球 ~！')
                     while True:
                         res, value = sc.GAGetDiReverseCount()
                         # print(res, value)
@@ -933,7 +938,7 @@ class PlanBallNumThead(QThread):
                                 num_old = num
                             if num >= 10:
                                 break
-                            elif time.time() - time_now > 60:
+                            elif time.time() - time_now > 30:
                                 sc.GASetDiReverseCount()  # 输入次数归0
                                 break
                         time.sleep(0.01)
@@ -945,8 +950,9 @@ class PlanBallNumThead(QThread):
 
 
 def PlanBallNum_signal_accept(msg):
-    print(msg)
-    ui.lineEdit_ball_num.setText(str(msg))
+    print('球数 %s' % msg)
+    if type(msg) == int:
+        ui.lineEdit_ball_num.setText(str(msg))
 
 
 '''
@@ -998,6 +1004,7 @@ class AxisThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
+        global flg_start
         while True:
             time.sleep(0.1)
             if not self.run_flg:
@@ -1014,6 +1021,8 @@ class AxisThead(QThread):
                                 data['highPos'] = -data['highPos']
                             res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
                             if res == 0:
+                                flg_start['card'] = True
+                                Pos_Thead.run_flg = True
                                 sc.card_move(int(data['nAxisNum']), 0)
                         res = sc.card_update()
                         if res == 0:
@@ -1042,6 +1051,7 @@ class CmdThead(QThread):
 
     def run(self) -> None:
         global action_area
+        global p_now
         while True:
             time.sleep(0.1)
             if not self.run_flg:
@@ -1054,13 +1064,15 @@ class CmdThead(QThread):
                     for plan_num in range(0, len(plan_list)):
                         print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
                         if not self.run_flg:
+                            print('动作未开始！')
                             break
                         if plan_list[plan_num][0] == '1':  # 是否勾选
                             self._signal.emit(plan_num)
-                            # if ((action_area >= max_area_count - 2)
-                            #         and (int(plan_list[plan_num][13]) in [action_area, action_area + 1])):
-                            #     # print(action_location)
-                            #     PlanBallNum_Thead.run_flg = True
+                            if ((action_area == 37)
+                                    and (int(plan_list[plan_num][13]) in [action_area, action_area - 1,
+                                                                          action_area + 1])):
+                                # print(action_location)
+                                PlanBallNum_Thead.run_flg = True
                             try:
                                 sc.card_move(1, int(plan_list[plan_num][2]), vel=int(plan_list[plan_num][7]),
                                              dAcc=float(plan_list[plan_num][8]),
@@ -1100,8 +1112,9 @@ class CmdThead(QThread):
                             else:
                                 while True:  # 正式运行，等待球进入触发区域再进行下一个动作
                                     if not self.run_flg:
+                                        print('动作等待中！')
                                         break
-                                    if int(plan_list[plan_num][13]) in [action_area, action_area - 1, action_area - 2]:
+                                    if int(plan_list[plan_num][13]) in [action_area, action_area - 1, action_area + 1]:
                                         break
                                     time.sleep(0.1)
 
@@ -1115,8 +1128,6 @@ class CmdThead(QThread):
                                 PlanObs_Thead.plan_obs = plan_list[plan_num][14]
                                 PlanObs_Thead.run_flg = True
 
-                    udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
-
                     self._signal.emit(succeed("运动流程：完成！"))
                     # 流程完成则打开终点开关，关闭闸门，关闭弹射
                     sc.GASetExtDoBit(3, 1)
@@ -1128,6 +1139,9 @@ class CmdThead(QThread):
             else:
                 self._signal.emit(fail("运动卡未链接！"))
             self.run_flg = False
+            print('动作已完成！')
+            # udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
+            p_now = 0
             if ui.checkBox_restart.isChecked():
                 ReStart_Thead.run_flg = True  # 1分钟后重启动作
                 print('1分钟后重启动作!')
@@ -1138,14 +1152,15 @@ def signal_accept(message):
     print(message)
     try:
         if type(message) == int:
+            print('动作位置 %s %s' % (message, p_now))
             if ui.checkBox_follow.isChecked():
                 # print(message)
                 tb_step = ui.tableWidget_Step
                 col_num = tb_step.columnCount()
                 # print(col_num)
-                for i in range(1, col_num - 2):
-                    tb_step.item(p_now, i).setBackground(QBrush(QColor(255, 255, 255)))
-                    tb_step.item(message, i).setBackground(QBrush(QColor(255, 0, 255)))
+                for col in range(1, col_num - 2):
+                    tb_step.item(p_now, col).setBackground(QBrush(QColor(255, 255, 255)))
+                    tb_step.item(message, col).setBackground(QBrush(QColor(255, 0, 255)))
                 p_now = message
         else:
             ui.textBrowser.append(str(message))
@@ -1476,9 +1491,8 @@ def card_start():
         res = sc.card_open(int(cardnum))
         print(res)
         if res == 0:
-            flg_start['card'] = True
+            # flg_start['card'] = True
             ui.textBrowser.append(succeed('启动板卡：%s' % card_res[res]))
-            Pos_Thead.run_flg = True
         else:
             ui.textBrowser.append(res)
     else:
@@ -1486,13 +1500,14 @@ def card_start():
 
     if not flg_start['s485']:
         flg_start['s485'] = s485.cam_open()
+        if flg_start['s485']:
+            Axis_Thead.run_flg = True
         ui.textBrowser.append(succeed('串口链接：%s' % flg_start['s485']))
     else:
         ui.textBrowser.append(fail('串口链接：%s' % flg_start['s485']))
     if not flg_start['obs']:
         if not Obs_Thead.isRunning():
             Obs_Thead.start()
-    Axis_Thead.run_flg = True
 
 
 def cmd_run():
@@ -1722,6 +1737,7 @@ if __name__ == '__main__':
         OBS 处理
     """
     source_list = []  # OBS来源列表
+    scene_now = ''
     cl_requst = ''  # 请求
     cl_event = ''  # 监听
 
