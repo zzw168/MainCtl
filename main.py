@@ -845,6 +845,7 @@ def time_signal_accept(msg):
     if int(msg) == 1:
         plan_refresh()
     ui.lineEdit_time.setText(str(msg))
+    ui.lineEdit_ball_num.setText('0')
 
 
 '''
@@ -1145,7 +1146,7 @@ class PlanCmdThead(QThread):
                                 if int(plan_list[plan_num][13]) in [action_area, action_area - 1, action_area + 1]:
                                     break
                                 t_over += 1
-                                if t_over == 50:
+                                if t_over == 55:
                                     print('等待超时！')
                                     break
                                 time.sleep(0.1)
