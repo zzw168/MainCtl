@@ -1062,90 +1062,89 @@ class CmdThead(QThread):
             if not self.run_flg:
                 continue
             if flg_start['card']:
-                try:
-                    self._signal.emit(succeed("运动流程：开始！"))
-                    udp_thread.run_flg = True  # 开始处理图像识别数据
-                    reset_ranking_array()  # 初始化排名，位置变量
-                    for plan_num in range(0, len(plan_list)):
-                        print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
-                        if not self.run_flg:
-                            print('动作未开始！')
-                            break
-                        if plan_list[plan_num][0] == '1':  # 是否勾选
-                            self._signal.emit(plan_num)
+                self._signal.emit(succeed("运动流程：开始！"))
+                udp_thread.run_flg = True  # 开始处理图像识别数据
+                reset_ranking_array()  # 初始化排名，位置变量
+                for plan_num in range(0, len(plan_list)):
+                    print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
+                    if not self.run_flg:
+                        print('动作未开始！')
+                        break
+                    if plan_list[plan_num][0] == '1':  # 是否勾选
+                        self._signal.emit(plan_num)
+                        try:
+                            sc.card_move(1, int(plan_list[plan_num][2]), vel=int(plan_list[plan_num][7]),
+                                         dAcc=float(plan_list[plan_num][8]),
+                                         dDec=float(plan_list[plan_num][9]),
+                                         dVelStart=0.1, dSmoothTime=0)
+                            sc.card_move(2, int(plan_list[plan_num][3]), vel=int(plan_list[plan_num][7]),
+                                         dAcc=float(plan_list[plan_num][8]),
+                                         dDec=float(plan_list[plan_num][9]),
+                                         dVelStart=0.1, dSmoothTime=0)
+                            sc.card_move(3, int(plan_list[plan_num][4]), vel=int(plan_list[plan_num][7]),
+                                         dAcc=float(plan_list[plan_num][8]),
+                                         dDec=float(plan_list[plan_num][9]),
+                                         dVelStart=0.1, dSmoothTime=0)
+                            sc.card_move(4, int(plan_list[plan_num][5]), vel=int(plan_list[plan_num][7]),
+                                         dAcc=float(plan_list[plan_num][8]),
+                                         dDec=float(plan_list[plan_num][9]),
+                                         dVelStart=0.1, dSmoothTime=0)
+                            sc.card_move(5, int(plan_list[plan_num][6]), vel=int(plan_list[plan_num][7]),
+                                         dAcc=float(plan_list[plan_num][8]),
+                                         dDec=float(plan_list[plan_num][9]),
+                                         dVelStart=0.1, dSmoothTime=0)
+                            sc.card_update()
+
+                            print("开启机关")
+                            if int(plan_list[plan_num][12]) != 0:
+                                if '-' in plan_list[plan_num][12]:
+                                    sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 0)
+                                else:
+                                    sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 1)
+                        except:
+                            print("运动板运行出错！")
+
+                        if ui.checkBox_test.isChecked() or int(plan_list[plan_num][13]) == 0:
+                            time.sleep(2)  # 测试期间停两秒切换下一个动作
+                        elif int(plan_list[plan_num][13]) < 0:
+                            pass  # 负数则直接下一个动作
+                        else:
+                            while True:  # 正式运行，等待球进入触发区域再进行下一个动作
+                                if not self.run_flg:
+                                    print('动作等待中！')
+                                    break
+                                if int(plan_list[plan_num][13]) in [action_area, action_area - 1, action_area + 1]:
+                                    break
+                                time.sleep(0.1)
+
+                        if self.run_flg:
                             if action_area in [max_area_count - 3, max_area_count - 2, max_area_count - 1]:
-                                PlanBallNum_Thead.run_flg = True
-                            try:
-                                sc.card_move(1, int(plan_list[plan_num][2]), vel=int(plan_list[plan_num][7]),
-                                             dAcc=float(plan_list[plan_num][8]),
-                                             dDec=float(plan_list[plan_num][9]),
-                                             dVelStart=0.1, dSmoothTime=0)
-                                sc.card_move(2, int(plan_list[plan_num][3]), vel=int(plan_list[plan_num][7]),
-                                             dAcc=float(plan_list[plan_num][8]),
-                                             dDec=float(plan_list[plan_num][9]),
-                                             dVelStart=0.1, dSmoothTime=0)
-                                sc.card_move(3, int(plan_list[plan_num][4]), vel=int(plan_list[plan_num][7]),
-                                             dAcc=float(plan_list[plan_num][8]),
-                                             dDec=float(plan_list[plan_num][9]),
-                                             dVelStart=0.1, dSmoothTime=0)
-                                sc.card_move(4, int(plan_list[plan_num][5]), vel=int(plan_list[plan_num][7]),
-                                             dAcc=float(plan_list[plan_num][8]),
-                                             dDec=float(plan_list[plan_num][9]),
-                                             dVelStart=0.1, dSmoothTime=0)
-                                sc.card_move(5, int(plan_list[plan_num][6]), vel=int(plan_list[plan_num][7]),
-                                             dAcc=float(plan_list[plan_num][8]),
-                                             dDec=float(plan_list[plan_num][9]),
-                                             dVelStart=0.1, dSmoothTime=0)
-                                sc.card_update()
-
-                                print("开启机关")
-                                if int(plan_list[plan_num][12]) != 0:
-                                    if '-' in plan_list[plan_num][12]:
-                                        sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 0)
-                                    else:
-                                        sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 1)
-                            except:
-                                print("运动板运行出错！")
-
-                            if ui.checkBox_test.isChecked() or int(plan_list[plan_num][13]) == 0:
-                                time.sleep(2)  # 测试期间停两秒切换下一个动作
-                            elif int(plan_list[plan_num][13]) < 0:
-                                pass  # 负数则直接下一个动作
-                            else:
-                                while True:  # 正式运行，等待球进入触发区域再进行下一个动作
-                                    if not self.run_flg:
-                                        print('动作等待中！')
-                                        break
-                                    if int(plan_list[plan_num][13]) in [action_area, action_area - 1, action_area + 1]:
-                                        break
-                                    time.sleep(0.1)
+                                PlanBallNum_Thead.run_flg = True  # 终点计数器线程
 
                             if int(plan_list[plan_num][11]) != 0:  # 摄像头延时，也可以用作动作延时
                                 if int(plan_list[plan_num][10]) != 0:  # 摄像头缩放
-                                    PlanCam_Thead.camitem = [int(plan_list[plan_num][10]), int(plan_list[plan_num][11])]
-                                    PlanCam_Thead.run_flg = True
+                                    PlanCam_Thead.camitem = [int(plan_list[plan_num][10]),
+                                                             int(plan_list[plan_num][11])]
+                                    PlanCam_Thead.run_flg = True  # 摄像头线程
                                 time.sleep(int(plan_list[plan_num][11]))
 
-                            if '_' in plan_list[plan_num][14]:  # 切换场景
+                            if '_' in plan_list[plan_num][14]:
                                 PlanObs_Thead.plan_obs = plan_list[plan_num][14]
-                                PlanObs_Thead.run_flg = True
+                                PlanObs_Thead.run_flg = True  # 切换场景线程
 
-                    # 流程完成则打开终点开关，关闭闸门，关闭弹射
-                    sc.GASetExtDoBit(3, 1)
-                    sc.GASetExtDoBit(1, 0)
-                    sc.GASetExtDoBit(0, 0)
-
-                except:
-                    self._signal.emit(fail("运动卡运行：出错！"))
+                # 流程完成则打开终点开关，关闭闸门，关闭弹射
+                sc.GASetExtDoBit(3, 1)  # 打开终点开关
+                sc.GASetExtDoBit(1, 0)  # 关闭闸门
+                sc.GASetExtDoBit(0, 0)  # 关闭弹射
             else:
                 self._signal.emit(fail("运动卡未链接！"))
+            if self.run_flg and ui.checkBox_restart.isChecked():
+                ReStart_Thead.run_flg = True  # 1分钟后重启动作
+                print('1分钟后重启动作!')
             self.run_flg = False
             self._signal.emit(succeed("运动流程：完成！"))
             print('动作已完成！')
             # udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
-            if ui.checkBox_restart.isChecked():
-                ReStart_Thead.run_flg = True  # 1分钟后重启动作
-                print('1分钟后重启动作!')
 
 
 def signal_accept(message):
