@@ -933,7 +933,7 @@ class PlanBallNumThead(QThread):
         global flg_start
         while True:
             time.sleep(0.1)
-            if not self.run_flg:
+            if (not self.run_flg) or (not flg_start['card']):
                 continue
             print('正在接收运动卡输入信息！')
             try:
@@ -958,6 +958,7 @@ class PlanBallNumThead(QThread):
                         else:
                             flg_start['card'] = False
                             self._signal.emit(fail("运动板x输入通信出错！"))
+                            break
                         time.sleep(0.01)
                 else:
                     print("次数归0 失败！")
