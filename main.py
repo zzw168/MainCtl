@@ -1048,11 +1048,11 @@ class AxisThead(QThread):
 '''
 
 
-class CmdThead(QThread):
+class PlanCmdThead(QThread):
     _signal = pyqtSignal(object)
 
     def __init__(self):
-        super(CmdThead, self).__init__()
+        super(PlanCmdThead, self).__init__()
         self.run_flg = False
 
     def run(self) -> None:
@@ -1690,7 +1690,7 @@ if __name__ == '__main__':
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()
 
-    PlanCmd_Thead = CmdThead()  # 总运行方案
+    PlanCmd_Thead = PlanCmdThead()  # 总运行方案
     PlanCmd_Thead._signal.connect(signal_accept)
     PlanCmd_Thead.start()
 
