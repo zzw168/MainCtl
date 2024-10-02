@@ -1155,7 +1155,6 @@ def signal_accept(message):
         if type(message) == int:
             print('动作位置 %s %s' % (message, p_now))
             if ui.checkBox_follow.isChecked():
-                # print(message)
                 tb_step = ui.tableWidget_Step
                 col_num = tb_step.columnCount()
                 # print(col_num)
@@ -1165,7 +1164,7 @@ def signal_accept(message):
                 p_now = message
         else:
             ui.textBrowser.append(str(message))
-            if message == succeed("运动流程：完成！"):
+            if str(message) == succeed("运动流程：完成！"):
                 plan_refresh()
                 p_now = 0
     except:
