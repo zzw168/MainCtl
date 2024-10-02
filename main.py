@@ -1565,7 +1565,7 @@ def table_change():
     row = tb_step.currentRow()
     col = tb_step.currentColumn()
     # print("%s %s" % (row, col))
-    if col == 14:
+    if col in [0, 14]:
         return
     if row < 0 or col < 0:
         return
