@@ -1570,13 +1570,13 @@ def table_change():
     if row < 0 or col < 0:
         return
     try:
-        if not is_natural_num(tb_step.item(row, col).text()):
-            if col > len(plan_list[row]) - 1:
-                if tb_step.item(row, col):
-                    tb_step.item(row, col).setText('')
-            else:
-                if tb_step.item(row, col):
-                    tb_step.item(row, col).setText(plan_list[row][col])
+        # print(len(plan_list[row]), col)
+        if col > len(plan_list[row]) - 1:
+            if tb_step.item(row, col):
+                tb_step.item(row, col).setText('')
+        elif not is_natural_num(tb_step.item(row, col).text()):
+            if tb_step.item(row, col):
+                tb_step.item(row, col).setText(plan_list[row][col])
     except:
         print("数据表操作出错！")
 
