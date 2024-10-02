@@ -1572,11 +1572,11 @@ def table_change():
     try:
         if not is_natural_num(tb_step.item(row, col).text()):
             if col > len(plan_list[row]) - 1:
-                tb_step.item(row, col).setText('')
+                if tb_step.item(row, col):
+                    tb_step.item(row, col).setText('')
             else:
-                comb = ui.comboBox_plan
-                _index = comb.currentIndex()
-                tb_step.item(row, col).setText(plan_list[row][col])
+                if tb_step.item(row, col):
+                    tb_step.item(row, col).setText(plan_list[row][col])
     except:
         print("数据表操作出错！")
 
