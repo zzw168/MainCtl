@@ -1136,15 +1136,16 @@ class CmdThead(QThread):
                 sc.GASetExtDoBit(3, 1)  # 打开终点开关
                 sc.GASetExtDoBit(1, 0)  # 关闭闸门
                 sc.GASetExtDoBit(0, 0)  # 关闭弹射
+
+                if self.run_flg and ui.checkBox_restart.isChecked():
+                    ReStart_Thead.run_flg = True  # 1分钟后重启动作
+                    print('1分钟后重启动作!')
+                self.run_flg = False
+                self._signal.emit(succeed("运动流程：完成！"))
+                print('动作已完成！')
+                # udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
             else:
                 self._signal.emit(fail("运动卡未链接！"))
-            if self.run_flg and ui.checkBox_restart.isChecked():
-                ReStart_Thead.run_flg = True  # 1分钟后重启动作
-                print('1分钟后重启动作!')
-            self.run_flg = False
-            self._signal.emit(succeed("运动流程：完成！"))
-            print('动作已完成！')
-            # udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
 
 
 def signal_accept(message):
