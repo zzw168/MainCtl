@@ -830,6 +830,9 @@ class ReStartThead(QThread):
                 else:
                     countdown = 300
                 for t in range(countdown, 0, -1):
+                    if not ui.checkBox_restart.isChecked():
+                        self.run_flg = False
+                        break
                     time.sleep(1)
                     self._signal.emit(t)
                 PlanCmd_Thead.run_flg = True
@@ -839,6 +842,8 @@ class ReStartThead(QThread):
 
 def time_signal_accept(msg):
     print(msg)
+    if int(msg) == 1:
+        plan_refresh()
     ui.lineEdit_time.setText(str(msg))
 
 
@@ -1188,7 +1193,6 @@ def signal_accept(message):
         else:
             ui.textBrowser.append(str(message))
             if str(message) == succeed("运动流程：完成！"):
-                plan_refresh()
                 p_now = 0
     except:
         print("运行数据处理出错！")
@@ -1506,6 +1510,7 @@ def plan_refresh():  # 刷新方案列表
 # 关闭运动卡
 def card_stop():
     PlanCmd_Thead.run_flg = False
+    print(flg_start)
     reset_ranking_array()
 
 
