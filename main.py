@@ -1137,11 +1137,16 @@ class PlanCmdThead(QThread):
                         elif int(plan_list[plan_num][13]) < 0:
                             pass  # 负数则直接下一个动作
                         else:
+                            t_over = 0
                             while True:  # 正式运行，等待球进入触发区域再进行下一个动作
                                 if not self.run_flg:
                                     print('动作等待中！')
                                     break
                                 if int(plan_list[plan_num][13]) in [action_area, action_area - 1, action_area + 1]:
+                                    break
+                                t_over += 1
+                                if t_over == 50:
+                                    print('等待超时！')
                                     break
                                 time.sleep(0.1)
 
