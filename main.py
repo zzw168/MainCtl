@@ -239,6 +239,7 @@ def get_picture(scence_current):
     resp = cl_requst.get_source_screenshot(scence_current, "jpg", None, None, 100)
     # print(resp.image_data)
     img = str2image(resp.image_data)
+    str2image_file(resp.image_data, './a.jpg')
     pixmap = QPixmap()
     pixmap.loadFromData(img)
     pixmap = pixmap.scaled(800, 450)
@@ -1180,6 +1181,7 @@ class PlanCmdThead(QThread):
                 # udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
             else:
                 self._signal.emit(fail("运动卡未链接！"))
+                self.run_flg = False
 
 
 def signal_accept(message):
@@ -1551,7 +1553,6 @@ def cmd_run():
     global p_now
     save_plan()
     p_now = 0
-    udp_thread.run_flg = True
     PlanCmd_Thead.run_flg = True
 
 
