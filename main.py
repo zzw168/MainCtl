@@ -900,12 +900,13 @@ class CamThead(QThread):
             if not self.run_flg:
                 continue
             print('串口运行')
-            try:
-                s485.cam_zoom_move(self.camitem[0])
-                time.sleep(self.camitem[1])
-                s485.cam_zoom_on_off()
-            except:
-                print("485 运行出错！")
+            if self.camitem[0] != 0:
+                try:
+                    s485.cam_zoom_move(self.camitem[0])
+                    time.sleep(self.camitem[1])
+                    s485.cam_zoom_on_off()
+                except:
+                    print("485 运行出错！")
             self.run_flg = False
 
 
@@ -944,7 +945,7 @@ class PlanBallNumThead(QThread):
                                 break
                             elif time.time() - time_now > 30:
                                 sc.GASetDiReverseCount()  # 输入次数归0
-                                self._signal.emit(0)
+                                # self._signal.emit(0)
                                 break
                         time.sleep(0.01)
                 else:
@@ -1056,7 +1057,6 @@ class CmdThead(QThread):
 
     def run(self) -> None:
         global action_area
-        global p_now
         while True:
             time.sleep(0.1)
             if not self.run_flg:
@@ -1130,7 +1130,6 @@ class CmdThead(QThread):
                                 PlanObs_Thead.plan_obs = plan_list[plan_num][14]
                                 PlanObs_Thead.run_flg = True
 
-                    self._signal.emit(succeed("运动流程：完成！"))
                     # 流程完成则打开终点开关，关闭闸门，关闭弹射
                     sc.GASetExtDoBit(3, 1)
                     sc.GASetExtDoBit(1, 0)
@@ -1141,9 +1140,9 @@ class CmdThead(QThread):
             else:
                 self._signal.emit(fail("运动卡未链接！"))
             self.run_flg = False
+            self._signal.emit(succeed("运动流程：完成！"))
             print('动作已完成！')
             # udp_thread.run_flg = False  # 停止处理图像识别数据，节省资源
-            p_now = 0
             if ui.checkBox_restart.isChecked():
                 ReStart_Thead.run_flg = True  # 1分钟后重启动作
                 print('1分钟后重启动作!')
@@ -1166,6 +1165,9 @@ def signal_accept(message):
                 p_now = message
         else:
             ui.textBrowser.append(str(message))
+            if message == succeed("运动流程：完成！"):
+                plan_refresh()
+                p_now = 0
     except:
         print("运行数据处理出错！")
 
