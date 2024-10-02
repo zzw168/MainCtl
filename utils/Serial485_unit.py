@@ -40,6 +40,7 @@ class Serial485:
             self.ser.write(cmd)  # 4. Hex发送
         else:
             print('端口未链接！')
+        return self.ser.is_open
 
     # 镜头缩放开关
     def cam_zoom_on_off(self):
@@ -50,6 +51,7 @@ class Serial485:
             self.ser.write(cmd)  # 4. Hex发送
         else:
             print('端口未链接！')
+        return self.ser.is_open
 
     # 五轴校正
     def get_axis_pos(self):

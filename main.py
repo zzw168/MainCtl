@@ -897,16 +897,22 @@ class CamThead(QThread):
     def run(self) -> None:
         while True:
             time.sleep(0.01)
-            if not self.run_flg:
+            if (not self.run_flg) or (not flg_start['s485']):
                 continue
             print('串口运行')
             if self.camitem[0] != 0:
                 try:
-                    s485.cam_zoom_move(self.camitem[0])
+                    res = s485.cam_zoom_move(self.camitem[0])
+                    if not res:
+                        flg_start['s485'] = False
+                        self._signal.emit(fail("s485通信出错！"))
+                        continue
                     time.sleep(self.camitem[1])
                     s485.cam_zoom_on_off()
                 except:
                     print("485 运行出错！")
+                    flg_start['s485'] = False
+                    self._signal.emit(fail("s485通信出错！"))
             self.run_flg = False
 
 
@@ -923,6 +929,7 @@ class PlanBallNumThead(QThread):
         self.run_flg = False
 
     def run(self) -> None:
+        global flg_start
         while True:
             time.sleep(0.1)
             if not self.run_flg:
@@ -947,11 +954,18 @@ class PlanBallNumThead(QThread):
                                 sc.GASetDiReverseCount()  # 输入次数归0
                                 # self._signal.emit(0)
                                 break
+                        else:
+                            flg_start['card'] = False
+                            self._signal.emit(fail("运动板x输入通信出错！"))
                         time.sleep(0.01)
                 else:
                     print("次数归0 失败！")
+                    flg_start['card'] = False
+                    self._signal.emit(fail("运动板x输入通信出错！"))
             except:
                 print("接收运动卡输入 运行出错！")
+                flg_start['card'] = False
+                self._signal.emit(fail("运动板x输入通信出错！"))
             self.run_flg = False
 
 
@@ -1067,7 +1081,7 @@ class PlanCmdThead(QThread):
                 reset_ranking_array()  # 初始化排名，位置变量
                 for plan_num in range(0, len(plan_list)):
                     print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
-                    if not self.run_flg:
+                    if (not self.run_flg) or (not flg_start['card']):
                         print('动作未开始！')
                         break
                     if plan_list[plan_num][0] == '1':  # 是否勾选
@@ -1093,7 +1107,11 @@ class PlanCmdThead(QThread):
                                          dAcc=float(plan_list[plan_num][8]),
                                          dDec=float(plan_list[plan_num][9]),
                                          dVelStart=0.1, dSmoothTime=0)
-                            sc.card_update()
+                            res = sc.card_update()
+                            if res != 0:
+                                print("运动板通信出错！")
+                                flg_start['card'] = False
+                                self._signal.emit(fail("运动板通信出错！"))
 
                             print("开启机关")
                             if int(plan_list[plan_num][12]) != 0:
@@ -1103,6 +1121,8 @@ class PlanCmdThead(QThread):
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 1)
                         except:
                             print("运动板运行出错！")
+                            flg_start['card'] = False
+                            self._signal.emit(fail("运动板通信出错！"))
 
                         if ui.checkBox_test.isChecked() or int(plan_list[plan_num][13]) == 0:
                             time.sleep(2)  # 测试期间停两秒切换下一个动作
