@@ -120,6 +120,7 @@ class ObsThead(QThread):
                 flg_start['obs'] = True
         except:
             self._signal.emit(fail('OBS 启动失败！'))
+            flg_start['obs'] = False
 
 
 def obs_signal_accept(msg):
@@ -991,7 +992,7 @@ class PlanObsThead(QThread):
     def run(self) -> None:
         while True:
             time.sleep(0.01)
-            if not self.run_flg:
+            if (not self.run_flg) or (not flg_start['obs']):
                 continue
             print('OBS运行')
             try:
@@ -1007,6 +1008,7 @@ class PlanObsThead(QThread):
                     print('没有切换的场景！')
             except:
                 print("OBS 链接中断！")
+                flg_start['obs'] = False
                 self._signal.emit(fail("OBS 场景切换中断！"))
             self.run_flg = False
 
