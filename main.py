@@ -837,7 +837,7 @@ class ReStartThead(QThread):
                 self._signal.emit(t)
             if ui.checkBox_restart.isChecked():
                 PlanCmd_Thead.run_flg = True
-            print("循环启动！")
+            # print("循环启动！")
             self.run_flg = False
 
 
@@ -1006,7 +1006,7 @@ class PlanObsThead(QThread):
             try:
                 if '_' in self.plan_obs:  # 切换场景
                     obs_msg = str.split(self.plan_obs, '_')
-                    print(obs_msg)
+                    # print(obs_msg)
                     get_picture(obs_msg[1])
                     self._signal.emit(succeed("OBS 截图完成！"))
                     if int(obs_msg[0]) == 1:
@@ -1090,7 +1090,7 @@ class PlanCmdThead(QThread):
                 udp_thread.run_flg = True  # 开始处理图像识别数据
                 reset_ranking_array()  # 初始化排名，位置变量
                 for plan_num in range(0, len(plan_list)):
-                    print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
+                    # print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
                     if (not self.run_flg) or (not flg_start['card']):
                         print('动作未开始！')
                         break
@@ -1123,7 +1123,7 @@ class PlanCmdThead(QThread):
                                 flg_start['card'] = False
                                 self._signal.emit(fail("运动板通信出错！"))
 
-                            print("开启机关")
+                            # print("开启机关")
                             if int(plan_list[plan_num][12]) != 0:
                                 if '-' in plan_list[plan_num][12]:
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 0)
@@ -1153,7 +1153,7 @@ class PlanCmdThead(QThread):
                                 time.sleep(0.1)
 
                         if self.run_flg:
-                            if action_area in [max_area_count - 3, max_area_count - 2, max_area_count - 1]:
+                            if action_area > max_area_count - 3:
                                 PlanBallNum_Thead.run_flg = True  # 终点计数器线程
 
                             if int(plan_list[plan_num][11]) != 0:  # 摄像头延时，也可以用作动作延时
@@ -1188,8 +1188,8 @@ def signal_accept(message):
     global p_now
     print(message)
     try:
-        if type(message) == int:
-            print('动作位置 %s %s' % (message, p_now))
+        if isinstance(message, int):
+            # print('动作位置 %s %s' % (message, p_now))
             if ui.checkBox_follow.isChecked():
                 tb_step = ui.tableWidget_Step
                 col_num = tb_step.columnCount()
