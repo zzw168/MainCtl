@@ -1635,12 +1635,16 @@ def ballnum2zero():
 
 
 def test():
-    message = 1
-    if type(message) == int:
-        print('数字')
-    else:
-        print(type(message))
-    get_picture('终点')
+    for i in range(0, 10):
+        if i < 9:
+            continue
+        print("ok~")
+    # message = 1
+    # if type(message) == int:
+    #     print('数字')
+    # else:
+    #     print(type(message))
+    # get_picture('终点')
     # res, value = sc.GAGetDiReverseCount()
     # print(res, value)
     # res = sc.GASetDiReverseCount()
