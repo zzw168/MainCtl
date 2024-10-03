@@ -239,7 +239,7 @@ def get_picture(scence_current):
     resp = cl_requst.get_source_screenshot(scence_current, "jpg", None, None, 100)
     # print(resp.image_data)
     img = str2image(resp.image_data)
-    str2image_file(resp.image_data, './a.jpg')
+    # str2image_file(resp.image_data, './a.jpg')
     pixmap = QPixmap()
     pixmap.loadFromData(img)
     pixmap = pixmap.scaled(800, 450)
@@ -1007,11 +1007,11 @@ class PlanObsThead(QThread):
                 if '_' in self.plan_obs:  # 切换场景
                     obs_msg = str.split(self.plan_obs, '_')
                     # print(obs_msg)
-                    get_picture(obs_msg[1])
-                    self._signal.emit(succeed("OBS 截图完成！"))
                     if int(obs_msg[0]) == 1:
                         cl_requst.set_current_program_scene(obs_msg[1])
                         self._signal.emit(succeed("OBS 场景切换完成！"))
+                    get_picture(obs_msg[1])
+                    self._signal.emit(succeed("OBS 截图完成！"))
                 else:
                     print('没有切换的场景！')
             except:
@@ -1641,7 +1641,7 @@ def test():
         print('数字')
     else:
         print(type(message))
-    # get_picture('终点')
+    get_picture('终点')
     # res, value = sc.GAGetDiReverseCount()
     # print(res, value)
     # res = sc.GASetDiReverseCount()
