@@ -570,7 +570,7 @@ class UdpThead(QThread):
                     array_data = filter_max_value(array_data)
                     deal_rank(array_data)
                     for rank_num in range(0, len(ranking_array)):
-                        if (int(ranking_array[rank_num][6]) > action_area + 2
+                        if (int(ranking_array[rank_num][6]) > action_area + 3
                                 or (6 - max_area_count < int(  # 跨圈
                                     ranking_array[rank_num][6]) < action_area)):
                             continue
@@ -844,8 +844,8 @@ def time_signal_accept(msg):
     print(msg)
     if int(msg) == 1:
         plan_refresh()
+        ui.lineEdit_ball_num.setText('0')
     ui.lineEdit_time.setText(str(msg))
-    ui.lineEdit_ball_num.setText('0')
 
 
 '''
@@ -978,9 +978,11 @@ class PlanBallNumThead(QThread):
 
 
 def PlanBallNum_signal_accept(msg):
-    # print('球数 %s' % msg)
-    if type(msg) == int:
+    print('球数 %s' % msg)
+    if isinstance(msg, int):
         ui.lineEdit_ball_num.setText(str(msg))
+    else:
+        ui.textBrowser.append(msg)
 
 
 '''
@@ -1152,7 +1154,7 @@ class PlanCmdThead(QThread):
                                 time.sleep(0.1)
 
                         if self.run_flg:
-                            if action_area > max_area_count - 3:
+                            if action_area > max_area_count - 5:
                                 PlanBallNum_Thead.run_flg = True  # 终点计数器线程
 
                             if int(plan_list[plan_num][11]) != 0:  # 摄像头延时，也可以用作动作延时
@@ -1166,10 +1168,11 @@ class PlanCmdThead(QThread):
                                 PlanObs_Thead.plan_obs = plan_list[plan_num][14]
                                 PlanObs_Thead.run_flg = True  # 切换场景线程
 
-                # 流程完成则打开终点开关，关闭闸门，关闭弹射
-                sc.GASetExtDoBit(3, 1)  # 打开终点开关
-                sc.GASetExtDoBit(1, 0)  # 关闭闸门
-                sc.GASetExtDoBit(0, 0)  # 关闭弹射
+                if not ui.checkBox_test.isChecked():  # 非测试模式才关闭
+                    # 流程完成则打开终点开关，关闭闸门，关闭弹射
+                    sc.GASetExtDoBit(3, 1)  # 打开终点开关
+                    sc.GASetExtDoBit(1, 0)  # 关闭闸门
+                    sc.GASetExtDoBit(0, 0)  # 关闭弹射
 
                 if self.run_flg and ui.checkBox_restart.isChecked():
                     ReStart_Thead.run_flg = True  # 1分钟后重启动作
@@ -1630,6 +1633,46 @@ def wakeup_server():
         time.sleep(300)
 
 
+def save_images():
+    form_data = {
+        'saveImgRun': 1,
+        'saveBackground': 0,
+        'saveImgNum': '0,1,2,3,4,5,6,7,8',
+        'saveImgPath': 'D:/saidao',
+
+        # 'requestType': 'set_run_toggle',
+        #
+        # 'requestType': 'get_run_toggle',
+        # 'run_toggle': '1',
+        # "num":6
+    }
+    try:
+        r = requests.post(url=wakeup_addr, data=form_data)
+        print(r.text)
+    except:
+        print('图像识别主机通信失败！')
+
+
+def stop_save_images():
+    form_data = {
+        'saveImgRun': 0,
+        'saveBackground': 0,
+        'saveImgNum': '0,1,2,3,4,5,6,7,8',
+        'saveImgPath': 'D:/saidao',
+
+        # 'requestType': 'set_run_toggle',
+        #
+        # 'requestType': 'get_run_toggle',
+        # 'run_toggle': '1',
+        # "num":6
+    }
+    try:
+        r = requests.post(url=wakeup_addr, data=form_data)
+        print(r.text)
+    except:
+        print('图像识别主机通信失败！')
+
+
 def ballnum2zero():
     ui.lineEdit_ball_num.setText('0')
 
@@ -1767,6 +1810,8 @@ if __name__ == '__main__':
     ui.pushButton_Obs2Table.clicked.connect(obs_to_table)
     ui.pushButton_Obs_delete.clicked.connect(obs_remove_table)
     ui.pushButton_ball_clean.clicked.connect(ballnum2zero)
+    ui.pushButton_saveImgs.clicked.connect(save_images)
+    ui.pushButton_stop_saveImgs.clicked.connect(stop_save_images)
 
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
