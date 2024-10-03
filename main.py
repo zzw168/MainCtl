@@ -546,7 +546,7 @@ class UdpThead(QThread):
 
     def __init__(self):
         super(UdpThead, self).__init__()
-        self.run_flg = False
+        self.run_flg = True
 
     def run(self) -> None:
         global action_area
@@ -561,7 +561,7 @@ class UdpThead(QThread):
                     data_res = eval(res)  # str转换list
                     self._signal.emit(data_res)
                     array_data = []
-                    for i_ in range(1, len(data_res)):
+                    for i_ in range(1, len(data_res)):  # data_res[0] 是时间戳差值 ms
                         array_data.append(data_res[i_])
                     # print(array_data)
                     array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
