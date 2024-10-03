@@ -244,7 +244,6 @@ def get_picture(scence_current):
     pixmap.loadFromData(img)
     pixmap = pixmap.scaled(800, 450)
     lab_p = ui.label_picture
-    lab_p.clear()
     lab_p.setPixmap(pixmap)
 
 
