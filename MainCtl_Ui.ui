@@ -1626,7 +1626,495 @@
           <string>运动参数</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_20">
-          <item row="0" column="1" rowspan="2">
+          <item row="0" column="0">
+           <widget class="QFrame" name="frame_13">
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_13">
+             <item row="0" column="8">
+              <widget class="QFrame" name="frame_19">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QComboBox" name="comboBox_plan">
+               <property name="minimumSize">
+                <size>
+                 <width>200</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="4">
+              <widget class="QFrame" name="frame_14">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="7">
+              <widget class="QCheckBox" name="checkBox_test">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>测试模式</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="11">
+              <widget class="QPushButton" name="pushButton_rename">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>重命名方案</string>
+               </property>
+               <property name="default">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="checkBox_selectall">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>全选</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <widget class="QPushButton" name="pushButton_fsave">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>保存方案</string>
+               </property>
+               <property name="default">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_22">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>选择方案：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="5">
+              <widget class="QCheckBox" name="checkBox_follow">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>运行跟踪</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="9">
+              <widget class="QLabel" name="label_23">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>方案名称：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="10">
+              <widget class="QLineEdit" name="lineEdit_rename"/>
+             </item>
+             <item row="0" column="6">
+              <widget class="QCheckBox" name="checkBox_restart">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>循环模式</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QTableWidget" name="tableWidget_Step">
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>80</number>
+            </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string/>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>圈数</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>左右</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>前后</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>上下</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>头旋转</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>头上下</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>速度</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>加速</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>减速</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>镜头缩放</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>缩放时长</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>机关</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>运动位置</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>OBS画面</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string/>
+             </property>
+            </column>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QFrame" name="frame_23">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_25">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item row="0" column="10">
+              <widget class="QLineEdit" name="lineEdit_time">
+               <property name="maximumSize">
+                <size>
+                 <width>30</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background:rgb(238, 238, 238)</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="9">
+              <widget class="QLabel" name="label_8">
+               <property name="maximumSize">
+                <size>
+                 <width>50</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>倒计时：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <widget class="QFrame" name="frame_24">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="lineEdit_ball_num">
+               <property name="maximumSize">
+                <size>
+                 <width>30</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background:rgb(238, 238, 238)</string>
+               </property>
+               <property name="readOnly">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="6">
+              <widget class="QFrame" name="frame_25">
+               <property name="frameShape">
+                <enum>QFrame::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Raised</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="maximumSize">
+                <size>
+                 <width>150</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>过终点球数(每30秒重置)：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="8">
+              <widget class="QLineEdit" name="lineEdit_Countdown">
+               <property name="maximumSize">
+                <size>
+                 <width>50</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>300</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="pushButton_ball_clean">
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>80</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>清零</string>
+               </property>
+               <property name="default">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="7">
+              <widget class="QLabel" name="label_27">
+               <property name="maximumSize">
+                <size>
+                 <width>120</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <weight>75</weight>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>设置循环间隔(秒)：</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="0" column="1" rowspan="3">
            <widget class="QFrame" name="frame_10">
             <property name="minimumSize">
              <size>
@@ -1646,15 +2134,14 @@
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
             </property>
-            <layout class="QGridLayout" name="gridLayout_18">
-             <item row="9" column="0">
-              <widget class="QTextBrowser" name="textBrowser">
-               <property name="readOnly">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
+            <layout class="QGridLayout" name="gridLayout_34">
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item row="0" column="0">
               <widget class="QGroupBox" name="groupBox_6">
                <property name="font">
                 <font>
@@ -2104,7 +2591,7 @@
                </layout>
               </widget>
              </item>
-             <item row="3" column="0">
+             <item row="1" column="0">
               <widget class="QGroupBox" name="groupBox_4">
                <property name="maximumSize">
                 <size>
@@ -2261,453 +2748,15 @@
                </layout>
               </widget>
              </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QFrame" name="frame_13">
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_13">
-             <item row="0" column="8">
-              <widget class="QFrame" name="frame_19">
-               <property name="minimumSize">
-                <size>
-                 <width>50</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QComboBox" name="comboBox_plan">
-               <property name="minimumSize">
-                <size>
-                 <width>200</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="4">
-              <widget class="QFrame" name="frame_14">
-               <property name="minimumSize">
-                <size>
-                 <width>50</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="7">
-              <widget class="QCheckBox" name="checkBox_test">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>测试模式</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="11">
-              <widget class="QPushButton" name="pushButton_rename">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>重命名方案</string>
-               </property>
-               <property name="default">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="checkBox_selectall">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>全选</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <widget class="QPushButton" name="pushButton_fsave">
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>保存方案</string>
-               </property>
-               <property name="default">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="label_22">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>选择方案：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="5">
-              <widget class="QCheckBox" name="checkBox_follow">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>运行跟踪</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="9">
-              <widget class="QLabel" name="label_23">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>方案名称：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="10">
-              <widget class="QLineEdit" name="lineEdit_rename"/>
-             </item>
-             <item row="0" column="6">
-              <widget class="QCheckBox" name="checkBox_restart">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>循环模式</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QTableWidget" name="tableWidget_Step">
-            <property name="selectionBehavior">
-             <enum>QAbstractItemView::SelectRows</enum>
-            </property>
-            <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>80</number>
-            </attribute>
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>true</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>圈数</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>左右</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>前后</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>上下</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>头旋转</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>头上下</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>速度</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>加速</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>减速</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>镜头缩放</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>缩放时长</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>机关</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>运动位置</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>OBS画面</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QFrame" name="frame_23">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::StyledPanel</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_25">
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_7">
-               <property name="maximumSize">
-                <size>
-                 <width>150</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>过终点球数(每30秒重置)：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="7">
-              <widget class="QLabel" name="label_27">
-               <property name="maximumSize">
-                <size>
-                 <width>120</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>设置循环间隔(秒)：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="8">
-              <widget class="QLineEdit" name="lineEdit_Countdown">
-               <property name="maximumSize">
-                <size>
-                 <width>50</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>300</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="4">
-              <widget class="QPushButton" name="pushButton_saveImgs">
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>80</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>开始录图</string>
-               </property>
-               <property name="default">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <widget class="QFrame" name="frame_24">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="lineEdit_ball_num">
-               <property name="maximumSize">
-                <size>
-                 <width>30</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background:rgb(238, 238, 238)</string>
-               </property>
+             <item row="2" column="0">
+              <widget class="QTextBrowser" name="textBrowser">
                <property name="readOnly">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QPushButton" name="pushButton_ball_clean">
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>80</width>
-                 <height>16777215</height>
-                </size>
-               </property>
+             <item row="3" column="0">
+              <widget class="QGroupBox" name="groupBox_10">
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
@@ -2716,97 +2765,43 @@
                  <bold>true</bold>
                 </font>
                </property>
-               <property name="text">
-                <string>清零</string>
+               <property name="title">
+                <string>识别主机录图操作</string>
                </property>
-               <property name="default">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="10">
-              <widget class="QLineEdit" name="lineEdit_time">
-               <property name="maximumSize">
-                <size>
-                 <width>30</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">background:rgb(238, 238, 238)</string>
-               </property>
-               <property name="readOnly">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="9">
-              <widget class="QLabel" name="label_8">
-               <property name="maximumSize">
-                <size>
-                 <width>50</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>倒计时：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="6">
-              <widget class="QFrame" name="frame_25">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="5">
-              <widget class="QPushButton" name="pushButton_stop_saveImgs">
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>80</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>停止录图</string>
-               </property>
-               <property name="default">
-                <bool>true</bool>
-               </property>
+               <layout class="QGridLayout" name="gridLayout_18">
+                <item row="0" column="0">
+                 <widget class="QRadioButton" name="radioButton_noball">
+                  <property name="text">
+                   <string>无球</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QRadioButton" name="radioButton_ball">
+                  <property name="text">
+                   <string>有球</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QCheckBox" name="checkBox_saveImgs">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <weight>75</weight>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>开始录屏</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </item>
             </layout>

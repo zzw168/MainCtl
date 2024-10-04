@@ -1634,37 +1634,19 @@ def wakeup_server():
 
 
 def save_images():
+    if ui.checkBox_saveImgs.isChecked():
+        saveImgRun = 1  # 1 录图开启标志
+    else:
+        saveImgRun = 0  # 1 录图关闭标志
+    if ui.radioButton_ball.isChecked():
+        saveBackground = 0  # 0 有球录图标志
+    else:
+        saveBackground = 1  # 0 无球录图标志
     form_data = {
-        'saveImgRun': 1,
-        'saveBackground': 0,
+        'saveImgRun': saveImgRun,
+        'saveBackground': saveBackground,
         'saveImgNum': '0,1,2,3,4,5,6,7,8',
-        'saveImgPath': 'D:/saidao',
-
-        # 'requestType': 'set_run_toggle',
-        #
-        # 'requestType': 'get_run_toggle',
-        # 'run_toggle': '1',
-        # "num":6
-    }
-    try:
-        r = requests.post(url=wakeup_addr, data=form_data)
-        print(r.text)
-    except:
-        print('图像识别主机通信失败！')
-
-
-def stop_save_images():
-    form_data = {
-        'saveImgRun': 0,
-        'saveBackground': 0,
-        'saveImgNum': '0,1,2,3,4,5,6,7,8',
-        'saveImgPath': 'D:/saidao',
-
-        # 'requestType': 'set_run_toggle',
-        #
-        # 'requestType': 'get_run_toggle',
-        # 'run_toggle': '1',
-        # "num":6
+        # 'saveImgPath': 'D:/saidao',
     }
     try:
         r = requests.post(url=wakeup_addr, data=form_data)
@@ -1810,9 +1792,10 @@ if __name__ == '__main__':
     ui.pushButton_Obs2Table.clicked.connect(obs_to_table)
     ui.pushButton_Obs_delete.clicked.connect(obs_remove_table)
     ui.pushButton_ball_clean.clicked.connect(ballnum2zero)
-    ui.pushButton_saveImgs.clicked.connect(save_images)
-    ui.pushButton_stop_saveImgs.clicked.connect(stop_save_images)
+    # ui.pushButton_saveImgs.clicked.connect(save_images)
+    # ui.pushButton_stop_saveImgs.clicked.connect(stop_save_images)
 
+    ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
     ui.tableWidget_Step.itemChanged.connect(table_change)
