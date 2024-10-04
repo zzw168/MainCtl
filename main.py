@@ -1079,6 +1079,7 @@ class PlanCmdThead(QThread):
     def __init__(self):
         super(PlanCmdThead, self).__init__()
         self.run_flg = False
+        self.card_next = False
 
     def run(self) -> None:
         global action_area
@@ -1151,10 +1152,14 @@ class PlanCmdThead(QThread):
                                 if t_over == 55:
                                     print('等待超时！')
                                     break
+                                if self.card_next:
+                                    break
                                 time.sleep(0.1)
-
+                        if self.card_next:  # 快速执行下一个动作
+                            self.card_next = False
+                            continue
                         if self.run_flg:
-                            if action_area > max_area_count - 5:
+                            if action_area >= max_area_count - 3:
                                 PlanBallNum_Thead.run_flg = True  # 终点计数器线程
 
                             if int(plan_list[plan_num][11]) != 0:  # 摄像头延时，也可以用作动作延时
@@ -1517,6 +1522,11 @@ def plan_refresh():  # 刷新方案列表
                 table.setItem(num, col, item)
 
 
+# 进入下一步动作
+def card_next():
+    PlanCmd_Thead.card_next = True
+
+
 # 关闭运动卡
 def card_stop():
     PlanCmd_Thead.run_flg = False
@@ -1792,7 +1802,7 @@ if __name__ == '__main__':
     ui.pushButton_Obs2Table.clicked.connect(obs_to_table)
     ui.pushButton_Obs_delete.clicked.connect(obs_remove_table)
     ui.pushButton_ball_clean.clicked.connect(ballnum2zero)
-    # ui.pushButton_saveImgs.clicked.connect(save_images)
+    ui.pushButton_CardNext.clicked.connect(card_next)
     # ui.pushButton_stop_saveImgs.clicked.connect(stop_save_images)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
