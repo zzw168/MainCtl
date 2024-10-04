@@ -1670,14 +1670,10 @@ def ballnum2zero():
 
 def test():
     try:
-        cl_requst.set_scene_item_enabled(scene_name, item_id, source_enable)  # 打开视频来源
+        cl_requst.set_scene_item_enabled('现场', 13, True)  # 打开视频来源
     except:
         ui.textBrowser.append(fail("OBS 链接中断！"))
-    # message = 1
-    # if type(message) == int:
-    #     print('数字')
-    # else:
-    #     print(type(message))
+
     # get_picture('终点')
     # res, value = sc.GAGetDiReverseCount()
     # print(res, value)
