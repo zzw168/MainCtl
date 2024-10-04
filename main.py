@@ -557,7 +557,6 @@ class UdpThead(QThread):
                 recv_data = udp_socket.recvfrom(10240)  # 1024表示本次接收的最大字节数
                 if self.run_flg:
                     res = recv_data[0].decode('utf8')
-                    # res = json.loads(res)
                     data_res = eval(res)  # str转换list
                     self._signal.emit(data_res)
                     array_data = []
