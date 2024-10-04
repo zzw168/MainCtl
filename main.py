@@ -841,7 +841,7 @@ class ReStartThead(QThread):
 
 
 def time_signal_accept(msg):
-    print(msg)
+    # print(msg)
     if int(msg) == 1:
         plan_refresh()
         ui.lineEdit_ball_num.setText('0')
