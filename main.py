@@ -1450,6 +1450,8 @@ def load_plan_yaml():
             s485.s485_Cam_No = plan_all['s485_Cam_No']
             s485.s485_Axis_No = plan_all['s485_Axis_No']
 
+            ui.lineEdit_CarNo.setText(str(plan_all['cardNo']))
+
             comb = ui.comboBox_plan
             comb.addItems(plan_names)
             plan_refresh()
@@ -1753,7 +1755,6 @@ if __name__ == '__main__':
                  'server2': False}  # 各硬件启动标志
 
     load_plan_yaml()
-    ui.lineEdit_CarNo.setText(str(plan_all['cardNo']))
 
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()

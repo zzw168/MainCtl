@@ -14,10 +14,10 @@ class Serial485:
         self.ser = ''
         self.s485_Cam_No = 'COM1'
         self.s485_Axis_No = 'COM23'
-        try:
-            self.ser = serial.Serial(self.s485_Cam_No, 9600, timeout=5)
-        except:
-            print('s485 启动失败')
+        # try:
+        #     self.ser = serial.Serial(self.s485_Cam_No, 9600, timeout=5)
+        # except:
+        #     print('s485 启动失败')
 
     def cam_open(self):
         try:
