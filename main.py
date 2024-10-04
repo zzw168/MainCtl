@@ -182,17 +182,18 @@ def source2table():
 
 
 def source_enable():  # 开关来源
+    global source_list
     tb_source = ui.tableWidget_Sources
     row_num = tb_source.currentRow()
     source_list[row_num][0] = not (source_list[row_num][0])
-    source_enable = source_list[row_num][0]
+    s_enable = source_list[row_num][0]
     cb_scene = ui.comboBox_Scenes
     scene_name = cb_scene.currentText()
     item_id = source_list[row_num][2]
     # print(source_list)
     # 打开,关闭来源
     try:
-        cl_requst.set_scene_item_enabled(scene_name, item_id, source_enable)  # 打开视频来源
+        cl_requst.set_scene_item_enabled(scene_name, item_id, s_enable)  # 打开视频来源
     except:
         ui.textBrowser.append(fail("OBS 链接中断！"))
 
@@ -1668,10 +1669,10 @@ def ballnum2zero():
 
 
 def test():
-    for i in range(0, 10):
-        if i < 9:
-            continue
-        print("ok~")
+    try:
+        cl_requst.set_scene_item_enabled(scene_name, item_id, source_enable)  # 打开视频来源
+    except:
+        ui.textBrowser.append(fail("OBS 链接中断！"))
     # message = 1
     # if type(message) == int:
     #     print('数字')
