@@ -1089,7 +1089,7 @@ class PlanCmdThead(QThread):
                 continue
             if flg_start['card']:
                 self._signal.emit(succeed("运动流程：开始！"))
-                udp_thread.run_flg = True  # 开始处理图像识别数据
+                self.card_next = False  # 初始化快速动作标志
                 reset_ranking_array()  # 初始化排名，位置变量
                 for plan_num in range(0, len(plan_list)):
                     # print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
@@ -1149,7 +1149,7 @@ class PlanCmdThead(QThread):
                                 if int(plan_list[plan_num][13]) in [action_area, action_area - 1, action_area + 1]:
                                     break
                                 t_over += 1
-                                if t_over == 55:
+                                if t_over == 60:
                                     print('等待超时！')
                                     break
                                 if self.card_next:
