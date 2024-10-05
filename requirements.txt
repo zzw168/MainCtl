@@ -1,0 +1,8 @@
+opencv-python
+numpy
+pynput
+requests
+pyyaml
+obsws-python
+pyserial
+PySide6

@@ -11,9 +11,9 @@ import pynput
 import requests
 import yaml
 
-from PyQt5.QtCore import Qt, QThread, pyqtSignal, pyqtSlot
-from PyQt5.QtGui import QBrush, QColor, QPixmap
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu
+from PySide6.QtCore import Qt, QThread, Signal, Slot
+from PySide6.QtGui import QBrush, QColor, QPixmap
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu
 
 import obsws_python as obs
 
@@ -96,7 +96,7 @@ def on_get_stream_status(data):
 
 
 class ObsThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(ObsThead, self).__init__()
@@ -137,7 +137,7 @@ def obs_open():
 
 
 class SourceThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(SourceThead, self).__init__()
@@ -482,7 +482,7 @@ def init_ranking_table():
 
 
 class UpdateThread(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(UpdateThread, self).__init__()
@@ -507,7 +507,7 @@ def ranking_signal_accept(msg):
 
 
 class TcpThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(TcpThead, self).__init__()
@@ -543,7 +543,7 @@ def tcp_signal_accept(msg):
 
 
 class UdpThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(UdpThead, self).__init__()
@@ -598,7 +598,7 @@ def udp_signal_accept(msg):
 
 
 class ResetThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(ResetThead, self).__init__()
@@ -812,7 +812,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
 
 
 class ReStartThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(ReStartThead, self).__init__()
@@ -854,7 +854,7 @@ def time_signal_accept(msg):
 
 
 class PosThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(PosThead, self).__init__()
@@ -894,7 +894,7 @@ def pos_signal_accept(message):
 
 
 class CamThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(CamThead, self).__init__()
@@ -929,7 +929,7 @@ class CamThead(QThread):
 
 
 class PlanBallNumThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(PlanBallNumThead, self).__init__()
@@ -991,7 +991,7 @@ def PlanBallNum_signal_accept(msg):
 
 
 class PlanObsThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(PlanObsThead, self).__init__()
@@ -1028,7 +1028,7 @@ class PlanObsThead(QThread):
 
 
 class AxisThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(AxisThead, self).__init__()
@@ -1074,7 +1074,7 @@ class AxisThead(QThread):
 
 
 class PlanCmdThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(PlanCmdThead, self).__init__()
@@ -1213,7 +1213,7 @@ def signal_accept(message):
 
 
 class KeyListenerThead(QThread):
-    _signal = pyqtSignal(object)
+    _signal = Signal(object)
 
     def __init__(self):
         super(KeyListenerThead, self).__init__()
@@ -1670,7 +1670,8 @@ def ballnum2zero():
     ui.lineEdit_ball_num.setText('0')
 
 
-def test():
+def my_test():
+    print('111')
     try:
         cl_requst.set_scene_item_enabled('现场', 13, True)  # 打开视频来源
     except:
@@ -1706,21 +1707,11 @@ class MyApp(QApplication):
         super().__init__(argv)
         self.aboutToQuit.connect(self.onAboutToQuit)
 
-    @pyqtSlot()
+    @Slot()
     def onAboutToQuit(self):
         print("Exiting the application.")
         try:
             # 当准备退出时，关闭所有服务
-            tcp_socket.shutdown(socket.SHUT_RDWR)
-            tcp_socket.close()
-
-            tcp_thread.close()
-            tcp_thread.join()
-
-            udp_socket.shutdown(socket.SHUT_RDWR)
-            udp_socket.close()
-            udp_thread.join()
-
             httpd.shutdown()
             httpd.server_close()
 
@@ -1788,7 +1779,7 @@ if __name__ == '__main__':
     ReStart_Thead.start()
 
     ui.pushButton_fsave.clicked.connect(save_plan)
-    ui.pushButton_rename.clicked.connect(test)
+    ui.pushButton_rename.clicked.connect(my_test)
     # ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardStop.clicked.connect(card_stop)
@@ -1926,4 +1917,4 @@ if __name__ == '__main__':
     ui.pushButton_reset_Ranking.clicked.connect(reset_ranking_array)
     "**************************图像识别算法_结束*****************************"
 
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
