@@ -1092,7 +1092,7 @@ class PlanCmdThead(QThread):
                 self.card_next = False  # 初始化快速动作标志
                 reset_ranking_array()  # 初始化排名，位置变量
                 for plan_num in range(0, len(plan_list)):
-                    # print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
+                    print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
                     if (not self.run_flg) or (not flg_start['card']):
                         print('动作未开始！')
                         break
@@ -1192,7 +1192,7 @@ class PlanCmdThead(QThread):
 
 def signal_accept(message):
     global p_now
-    print(message)
+    # print(message)
     try:
         if isinstance(message, int):
             # print('动作位置 %s %s' % (message, p_now))
