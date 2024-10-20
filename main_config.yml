@@ -1,6 +1,133 @@
-Countdown: '300'
-cardNo: 10
+balls_count: '8'
+cardNo: '10'
+color_ch:
+  Brown: 棕
+  White: 白
+  black: 黑
+  blue: 蓝
+  green: 绿
+  orange: 橙
+  pink: 粉
+  purple: 紫
+  red: 红
+  yellow: 黄
+init_array:
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - yellow
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - blue
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - red
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - purple
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - orange
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - green
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - Brown
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - black
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - pink
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - White
+  - 0
+  - 0
+  - 0
+  - 0
+music_1:
+- false
+- ./mp3/07_冰原背景音乐1.mp3
+music_2:
+- true
+- ./mp3/07_冰原背景音乐2.mp3
+music_3:
+- false
+- ./mp3/07_冰原背景音乐3.mp3
+rtsp_url: rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101
 s485_Axis_No: COM23
 s485_Cam_No: COM1
-time_count_ball: '30'
-time_send_result: '15'
+tcpServer_addr:
+- 0.0.0.0
+- '9999'
+udpServer_addr:
+- 0.0.0.0
+- '19734'
+wakeup_addr: http://192.168.0.110:8080

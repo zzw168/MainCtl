@@ -43,7 +43,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(response_text.encode('utf-8'))
             elif path == '/reset':
                 running = False
-                reset_time()
+                restart_time()
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()

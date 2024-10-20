@@ -362,12 +362,12 @@ def deal_rank(integration_qiu_array):
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
                 if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
-                    if result_count >= max_area_count - ball_num - 15:
+                    if result_count >= max_area_count - balls_count - 15:
                         ranking_array[r_index][8] += 1
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = 0
-                if action_area[0] >= max_area_count - ball_num and action_area[1] >= max_lap_count - 1:
-                    area_limit = ball_num
+                if action_area[0] >= max_area_count - balls_count and action_area[1] >= max_lap_count - 1:
+                    area_limit = balls_count
                 else:
                     area_limit = 5
                 # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
@@ -376,7 +376,7 @@ def deal_rank(integration_qiu_array):
                             (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                              or ranking_array[0][6] - ranking_array[r_index][6] > 5
                             ))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
-                        or (q_item[6] < 8 and ranking_array[r_index][6] >= max_area_count - ball_num - 6)):  # 跨圈情况
+                        or (q_item[6] < 8 and ranking_array[r_index][6] >= max_area_count - balls_count - 6)):  # 跨圈情况
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_array[r_index][9] = 1
@@ -536,36 +536,18 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 def load_ballsort_yaml():
     global max_lap_count
     global max_area_count
-    global reset_time
-    global init_array
-    global color_ch
-    global udpServer_addr
-    global tcpServer_addr
-    global httpServer_addr
-    global udpClient_addr
-    global wakeup_addr
-    global ball_num
-    global rtsp_url
     file = "./ballsort_config.yml"
     if os.path.exists(file):
         f = open(file, 'r', encoding='utf-8')
-        f_ = yaml.safe_load(f)
-        max_area_count = f_['max_area_count']
-        max_lap_count = f_['max_lap_count']
-        reset_time = f_['reset_time']
-        init_array = f_['init_array']
-        color_ch = f_['color_ch']
-        udpServer_addr = (f_['udpServer_addr'][0], f_['udpServer_addr'][1])
-        tcpServer_addr = (f_['tcpServer_addr'][0], f_['tcpServer_addr'][1])
-        httpServer_addr = (f_['httpServer_addr'][0], f_['httpServer_addr'][1])
-        udpClient_addr = (f_['udpClient_addr'][0], f_['udpClient_addr'][1])
-        wakeup_addr = (f_['wakeup_addr'])
-        ball_num = (f_['ball_num'])
-        rtsp_url = (f_['rtsp_url'])
+        ballsort_all = yaml.safe_load(f)
+        max_area_count = int(ballsort_all['max_area_count'])
+        max_lap_count = int(ballsort_all['max_lap_count'])
 
         ui.lineEdit_lap_Ranking.setText(str(max_lap_count))
         ui.lineEdit_area_Ranking.setText(str(max_area_count))
-        ui.lineEdit_time_Ranking.setText(str(reset_time))
+        ui.lineEdit_Time_Restart_Ranking.setText(str(ballsort_all['reset_time']))
+        ui.lineEdit_time_send_result.setText(str(ballsort_all['time_send_result']))
+        ui.lineEdit_time_count_ball.setText(str(ballsort_all['time_count_ball']))
 
         f.close()
     else:
@@ -575,30 +557,29 @@ def load_ballsort_yaml():
 def save_ballsort_yaml():
     global max_lap_count
     global max_area_count
-    global reset_time
     file = "./ballsort_config.yml"
     if os.path.exists(file):
         f = open(file, 'r', encoding='utf-8')
-        ballsort_conf = yaml.safe_load(f)
+        ballsort_all = yaml.safe_load(f)
         f.close()
         if (ui.lineEdit_lap_Ranking.text().isdigit()
                 and ui.lineEdit_area_Ranking.text().isdigit()
-                and ui.lineEdit_time_Ranking.text().isdigit()):
-            ballsort_conf['max_lap_count'] = int(ui.lineEdit_lap_Ranking.text())
-            ballsort_conf['max_area_count'] = int(ui.lineEdit_area_Ranking.text())
-            ballsort_conf['reset_time'] = int(ui.lineEdit_time_Ranking.text())
+                and ui.lineEdit_Time_Restart_Ranking.text().isdigit()):
+            ballsort_all['max_lap_count'] = int(ui.lineEdit_lap_Ranking.text())
+            ballsort_all['max_area_count'] = int(ui.lineEdit_area_Ranking.text())
+            ballsort_all['reset_time'] = int(ui.lineEdit_Time_Restart_Ranking.text())
+            ballsort_all['time_send_result'] = int(ui.lineEdit_time_send_result.text())
+            ballsort_all['time_count_ball'] = int(ui.lineEdit_time_count_ball.text())
             max_lap_count = int(ui.lineEdit_lap_Ranking.text())
             max_area_count = int(ui.lineEdit_area_Ranking.text())
-            reset_time = int(ui.lineEdit_time_Ranking.text())
-            ui.lineEdit_Countdown.setText(str(reset_time))
             # print(ballsort_conf)
             with open(file, "w", encoding="utf-8") as f:
-                yaml.dump(ballsort_conf, f, allow_unicode=True)
+                yaml.dump(ballsort_all, f, allow_unicode=True)
             f.close()
             ui.textBrowser_background_data.setText(
-                succeed("%s,%s,%s 保存服务器完成" % (ballsort_conf['max_lap_count'],
-                                                     ballsort_conf['max_area_count'],
-                                                     ballsort_conf['reset_time'])))
+                succeed("%s,%s,%s 保存服务器完成" % (ballsort_all['max_lap_count'],
+                                                     ballsort_all['max_area_count'],
+                                                     ballsort_all['reset_time'])))
         else:
             ui.textBrowser_background_data.setText(fail("错误，只能输入数字！"))
 
@@ -741,7 +722,7 @@ class TcpResultThead(QThread):
 
 
 def tcp_signal_accept(msg):
-    print()
+    # print(msg)
     ui.textBrowser_background_data.append(msg)
 
 
@@ -780,7 +761,7 @@ class UdpThead(QThread):
                     array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
                     if not array_data:
                         continue
-                    if action_area[0] >= max_area_count - ball_num and action_area[
+                    if action_area[0] >= max_area_count - balls_count and action_area[
                         1] >= max_lap_count - 1:  # 在最后面排名阶段，以区域先后为准
                         array_data = filter_max_area(array_data)
                     else:
@@ -806,37 +787,6 @@ def udp_signal_accept(msg):
     # print(msg)
     if ui.checkBox_ShowUdp.isChecked():
         ui.textBrowser_background_data.append(str(msg))
-
-
-class ResetThead(QThread):
-    _signal = Signal(object)
-
-    def __init__(self):
-        super(ResetThead, self).__init__()
-        self.running = True
-
-    def stop(self):
-        self.run_flg = False
-        self.running = False  # 修改标志位，线程优雅退出
-
-    def run(self) -> None:
-        while self.running:
-            time.sleep(5)
-            if (ranking_array[0][8] == max_lap_count - 1 and ranking_array[0][6] == max_area_count
-                    and ui.checkBox_reset_Ranking.isChecked()):
-                for t in range(reset_time, 0, -1):
-                    if not ui.checkBox_reset_Ranking.isChecked():
-                        break
-                    self._signal.emit(t)
-                    time.sleep(1)
-                if ui.checkBox_reset_Ranking.isChecked():
-                    reset_ranking_array()
-                    self._signal.emit('提示:球排名数据已自动重置！')
-
-
-def reset_signal_accept(msg):
-    ui.textBrowser_background_data.clear()
-    init_ranking_table()
 
 
 def load_area():  # 载入位置文件初始化区域列表
@@ -1107,7 +1057,7 @@ class ReStartThead(QThread):
             time.sleep(1)
             if not self.run_flg:
                 continue
-            countdown = ui.lineEdit_Countdown.text()
+            countdown = ui.lineEdit_Time_Restart_Ranking.text()
             if countdown.isdigit():
                 countdown = int(countdown)
             else:
@@ -1266,7 +1216,7 @@ class PlanBallNumThead(QThread):
                                         tcp_ranking_thread.send_time_flg = True
                                 self._signal.emit(num)
                                 num_old = num
-                            if num >= ball_num:
+                            if num >= balls_count:
                                 break
                             elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
                                 sc.GASetDiReverseCount()  # 输入次数归0
@@ -1324,7 +1274,7 @@ class ScreenShotThead(QThread):
                 continue
             print('截图结果识别运行！')
             try:
-                for t in range(int(ui.lineEdit_time_sendresult.text()), 0, -1):
+                for t in range(int(ui.lineEdit_time_send_result.text()), 0, -1):
                     if int(ui.lineEdit_ball_num.text()) >= 8:
                         break
                     print('结果倒数：', t)
@@ -1995,17 +1945,44 @@ def load_plan_yaml():
 
 
 def save_main_yaml():
+    global init_array
+    global color_ch
+    global udpServer_addr
+    global tcpServer_addr
+    global wakeup_addr
+    global balls_count
+    global rtsp_url
     file = "main_config.yml"
     if os.path.exists(file):
         try:
-            with open(file, "r", encoding="utf-8") as f:
+            with (open(file, "r", encoding="utf-8") as f):
                 main_all = yaml.safe_load(f)
-                if ui.lineEdit_time_sendresult.text().isdigit():
-                    main_all['time_send_result'] = ui.lineEdit_time_sendresult.text()
-                if ui.lineEdit_time_count_ball.text().isdigit():
-                    main_all['time_count_ball'] = ui.lineEdit_time_count_ball.text()
-                if ui.lineEdit_Countdown.text().isdigit():
-                    main_all['Countdown'] = ui.lineEdit_Countdown.text()
+                # print(main_all)
+                main_all['cardNo'] = ui.lineEdit_cardNo.text()
+                main_all['s485_Axis_No'] = ui.lineEdit_s485_Axis_No.text()
+                main_all['s485_Cam_No'] = ui.lineEdit_s485_Cam_No.text()
+                main_all['balls_count'] = ui.lineEdit_balls_count.text()
+                main_all['wakeup_addr'] = ui.lineEdit_wakeup_addr.text()
+                main_all['rtsp_url'] = ui.lineEdit_rtsp_url.text()
+                main_all['tcpServer_addr'][1] = ui.lineEdit_TcpServer_Port.text()
+                main_all['udpServer_addr'][1] = ui.lineEdit_UdpServer_Port.text()
+                for index in range(1, 4):
+                    main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
+                    main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
+                for index in range(1, 11):
+                    eng = getattr(ui, 'lineEdit_Color_Eng_%s' % index).text()
+                    ch = getattr(ui, 'lineEdit_Color_Ch_%s' % index).text()
+                    main_all['init_array'][index - 1][5] = eng
+                    main_all['color_ch'][eng] = ch
+
+                # 赋值变量
+                init_array = main_all['init_array']
+                color_ch = main_all['color_ch']
+                wakeup_addr = main_all['wakeup_addr']
+                balls_count = int(main_all['balls_count'])
+                rtsp_url = main_all['rtsp_url']
+                s485.s485_Axis_No = main_all['s485_Axis_No']
+                s485.s485_Cam_No = main_all['s485_Cam_No']
             with open(file, "w", encoding="utf-8") as f:
                 yaml.dump(main_all, f, allow_unicode=True)
             f.close()
@@ -2016,17 +1993,49 @@ def save_main_yaml():
 
 
 def load_main_yaml():
+    global init_array
+    global color_ch
+    global udpServer_addr
+    global tcpServer_addr
+    global wakeup_addr
+    global balls_count
+    global rtsp_url
     file = "main_config.yml"
     if os.path.exists(file):
         try:
             f = open(file, 'r', encoding='utf-8')
             main_all = yaml.safe_load(f)
             f.close()
-            ui.lineEdit_CarNo.setText(str(main_all['cardNo']))
-            ui.lineEdit_time_sendresult.setText(str(main_all['time_send_result']))
-            ui.lineEdit_time_count_ball.setText(str(main_all['time_count_ball']))
-            ui.lineEdit_Countdown.setText(str(main_all['Countdown']))
 
+            s485.s485_Axis_No = main_all['s485_Axis_No']
+            s485.s485_Cam_No = main_all['s485_Cam_No']
+
+            ui.lineEdit_cardNo.setText(main_all['cardNo'])
+            ui.lineEdit_CardNo.setText(main_all['cardNo'])
+            ui.lineEdit_s485_Axis_No.setText(main_all['s485_Axis_No'])
+            ui.lineEdit_s485_Cam_No.setText(main_all['s485_Cam_No'])
+            ui.lineEdit_balls_count.setText(main_all['balls_count'])
+            ui.lineEdit_wakeup_addr.setText(main_all['wakeup_addr'])
+            ui.lineEdit_rtsp_url.setText(main_all['rtsp_url'])
+            ui.lineEdit_TcpServer_Port.setText(main_all['tcpServer_addr'][1])
+            ui.lineEdit_UdpServer_Port.setText(main_all['udpServer_addr'][1])
+            for index in range(1, 4):
+                getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
+                getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
+                getattr(ui, 'radioButton_music_background_%s' % index).setChecked(main_all['music_%s' % index][0])
+            for index in range(1, 11):
+                eng = main_all['init_array'][index - 1][5]
+                ch = main_all['color_ch'][eng]
+                getattr(ui, 'lineEdit_Color_Eng_%s' % index).setText(eng)
+                getattr(ui, 'lineEdit_Color_Ch_%s' % index).setText(ch)
+            # 赋值变量
+            init_array = main_all['init_array']
+            color_ch = main_all['color_ch']
+            udpServer_addr = (int(main_all['udpServer_addr'][0]), int(main_all['udpServer_addr'][1]))
+            tcpServer_addr = (int(main_all['tcpServer_addr'][0]), int(main_all['tcpServer_addr'][1]))
+            wakeup_addr = main_all['wakeup_addr']
+            balls_count = int(main_all['balls_count'])
+            rtsp_url = main_all['rtsp_url']
             s485.s485_Axis_No = main_all['s485_Axis_No']
             s485.s485_Cam_No = main_all['s485_Cam_No']
         except:
@@ -2338,7 +2347,7 @@ class DraggableLabel(QLabel):
             area_part = 0
             for index in range(len(map_orbit)):
                 if abs(map_orbit[index][0] - x) < 10 and abs(map_orbit[index][1] - y) < 10:
-                    part = len(map_orbit) / (max_area_count - ball_num + 1)
+                    part = len(map_orbit) / (max_area_count - balls_count + 1)
                     area_part = index // part
                     x = int(map_orbit[index][0])
                     y = int(map_orbit[index][1])
@@ -2398,7 +2407,7 @@ class MapLabel(QLabel):
         self.speed = 1  # 小球每次前进的步数（可以根据需要调整）
         self.flash_time = flash_time
         self.positions = []  # 每个球的当前位置索引
-        for num in range(ball_num):
+        for num in range(balls_count):
             self.positions.append([num * self.ball_space, QColor(255, 0, 0)])
 
         # 创建定时器，用于定时更新球的位置
@@ -2417,14 +2426,14 @@ class MapLabel(QLabel):
                         index = len(ranking_array) * self.ball_space
                     else:
                         index = len(ranking_array) * self.ball_space - p_num * self.ball_space
-                elif (ranking_array[num][6] >= max_area_count - ball_num + 1
+                elif (ranking_array[num][6] >= max_area_count - balls_count + 1
                       and ranking_array[num][8] >= max_lap_count - 1):  # 最后一圈处理
                     if p_num == 0:
                         index = len(self.path_points) - 1
                     else:
                         index = len(self.path_points) - 1 - p_num * self.ball_space
                 elif ranking_array[num][8] == action_area[1]:  # 同圈才运动
-                    area_num = max_area_count - ball_num  # 跟踪区域数量
+                    area_num = max_area_count - balls_count  # 跟踪区域数量
                     p = int(len(self.path_points) * (ranking_array[num][6] / area_num)) - 1
                     color = self.color_names[ranking_array[num][5]]
                     if p - self.positions[p_num][0] > 50:
@@ -2446,7 +2455,7 @@ class MapLabel(QLabel):
                     else:
                         index = self.positions[p_num][0] + self.speed
                 else:  # 不同圈情况
-                    area_num = max_area_count - ball_num  # 跟踪区域数量
+                    area_num = max_area_count - balls_count  # 跟踪区域数量
                     p = int(len(self.path_points) * (ranking_array[num][6] / area_num)) - 1
                     color = self.color_names[ranking_array[num][5]]
                     if p - self.positions[p_num][0] > 50:
@@ -2479,7 +2488,7 @@ class MapLabel(QLabel):
 
         if ui.checkBox_show_orbit.isChecked():
             for index in range(len(self.path_points)):
-                part = len(self.path_points) / (max_area_count - ball_num + 1)
+                part = len(self.path_points) / (max_area_count - balls_count + 1)
                 if index % int(part) == 0:
                     painter.setBrush(QBrush(QColor(255, 0, 0), Qt.SolidPattern))
                     font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
@@ -2952,7 +2961,7 @@ def music_ctl():
     if ui.checkBox_main_music.isChecked():
         for index in range(1, 4):
             if getattr(ui, 'radioButton_music_%s' % index).isChecked():
-                mp3_name = './mp3/07_冰原背景音乐%s.mp3' % index
+                mp3_name = getattr(ui, 'lineEdit_music_%s' % index).text()
                 break
         # 加载并播放背景音乐
         pygame.mixer.music.load(mp3_name)
@@ -3009,9 +3018,10 @@ def card_close_all():
 
 def my_test():
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
+    save_main_yaml()
     # 加载音效
-    sound_effect = pygame.mixer.Sound('D:/pythonProject/Main_controller/mp3/07_冰原起泡准备声1.wav')
-    sound_effect.play(loops=10, maxtime=5000)  # 播放音效
+    # sound_effect = pygame.mixer.Sound('D:/pythonProject/Main_controller/mp3/07_冰原起泡准备声1.wav')
+    # sound_effect.play(loops=10, maxtime=5000)  # 播放音效
     # activate_browser()
     # Test_Thead.obs_name = '终点2'
     # Test_Thead.run_flg = not (Test_Thead.run_flg)
@@ -3065,7 +3075,6 @@ class MyApp(QApplication):
             PlanObs_Thead.stop()
             PlanCam_Thead.stop()
             PlanBallNum_Thead.stop()
-            reset_thread.stop()
             tcp_ranking_thread.stop()
             udp_thread.stop()
             Update_Thread.stop()
@@ -3091,7 +3100,6 @@ if __name__ == '__main__':
     ui.setupUi(MainWindow)
     MainWindow.show()
 
-    z_status = True
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
 
@@ -3105,7 +3113,6 @@ if __name__ == '__main__':
                  'server2': False}  # 各硬件启动标志
 
     load_plan_yaml()
-    load_main_yaml()
 
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()
@@ -3172,10 +3179,6 @@ if __name__ == '__main__':
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
     ui.tableWidget_Step.itemChanged.connect(table_change)
 
-    ui.lineEdit_time_sendresult.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_time_count_ball.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_Countdown.editingFinished.connect(save_main_yaml)
-
     """
         OBS 处理
     """
@@ -3204,7 +3207,7 @@ if __name__ == '__main__':
     # print(area_Code)
 
     action_area = [1, 0]  # 触发镜头向下一个位置活动的点位
-    ball_num = 8  # 运行球数
+    balls_count = 8  # 运行球数
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
     ball_sort = []  # 位置寄存器
@@ -3212,7 +3215,6 @@ if __name__ == '__main__':
     # 初始化数据
     max_lap_count = 1  # 最大圈
     max_area_count = 39  # 统计一圈的位置差
-    reset_time = 60  # 等待结束重置时间
     init_array = [
         [0, 0, 0, 0, 0, 'yellow', 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 'blue', 0, 0, 0, 0],
@@ -3242,7 +3244,9 @@ if __name__ == '__main__':
     udpClient_addr = ("192.168.0.161", 19733)  # 数据发送给其他服务器
     wakeup_addr = "http://192.168.0.110:8080"  # 唤醒服务器线程
     rtsp_url = 'rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101'  # 主码流
+
     load_ballsort_yaml()
+    load_main_yaml()
     # print(map_data)
 
     # 初始化列表
@@ -3260,11 +3264,6 @@ if __name__ == '__main__':
             else:
                 con_data[i].append(0)
     init_ranking_table()  # 初始化排名数据表
-
-    # 自动重置排名线程
-    reset_thread = ResetThead()
-    reset_thread._signal.connect(reset_signal_accept)
-    reset_thread.start()
 
     # 1. Udp 接收数据
     try:
@@ -3313,6 +3312,9 @@ if __name__ == '__main__':
 
     ui.pushButton_save_Ranking.clicked.connect(save_ballsort_yaml)
     ui.pushButton_reset_Ranking.clicked.connect(reset_ranking_array)
+
+    ui.lineEdit_time_send_result.editingFinished.connect(save_ballsort_yaml)
+    ui.lineEdit_time_count_ball.editingFinished.connect(save_ballsort_yaml)
 
     # 初始化球数组，位置寄存器
     reset_ranking_array()  # 重置排名数组
@@ -3390,6 +3392,24 @@ if __name__ == '__main__':
     fit_camera_label.Camera_index = 'fit_Camera'
     fit_camera_layout.addWidget(fit_camera_label)
 
-    "**************************分机结果_结束*****************************"
+    "**************************摄像头结果_结束*****************************"
+    "**************************参数设置_开始*****************************"
+    ui.lineEdit_UdpServer_Port.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_TcpServer_Port.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_wakeup_addr.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_rtsp_url.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_cardNo.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_CardNo.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_s485_Axis_No.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_s485_Cam_No.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_music_1.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_music_2.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_music_3.editingFinished.connect(save_main_yaml)
+    ui.radioButton_music_background_1.clicked.connect(save_main_yaml)
+    ui.radioButton_music_background_2.clicked.connect(save_main_yaml)
+    ui.radioButton_music_background_3.clicked.connect(save_main_yaml)
+    ui.pushButton_Save_Ball.clicked.connect(save_main_yaml)
+
+    "**************************参数设置_结束*****************************"
 
     sys.exit(app.exec())
