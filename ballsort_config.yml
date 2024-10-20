@@ -1,3 +1,4 @@
+ball_num: 8
 color_ch:
   Brown: 棕
   White: 白
@@ -113,12 +114,13 @@ init_array:
   - 0
   - 0
   - 0
-max_area_count: 39
-max_lap_count: 1
-reset_time: 60
+max_area_count: 47
+max_lap_count: 3
+reset_time: 300
+rtsp_url: rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101
 tcpServer_addr:
 - 0.0.0.0
-- 2222
+- 9999
 udpClient_addr:
 - 192.168.0.161
 - 19733

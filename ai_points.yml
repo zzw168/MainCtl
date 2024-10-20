@@ -1,0 +1,15 @@
+ai_points:
+- - 0
+  - - - 0
+    - - 80
+      - -5
+  - - - 0
+    - - 69
+      - 0
+  - - - 0
+    - - 67
+      - -6
+ai_table:
+- - D:/pythonProject/Main_controller/mp3/example.mp3
+  - '2'
+  - '2'

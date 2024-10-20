@@ -1,0 +1,6 @@
+Countdown: '300'
+cardNo: 10
+s485_Axis_No: COM23
+s485_Cam_No: COM1
+time_count_ball: '30'
+time_send_result: '15'

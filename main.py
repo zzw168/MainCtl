@@ -1,5 +1,8 @@
+import copy
 import json
+import math
 import os
+import random
 import sys
 import threading
 import time
@@ -10,18 +13,21 @@ import numpy as np
 import pynput
 import requests
 import yaml
+from PyInstaller.utils.hooks.conda import files
 
-from PySide6.QtCore import Qt, QThread, Signal, Slot
-from PySide6.QtGui import QBrush, QColor, QPixmap
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu
+from PySide6.QtCore import Qt, QThread, Signal, Slot, QTimer, QPropertyAnimation
+from PySide6.QtGui import QBrush, QColor, QPixmap, QMouseEvent
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu, QMessageBox, QFileDialog
 
 import obsws_python as obs
+import pygame
 
 from utils.SportCard_unit import *
 from utils.tool_unit import *
 from utils.Serial485_unit import *
 from MainCtl_Ui import *
 from utils.pingpong_socket import *
+from utils.z_json2txt import *
 
 "************************************OBS_开始****************************************"
 """
@@ -60,6 +66,7 @@ def on_scene_item_enable_state_changed(data):
     print(data.scene_name)
     print(data.scene_item_id)
     print(data.scene_item_enabled)
+    get_source_list(data.scene_name)
 
 
 # 流状态改变事件
@@ -142,9 +149,14 @@ class SourceThead(QThread):
     def __init__(self):
         super(SourceThead, self).__init__()
         self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
 
     def run(self) -> None:
-        while True:
+        while self.running:
             time.sleep(0.1)
             if not self.run_flg:
                 continue
@@ -195,7 +207,23 @@ def source_enable():  # 开关来源
     try:
         cl_requst.set_scene_item_enabled(scene_name, item_id, s_enable)  # 打开视频来源
     except:
-        ui.textBrowser.append(fail("OBS 链接中断！"))
+        ui.textBrowser.append(fail("OBS 开关来源！"))
+
+
+def activate_browser():  # 程序开始，刷新浏览器
+    tb_source = ui.tableWidget_Sources
+    for row_num in range(tb_source.rowCount()):
+        # print(tb_source.item(row_num, 1))
+        if tb_source.item(row_num, 1).text() == '浏览器':
+            item_id = source_list[row_num][2]
+            try:
+                print('现场', item_id, False)
+                cl_requst.set_scene_item_enabled('现场', item_id, False)  # 打开视频来源
+                time.sleep(1)
+                cl_requst.set_scene_item_enabled('现场', item_id, True)  # 打开视频来源
+            except:
+                ui.textBrowser.append(fail("OBS 开关浏览器出错！"))
+            break
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -203,7 +231,7 @@ def get_scenes_list():  # 刷新所有列表
         res = cl_requst.get_scene_list()  # 获取场景列表
         res_name = cl_requst.get_current_program_scene()  # 获取激活的场景
     except:
-        ui.textBrowser.append(fail("OBS 链接中断！"))
+        ui.textBrowser.append(fail("OBS 刷新所有列表中断！"))
         return
     print('%s' % res_name.scene_name)
     scene_name = res_name.scene_name
@@ -221,10 +249,11 @@ def get_source_list(scene_name):  # 取得来源列表
     scene_now = scene_name
     res = cl_requst.get_scene_item_list(scene_name)
     source_list = []
-    for item in res.scene_items:
-        source_list.append([item['sceneItemEnabled'], item['sourceName'], item['sceneItemId']])
-        # print('取得来源列表 %s' % item)
-    Source_Thead.run_flg = True
+    if res:
+        for item in res.scene_items:
+            source_list.append([item['sceneItemEnabled'], item['sourceName'], item['sceneItemId']])
+            # print('取得来源列表 %s' % item)
+        Source_Thead.run_flg = True
 
 
 def scenes_change():  # 变换场景
@@ -232,27 +261,99 @@ def scenes_change():  # 变换场景
     try:
         cl_requst.set_current_program_scene(scene_name)
     except:
-        ui.textBrowser.append(fail("OBS 链接中断！"))
+        ui.textBrowser.append(fail("OBS 变换场景链接中断！"))
 
 
 # 截取OBS图片
 def get_picture(scence_current):
-    resp = cl_requst.get_source_screenshot(scence_current, "jpg", None, None, 100)
-    # print(resp.image_data)
-    img = str2image(resp.image_data)
-    # str2image_file(resp.image_data, './a.jpg')
-    pixmap = QPixmap()
-    pixmap.loadFromData(img)
-    pixmap = pixmap.scaled(800, 450)
-    lab_p = ui.label_picture
-    lab_p.setPixmap(pixmap)
+    # cl_requst.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
+    # time.sleep(1)
+    resp = cl_requst.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
+    img = resp.image_data[22:]
+    form_data = {
+        'CameraType': 'obs',
+        'img': img,
+        'sort': '1',  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+    }
+    try:
+        res = requests.post(url="http://127.0.0.1:6066", data=form_data, timeout=5)
+        r_list = eval(res.text)  # 返回 [图片字节码，排名列表]
+        return r_list
+    except:
+        img = img.encode('ascii')
+        image_byte = base64.b64decode(img)
+        return [image_byte, '[1]', 'obs']
+        print('终点识别服务没有开启！')
+
+
+# obs 脚本 obs_script_time.py 请求
+def obs_script_request():
+    res = requests.get(url="http://127.0.0.1:8899/start")
+    # res = requests.get(url="http://127.0.0.1:8899/stop")
+    # res = requests.get(url="http://127.0.0.1:8899/reset")
+    # res = requests.get(url="http://127.0.0.1:8899/period?term=开始")
+    print(res)
 
 
 "******************************OBS结束*************************************"
 
+"******************************网络摄像头*************************************"
+
+
+# 获取网络摄像头图片
+def get_rtsp(rtsp_url):
+    cap = cv2.VideoCapture(rtsp_url)
+    if cap.isOpened():
+        ret, frame = cap.read()
+        if ret:
+            success, jpeg_data = cv2.imencode('.jpg', frame)
+            if success:
+                # 将 JPEG 数据转换为 Base64 字符串
+                jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
+                try:
+                    form_data = {
+                        'CameraType': 'monitor',
+                        'img': jpg_base64,
+                        'sort': '10',  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+                    }
+                    res = requests.post(url="http://127.0.0.1:6066", data=form_data, timeout=5)
+                    r_list = eval(res.text)  # 返回 [图片字节码，排名列表]
+                    return r_list
+                except:
+                    print('终点识别服务没有开启！')
+                    # img = frame2img(frame)
+                    # image_byte = qimage_to_bytes(img)
+                    img = jpg_base64.encode('ascii')
+                    image_byte = base64.b64decode(img)
+                    return [image_byte, '[1]', 'monitor']
+        else:
+            print("无法读取视频帧")
+    else:
+        print(f'无法打开摄像头')
+
+
 "************************************图像识别_开始****************************************"
 
 
+# 处理触发点位
+def deal_action():
+    global action_area
+    for rank_num in range(0, len(ranking_array)):  # 循环寻找合适的球位置，镜头追踪
+        if action_area[1] == int(ranking_array[rank_num][8]):
+            if (int(ranking_array[rank_num][6]) > action_area[0] + 3
+                    or (int(ranking_array[rank_num][6]) < action_area[0])):
+                continue
+            action_area[0] = int(ranking_array[rank_num][6])  # 同圈中寻找合适区域
+            break
+        if action_area[1] < int(ranking_array[rank_num][8]):  # 不同圈赋值更大圈数
+            action_area[1] = int(ranking_array[rank_num][8])
+            print('区域更新~~~~~~~~', action_area[1])
+        if action_area[0] > int(ranking_array[rank_num][6]):  # 不同圈，跨圈情况
+            action_area[0] = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
+        break
+
+
+# 处理排名
 def deal_rank(integration_qiu_array):
     global ranking_array
     for r_index in range(0, len(ranking_array)):
@@ -261,18 +362,23 @@ def deal_rank(integration_qiu_array):
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
                 if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
-                    if result_count >= max_area_count - 6:
+                    if result_count >= max_area_count - ball_num - 15:
                         ranking_array[r_index][8] += 1
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = 0
-                if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
+                if action_area[0] >= max_area_count - ball_num and action_area[1] >= max_lap_count - 1:
+                    area_limit = ball_num
+                else:
+                    area_limit = 5
+                # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
+                if ((ranking_array[r_index][6] == 0 and q_item[6] < 5)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
-                            (q_item[6] - ranking_array[r_index][6] <= 3  # 新位置相差旧位置三个区域以内
-                             or ranking_array[0][6] - ranking_array[r_index][
-                                 6] > 5))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
-                        or (q_item[6] < 8 and ranking_array[r_index][6] >= max_area_count - 8)):  # 跨圈情况
+                            (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
+                             or ranking_array[0][6] - ranking_array[r_index][6] > 5
+                            ))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
+                        or (q_item[6] < 8 and ranking_array[r_index][6] >= max_area_count - ball_num - 6)):  # 跨圈情况
                     for r_i in range(0, len(q_item)):
-                        ranking_array[r_index][r_i] = q_item[r_i]  # 更新 ranking_array
+                        ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_array[r_index][9] = 1
                 replaced = True
                 break
@@ -314,8 +420,9 @@ def sort_ranking():
                 ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
     # 4.寄存器保存固定每个区域的最新排位（因为ranking_array 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
     for i in range(0, len(ranking_array)):
+        # print(ranking_array[i], '~~~~~~~~~~~')
         if not (ranking_array[i][5] in ball_sort[ranking_array[i][6]][ranking_array[i][8]]):
-            ball_sort[ranking_array[i][6]][ranking_array[i][8]].append(ranking_array[i][5])  # 添加寄存器球排序
+            ball_sort[ranking_array[i][6]][ranking_array[i][8]].append(copy.deepcopy(ranking_array[i][5]))  # 添加寄存器球排序
             # if ranking_array[i][6] == 35 and ranking_array[i][8] == 1:
             #     print(ball_sort[ranking_array[i][6]][ranking_array[i][8]])
     # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
@@ -343,6 +450,8 @@ def reset_ranking_array():
     global ball_sort
     global con_data
     global action_area
+    global z_ranking_res
+    global z_ranking_time
     # global previous_position
     ranking_array = []  # 排名数组
     for i in range(0, len(init_array)):
@@ -360,21 +469,46 @@ def reset_ranking_array():
                 con_data[i][j] = init_array[i][5]  # con_data 数据表数组
             else:
                 con_data[i][j] = 0
-    action_area = 1
-    # print(ball_sort)
+    action_area = [1, 0]  # 初始化触发区域
+    z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
+    z_ranking_time = ['TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'OUT', 'OUT']  # 初始化网页排名时间
+    tcp_ranking_thread.sleep_time = 1  # 重置排名数据包发送时间
+    if flg_start['obs']:
+        try:
+            res = requests.get(url="http://127.0.0.1:8899/reset")
+            print(res)
+        except:
+            print('OBS脚本链接错误！')
+
+
+# print(ball_sort)
 
 
 def to_num(res):  # 按最新排名排列数组
-    global z_response
+    global z_ranking_res
     arr_res = []
     for r in res:
         for i in range(0, len(init_array)):
             if r[0] == init_array[i][5]:
                 arr_res.append(i + 1)
     for i in range(0, len(arr_res)):
-        for j in range(0, len(z_response)):
-            if arr_res[i] == z_response[j]:
-                z_response[i], z_response[j] = z_response[j], z_response[i]
+        for j in range(0, len(z_ranking_res)):
+            if arr_res[i] == z_ranking_res[j]:
+                z_ranking_res[i], z_ranking_res[j] = z_ranking_res[j], z_ranking_res[i]
+
+
+def camera_to_num(res):  # 按最新排名排列数组
+    camera_response = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    arr_res = []
+    for r in res:
+        for i in range(0, len(init_array)):
+            if r == init_array[i][5]:
+                arr_res.append(i + 1)
+    for i in range(0, len(arr_res)):
+        for j in range(0, len(camera_response)):
+            if arr_res[i] == camera_response[j]:
+                camera_response[i], camera_response[j] = camera_response[j], camera_response[i]
+    return camera_response
 
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
@@ -410,6 +544,8 @@ def load_ballsort_yaml():
     global httpServer_addr
     global udpClient_addr
     global wakeup_addr
+    global ball_num
+    global rtsp_url
     file = "./ballsort_config.yml"
     if os.path.exists(file):
         f = open(file, 'r', encoding='utf-8')
@@ -424,9 +560,11 @@ def load_ballsort_yaml():
         httpServer_addr = (f_['httpServer_addr'][0], f_['httpServer_addr'][1])
         udpClient_addr = (f_['udpClient_addr'][0], f_['udpClient_addr'][1])
         wakeup_addr = (f_['wakeup_addr'])
+        ball_num = (f_['ball_num'])
+        rtsp_url = (f_['rtsp_url'])
 
         ui.lineEdit_lap_Ranking.setText(str(max_lap_count))
-        ui.lineEdit_region_Ranking.setText(str(max_area_count))
+        ui.lineEdit_area_Ranking.setText(str(max_area_count))
         ui.lineEdit_time_Ranking.setText(str(reset_time))
 
         f.close()
@@ -444,30 +582,32 @@ def save_ballsort_yaml():
         ballsort_conf = yaml.safe_load(f)
         f.close()
         if (ui.lineEdit_lap_Ranking.text().isdigit()
-                and ui.lineEdit_region_Ranking.text().isdigit()
+                and ui.lineEdit_area_Ranking.text().isdigit()
                 and ui.lineEdit_time_Ranking.text().isdigit()):
             ballsort_conf['max_lap_count'] = int(ui.lineEdit_lap_Ranking.text())
-            ballsort_conf['max_area_count'] = int(ui.lineEdit_region_Ranking.text())
+            ballsort_conf['max_area_count'] = int(ui.lineEdit_area_Ranking.text())
             ballsort_conf['reset_time'] = int(ui.lineEdit_time_Ranking.text())
             max_lap_count = int(ui.lineEdit_lap_Ranking.text())
-            max_area_count = int(ui.lineEdit_region_Ranking.text())
+            max_area_count = int(ui.lineEdit_area_Ranking.text())
             reset_time = int(ui.lineEdit_time_Ranking.text())
+            ui.lineEdit_Countdown.setText(str(reset_time))
             # print(ballsort_conf)
             with open(file, "w", encoding="utf-8") as f:
                 yaml.dump(ballsort_conf, f, allow_unicode=True)
-                ui.textBrowser_msg_Ranking.setText(
-                    succeed("%s,%s,%s 保存服务器完成" % (ballsort_conf['max_lap_count'],
-                                                         ballsort_conf['max_area_count'],
-                                                         ballsort_conf['reset_time'])))
+            f.close()
+            ui.textBrowser_background_data.setText(
+                succeed("%s,%s,%s 保存服务器完成" % (ballsort_conf['max_lap_count'],
+                                                     ballsort_conf['max_area_count'],
+                                                     ballsort_conf['reset_time'])))
         else:
-            ui.textBrowser_msg_Ranking.setText(fail("错误，只能输入数字！"))
+            ui.textBrowser_background_data.setText(fail("错误，只能输入数字！"))
 
 
 def init_ranking_table():
-    table = ui.tableWidget_Ranking
-    table.setRowCount(10)
-    table.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
-    table.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+    tb_ranking = ui.tableWidget_Ranking
+    tb_ranking.setRowCount(10)
+    tb_ranking.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+    tb_ranking.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
     for i in range(0, len(con_data)):
         for j in range(0, len(con_data[i])):
             if con_data[i][0] in color_ch.keys():
@@ -478,7 +618,7 @@ def init_ranking_table():
                     item = QTableWidgetItem(str(con_data[i][j]))
                     item.setTextAlignment(Qt.AlignCenter)
                     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                table.setItem(i, j, item)
+                tb_ranking.setItem(i, j, item)
 
 
 class UpdateThread(QThread):
@@ -486,47 +626,70 @@ class UpdateThread(QThread):
 
     def __init__(self):
         super(UpdateThread, self).__init__()
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
 
     def run(self) -> None:
-        table = ui.tableWidget_Ranking
-
-        while True:
+        tb_ranking = ui.tableWidget_Ranking
+        while self.running:
             time.sleep(1)
             for i in range(0, len(con_data)):
                 for j in range(0, len(con_data[i])):
                     if con_data[i][0] in color_ch.keys():
-                        if j == 0 and table.item(i, j).text() != color_ch[con_data[i][j]]:
+                        if j == 0 and tb_ranking.item(i, j).text() != color_ch[con_data[i][j]]:
                             self._signal.emit([i, j, color_ch[con_data[i][j]]])
-                        elif j != 0 and table.item(i, j).text() != con_data[i][j]:
+                        elif j != 0 and tb_ranking.item(i, j).text() != con_data[i][j]:
                             self._signal.emit([i, j, con_data[i][j]])
 
 
 def ranking_signal_accept(msg):
-    table = ui.tableWidget_Ranking
-    table.item(msg[0], msg[1]).setText(str(msg[2]))
+    tb_ranking = ui.tableWidget_Ranking
+    tb_ranking.item(msg[0], msg[1]).setText(str(msg[2]))
 
 
-class TcpThead(QThread):
+class TcpRankingThead(QThread):
     _signal = Signal(object)
 
     def __init__(self):
-        super(TcpThead, self).__init__()
+        super(TcpRankingThead, self).__init__()
+        self.running = True
+        self.run_flg = True
+        self.send_time_flg = False
+        self.sleep_time = 0.1
+        self.send_time_data = [1, time.strftime('%M"%S', time.localtime(time.time()))]
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
 
     def run(self) -> None:
-        while True:
+        while self.running:
             try:
-                con, addr = tcp_socket.accept()
-                # print("Accepted. {0}, {1}".format(con, str(addr)))
+                con, addr = tcp_ranking_socket.accept()
+                print("Accepted. {0}, {1}".format(con, str(addr)))
                 if con:
                     self._signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
                     with WebsocketServer(con) as ws:
+                        # ws.send('pong')
                         while True:
-                            time.sleep(1)
                             try:
-                                d = {'data': z_response, 'type': 'pm'}
-                                # d = {'data': np.random.permutation([1, 2, 3, 4, 5, 6, 9, 7, 8, 10]).tolist(),
-                                #      'type': 'pm'}
+                                time.sleep(self.sleep_time)
+                                if self.send_time_flg:
+                                    d = {"mc": self.send_time_data[0], 'data': self.send_time_data[1],
+                                         'type': 'time'}
+                                else:
+                                    d = {'data': z_ranking_res, 'type': 'pm'}
+                                    # time.sleep(1)
+                                    # d = {"mc": self.send_time_data[0], 'data': '7.98',
+                                    #      'type': 'time'}
+                                    # print(d)
+                                    # d = {'data': np.random.permutation([1, 2, 3, 4, 5, 6, 9, 7, 8, 10]).tolist(),
+                                    #      'type': 'pm'}
                                 ws.send(json.dumps(d))
+                                self.send_time_flg = False
                             except Exception as e:
                                 # print("pingpong 错误：", e)
                                 self._signal.emit("pingpong 错误：%s" % e)
@@ -534,12 +697,52 @@ class TcpThead(QThread):
             except Exception as e:
                 # print(e)
                 self._signal.emit("pingpong 错误：%s" % e)
-                break
+                # break
+
+
+class TcpResultThead(QThread):
+    _signal = Signal(object)
+
+    def __init__(self):
+        super(TcpResultThead, self).__init__()
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+
+    def run(self) -> None:
+        while self.running:
+            try:
+                con, addr = tcp_result_socket.accept()
+                print("Accepted. {0}, {1}".format(con, str(addr)))
+                if con:
+                    self._signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
+                    with WebsocketServer(con) as ws:
+                        datalist = {
+                            'type': 'updata',
+                            'data': {
+                                'qh': "9555059",
+                                'rank': [{"mc": z_ranking_res[0], "time": z_ranking_time[0]},
+                                         {"mc": z_ranking_res[1], "time": z_ranking_time[1]},
+                                         {"mc": z_ranking_res[2], "time": z_ranking_time[2]},
+                                         {"mc": z_ranking_res[3], "time": z_ranking_time[3]},
+                                         {"mc": z_ranking_res[4], "time": z_ranking_time[4]},
+                                         {"mc": z_ranking_res[5], "time": z_ranking_time[5]},
+                                         {"mc": z_ranking_res[6], "time": z_ranking_time[6]},
+                                         {"mc": z_ranking_res[7], "time": z_ranking_time[7]},
+                                         {"mc": z_ranking_res[8], "time": z_ranking_time[8]},
+                                         {"mc": z_ranking_res[9], "time": z_ranking_time[9]}]}}
+                        ws.send(json.dumps(datalist))
+            except Exception as e:
+                # print(e)
+                self._signal.emit("pingpong 错误：%s" % e)
+                # break
 
 
 def tcp_signal_accept(msg):
     print()
-    ui.textBrowser_net_data.append(msg)
+    ui.textBrowser_background_data.append(msg)
 
 
 class UdpThead(QThread):
@@ -548,34 +751,42 @@ class UdpThead(QThread):
     def __init__(self):
         super(UdpThead, self).__init__()
         self.run_flg = True
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
 
     def run(self) -> None:
-        global action_area
         global con_data
-        while True:
+        while self.running:
             try:
                 # 3. 等待接收对方发送的数据
                 recv_data = udp_socket.recvfrom(10240)  # 1024表示本次接收的最大字节数
+                if recv_data[0] is None:
+                    print('UDP无数据！', recv_data[0])
+                    continue
                 if self.run_flg:
                     res = recv_data[0].decode('utf8')
+                    if res == '':
+                        print('UDP_res无数据！', recv_data[0])
+                        continue
                     data_res = eval(res)  # str转换list
                     self._signal.emit(data_res)
                     array_data = []
                     for i_ in range(1, len(data_res)):  # data_res[0] 是时间戳差值 ms
-                        array_data.append(data_res[i_])
+                        array_data.append(copy.deepcopy(data_res[i_]))
                     # print(array_data)
                     array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
                     if not array_data:
                         continue
-                    array_data = filter_max_value(array_data)
+                    if action_area[0] >= max_area_count - ball_num and action_area[
+                        1] >= max_lap_count - 1:  # 在最后面排名阶段，以区域先后为准
+                        array_data = filter_max_area(array_data)
+                    else:
+                        array_data = filter_max_value(array_data)  # 在平时球位置追踪，以置信度为准
                     deal_rank(array_data)
-                    for rank_num in range(0, len(ranking_array)):
-                        if (int(ranking_array[rank_num][6]) > action_area + 3
-                                or (6 - max_area_count < int(  # 跨圈
-                                    ranking_array[rank_num][6]) < action_area)):
-                            continue
-                        action_area = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
-                        break
+                    deal_action()
                     con_data = []
                     for k in range(0, len(ranking_array)):
                         con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
@@ -602,14 +813,25 @@ class ResetThead(QThread):
 
     def __init__(self):
         super(ResetThead, self).__init__()
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
 
     def run(self) -> None:
-        while True:
+        while self.running:
             time.sleep(5)
-            if ranking_array[0][8] == max_lap_count - 1 and ranking_array[0][6] == max_area_count:
-                time.sleep(reset_time)
-                reset_ranking_array()
-                self._signal.emit('提示:球排名数据已自动重置！')
+            if (ranking_array[0][8] == max_lap_count - 1 and ranking_array[0][6] == max_area_count
+                    and ui.checkBox_reset_Ranking.isChecked()):
+                for t in range(reset_time, 0, -1):
+                    if not ui.checkBox_reset_Ranking.isChecked():
+                        break
+                    self._signal.emit(t)
+                    time.sleep(1)
+                if ui.checkBox_reset_Ranking.isChecked():
+                    reset_ranking_array()
+                    self._signal.emit('提示:球排名数据已自动重置！')
 
 
 def reset_signal_accept(msg):
@@ -620,7 +842,6 @@ def reset_signal_accept(msg):
 def load_area():  # 载入位置文件初始化区域列表
     global area_Code
     for key in area_Code.keys():
-        # track_file = f"./txts/{key}.txt"
         track_file = "./txts/%s.txt" % key
         if os.path.exists(track_file):  # 存在就加载数据对应赛道数据
             with open(track_file, 'r') as file:
@@ -646,8 +867,9 @@ def load_area():  # 载入位置文件初始化区域列表
 def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
     ball_area_array = []
     for ball in ball_array:
-        if ball[4] < 0.45:  # 置信度小于 0.45 的数据不处理
+        if ball[4] < 0.35:  # 置信度小于 0.45 的数据不处理
             continue
+        ball.append(0)
         x = (ball[0] + ball[2]) / 2
         y = (ball[1] + ball[3]) / 2
         point = (x, y)
@@ -657,12 +879,27 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
                 Result = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
                 if Result > -1.0:
                     ball[6] = area['area_code']
-                    ball.append(area['direction'])
-                    ball_area_array.append(ball)  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向
+                    ball[7] = area['direction']
+                    ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向
     return ball_area_array  # ball_area_array = [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
 
 
 # 33 17 25 29
+def filter_max_area(lists):  # 在区域范围内如果出现两个相同的球，则取区域最大的球为准
+    max_area = {}
+    # print('原', lists)
+    for sublist in lists:
+        key, area = sublist[5], sublist[6]
+        if (key not in max_area) or (area > max_area[key]):
+            max_area[key] = area
+    filtered_list = []
+    for sublist in lists:
+        if (sublist[6] == max_area[sublist[5]]):  # 选取同一区域置信度最大的球添加到修正后的队列
+            filtered_list.append(copy.deepcopy(sublist))
+            # print(filtered_list)
+    return filtered_list
+
+
 def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球，则取置信度最高的球为准
     max_values = {}
     for sublist in lists:
@@ -672,8 +909,7 @@ def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球
     filtered_list = []
     for sublist in lists:
         if sublist[4] == max_values[sublist[5]]:  # 选取置信度最大的球添加到修正后的队列
-            filtered_list.append(sublist)
-    # print(filtered_list)
+            filtered_list.append(copy.deepcopy(sublist))
     return filtered_list
 
 
@@ -696,18 +932,33 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
+        tb_audio = self.tableWidget_Audio
+        tb_audio.horizontalHeader().resizeSection(0, 180)
+        tb_audio.horizontalHeader().resizeSection(1, 50)
+        tb_audio.horizontalHeader().resizeSection(2, 50)
+        tb_audio.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_audio.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+
+        tb_ai = self.tableWidget_Ai
+        tb_ai.horizontalHeader().resizeSection(0, 180)
+        tb_ai.horizontalHeader().resizeSection(1, 50)
+        tb_ai.horizontalHeader().resizeSection(2, 50)
+        tb_ai.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_ai.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+
         tb_Step = self.tableWidget_Step
         tb_Step.horizontalHeader().resizeSection(0, 10)
-        tb_Step.horizontalHeader().resizeSection(1, 50)
+        tb_Step.horizontalHeader().resizeSection(1, 40)
         tb_Step.horizontalHeader().resizeSection(7, 50)
         tb_Step.horizontalHeader().resizeSection(8, 50)
         tb_Step.horizontalHeader().resizeSection(9, 50)
         tb_Step.horizontalHeader().resizeSection(10, 60)
-        tb_Step.horizontalHeader().resizeSection(11, 60)
-        tb_Step.horizontalHeader().resizeSection(12, 60)
+        tb_Step.horizontalHeader().resizeSection(11, 40)
+        tb_Step.horizontalHeader().resizeSection(12, 50)
         tb_Step.horizontalHeader().resizeSection(13, 60)
-        tb_Step.horizontalHeader().resizeSection(14, 60)
-        # tb_Step.setColumnHidden(3, True)
+        tb_Step.horizontalHeader().resizeSection(14, 50)
+        tb_Step.horizontalHeader().resizeSection(15, 50)
+        tb_Step.setColumnHidden(13, True)
         tb_Step.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_Step.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
@@ -740,11 +991,12 @@ class MyUi(QMainWindow, Ui_MainWindow):
             plan_refresh()
         if action == item2:
             # del_host()
-            rownum = tb_step.rowCount()
-            print(rownum)
-            if rownum != 0:
+            row_count = tb_step.rowCount()
+            col_count = tb_step.columnCount()
+            print(row_count)
+            if row_count != 0:
                 p = tb_step.currentRow()
-                for row in range(p, rownum - 1):
+                for row in range(p, row_count - 1):
                     print('%d' % row)
                     for col in range(0, tb_step.columnCount() - 1):
                         if col == 0:
@@ -752,58 +1004,84 @@ class MyUi(QMainWindow, Ui_MainWindow):
                             cb.setStyleSheet('QCheckBox{margin:6px};')
                             cb.setChecked(tb_step.cellWidget(row + 1, col).isChecked())
                             tb_step.setCellWidget(row, col, cb)
-                        elif col == 14:
-                            if tb_step.cellWidget(row + 1, col):
-                                cb = QCheckBox()
-                                cb.setStyleSheet('QCheckBox{margin:6px};')
-                                cb.setText(tb_step.cellWidget(row + 1, col).text())
-                                cb.setChecked(tb_step.cellWidget(row + 1, col).isChecked())
-                                tb_step.setCellWidget(row, col, cb)
+                        elif col == col_count - 2:
+                            cell_widget = tb_step.cellWidget(row + 1, col)
+                            if cell_widget:
+                                if tb_step.item(row, col):
+                                    tb_step.item(row, col).setText('')
+                                if isinstance(cell_widget, QCheckBox):
+                                    cb = QCheckBox()
+                                    cb.setStyleSheet('QCheckBox{margin:6px};')
+                                    cb.setText(tb_step.cellWidget(row + 1, col).text())
+                                    cb.setChecked(tb_step.cellWidget(row + 1, col).isChecked())
+                                    tb_step.setCellWidget(row, col, cb)
+                                elif isinstance(cell_widget, QRadioButton):
+                                    rb = QRadioButton()
+                                    rb.setStyleSheet('QRadioButton{margin:6px};')
+                                    rb.setText(tb_step.cellWidget(row + 1, col).text())
+                                    rb.setChecked(tb_step.cellWidget(row + 1, col).isChecked())
+                                    tb_step.setCellWidget(row, col, rb)
                             else:
                                 if tb_step.cellWidget(row, col):
                                     tb_step.removeCellWidget(row, col)
+                                    item = QTableWidgetItem(tb_step.item(row + 1, col).text())
+                                    item.setTextAlignment(Qt.AlignCenter)
+                                    tb_step.setItem(row, col, item)
                         else:
                             item = QTableWidgetItem(tb_step.item(row + 1, col).text())
                             item.setTextAlignment(Qt.AlignCenter)
                             tb_step.setItem(row, col, item)
-                tb_step.setRowCount(rownum - 1)
+                tb_step.setRowCount(row_count - 1)
         if action == item3:
-            table = self.tableWidget_Step
-            rownum = table.rowCount()
-            table.setRowCount(rownum + 1)
-            row = table.currentRow()
-            if rownum > 0:  # 下移表格
-                for r in range(rownum, row, -1):
+            tb_step = self.tableWidget_Step
+            row_count = tb_step.rowCount()
+            col_count = tb_step.columnCount()
+            tb_step.setRowCount(row_count + 1)
+            row = tb_step.currentRow()
+            if row_count > 0:  # 下移表格
+                for r in range(row_count, row, -1):
                     cb = QCheckBox()
                     cb.setStyleSheet('QCheckBox{margin:6px};')
-                    table.setCellWidget(r, 0, cb)
-                    table.cellWidget(r, 0).setChecked(table.cellWidget(r - 1, 0).isChecked())
-                    for col in range(1, table.columnCount() - 1):
-                        if col == 14:
-                            if tb_step.cellWidget(r - 1, col):
-                                cb = QCheckBox()
-                                cb.setStyleSheet('QCheckBox{margin:6px};')
-                                cb.setText(tb_step.cellWidget(r - 1, col).text())
-                                cb.setChecked(tb_step.cellWidget(r - 1, col).isChecked())
-                                tb_step.setCellWidget(r, col, cb)
+                    tb_step.setCellWidget(r, 0, cb)
+                    tb_step.cellWidget(r, 0).setChecked(tb_step.cellWidget(r - 1, 0).isChecked())
+                    for col in range(1, tb_step.columnCount() - 1):
+                        if col == col_count - 2:
+                            cell_widget = tb_step.cellWidget(r - 1, col)
+                            if cell_widget:
+                                if isinstance(cell_widget, QCheckBox):
+                                    cb = QCheckBox()
+                                    cb.setStyleSheet('QCheckBox{margin:6px};')
+                                    cb.setText(tb_step.cellWidget(r - 1, col).text())
+                                    cb.setChecked(tb_step.cellWidget(r - 1, col).isChecked())
+                                    tb_step.setCellWidget(r, col, cb)
+                                elif isinstance(cell_widget, QRadioButton):
+                                    rb = QRadioButton()
+                                    rb.setStyleSheet('QRadioButton{margin:6px};')
+                                    rb.setText(tb_step.cellWidget(r - 1, col).text())
+                                    rb.setChecked(tb_step.cellWidget(r - 1, col).isChecked())
+                                    tb_step.setCellWidget(r, col, rb)
                             else:
-                                if tb_step.cellWidget(r, col):
+                                if tb_step.cellWidget(r, col):  # 删除本行控件
                                     tb_step.removeCellWidget(r, col)
+                                    item = QTableWidgetItem(tb_step.item(r - 1, col).text())
+                                    item.setTextAlignment(Qt.AlignCenter)
+                                    # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                                    tb_step.setItem(r, col, item)
                         else:
-                            item = QTableWidgetItem(table.item(r - 1, col).text())
+                            item = QTableWidgetItem(tb_step.item(r - 1, col).text())
                             item.setTextAlignment(Qt.AlignCenter)
                             # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                            table.setItem(r, col, item)
+                            tb_step.setItem(r, col, item)
             else:
                 cb = QCheckBox()
                 cb.setStyleSheet('QCheckBox{margin:6px};')
-                table.setCellWidget(0, 0, cb)
+                tb_step.setCellWidget(0, 0, cb)
 
-                for r in range(1, table.columnCount() - 1):
+                for r in range(1, tb_step.columnCount() - 1):
                     item = QTableWidgetItem('0')
                     item.setTextAlignment(Qt.AlignCenter)
                     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                    table.setItem(0, r, item)
+                    tb_step.setItem(0, r, item)
 
 
 '''
@@ -818,8 +1096,14 @@ class ReStartThead(QThread):
         super(ReStartThead, self).__init__()
         self.run_flg = False
 
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+
     def run(self) -> None:
-        while True:
+        while self.running:
             time.sleep(1)
             if not self.run_flg:
                 continue
@@ -835,6 +1119,8 @@ class ReStartThead(QThread):
                 time.sleep(1)
                 self._signal.emit(t)
             if ui.checkBox_restart.isChecked():
+                reset_ranking_array()  # 初始化排名，位置变量
+                activate_browser()  # 刷新OBS中排名浏览器
                 PlanCmd_Thead.run_flg = True
             # print("循环启动！")
             self.run_flg = False
@@ -859,10 +1145,15 @@ class PosThead(QThread):
     def __init__(self):
         super(PosThead, self).__init__()
         self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
 
     def run(self) -> None:
         global pValue
-        while True:
+        while self.running:
             time.sleep(0.1)
             if not self.run_flg:
                 continue
@@ -900,9 +1191,14 @@ class CamThead(QThread):
         super(CamThead, self).__init__()
         self.camitem = [5, 5]  # [运行挡位,持续时间]
         self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
 
     def run(self) -> None:
-        while True:
+        while self.running:
             time.sleep(0.01)
             if (not self.run_flg) or (not flg_start['s485']):
                 continue
@@ -935,9 +1231,15 @@ class PlanBallNumThead(QThread):
         super(PlanBallNumThead, self).__init__()
         self.run_flg = False
 
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+
     def run(self) -> None:
         global flg_start
-        while True:
+        while self.running:
             time.sleep(0.1)
             if (not self.run_flg) or (not flg_start['card']):
                 continue
@@ -953,11 +1255,20 @@ class PlanBallNumThead(QThread):
                         if res == 0:
                             num = int(value[0] / 2)
                             if num != num_old:
+                                t = time.time()
+                                if num_old < len(z_ranking_time):
+                                    # minute = int((t - ranking_time_start) / 60)
+                                    # Second = int((t - ranking_time_start) % 60)
+                                    # z_ranking_time[num_old] = "%s'%s" % (minute, Second)
+                                    z_ranking_time[num_old] = '%.2f"' % (t - ranking_time_start)
+                                    if not tcp_ranking_thread.send_time_flg:
+                                        tcp_ranking_thread.send_time_data = [num, z_ranking_time[num - 1]]
+                                        tcp_ranking_thread.send_time_flg = True
                                 self._signal.emit(num)
                                 num_old = num
-                            if num >= 10:
+                            if num >= ball_num:
                                 break
-                            elif time.time() - time_now > 30:
+                            elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
                                 sc.GASetDiReverseCount()  # 输入次数归0
                                 # self._signal.emit(0)
                                 break
@@ -966,6 +1277,10 @@ class PlanBallNumThead(QThread):
                             self._signal.emit(fail("运动板x输入通信出错！"))
                             break
                         time.sleep(0.01)
+                    tcp_ranking_thread.sleep_time = 1  # 恢复正常排名数据包发送频率
+                    ScreenShot_Thead.run_flg = True  # 终点截图识别线程
+                    Audio_Thead.run_flg = False
+                    ui.checkBox_main_music.setChecked(False)
                 else:
                     print("次数归0 失败！")
                     flg_start['card'] = False
@@ -986,6 +1301,107 @@ def PlanBallNum_signal_accept(msg):
 
 
 '''
+    ScreenShotThead(QThread) 结果截图线程
+'''
+
+
+class ScreenShotThead(QThread):
+    _signal = Signal(object)
+
+    def __init__(self):
+        super(ScreenShotThead, self).__init__()
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+
+    def run(self) -> None:
+        while self.running:
+            time.sleep(1)
+            if not self.run_flg:
+                continue
+            print('截图结果识别运行！')
+            try:
+                for t in range(int(ui.lineEdit_time_sendresult.text()), 0, -1):
+                    if int(ui.lineEdit_ball_num.text()) >= 8:
+                        break
+                    print('结果倒数：', t)
+                    time.sleep(1)
+                obs_res = get_picture('终点1')  # 拍摄来源
+                if obs_res:
+                    self._signal.emit(obs_res)
+                monitor_res = get_rtsp(rtsp_url)
+                if monitor_res:
+                    self._signal.emit(monitor_res)
+                res = requests.get(url="http://127.0.0.1:8899/stop")  # 发送信号，停止OBS计时
+                print('比赛结束:', res)
+                if obs_res[1] == monitor_res[1]:
+                    print('识别正确:', obs_res[1])
+                tb_source = ui.tableWidget_Sources
+                for row_num in range(0, tb_source.rowCount()):
+                    if tb_source.item(row_num, 1).text() == '浏览器':
+                        item_id = source_list[row_num][2]
+                        flg_enable = False
+                        res = cl_requst.set_scene_item_enabled('现场', item_id,
+                                                               flg_enable)  # 打开视频来源
+                        print(res)
+                    if tb_source.item(row_num, 1).text() == '画中画':
+                        item_id = source_list[row_num][2]
+                        flg_enable = False
+                        res = cl_requst.set_scene_item_enabled('现场', item_id,
+                                                               flg_enable)  # 打开视频来源
+                        print(res)
+                    if tb_source.item(row_num, 1).text() == '结算页':
+                        item_id = source_list[row_num][2]
+                        flg_enable = True
+                        res = cl_requst.set_scene_item_enabled('现场', item_id,
+                                                               flg_enable)  # 打开视频来源
+                        print(res)
+                if ui.checkBox_restart.isChecked():
+                    ReStart_Thead.run_flg = True  # 1分钟后重启动作
+                    print('1分钟后重启动作!')
+            except:
+                print("截图识别中断！")
+                flg_start['obs'] = False
+                self._signal.emit(fail("结果截图识别中断！"))
+            self.run_flg = False
+
+
+def ScreenShot_signal_accept(msg):
+    global main_Camera, monitor_Camera, fit_Camera
+    try:
+        if isinstance(msg, list):
+            img = msg[0]
+            msg_list = eval(msg[1])
+            pixmap = QPixmap()
+            pixmap.loadFromData(img)
+            pixmap = pixmap.scaled(int(400 * 1.6), int(225 * 1.6))
+            if msg[2] == 'obs':
+                ui.label_main_picture.setPixmap(pixmap)
+                main_Camera = camera_to_num(msg_list)
+            elif msg[2] == 'monitor':
+                ui.label_monitor_picture.setPixmap(pixmap)
+                monitor_Camera = camera_to_num(msg_list)
+            for index in range(len(main_Camera)):
+                fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
+            if perfect_Camera == fit_Camera:
+                ui.lineEdit_result_send.setText(str(main_Camera[:8]))
+            msg_list = eval(msg[1])
+
+            color_list = ''
+            for m in msg_list:
+                if m in color_ch.keys():
+                    color_list = '%s %s' % (color_list, color_ch[m])
+            ui.textBrowser_background_data.append(color_list)
+        else:
+            ui.textBrowser.append(str(msg))
+    except:
+        print('OBS 操作失败！')
+
+
+'''
     PlanObsThead(QThread) 摄像头运动方案线程
 '''
 
@@ -995,11 +1411,16 @@ class PlanObsThead(QThread):
 
     def __init__(self):
         super(PlanObsThead, self).__init__()
-        self.plan_obs = '0'  # [运行挡位,持续时间]
+        self.plan_obs = '0'  # [开关,场景名称]
         self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
 
     def run(self) -> None:
-        while True:
+        while self.running:
             time.sleep(0.01)
             if (not self.run_flg) or (not flg_start['obs']):
                 continue
@@ -1008,18 +1429,70 @@ class PlanObsThead(QThread):
                 if '_' in self.plan_obs:  # 切换场景
                     obs_msg = str.split(self.plan_obs, '_')
                     # print(obs_msg)
-                    if int(obs_msg[0]) == 1:
+                    if obs_msg[0] in ['10', '11']:
                         cl_requst.set_current_program_scene(obs_msg[1])
                         self._signal.emit(succeed("OBS 场景切换完成！"))
-                    get_picture(obs_msg[1])
-                    self._signal.emit(succeed("OBS 截图完成！"))
+                    elif obs_msg[0] in ['0', '1']:
+                        # print(obs_msg[1])
+                        cb_scene = ui.comboBox_Scenes
+                        scene_name = cb_scene.currentText()
+                        tb_source = ui.tableWidget_Sources
+                        for row_num in range(tb_source.rowCount()):
+                            if tb_source.item(row_num, 1).text() == obs_msg[1]:
+                                item_id = source_list[row_num][2]
+                                flg_enable = (True if obs_msg[0] == '1' else False)
+                                print(scene_name, item_id, flg_enable)
+                                cl_requst.set_scene_item_enabled(scene_name, item_id,
+                                                                 flg_enable)  # 打开视频来源
+                                break
+                    elif obs_msg[0] in ['12']:
+                        # print(obs_msg[1])
+                        obs_res = get_picture(obs_msg[1])  # 拍摄来源
+                        if obs_res:
+                            self._signal.emit(obs_res)
+                        monitor_res = get_rtsp(rtsp_url)
+                        if monitor_res:
+                            print(monitor_res[0][:60])
+                            self._signal.emit(monitor_res)
                 else:
                     print('没有切换的场景！')
             except:
-                print("OBS 链接中断！")
+                print("OBS 截图中断！")
                 flg_start['obs'] = False
                 self._signal.emit(fail("OBS 场景切换中断！"))
             self.run_flg = False
+
+
+def PlanObs_signal_accept(msg):
+    global main_Camera, monitor_Camera, fit_Camera
+    try:
+        if isinstance(msg, list):
+            img = msg[0]
+            msg_list = eval(msg[1])
+            pixmap = QPixmap()
+            pixmap.loadFromData(img)
+            pixmap = pixmap.scaled(int(400 * 1.6), int(225 * 1.6))
+            if msg[2] == 'obs':
+                ui.label_main_picture.setPixmap(pixmap)
+                main_Camera = camera_to_num(msg_list)
+            elif msg[2] == 'monitor':
+                ui.label_monitor_picture.setPixmap(pixmap)
+                monitor_Camera = camera_to_num(msg_list)
+            for index in range(len(main_Camera)):
+                fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
+            if perfect_Camera == fit_Camera:
+                ui.lineEdit_result_send.setText(str(main_Camera[:8]))
+            msg_list = eval(msg[1])
+
+            color_list = ''
+            for m in msg_list:
+                if m in color_ch.keys():
+                    color_list = '%s %s' % (color_list, color_ch[m])
+            ui.textBrowser_background_data.append(color_list)
+        else:
+            ui.textBrowser.append(str(msg))
+    except:
+        print('OBS 操作失败！')
 
 
 '''
@@ -1033,10 +1506,15 @@ class AxisThead(QThread):
     def __init__(self):
         super(AxisThead, self).__init__()
         self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
 
     def run(self) -> None:
         global flg_start
-        while True:
+        while self.running:
             time.sleep(0.1)
             if not self.run_flg:
                 continue
@@ -1079,24 +1557,34 @@ class PlanCmdThead(QThread):
     def __init__(self):
         super(PlanCmdThead, self).__init__()
         self.run_flg = False
-        self.card_next = False
+        self.cmd_next = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
 
     def run(self) -> None:
         global action_area
-        while True:
+        global ranking_time_start
+        while self.running:
             time.sleep(0.1)
             if not self.run_flg:
                 continue
-            if flg_start['card']:
+            if flg_start['card'] and action_area[1] < max_lap_count:
+                Audio_Thead.run_flg = True
+                ui.checkBox_main_music.setChecked(True)
                 self._signal.emit(succeed("运动流程：开始！"))
-                self.card_next = False  # 初始化快速动作标志
-                reset_ranking_array()  # 初始化排名，位置变量
+                self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
+                cb_index = ui.comboBox_plan.currentIndex()
                 for plan_num in range(0, len(plan_list)):
-                    print('第 %s 个动作，识别在第 %s 区！' % (plan_num + 1, action_area))
+                    print('第 %s 个动作，识别在第 %s 区 %s 圈！' % (plan_num + 1, action_area[0], action_area[1]))
                     if (not self.run_flg) or (not flg_start['card']):
                         print('动作未开始！')
                         break
-                    if plan_list[plan_num][0] == '1':  # 是否勾选
+                    if plan_list[plan_num][0] == '1' and (
+                            (action_area[1] < int(plan_list[plan_num][1]) or (
+                                    int(plan_list[plan_num][1]) == 0))):  # 是否勾选,且在圈数范围内
                         self._signal.emit(plan_num)
                         try:
                             sc.card_move(1, int(plan_list[plan_num][2]), vel=int(plan_list[plan_num][7]),
@@ -1131,14 +1619,34 @@ class PlanCmdThead(QThread):
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 0)
                                 else:
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 1)
+                                if plan_list[plan_num][12] == '2':  # 闸门机关打开即开始计时
+                                    ranking_time_start = time.time()
+                                    if flg_start['obs']:
+                                        try:
+                                            res = requests.get(url="http://127.0.0.1:8899/start")
+                                            print('比赛开始：', res, ranking_time_start)
+                                        except:
+                                            print('OBS脚本开始错误！')
+                            if int(plan_list[plan_num][15]) > 0:  # 播放音效
+                                tb_audio = ui.tableWidget_Audio
+                                audio_row_count = tb_audio.rowCount()
+                                # print('~~~~~~~~~~~~~~~~~~~~音效', plan_list[plan_num][15])
+                                if int(plan_list[plan_num][15]) - 1 < audio_row_count:
+                                    sound_file = tb_audio.item(int(plan_list[plan_num][15]) - 1, 0).text()
+                                    sound_times = int(tb_audio.item(int(plan_list[plan_num][15]) - 1, 1).text())
+                                    sound_delay = int(tb_audio.item(int(plan_list[plan_num][15]) - 1, 2).text()) * 1000
+                                    print(sound_file, sound_times, sound_delay)
+                                    # 加载音效
+                                    sound_effect = pygame.mixer.Sound(sound_file)
+                                    sound_effect.play(loops=sound_times, maxtime=sound_delay)  # 播放音效
                         except:
                             print("运动板运行出错！")
                             flg_start['card'] = False
                             self._signal.emit(fail("运动板通信出错！"))
 
-                        if ui.checkBox_test.isChecked() or int(plan_list[plan_num][13]) == 0:
+                        if ui.checkBox_test.isChecked():
                             time.sleep(2)  # 测试期间停两秒切换下一个动作
-                        elif int(plan_list[plan_num][13]) < 0:
+                        elif int(plan_list[plan_num][14]) <= 0:
                             pass  # 负数则直接下一个动作
                         else:
                             t_over = 0
@@ -1146,47 +1654,63 @@ class PlanCmdThead(QThread):
                                 if not self.run_flg:
                                     print('动作等待中！')
                                     break
-                                if int(plan_list[plan_num][13]) in [action_area, action_area - 1, action_area + 1]:
+                                if (int(camera_points[int(plan_list[plan_num][14])][cb_index + 1][0][0])
+                                        in [action_area[0], action_area[0] - 1, action_area[0] + 1]):
                                     break
+                                # if int(plan_list[plan_num][13]) in [action_area[0], action_area[0] - 1, action_area[0] + 1]:
+                                #     break
                                 t_over += 1
                                 if t_over == 60:
                                     print('等待超时！')
                                     break
-                                if self.card_next:
+                                if self.cmd_next:
                                     break
                                 time.sleep(0.1)
-                        if self.card_next:  # 快速执行下一个动作
-                            self.card_next = False
+                        if self.cmd_next:  # 快速执行下一个动作
+                            self.cmd_next = False
                             continue
                         if self.run_flg:
-                            if action_area >= max_area_count - 3:
-                                PlanBallNum_Thead.run_flg = True  # 终点计数器线程
-
                             if int(plan_list[plan_num][11]) != 0:  # 摄像头延时，也可以用作动作延时
                                 if int(plan_list[plan_num][10]) != 0:  # 摄像头缩放
                                     PlanCam_Thead.camitem = [int(plan_list[plan_num][10]),
                                                              int(plan_list[plan_num][11])]
                                     PlanCam_Thead.run_flg = True  # 摄像头线程
                                 time.sleep(int(plan_list[plan_num][11]))
-
-                            if '_' in plan_list[plan_num][14]:
-                                PlanObs_Thead.plan_obs = plan_list[plan_num][14]
+                            plan_col_count = len(plan_list[plan_num])
+                            if '_' in plan_list[plan_num][plan_col_count - 1]:
+                                PlanObs_Thead.plan_obs = plan_list[plan_num][plan_col_count - 1]
                                 PlanObs_Thead.run_flg = True  # 切换场景线程
-
-                if not ui.checkBox_test.isChecked():  # 非测试模式才关闭
+                                print('######################', len(plan_list), plan_num)
+                            if (len(plan_list) - 6 <= plan_num) and (
+                                    action_area[1] >= max_lap_count - 1):
+                                if len(plan_list) - 3 <= plan_num:
+                                    PlanBallNum_Thead.run_flg = True  # 终点计数器线程
+                                    tcp_ranking_thread.sleep_time = 0.1  # 终点时间发送设置
+                                if not ui.checkBox_test.isChecked():  # 非测试模式才关闭
+                                    # 流程完成则打开终点开关，关闭闸门，关闭弹射
+                                    sc.GASetExtDoBit(3, 1)  # 打开终点开关
+                                    sc.GASetExtDoBit(1, 0)  # 关闭闸门
+                                    sc.GASetExtDoBit(0, 0)  # 关闭弹射
+                        if plan_num == len(plan_list) - 1:
+                            action_area[0] = 1
+                            action_area[1] += 1
+                if not ui.checkBox_test.isChecked() and not self.run_flg:  # 非测试模式才关闭
                     # 流程完成则打开终点开关，关闭闸门，关闭弹射
+                    print('另外开关~~~~~~~~~')
                     sc.GASetExtDoBit(3, 1)  # 打开终点开关
                     sc.GASetExtDoBit(1, 0)  # 关闭闸门
                     sc.GASetExtDoBit(0, 0)  # 关闭弹射
-
-                if self.run_flg and ui.checkBox_restart.isChecked():
-                    ReStart_Thead.run_flg = True  # 1分钟后重启动作
-                    print('1分钟后重启动作!')
-                self.run_flg = False
+                if ui.checkBox_test.isChecked():  # 如果是测试模式，不用算圈数
+                    self.run_flg = False
+            else:
+                if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
+                    sc.GASetExtDoBit(3, 1)  # 打开终点开关
+                    sc.GASetExtDoBit(1, 0)  # 关闭闸门
+                    sc.GASetExtDoBit(0, 0)  # 关闭弹射
                 self._signal.emit(succeed("运动流程：完成！"))
                 print('动作已完成！')
-            else:
-                self._signal.emit(fail("运动卡未链接！"))
+                if not flg_start['card']:
+                    self._signal.emit(fail("运动卡未链接！"))
                 self.run_flg = False
 
 
@@ -1280,7 +1804,7 @@ def keyboard_release(key):
                 sc.card_update()
 
             if key == key.page_up:
-                print('头下')
+                print('头上')
                 flg_key_run = True
                 sc.card_setpos(5, pValue[4] - 30000)
                 sc.card_update()
@@ -1307,6 +1831,8 @@ def keyboard_release(key):
 
 def keyboard_press(key):
     global flg_key_run
+    # if key == key.:
+    #     pass
     if ui.checkBox_key.isChecked() and flg_start['card']:
         try:
             Pos_Thead.run_flg = True
@@ -1385,33 +1911,44 @@ def keyboard_press(key):
 
 
 # 保存方案
-def save_plan():
+def save_plan_yaml():
     global plan_list
     global plan_all
-    table = ui.tableWidget_Step
-    row_num = table.rowCount()
-    # col_num = table.columnCount()
+    tb_step = ui.tableWidget_Step
+    row_num = tb_step.rowCount()
+    col_count = tb_step.columnCount()
     if row_num == 0:
         return
     plan_list = []
     local_list = []
     for row in range(0, row_num):
-        if table.cellWidget(row, 0):
-            if table.cellWidget(row, 0).isChecked():
+        if tb_step.cellWidget(row, 0):
+            if tb_step.cellWidget(row, 0).isChecked():
                 local_list.append("1")
             else:
                 local_list.append("0")
-        for col in range(1, 14):
+        for col in range(1, col_count - 2):
             local_list.append(
-                "0" if (not table.item(row, col) or table.item(row, col).text() == '') else table.item(row, col).text())
-        if table.cellWidget(row, 14):
-            if table.cellWidget(row, 14).isChecked():
-                local_list.append(str("1_%s" % table.cellWidget(row, 14).text()))
-            else:
-                local_list.append(str("0_%s" % table.cellWidget(row, 14).text()))
+                "0" if (not tb_step.item(row, col) or tb_step.item(row, col).text() == '') else tb_step.item(row,
+                                                                                                             col).text())
+        cell_widget = tb_step.cellWidget(row, col_count - 2)
+        if cell_widget:
+            if isinstance(cell_widget, QCheckBox):
+                if cell_widget.isChecked():
+                    local_list.append(str("1_%s" % cell_widget.text()))
+                else:
+                    local_list.append(str("0_%s" % cell_widget.text()))
+            if isinstance(cell_widget, QRadioButton):
+                if cell_widget.isChecked():
+                    local_list.append(str("11_%s" % cell_widget.text()))
+                else:
+                    local_list.append(str("10_%s" % cell_widget.text()))
         else:
             local_list.append(
-                "0" if (not table.item(row, 14) or table.item(row, 14).text() == '') else table.item(row, 14).text())
+                "0" if (not tb_step.item(row, col_count - 2) or tb_step.item(row,
+                                                                             col_count - 2).text() == '') else tb_step.item(
+                    row,
+                    col_count - 2).text())
         plan_list.append(local_list)
         local_list = []
     print(plan_list)
@@ -1438,6 +1975,7 @@ def save_plan():
 def load_plan_yaml():
     global plan_names
     global plan_all
+    global camera_points
     file = "Plan_config.yml"
     if os.path.exists(file):
         try:
@@ -1447,14 +1985,50 @@ def load_plan_yaml():
             for plan in plan_all['plans']:
                 plan_names.append(plan_all['plans'][plan]['plan_name'])
 
-            s485.s485_Cam_No = plan_all['s485_Cam_No']
-            s485.s485_Axis_No = plan_all['s485_Axis_No']
-
-            ui.lineEdit_CarNo.setText(str(plan_all['cardNo']))
-
             comb = ui.comboBox_plan
             comb.addItems(plan_names)
             plan_refresh()
+        except:
+            pass
+    else:
+        print("文件不存在")
+
+
+def save_main_yaml():
+    file = "main_config.yml"
+    if os.path.exists(file):
+        try:
+            with open(file, "r", encoding="utf-8") as f:
+                main_all = yaml.safe_load(f)
+                if ui.lineEdit_time_sendresult.text().isdigit():
+                    main_all['time_send_result'] = ui.lineEdit_time_sendresult.text()
+                if ui.lineEdit_time_count_ball.text().isdigit():
+                    main_all['time_count_ball'] = ui.lineEdit_time_count_ball.text()
+                if ui.lineEdit_Countdown.text().isdigit():
+                    main_all['Countdown'] = ui.lineEdit_Countdown.text()
+            with open(file, "w", encoding="utf-8") as f:
+                yaml.dump(main_all, f, allow_unicode=True)
+            f.close()
+            ui.textBrowser.append(succeed('方案保存：成功'))
+        except:
+            ui.textBrowser.append(fail('方案保存：失败'))
+        print("保存成功~！")
+
+
+def load_main_yaml():
+    file = "main_config.yml"
+    if os.path.exists(file):
+        try:
+            f = open(file, 'r', encoding='utf-8')
+            main_all = yaml.safe_load(f)
+            f.close()
+            ui.lineEdit_CarNo.setText(str(main_all['cardNo']))
+            ui.lineEdit_time_sendresult.setText(str(main_all['time_send_result']))
+            ui.lineEdit_time_count_ball.setText(str(main_all['time_count_ball']))
+            ui.lineEdit_Countdown.setText(str(main_all['Countdown']))
+
+            s485.s485_Axis_No = main_all['s485_Axis_No']
+            s485.s485_Cam_No = main_all['s485_Cam_No']
         except:
             pass
     else:
@@ -1470,13 +2044,13 @@ def plan_rename():
 
 
 def sel_all():
-    table = ui.tableWidget_Step
-    num = table.rowCount()
-    for i in range(0, num):
+    tb_step = ui.tableWidget_Step
+    num = tb_step.rowCount()
+    for row in range(0, num):
         if ui.checkBox_selectall.isChecked():
-            table.cellWidget(i, 0).setChecked(True)
+            tb_step.cellWidget(row, 0).setChecked(True)
         else:
-            table.cellWidget(i, 0).setChecked(False)
+            tb_step.cellWidget(row, 0).setChecked(False)
 
 
 def plan_refresh():  # 刷新方案列表
@@ -1485,53 +2059,73 @@ def plan_refresh():  # 刷新方案列表
     _index = comb.currentIndex()
     plan_list = plan_all['plans']['plan%d' % (_index + 1)]['plan_list']
 
-    table = ui.tableWidget_Step
+    tb_step = ui.tableWidget_Step
+    col_count = tb_step.columnCount()
     for num, plan in enumerate(plan_list):
-        table.setRowCount(num + 1)
+        tb_step.setRowCount(num + 1)
         cb = QCheckBox()
         cb.setStyleSheet('QCheckBox{margin:6px};')
-        table.setCellWidget(num, 0, cb)
+        tb_step.setCellWidget(num, 0, cb)
         if plan[0] == '1':
-            table.cellWidget(num, 0).setChecked(True)
+            tb_step.cellWidget(num, 0).setChecked(True)
         for col in range(1, len(plan)):
-            if col == 14:
-                if table.item(num, col):
-                    table.item(num, col).setText('')
-                if table.cellWidget(num, col):
-                    table.removeCellWidget(num, col)
+            if col == col_count - 2:
+                if tb_step.item(num, col):
+                    tb_step.item(num, col).setText('')
+                if tb_step.cellWidget(num, col):
+                    tb_step.removeCellWidget(num, col)
                 s_num = str(plan[col]).find('_')
                 if s_num != -1:
-                    obs_check = str(plan[col])[0]
+                    obs_check = str(plan[col])[0:s_num]
                     obs_name = str(plan[col])[s_num + 1:]
                     # print(obs_check, obs_name)
-                    cb = QCheckBox()
-                    cb.setStyleSheet('QCheckBox{margin:6px};')
-                    cb.setText(obs_name)
-                    if int(obs_check) == 1:
-                        cb.setChecked(True)
-                    table.setCellWidget(num, 14, cb)
+                    if obs_check in ['0', '1']:
+                        cb = QCheckBox()
+                        cb.setStyleSheet('QCheckBox{margin:6px};')
+                        cb.setText(obs_name)
+                        if obs_check == '1':
+                            cb.setChecked(True)
+                        tb_step.setCellWidget(num, col_count - 2, cb)
+                    elif obs_check in ['10', '11']:
+                        rb = QRadioButton()
+                        rb.setStyleSheet('QRadioButton{margin:6px};')
+                        rb.setText(obs_name)
+                        if obs_check == '11':
+                            rb.setChecked(True)
+                        tb_step.setCellWidget(num, col_count - 2, rb)
                 else:
                     item = QTableWidgetItem(
                         "0" if not plan[col] else plan[col])
                     item.setTextAlignment(Qt.AlignCenter)
                     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                    table.setItem(num, col, item)
+                    tb_step.setItem(num, col, item)
             else:
                 item = QTableWidgetItem(str(plan[col]))
                 item.setTextAlignment(Qt.AlignCenter)
                 # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                table.setItem(num, col, item)
+                tb_step.setItem(num, col, item)
+    for index in range(len(camera_points)):  # 卫星图刷新
+        num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
+        camera_points[index][0].move(*camera_points[index][num][1])  # 设置初始位置
+        camera_points[index][0].show()
+    for index in range(len(audio_points)):  # 卫星图刷新
+        num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
+        audio_points[index][0].move(*audio_points[index][num][1])  # 设置初始位置
+        audio_points[index][0].show()
+    for index in range(len(ai_points)):  # 卫星图刷新
+        num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
+        ai_points[index][0].move(*ai_points[index][num][1])  # 设置初始位置
+        ai_points[index][0].show()
 
 
 # 进入下一步动作
-def card_next():
-    PlanCmd_Thead.card_next = True
+def cmd_next():
+    PlanCmd_Thead.cmd_next = True
 
 
-# 关闭运动卡
-def card_stop():
+# 关闭动作循环
+def cmd_stop():
     PlanCmd_Thead.run_flg = False
-    print(flg_start)
     reset_ranking_array()
 
 
@@ -1553,7 +2147,7 @@ def card_start():
     if not flg_start['s485']:
         flg_start['s485'] = s485.cam_open()
         if flg_start['s485']:
-            Axis_Thead.run_flg = True
+            Axis_Thead.run_flg = True  # 轴复位
         ui.textBrowser.append(succeed('串口链接：%s' % flg_start['s485']))
     else:
         ui.textBrowser.append(fail('串口链接：%s' % flg_start['s485']))
@@ -1564,8 +2158,10 @@ def card_start():
 
 def cmd_run():
     global p_now
-    save_plan()
+    save_plan_yaml()
     p_now = 0
+    reset_ranking_array()
+    activate_browser()  # 刷新OBS中排名浏览器
     PlanCmd_Thead.run_flg = True
 
 
@@ -1586,34 +2182,56 @@ def obs_to_table():
     scene = ui.comboBox_Scenes.currentText()
     if scene:
         tb_step = ui.tableWidget_Step
-        row_num = tb_step.currentRow()
-        if row_num > -1:
-            if tb_step.item(row_num, 14):
-                tb_step.item(row_num, 14).setText('')
-            if tb_step.cellWidget(row_num, 14):
-                tb_step.removeCellWidget(row_num, 14)
-            cb = QCheckBox()
+        row_count = tb_step.currentRow()
+        col_count = tb_step.columnCount()
+        if row_count > -1:
+            if tb_step.item(row_count, col_count - 2):
+                tb_step.item(row_count, col_count - 2).setText('')
+            if tb_step.cellWidget(row_count, col_count - 2):
+                tb_step.removeCellWidget(row_count, col_count - 2)
+            cb = QRadioButton()
             cb.setText(scene)
             cb.setStyleSheet('QCheckBox{margin:6px};')
-            tb_step.setCellWidget(row_num, 14, cb)
-            # print(tb_step.cellWidget(row_num, 14).text())
+            tb_step.setCellWidget(row_count, col_count - 2, cb)
+            # print(tb_step.cellWidget(row_num, col_count - 2).text())
+
+
+def source_to_table():
+    sources_row_num = ui.tableWidget_Sources.currentRow()
+    if sources_row_num > -1:
+        tb_step = ui.tableWidget_Step
+        row_count = tb_step.currentRow()
+        col_count = tb_step.columnCount()
+        if row_count > -1:
+            if tb_step.item(row_count, col_count - 2):
+                tb_step.item(row_count, col_count - 2).setText('')
+            if tb_step.cellWidget(row_count, col_count - 2):
+                tb_step.removeCellWidget(row_count, col_count - 2)
+            rb = QCheckBox()
+            rb.setText(ui.tableWidget_Sources.item(sources_row_num, 1).text())
+            rb.setChecked(True)
+            rb.setStyleSheet('QCheckBox{margin:6px};')
+            tb_step.setCellWidget(row_count, col_count - 2, rb)
+            # print(tb_step.cellWidget(row_num, col_count - 2).text())
 
 
 def obs_remove_table():
     tb_step = ui.tableWidget_Step
     row_num = tb_step.currentRow()
-    if row_num > -1 and tb_step.cellWidget(row_num, 14):
-        tb_step.removeCellWidget(row_num, 14)
+    col_count = tb_step.columnCount()
+    if row_num > -1 and tb_step.cellWidget(row_num, col_count - 2):
+        tb_step.removeCellWidget(row_num, col_count - 2)
 
 
 # 禁止输入非数字
 def table_change():
     global plan_list
     tb_step = ui.tableWidget_Step
+    col_count = tb_step.columnCount()
     row = tb_step.currentRow()
     col = tb_step.currentColumn()
     # print("%s %s" % (row, col))
-    if col in [0, 14] or row < 0 or col < 0:
+    if col in [0, col_count - 2] or row < 0 or col < 0:
         return
     try:
         # print(len(plan_list[row]), col)
@@ -1656,7 +2274,8 @@ def save_images():
     form_data = {
         'saveImgRun': saveImgRun,
         'saveBackground': saveBackground,
-        'saveImgNum': '0,1,2,3,4,5,6,7,8',
+        # 'saveImgNum': '0,1,2,3,4,5,6,7,8',
+        'saveImgNum': '1',
         # 'saveImgPath': 'D:/saidao',
     }
     try:
@@ -1666,40 +2285,762 @@ def save_images():
         print('图像识别主机通信失败！')
 
 
-def ballnum2zero():
-    ui.lineEdit_ball_num.setText('0')
+def json_txt():
+    if json_to_txt():
+        ui.textBrowser_background_data.append(succeed('区域文件转TXT成功！'))
+    else:
+        ui.textBrowser_background_data.append(fail('区域文件转TXT失败！'))
+
+
+"****************************************卫星图_开始***********************************************"
+
+
+class DraggableLabel(QLabel):
+    def __init__(self, text, color, parent=None):
+        super().__init__(text, parent)
+        # self.setFixedSize(150, 70)  # 设置标签大小
+        self.color = color
+        # 设置字体样式
+        font = QFont("Arial", 24, QFont.Bold)  # 字体：Arial，大小：16，加粗
+        font.setItalic(False)  # 设置斜体
+        self.setFont(font)
+
+        # 设置背景和边框样式
+        self.setStyleSheet(
+            "color: %s;" % color  # 字体颜色为红色
+        )
+        self.dragging = False
+        self.start_pos = QPoint(0, 0)
+        self.label_text = text
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.dragging = True
+            # 使用 position().toPoint() 获取点击位置
+            self.start_pos = event.position().toPoint()
+
+    def mouseMoveEvent(self, event):
+        if self.dragging:
+            # 计算新位置：将事件位置映射到父控件坐标系
+            parent_pos = self.mapToParent(event.position().toPoint() - self.start_pos)
+            self.move(parent_pos)
+            # print("内部坐标：", self.pos())
+
+    def mouseReleaseEvent(self, event):
+        global camera_points
+        global audio_points
+        global ai_points
+        if event.button() == Qt.LeftButton:
+            self.dragging = False
+            # 打印标签相对于父控件的内部坐标
+            x = self.pos().x() + self.width() / 2
+            y = self.pos().y() + self.height() / 2
+            area_part = 0
+            for index in range(len(map_orbit)):
+                if abs(map_orbit[index][0] - x) < 10 and abs(map_orbit[index][1] - y) < 10:
+                    part = len(map_orbit) / (max_area_count - ball_num + 1)
+                    area_part = index // part
+                    x = int(map_orbit[index][0])
+                    y = int(map_orbit[index][1])
+                    self.move(int(x - self.width() / 2), int(y - self.height() / 2))
+                    break
+            num = ui.comboBox_plan.currentIndex() + 1  # 按方案索引保存
+            if self.color == 'red':
+                camera_points[int(self.label_text)][num][0] = [int(area_part)]
+                camera_points[int(self.label_text)][num][1] = [int(x - self.width() / 2), int(y - self.height() / 2)]
+            if self.color == 'blue':
+                audio_points[int(self.label_text)][num][0] = [int(area_part)]
+                audio_points[int(self.label_text)][num][1] = [int(x - self.width() / 2), int(y - self.height() / 2)]
+            if self.color == 'green':
+                ai_points[int(self.label_text)][num][0] = [int(area_part)]
+                ai_points[int(self.label_text)][num][1] = [int(x - self.width() / 2), int(y - self.height() / 2)]
+            save_points(self.color)
+            print("内部坐标：", [int(x - self.width() / 2), int(y - self.height() / 2)])
+
+    def delete_self(self):
+        """从父控件中删除自己"""
+        print(f"删除：{self.text()}")
+        self.setParent(None)  # 解除父控件引用
+        self.deleteLater()  # 安排删除自身
+
+
+class MapLabel(QLabel):
+    def __init__(self, picture_size=860, ball_space=11, ball_radius=10, flash_time=30, step_length=2, parent=None):
+        super().__init__(parent)
+        global map_orbit
+        map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json']  # 卫星地图资料
+        img = map_data[0]
+        pixmap = QPixmap(img)
+        # 设置label的尺寸
+        self.setMaximumSize(picture_size, picture_size)
+        self.setPixmap(pixmap)
+        self.setScaledContents(True)
+
+        self.color_names = {'red': QColor(255, 0, 0), 'green': QColor(0, 255, 0), 'blue': QColor(0, 0, 255),
+                            'pink': QColor(255, 0, 255), 'yellow': QColor(255, 255, 0), 'black': QColor(0, 0, 0),
+                            'purple': QColor(128, 0, 128), 'orange': QColor(255, 165, 0)}
+        # , 'White': QColor(248, 248, 255),
+        # 'Brown': QColor(139, 69, 19)}
+
+        self.path_points = []
+        with open(map_data[1], 'r', encoding='utf-8') as fcc_file:
+            fcc_data = json.load(fcc_file)
+        scale = picture_size / 860  # 缩放比例
+        for p in fcc_data[0]["content"]:
+            self.path_points.append((p['x'] * scale, p['y'] * scale))
+        self.path_points = divide_path(self.path_points, step_length)
+        if scale == 1:
+            map_orbit = self.path_points
+
+        self.ball_space = ball_space  # 球之间的距离
+        self.ball_radius = ball_radius  # 小球半径
+        # self.num_balls = 8  # 8个小球
+        self.speed = 1  # 小球每次前进的步数（可以根据需要调整）
+        self.flash_time = flash_time
+        self.positions = []  # 每个球的当前位置索引
+        for num in range(ball_num):
+            self.positions.append([num * self.ball_space, QColor(255, 0, 0)])
+
+        # 创建定时器，用于定时更新球的位置
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_positions)  # 定时触发更新
+        self.timer.start(self.flash_time)  # 每1秒更新一次
+
+    def update_positions(self):
+        # 更新每个小球的位置
+        p_num = 0
+        for num in range(0, len(ranking_array)):
+            if ranking_array[num][5] in self.color_names.keys():
+                color = self.color_names[ranking_array[num][5]]
+                if ranking_array[num][6] == 0:  # 起点
+                    if p_num == 0:
+                        index = len(ranking_array) * self.ball_space
+                    else:
+                        index = len(ranking_array) * self.ball_space - p_num * self.ball_space
+                elif (ranking_array[num][6] >= max_area_count - ball_num + 1
+                      and ranking_array[num][8] >= max_lap_count - 1):  # 最后一圈处理
+                    if p_num == 0:
+                        index = len(self.path_points) - 1
+                    else:
+                        index = len(self.path_points) - 1 - p_num * self.ball_space
+                elif ranking_array[num][8] == action_area[1]:  # 同圈才运动
+                    area_num = max_area_count - ball_num  # 跟踪区域数量
+                    p = int(len(self.path_points) * (ranking_array[num][6] / area_num)) - 1
+                    color = self.color_names[ranking_array[num][5]]
+                    if p - self.positions[p_num][0] > 50:
+                        self.speed = 3
+                    elif 30 >= p - self.positions[p_num][0] >= 25:
+                        self.speed = 2
+                    elif p < self.positions[p_num][0]:
+                        self.speed = 0
+                    else:
+                        self.speed = 1
+                    if self.positions[p_num][0] > len(self.path_points) - self.ball_radius - 1:
+                        index = 0
+                    elif p_num == 0:
+                        index = self.positions[p_num][0] + self.speed
+                    elif (0 < self.positions[p_num - 1][0] - self.positions[p_num][0] < self.ball_space
+                          and int(len(self.path_points) * (5 / area_num)) < self.positions[p_num][0] < len(
+                                self.path_points) - self.ball_space):
+                        index = self.positions[p_num][0] - self.ball_radius
+                    else:
+                        index = self.positions[p_num][0] + self.speed
+                else:  # 不同圈情况
+                    area_num = max_area_count - ball_num  # 跟踪区域数量
+                    p = int(len(self.path_points) * (ranking_array[num][6] / area_num)) - 1
+                    color = self.color_names[ranking_array[num][5]]
+                    if p - self.positions[p_num][0] > 50:
+                        self.speed = 3
+                    elif 30 >= p - self.positions[p_num][0] >= 25:
+                        self.speed = 2
+                    elif p < self.positions[p_num][0]:
+                        self.speed = 0
+                    else:
+                        self.speed = 1
+                    index = self.positions[p_num][0] + self.speed
+                    if index > len(self.path_points) - self.ball_radius - 1:
+                        index = len(self.path_points) - 1
+                self.positions[p_num][0] = index
+                self.positions[p_num][1] = color
+                # if index >= len(self.path_points):
+                #     self.positions[p_num][0] = 0  # 回到起点循环运动
+                p_num += 1
+
+        # 触发重绘
+        self.update()
+
+    # 通过重载paintEvent方法进行自定义绘制
+    def paintEvent(self, event):
+        # 调用父类的 paintEvent 以确保 QLabel 正常显示文本或图片
+        super().paintEvent(event)
+
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        if ui.checkBox_show_orbit.isChecked():
+            for index in range(len(self.path_points)):
+                part = len(self.path_points) / (max_area_count - ball_num + 1)
+                if index % int(part) == 0:
+                    painter.setBrush(QBrush(QColor(255, 0, 0), Qt.SolidPattern))
+                    font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
+                    painter.setFont(font)
+                    painter.setPen('green')
+                    painter.drawText(int(self.path_points[index][0]), int(self.path_points[index][1]),
+                                     str(index // int(part)))
+                    painter.drawEllipse(int(self.path_points[index][0]), int(self.path_points[index][1]),
+                                        10, 10)
+                else:
+                    painter.setBrush(QBrush(QColor(0, 255, 0), Qt.SolidPattern))
+                    painter.drawEllipse(int(self.path_points[index][0]), int(self.path_points[index][1]),
+                                        2, 2)
+
+        # 绘制每个小球
+        for i in range(len(self.positions)):
+            index = self.positions[i][0]  # 获取当前球的路径索引
+            if index in range(len(self.path_points)):
+                x, y = self.path_points[index]
+                # 设置球的颜色
+                painter.setBrush(QBrush(self.positions[i][1], Qt.SolidPattern))
+                # 绘制球
+                painter.drawEllipse(int(x - self.ball_radius), int(y - self.ball_radius),
+                                    self.ball_radius * 2, self.ball_radius * 2)
+
+    def mouseReleaseEvent(self, event: QMouseEvent):
+        """释放鼠标时停止拖动"""
+        if event.button() == Qt.LeftButton:
+            print(event.position().toPoint())
+
+
+def save_points(color):
+    points_save = []
+    table_save = []
+    if color == 'red':
+        file = "camera_points.yml"
+        for index in range(len(camera_points)):
+            points_save.append([index, [(camera_points[index][1][0]), (camera_points[index][1][1])],
+                                [(camera_points[index][2][0]), (camera_points[index][2][1])],
+                                [(camera_points[index][3][0]), (camera_points[index][3][1])]])
+    elif color == 'blue':
+        file = "audio_points.yml"
+        for index in range(len(audio_points)):
+            points_save.append([index, [(audio_points[index][1][0]), (audio_points[index][1][1])],
+                                [(audio_points[index][2][0]), (audio_points[index][2][1])],
+                                [(audio_points[index][3][0]), (audio_points[index][3][1])]])
+        tb_audio = ui.tableWidget_Audio
+        row_count = tb_audio.rowCount()
+        col_count = tb_audio.columnCount()
+        for row in range(row_count):
+            row_data = []
+            for col in range(col_count - 1):
+                if tb_audio.item(row, col).text() == '':
+                    tb_audio.item(row, col).setText('0')
+                row_data.append(tb_audio.item(row, col).text())
+            table_save.append(row_data)
+    elif color == 'green':
+        file = "ai_points.yml"
+        for index in range(len(ai_points)):
+            points_save.append([index, [(ai_points[index][1][0]), (ai_points[index][1][1])],
+                                [(ai_points[index][2][0]), (ai_points[index][2][1])],
+                                [(ai_points[index][3][0]), (ai_points[index][3][1])]])
+        tb_ai = ui.tableWidget_Ai
+        row_count = tb_ai.rowCount()
+        col_count = tb_ai.columnCount()
+        for row in range(row_count):
+            row_data = []
+            for col in range(col_count - 1):
+                if tb_ai.item(row, col).text() == '':
+                    tb_ai.item(row, col).setText('0')
+                row_data.append(tb_ai.item(row, col).text())
+            table_save.append(row_data)
+    else:
+        return
+    if os.path.exists(file):
+        try:
+            with open(file, "w", encoding="utf-8") as f:
+                if color == 'red':
+                    yaml.dump({'camera_points': points_save}, f, allow_unicode=True)
+                elif color == 'blue':
+                    yaml.dump({'audio_points': points_save, 'audio_table': table_save}, f, allow_unicode=True)
+                elif color == 'green':
+                    yaml.dump({'ai_points': points_save, 'ai_table': table_save}, f, allow_unicode=True)
+            f.close()
+            ui.textBrowser.append(succeed('方案保存：成功'))
+        except:
+            ui.textBrowser.append(fail('方案保存：失败'))
+        print("保存成功~！")
+
+
+def load_points_yaml(color):
+    global camera_points
+    global audio_points
+    global ai_points
+    if color == 'red':
+        file = "camera_points.yml"
+    elif color == 'blue':
+        file = "audio_points.yml"
+    elif color == 'green':
+        file = "ai_points.yml"
+    else:
+        return
+    # file = "camera_points.yml"
+    if os.path.exists(file):
+        try:
+            f = open(file, 'r', encoding='utf-8')
+            points_all = yaml.safe_load(f)
+            f.close()
+            if color == 'red':
+                camera_points = points_all['camera_points']
+                for index in range(len(camera_points)):
+                    camera_points[index][0] = DraggableLabel(str(index), color, map_label_big)
+                    num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
+                    camera_points[index][0].move(*camera_points[index][num][1])  # 设置初始位置
+                    camera_points[index][0].show()
+            if color == 'blue':
+                audio_points = points_all['audio_points']
+                for index in range(len(audio_points)):
+                    audio_points[index][0] = DraggableLabel(str(index), color, map_label_big)
+                    num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
+                    audio_points[index][0].move(*audio_points[index][num][1])  # 设置初始位置
+                    audio_points[index][0].show()
+                audio_table = points_all['audio_table']
+                tb_audio = ui.tableWidget_Audio
+                tb_audio.setRowCount(len(audio_table))
+                row_count = tb_audio.rowCount()
+                col_count = tb_audio.columnCount()
+                for row in range(row_count):
+                    for col in range(col_count - 1):
+                        audio_item = QTableWidgetItem(str(audio_table[row][col]))
+                        audio_item.setTextAlignment(Qt.AlignCenter)
+                        # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                        tb_audio.setItem(row, col, audio_item)
+                    btn = QPushButton("选择文件")
+                    btn.clicked.connect(lambda _, r=row: open_file_dialog(tb_audio, r))  # 传递行号
+                    tb_audio.setCellWidget(row, col_count - 1, btn)
+
+            if color == 'green':
+                ai_points = points_all['ai_points']
+                for index in range(len(ai_points)):
+                    ai_points[index][0] = DraggableLabel(str(index), color, map_label_big)
+                    num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
+                    ai_points[index][0].move(*ai_points[index][num][1])  # 设置初始位置
+                    ai_points[index][0].show()
+                ai_table = points_all['ai_table']
+                tb_ai = ui.tableWidget_Ai
+                tb_ai.setRowCount(len(ai_table))
+                row_count = tb_ai.rowCount()
+                col_count = tb_ai.columnCount()
+                for row in range(row_count):
+                    for col in range(col_count - 1):
+                        ai_item = QTableWidgetItem(str(ai_table[row][col]))
+                        ai_item.setTextAlignment(Qt.AlignCenter)
+                        # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                        tb_ai.setItem(row, col, ai_item)
+                    btn = QPushButton("选择文件")
+                    btn.clicked.connect(lambda _, r=row: open_file_dialog(tb_ai, r))  # 传递行号
+                    tb_ai.setCellWidget(row, col_count - 1, btn)
+        except:
+            pass
+    else:
+        print("文件不存在")
+
+
+def open_file_dialog(tb, r):
+    # 打开文件选择对话框
+    file_path, _ = QFileDialog.getOpenFileName(tb, "选择文件")
+    if file_path:
+        # 更新对应行的文件路径
+        tb.item(r, 0).setText(file_path)
+
+
+def add_camera_points():
+    global camera_points
+    # 加载图标并放置在窗口中心
+    camera_points_count = len(camera_points)
+    num = ui.comboBox_plan.currentIndex() + 1
+    if num == 1:
+        camera_points.append(
+            [DraggableLabel(str(camera_points_count), 'red', map_label_big),
+             [0, [camera_points_count * 20, 0]], [0, [0, 0]], [0, [0, 0]]])
+    if num == 2:
+        camera_points.append(
+            [DraggableLabel(str(camera_points_count), 'red', map_label_big),
+             [0, [0, 0]], [0, [camera_points_count * 20, 0]], [0, [0, 0]]])
+    if num == 3:
+        camera_points.append(
+            [DraggableLabel(str(camera_points_count), 'red', map_label_big),
+             [0, [0, 0]], [0, [0, 0]], [0, [camera_points_count * 20, 0]]])
+    camera_points[camera_points_count][0].move(*camera_points[camera_points_count][num][1])  # 设置初始位置
+    camera_points[camera_points_count][0].show()
+
+
+def add_audio_points():
+    global audio_points
+    # 加载图标并放置在窗口中心
+    audio_points_count = len(audio_points)
+    num = ui.comboBox_plan.currentIndex() + 1
+    if num == 1:
+        audio_points.append(
+            [DraggableLabel(str(audio_points_count), 'blue', map_label_big),
+             [0, [audio_points_count * 20, 0]], [0, [0, 0]], [0, [0, 0]]])
+    if num == 2:
+        audio_points.append(
+            [DraggableLabel(str(audio_points_count), 'blue', map_label_big),
+             [0, [0, 0]], [0, [audio_points_count * 20, 0]], [0, [0, 0]]])
+    if num == 3:
+        audio_points.append(
+            [DraggableLabel(str(audio_points_count), 'blue', map_label_big),
+             [0, [0, 0]], [0, [0, 0]], [0, [audio_points_count * 20, 0]]])
+    audio_points[audio_points_count][0].move(*audio_points[audio_points_count][num][1])  # 设置初始位置
+    audio_points[audio_points_count][0].show()
+
+    audio_points_count = len(audio_points) - 1
+    tb = ui.tableWidget_Audio
+    tb.setRowCount(audio_points_count)
+    row_count = tb.rowCount() - 1
+    col_count = tb.columnCount()
+    for col in range(col_count - 1):
+        audio_item = QTableWidgetItem('0')
+        audio_item.setTextAlignment(Qt.AlignCenter)
+        # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+        tb.setItem(row_count, col, audio_item)
+    btn = QPushButton("选择文件")
+    btn.clicked.connect(lambda _, r=row_count: open_file_dialog(tb, r))  # 传递行号
+    tb.setCellWidget(row_count, col_count - 1, btn)
+
+
+def add_ai_points():
+    global ai_points
+    # 加载图标并放置在窗口中心
+    ai_points_count = len(ai_points)
+    num = ui.comboBox_plan.currentIndex() + 1
+    if num == 1:
+        ai_points.append(
+            [DraggableLabel(str(ai_points_count), 'green', map_label_big),
+             [0, [ai_points_count * 20, 0]], [0, [0, 0]], [0, [0, 0]]])
+    if num == 2:
+        ai_points.append(
+            [DraggableLabel(str(ai_points_count), 'green', map_label_big),
+             [0, [0, 0]], [0, [ai_points_count * 20, 0]], [0, [0, 0]]])
+    if num == 3:
+        ai_points.append(
+            [DraggableLabel(str(ai_points_count), 'green', map_label_big),
+             [0, [0, 0]], [0, [0, 0]], [0, [ai_points_count * 20, 0]]])
+    ai_points[ai_points_count][0].move(*ai_points[ai_points_count][num][1])  # 设置初始位置
+    ai_points[ai_points_count][0].show()
+
+    ai_points_count = len(ai_points)
+    tb = ui.tableWidget_Ai
+    tb.setRowCount(ai_points_count)
+    row_count = tb.rowCount() - 1
+    col_count = tb.columnCount()
+    for col in range(col_count - 1):
+        ai_item = QTableWidgetItem('0')
+        ai_item.setTextAlignment(Qt.AlignCenter)
+        # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+        tb.setItem(row_count, col, ai_item)
+    btn = QPushButton("选择文件")
+    btn.clicked.connect(lambda _, r=row_count: open_file_dialog(tb, r))  # 传递行号
+    tb.setCellWidget(row_count, col_count - 1, btn)
+
+
+def del_camera_points():
+    global camera_points
+    camera_points_count = len(camera_points) - 1
+    num = ui.comboBox_plan.currentIndex() + 1
+    if camera_points_count > 0:
+        for index in range(1, len(camera_points[camera_points_count])):
+            if num != index and camera_points[camera_points_count][index][0] != 0:  # 如果其中有一个方案存在坐标，则不删
+                print('存在非空方案！')
+                res = QMessageBox.warning(ui, '提示', '其他方案存在该点位！是否强制删除？',
+                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+                print(res)
+                if res == QMessageBox.No:
+                    return
+        camera_points[camera_points_count][0].delete_self()
+        camera_points.pop(camera_points_count)
+
+
+def del_audio_points():
+    global audio_points
+    audio_points_count = len(audio_points) - 1
+    num = ui.comboBox_plan.currentIndex() + 1
+    if audio_points_count > 0:
+        for index in range(1, len(audio_points[audio_points_count])):
+            if num != index and audio_points[audio_points_count][index][0] != 0:  # 如果其中有一个方案存在坐标，则不删
+                print('存在非空方案！')
+                res = QMessageBox.warning(ui, '提示', '其他方案存在该点位！是否强制删除？',
+                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+                print(res)
+                if res == QMessageBox.No:
+                    return
+        audio_points[audio_points_count][0].delete_self()
+        audio_points.pop(audio_points_count)
+    audio_points_count = len(audio_points) - 1
+    if audio_points_count >= 0:
+        tb = ui.tableWidget_Audio
+        tb.setRowCount(audio_points_count)
+
+
+def del_ai_points():
+    global ai_points
+    ai_points_count = len(ai_points) - 1
+    num = ui.comboBox_plan.currentIndex() + 1
+    if ai_points_count > 0:
+        for index in range(1, len(ai_points[ai_points_count])):
+            if num != index and ai_points[ai_points_count][index][0] != 0:  # 如果其中有一个方案存在坐标，则不删
+                print('存在非空方案！')
+                res = QMessageBox.warning(ui, '提示', '其他方案存在该点位！是否强制删除？',
+                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+                print(res)
+                if res == QMessageBox.No:
+                    return
+        ai_points[ai_points_count][0].delete_self()
+        ai_points.pop(ai_points_count)
+
+    ai_points_count = len(ai_points)
+    tb = ui.tableWidget_Ai
+    tb.setRowCount(ai_points_count)
+
+
+def show_points(color):
+    if color == 'red':
+        if ui.checkBox_show_camera.isChecked():
+            for index in range(len(camera_points)):
+                camera_points[index][0].show()
+        else:
+            for index in range(len(camera_points)):
+                camera_points[index][0].hide()
+    if color == 'blue':
+        if ui.checkBox_show_audio.isChecked():
+            for index in range(len(audio_points)):
+                audio_points[index][0].show()
+        else:
+            for index in range(len(audio_points)):
+                audio_points[index][0].hide()
+    if color == 'green':
+        if ui.checkBox_show_ai.isChecked():
+            for index in range(len(ai_points)):
+                ai_points[index][0].show()
+        else:
+            for index in range(len(ai_points)):
+                ai_points[index][0].hide()
+
+
+def play_audio():
+    pass
+
+
+"****************************************卫星图_结束***********************************************"
+
+"****************************************分机结果_开始***********************************************"
+
+
+class CameraLabel(QLabel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.Camera_index = 'main_Camera'
+        self.img_data = []  # 图资料
+        for num in range(0, 10):
+            self.img_data.append('./img/ball/%s.png' % str(num + 1))
+        self.images = [QPixmap(img) for img in self.img_data]
+        self.fit_images = [QPixmap('./img/ball/No.png'), QPixmap('./img/ball/Yes.png')]
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_positions)  # 定时触发更新
+        self.timer.start(1000)  # 每1秒更新一次
+
+    def update_positions(self):
+        # 触发重绘
+        self.update()
+
+    # 通过重载paintEvent方法进行自定义绘制
+    def paintEvent(self, event):
+        # 调用父类的 paintEvent 以确保 QLabel 正常显示文本或图片
+        super().paintEvent(event)
+
+        """绘制并排显示的图片"""
+        painter = QPainter(self)
+
+        # 当前 x 轴绘制位置
+        x_offset = 0
+        x_space = 2
+
+        # 逐个绘制图片
+        for index in range(8):
+            ball_radius = 23
+            rect = QRect(x_offset, 0, ball_radius, ball_radius)
+            # 使用高质量的缩放方式
+            if self.Camera_index == 'main_Camera':
+                scaled_img = self.images[main_Camera[index] - 1].scaled(rect.size(), Qt.KeepAspectRatio,
+                                                                        Qt.SmoothTransformation)
+            elif self.Camera_index == 'monitor_Camera':
+                scaled_img = self.images[monitor_Camera[index] - 1].scaled(rect.size(), Qt.KeepAspectRatio,
+                                                                           Qt.SmoothTransformation)
+            else:
+                scaled_img = self.fit_images[fit_Camera[index]].scaled(rect.size(), Qt.KeepAspectRatio,
+                                                                       Qt.SmoothTransformation)
+            painter.drawPixmap(rect, scaled_img)  # 在 (x_offset, 50) 位置绘制图片
+            x_offset += ball_radius + x_space  # 更新下一个图片的 x_offset
+
+    # 重写鼠标按下事件处理函数
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            print("QLabel 被左键点击")
+            if self.Camera_index == 'main_Camera':
+                ui.lineEdit_result_send.setText(str(main_Camera[:8]))
+            elif self.Camera_index == 'monitor_Camera':
+                ui.lineEdit_result_send.setText(str(monitor_Camera[:8]))
+        elif event.button() == Qt.RightButton:
+            print("QLabel 被右键点击")
+
+
+"****************************************分机结果_结束***********************************************"
+
+
+class AudioThead(QThread):
+    _signal = Signal(object)
+
+    def __init__(self):
+        super(AudioThead, self).__init__()
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+
+    def run(self) -> None:
+        area_old = 0
+        while self.running:
+            time.sleep(0.2)
+            if not self.run_flg:
+                continue
+            if len(audio_points) <= 0:
+                continue
+            plan_index = ui.comboBox_plan.currentIndex() + 1  # 方案索引
+            for index in range(1, len(audio_points)):
+                # print(audio_points[index][plan_index][0][0])
+                if audio_points[index][plan_index][0][0] > 0 and (area_old != action_area) and (
+                        audio_points[index][plan_index][0][0] == action_area[0]):
+                    tb_audio = ui.tableWidget_Audio
+                    sound_file = tb_audio.item(index - 1, 0).text()
+                    sound_times = int(tb_audio.item(index - 1, 1).text())
+                    sound_delay = int(tb_audio.item(index - 1, 2).text())
+                    print(sound_file, sound_times, sound_delay)
+                    # 加载音效
+                    sound_effect = pygame.mixer.Sound(sound_file)
+                    sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
+                    area_old = copy.deepcopy(action_area)
+                    print('~~~~~~~~~~~~~', area_old, audio_points[index][plan_index][0][0], action_area[0])
+                    break
+
+
+def audio_signal_accept(msg):
+    try:
+        pass
+    except:
+        print("轴数据显示错误！")
+
+
+def pygame_loop():
+    # 主循环，确保程序运行一段时间来听到音乐和音效
+    while pygame.mixer.music.get_busy():
+        pygame.time.wait(100)  # 每100ms检查一次
+
+
+def music_ctl():
+    if ui.checkBox_main_music.isChecked():
+        for index in range(1, 4):
+            if getattr(ui, 'radioButton_music_%s' % index).isChecked():
+                mp3_name = './mp3/07_冰原背景音乐%s.mp3' % index
+                break
+        # 加载并播放背景音乐
+        pygame.mixer.music.load(mp3_name)
+        pygame.mixer.music.play(-1)  # 循环播放背景音乐
+    else:
+        pygame.mixer.music.stop()
+
+
+class TestThead(QThread):
+    _signal = Signal(object)
+
+    def __init__(self):
+        super(TestThead, self).__init__()
+        self.run_flg = False
+        self.obs_name = '终点1'
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+
+    def run(self) -> None:
+        while self.running:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
+            # cl_requst.save_source_screenshot(self.obs_name, "jpg", 'd:/img/%s/%s.jpg' % (self.obs_name, time.time()),
+            #                                  1920, 1080, 100)
+            # time.sleep(2)
+            # 加载并播放音频文件
+            pygame.mixer.music.load('./mp3/example.mp3')
+            pygame.mixer.music.play()
+
+            # 等待音频播放完成
+            while pygame.mixer.music.get_busy():
+                pass
+            self.run_flg = False
+
+
+def test_signal_accept(msg):
+    try:
+        pass
+    except:
+        print("轴数据显示错误！")
+
+
+def card_close_all():
+    if flg_start['card']:
+        for index in range(0, 16):
+            sc.GASetExtDoBit(index, 0)
+            time.sleep(0.1)
+        ui.textBrowser.append(succeed('已经关闭所有机关！'))
 
 
 def my_test():
-    print('111')
-    try:
-        cl_requst.set_scene_item_enabled('现场', 13, True)  # 打开视频来源
-    except:
-        ui.textBrowser.append(fail("OBS 链接中断！"))
+    print('~~~~~~~~~~~~~~~~~~~~~~~~~')
+    # 加载音效
+    sound_effect = pygame.mixer.Sound('D:/pythonProject/Main_controller/mp3/07_冰原起泡准备声1.wav')
+    sound_effect.play(loops=10, maxtime=5000)  # 播放音效
+    # activate_browser()
+    # Test_Thead.obs_name = '终点2'
+    # Test_Thead.run_flg = not (Test_Thead.run_flg)
+    # resp = cl_requst.get_source_screenshot('终点2', "jpg", 1920, 1080, 100)
+    # img = str2image(resp.image_data)
+    # pixmap = QPixmap()
+    # pixmap.loadFromData(img)
+    # pixmap = pixmap.scaled(800, 450)
+    # transform = QTransform()  ##需要用到pyqt5中QTransform函数
+    # transform.rotate(90)  ##设置旋转角度——顺时针旋转90°
+    # pixmap = pixmap.transformed(transform)  ##对image进行旋转
+    # lab_p = ui.label_monitor_picture
+    # lab_p.setPixmap(pixmap)
 
-    # get_picture('终点')
-    # res, value = sc.GAGetDiReverseCount()
-    # print(res, value)
-    # res = sc.GASetDiReverseCount()
-    # print(res)
-    # res, value = sc.GAGetDiReverseCount()
-    # print(res, value)
-    # data = b'\x01\x03\x04\x06\x13\xff\xfcJ\xcf'
-    # for index, byte in enumerate(data):
-    #     # print(byte)
-    #     if index == 3:
-    #         high1 = (hex(byte)[2:]).zfill(2)
-    #         print(high1)
-    #     if index == 4:
-    #         high2 = (hex(byte)[2:]).zfill(2)
-    #         print(high2)
-    #     if index == 5:
-    #         lowPos1 = (hex(byte)[2:]).zfill(2)
-    #         print(lowPos1)
-    #     if index == 6:
-    #         print(byte)
-    #         lowPos2 = (hex(byte)[2:]).zfill(2)
-    #         print(lowPos2)
+    # img = get_picture('终点1')[0]
+    # # resp = cl_requst.get_source_screenshot('终点1', "jpg", 1920, 1080, 100)
+    # # img = str2image(resp.image_data)
+    # pixmap = QPixmap()
+    # pixmap.loadFromData(img)
+    # pixmap = pixmap.scaled(400 * 1.6, 225 * 1.6)
+    # # transform = QTransform()  ##需要用到pyqt5中QTransform函数
+    # # transform.rotate(-90)  ##设置旋转角度——顺时针旋转90°
+    # # pixmap = pixmap.transformed(transform)  ##对image进行旋转
+    # lab_p = ui.label_main_picture
+    # lab_p.setPixmap(pixmap)
+
+    # # resp = cl_requst.get_source_screenshot('终点2', "jpg", 1920, 1080, 100)
+    # # resp = cl_requst.save_source_screenshot('终点1', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
+    # # resp = cl_requst.save_source_screenshot('终点2', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
 
 
 class MyApp(QApplication):
@@ -1711,10 +3052,28 @@ class MyApp(QApplication):
     def onAboutToQuit(self):
         print("Exiting the application.")
         try:
+            # data_list = [
+            #     {
+            #         'requestType': 'set_run_toggle',
+            #         'run_toggle': '0',
+            #     }
+            # ]
+            # 运行事件循环
+            # asyncio.run(post_main(wakeup_addr, data_list))
             # 当准备退出时，关闭所有服务
-            httpd.shutdown()
-            httpd.server_close()
-
+            PlanCmd_Thead.stop()
+            PlanObs_Thead.stop()
+            PlanCam_Thead.stop()
+            PlanBallNum_Thead.stop()
+            reset_thread.stop()
+            tcp_ranking_thread.stop()
+            udp_thread.stop()
+            Update_Thread.stop()
+            Test_Thead.stop()
+            Axis_Thead.stop()
+            Pos_Thead.stop()
+            ReStart_Thead.stop()
+            Source_Thead.stop()
         except KeyboardInterrupt:
             # 处理键盘中断，例如用户按下Ctrl+C
             pass
@@ -1736,7 +3095,7 @@ if __name__ == '__main__':
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
 
-    plan_list = []  # 当前方案列表 [0.选中,1.圈数,2.左右,3.前后,4.上下,5.头旋转,6.头上下,7.速度,8.加速,9.减速,10.镜头缩放,11.缩放时长,12.机关,13.运动位置,14.运动延时]
+    plan_list = []  # 当前方案列表 [0.选中,1.圈数,2.左右,3.前后,4.上下,5.头旋转,6.头上下,7.速度,8.加速,9.减速,10.镜头缩放,11.缩放时长,12.机关,13.运动位置,14.卫星图位置,col_count - 2.OBS画面]
     plan_names = []  # 当前方案名称
     plan_all = {}  # 所有方案资料
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
@@ -1746,6 +3105,7 @@ if __name__ == '__main__':
                  'server2': False}  # 各硬件启动标志
 
     load_plan_yaml()
+    load_main_yaml()
 
     KeyListener_Thead = KeyListenerThead()  # 启用键盘监听
     KeyListener_Thead.start()
@@ -1755,7 +3115,7 @@ if __name__ == '__main__':
     PlanCmd_Thead.start()
 
     PlanObs_Thead = PlanObsThead()  # OBS场景切换方案
-    PlanObs_Thead._signal.connect(signal_accept)
+    PlanObs_Thead._signal.connect(PlanObs_signal_accept)
     PlanObs_Thead.start()
 
     PlanCam_Thead = CamThead()  # 摄像头运行方案
@@ -1766,6 +3126,10 @@ if __name__ == '__main__':
     PlanBallNum_Thead._signal.connect(PlanBallNum_signal_accept)
     PlanBallNum_Thead.start()
 
+    ScreenShot_Thead = ScreenShotThead()  # 统计过终点的球数
+    ScreenShot_Thead._signal.connect(ScreenShot_signal_accept)
+    ScreenShot_Thead.start()
+
     Axis_Thead = AxisThead()  # 轴复位
     Axis_Thead._signal.connect(signal_accept)
     Axis_Thead.start()
@@ -1774,28 +3138,43 @@ if __name__ == '__main__':
     Pos_Thead._signal.connect(pos_signal_accept)
     Pos_Thead.start()
 
-    ReStart_Thead = ReStartThead()  # 重启动作
+    ReStart_Thead = ReStartThead()  # 循环模式
     ReStart_Thead._signal.connect(time_signal_accept)
     ReStart_Thead.start()
 
-    ui.pushButton_fsave.clicked.connect(save_plan)
-    ui.pushButton_rename.clicked.connect(my_test)
-    # ui.pushButton_rename.clicked.connect(plan_rename)
+    Audio_Thead = AudioThead()  # 音频线程
+    Audio_Thead._signal.connect(audio_signal_accept)
+    Audio_Thead.start()
+
+    Test_Thead = TestThead()  # 测试线程
+    Test_Thead._signal.connect(test_signal_accept)
+    Test_Thead.start()
+
+    ui.pushButton_fsave.clicked.connect(save_plan_yaml)
+    ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
-    ui.pushButton_CardStop.clicked.connect(card_stop)
+    ui.pushButton_CardStop.clicked.connect(cmd_stop)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
+    ui.pushButton_CardRun_2.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.pushButton_ToTable.clicked.connect(p_to_table)
     ui.pushButton_Obs2Table.clicked.connect(obs_to_table)
+    ui.pushButton_Source2Table.clicked.connect(source_to_table)
     ui.pushButton_Obs_delete.clicked.connect(obs_remove_table)
-    ui.pushButton_ball_clean.clicked.connect(ballnum2zero)
-    ui.pushButton_CardNext.clicked.connect(card_next)
-    # ui.pushButton_stop_saveImgs.clicked.connect(stop_save_images)
+    ui.pushButton_CardNext.clicked.connect(cmd_next)
+    ui.pushButton_to_TXT.clicked.connect(json_txt)
+    ui.pushButton_Draw.clicked.connect(open_draw)
+    ui.pushButton_test_2.clicked.connect(my_test)
+    ui.pushButton_CardCloseAll.clicked.connect(card_close_all)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
     ui.tableWidget_Step.itemChanged.connect(table_change)
+
+    ui.lineEdit_time_sendresult.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_time_count_ball.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_Countdown.editingFinished.connect(save_main_yaml)
 
     """
         OBS 处理
@@ -1822,8 +3201,10 @@ if __name__ == '__main__':
     camera_num = 8  # 摄像头数量
     area_Code = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}  # 摄像头代码列表
     load_area()  # 初始化区域划分
+    # print(area_Code)
 
-    action_area = 0  # 触发镜头向下一个位置活动的点位
+    action_area = [1, 0]  # 触发镜头向下一个位置活动的点位
+    ball_num = 8  # 运行球数
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
     ball_sort = []  # 位置寄存器
@@ -1855,26 +3236,30 @@ if __name__ == '__main__':
                 'pink': '粉',
                 'White': '白'}
     udpServer_addr = ('0.0.0.0', 8080)  # 接收图像识别结果
-    tcpServer_addr = ('0.0.0.0', 2222)  # pingpong 发送网页排名
+    tcpServer_addr = ('0.0.0.0', 9999)  # pingpong 发送网页排名
+    result_tcpServer_addr = ('0.0.0.0', 8888)  # pingpong 发送网页排名
     httpServer_addr = ('0.0.0.0', 8081)  # 接收网络数据包控制
     udpClient_addr = ("192.168.0.161", 19733)  # 数据发送给其他服务器
     wakeup_addr = "http://192.168.0.110:8080"  # 唤醒服务器线程
+    rtsp_url = 'rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101'  # 主码流
     load_ballsort_yaml()
+    # print(map_data)
 
     # 初始化列表
     con_data = []  # 排名数组
-    z_response = []  # 球号排名数组(发送给前端网页排名显示)
+    z_ranking_res = []  # 球号排名数组(发送给前端网页排名显示)
+    z_ranking_time = []  # 球号排名数组(发送给前端网页排名显示)
+    ranking_time_start = time.time()  # 比赛开始时间
     for i in range(0, len(init_array)):
         con_data.append([])
-        z_response.append(i + 1)  # z_response[1,2,3,4,5,6,7,8,9,10]
+        z_ranking_res.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
+        z_ranking_time.append('TRAP')  # z_ranking_time[1,2,3,4,5,6,7,8,9,10]    初始化网页排名时间
         for j in range(0, 5):
             if j == 0:
                 con_data[i].append(init_array[i][5])  # con_data[[yellow,0,0,0,0]]
             else:
                 con_data[i].append(0)
     init_ranking_table()  # 初始化排名数据表
-    # 初始化球数组，位置寄存器
-    reset_ranking_array()  # 重置排名数组
 
     # 自动重置排名线程
     reset_thread = ResetThead()
@@ -1882,22 +3267,35 @@ if __name__ == '__main__':
     reset_thread.start()
 
     # 1. Udp 接收数据
-    udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    udp_socket.bind(udpServer_addr)
-    print('Udp_socket Server Started.')
-    udp_thread = UdpThead()
-    udp_thread._signal.connect(udp_signal_accept)
-    udp_thread.start()
+    try:
+        udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        udp_socket.bind(udpServer_addr)
+        print('Udp_socket Server Started.')
+        udp_thread = UdpThead()
+        udp_thread._signal.connect(udp_signal_accept)
+        udp_thread.start()
+    except:
+        # 使用infomation信息框
+        QMessageBox.information(ui, "UDP", "UDP端口被占用")
+        # sys.exit()
 
     # pingpong 发送排名
-    tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    tcp_socket.bind(tcpServer_addr)
-    tcp_socket.listen(1)
+    tcp_ranking_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp_ranking_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    tcp_ranking_socket.bind(tcpServer_addr)
+    tcp_ranking_socket.listen(1)
     print('Pingpong Server Started.')
-    tcp_thread = TcpThead()  # 前端网页以pingpong形式发送排名数据
-    tcp_thread._signal.connect(tcp_signal_accept)
-    tcp_thread.start()
+    tcp_ranking_thread = TcpRankingThead()  # 前端网页以pingpong形式发送排名数据
+    tcp_ranking_thread._signal.connect(tcp_signal_accept)
+    tcp_ranking_thread.start()
+
+    tcp_result_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    tcp_result_socket.bind(result_tcpServer_addr)
+    tcp_result_socket.listen(5)
+    tcp_result_thread = TcpResultThead()  # 前端网页以pingpong形式发送结果数据
+    tcp_result_thread._signal.connect(tcp_signal_accept)
+    tcp_result_thread.start()
 
     # 唤醒图像识别主机线程
     wakeup_ser = threading.Thread(target=wakeup_server, daemon=True)
@@ -1915,6 +3313,83 @@ if __name__ == '__main__':
 
     ui.pushButton_save_Ranking.clicked.connect(save_ballsort_yaml)
     ui.pushButton_reset_Ranking.clicked.connect(reset_ranking_array)
+
+    # 初始化球数组，位置寄存器
+    reset_ranking_array()  # 重置排名数组
     "**************************图像识别算法_结束*****************************"
+
+    "**************************卫星图_开始*****************************"
+    camera_points = []  # 摄像机移动点位 camera_points[[label内存],[区域号],[卫星图坐标]]
+    audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
+    ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
+    map_orbit = []  # 地图轨迹
+
+    map_label_big = MapLabel()
+    layout_big = QVBoxLayout(ui.widget_map_big)
+    layout_big.setContentsMargins(0, 0, 0, 0)
+    layout_big.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    # 添加自定义的 QLabel 到布局中
+    layout_big.addWidget(map_label_big)
+
+    map_label = MapLabel(picture_size=350, ball_space=21, ball_radius=5, flash_time=20, step_length=0.5)
+    map_layout = QVBoxLayout(ui.widget_map)
+    map_layout.setContentsMargins(0, 0, 0, 0)
+    map_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    # 添加自定义的 QLabel 到布局中
+    map_layout.addWidget(map_label)
+
+    # 初始化混音器
+    pygame.mixer.init()
+
+    # pygame 声音循环线程
+    game_loop = threading.Thread(target=pygame_loop, daemon=True)
+    game_loop.start()
+    ui.checkBox_main_music.checkStateChanged.connect(music_ctl)
+    ui.radioButton_music_1.clicked.connect(music_ctl)
+    ui.radioButton_music_2.clicked.connect(music_ctl)
+    ui.radioButton_music_3.clicked.connect(music_ctl)
+
+    load_points_yaml('red')
+    load_points_yaml('blue')
+    load_points_yaml('green')
+
+    ui.pushButton_add_camera.clicked.connect(add_camera_points)
+    ui.pushButton_del_camera.clicked.connect(del_camera_points)
+    ui.pushButton_add_Audio.clicked.connect(add_audio_points)
+    ui.pushButton_del_Audio.clicked.connect(del_audio_points)
+    ui.pushButton_add_Ai.clicked.connect(add_ai_points)
+    ui.pushButton_del_Ai.clicked.connect(del_ai_points)
+    ui.pushButton_save_camera.clicked.connect(lambda: save_points('red'))
+    ui.pushButton_save_Audio.clicked.connect(lambda: save_points('blue'))
+    ui.pushButton_save_Ai.clicked.connect(lambda: save_points('green'))
+    ui.checkBox_show_camera.clicked.connect(lambda: show_points('red'))
+    ui.checkBox_show_audio.clicked.connect(lambda: show_points('blue'))
+    ui.checkBox_show_ai.clicked.connect(lambda: show_points('green'))
+
+    "**************************摄像头结果_开始*****************************"
+    main_Camera = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 主镜头结果
+    monitor_Camera = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 监控镜头结果
+    fit_Camera = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # 两个镜头的对比
+    perfect_Camera = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # 完美情况
+
+    main_camera_layout = QVBoxLayout(ui.widget_camera_sony)
+    main_camera_layout.setContentsMargins(0, 9, 0, 0)
+    main_camera_label = CameraLabel()
+    main_camera_label.Camera_index = 'main_Camera'
+    main_camera_layout.addWidget(main_camera_label)
+
+    monitor_camera_layout = QVBoxLayout(ui.widget_camera_monitor)
+    monitor_camera_layout.setContentsMargins(0, 9, 0, 0)
+    monitor_camera_label = CameraLabel()
+    monitor_camera_label.Camera_index = 'monitor_Camera'
+    monitor_camera_layout.addWidget(monitor_camera_label)
+
+    fit_camera_layout = QVBoxLayout(ui.widget_camera_fit)
+    fit_camera_layout.setContentsMargins(0, 5, 0, 5)
+    fit_camera_label = CameraLabel()
+    fit_camera_label.Camera_index = 'fit_Camera'
+    fit_camera_layout.addWidget(fit_camera_label)
+
+    "**************************分机结果_结束*****************************"
 
     sys.exit(app.exec())
