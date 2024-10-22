@@ -116,10 +116,10 @@ music_1:
 - false
 - ./mp3/07_冰原背景音乐1.mp3
 music_2:
-- true
+- false
 - ./mp3/07_冰原背景音乐2.mp3
 music_3:
-- false
+- true
 - ./mp3/07_冰原背景音乐3.mp3
 rtsp_url: rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101
 s485_Axis_No: COM23

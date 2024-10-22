@@ -1,7 +1,5 @@
 max_area_count: 47
-max_lap_count: 3
-reset_time: 300
-time_send_result: 15
+max_lap_count: 2
+reset_time: 30
 time_count_ball: 30
-
-
+time_send_result: 5

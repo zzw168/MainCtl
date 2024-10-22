@@ -1,8 +1,8 @@
 audio_points:
 - - 0
   - - - 0
-    - - 35
-      - -1
+    - - 33
+      - -2
   - - - 0
     - - 37
       - -2
@@ -50,15 +50,15 @@ audio_points:
     - - 0
       - 0
 audio_table:
-- - D:/pythonProject/Main_controller/mp3/07_冰原起泡准备声1.wav
+- - ./mp3/07_冰原起泡准备声1.wav
   - '3'
   - '5'
-- - D:/pythonProject/Main_controller/mp3/07_冰原超车声7.wav
+- - ./mp3/07_冰原超车声7.wav
   - '5'
   - '20'
-- - D:/pythonProject/Main_controller/mp3/07_冰原起泡准备声1.wav
+- - ./mp3/07_冰原起泡准备声1.wav
   - '0'
   - '5'
-- - D:/pythonProject/Main_controller/mp3/07_冰原进入终点1.wav
+- - ./mp3/07_冰原进入终点1.wav
   - '3'
   - '10'

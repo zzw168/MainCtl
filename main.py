@@ -14,15 +14,18 @@ import pynput
 import requests
 import yaml
 from PyInstaller.utils.hooks.conda import files
+from PySide6 import QtWidgets
 
-from PySide6.QtCore import Qt, QThread, Signal, Slot, QTimer, QPropertyAnimation
-from PySide6.QtGui import QBrush, QColor, QPixmap, QMouseEvent
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu, QMessageBox, QFileDialog
+from PySide6.QtCore import Qt, QThread, Signal, Slot, QTimer, QPropertyAnimation, QEvent
+from PySide6.QtGui import QBrush, QColor, QPixmap, QMouseEvent, QPen
+from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu, QMessageBox, QFileDialog, \
+    QAbstractButton
 
 import obsws_python as obs
 import pygame
 
 from utils.SportCard_unit import *
+from utils.test_data import datas
 from utils.tool_unit import *
 from utils.Serial485_unit import *
 from MainCtl_Ui import *
@@ -214,7 +217,7 @@ def activate_browser():  # 程序开始，刷新浏览器
     tb_source = ui.tableWidget_Sources
     for row_num in range(tb_source.rowCount()):
         # print(tb_source.item(row_num, 1))
-        if tb_source.item(row_num, 1).text() == '浏览器':
+        if tb_source.item(row_num, 1).text() == '期号时间组件':
             item_id = source_list[row_num][2]
             try:
                 print('现场', item_id, False)
@@ -339,16 +342,16 @@ def get_rtsp(rtsp_url):
 def deal_action():
     global action_area
     for rank_num in range(0, len(ranking_array)):  # 循环寻找合适的球位置，镜头追踪
-        if action_area[1] == int(ranking_array[rank_num][8]):
+        if action_area[1] == int(ranking_array[rank_num][8]) and action_area[2] == 0:  # 写入标志 0 为任意写入
             if (int(ranking_array[rank_num][6]) > action_area[0] + 3
                     or (int(ranking_array[rank_num][6]) < action_area[0])):
                 continue
             action_area[0] = int(ranking_array[rank_num][6])  # 同圈中寻找合适区域
             break
-        if action_area[1] < int(ranking_array[rank_num][8]):  # 不同圈赋值更大圈数
-            action_area[1] = int(ranking_array[rank_num][8])
-            print('区域更新~~~~~~~~', action_area[1])
-        if action_area[0] > int(ranking_array[rank_num][6]):  # 不同圈，跨圈情况
+        # if action_area[1] < int(ranking_array[rank_num][8]):  # 不同圈赋值更大圈数
+        #     action_area[1] = int(ranking_array[rank_num][8])
+        #     print('区域更新~~~~~~~~', action_area[1])
+        if action_area[0] > int(ranking_array[rank_num][6]) and action_area[2] == 0:  # 不同圈，跨圈情况
             action_area[0] = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
         break
 
@@ -469,7 +472,7 @@ def reset_ranking_array():
                 con_data[i][j] = init_array[i][5]  # con_data 数据表数组
             else:
                 con_data[i][j] = 0
-    action_area = [1, 0]  # 初始化触发区域
+    action_area = [1, 0, 0]  # 初始化触发区域
     z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
     z_ranking_time = ['TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'OUT', 'OUT']  # 初始化网页排名时间
     tcp_ranking_thread.sleep_time = 1  # 重置排名数据包发送时间
@@ -758,16 +761,31 @@ class UdpThead(QThread):
                     for i_ in range(1, len(data_res)):  # data_res[0] 是时间戳差值 ms
                         array_data.append(copy.deepcopy(data_res[i_]))
                     # print(array_data)
+                    if len(array_data) < 1:
+                        continue
+                    if len(array_data[0]) < 7:
+                        print('array_data < 7数据错误！', array_data[0])
+                        continue
                     array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
-                    if not array_data:
+                    # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~1', array_data)
+                    if array_data is None or len(array_data) < 1:
+                        continue
+                    if len(array_data[0]) < 8:
+                        print('array_data < 8数据错误！', array_data[0])
                         continue
                     if action_area[0] >= max_area_count - balls_count and action_area[
                         1] >= max_lap_count - 1:  # 在最后面排名阶段，以区域先后为准
                         array_data = filter_max_area(array_data)
                     else:
                         array_data = filter_max_value(array_data)  # 在平时球位置追踪，以置信度为准
+                    if array_data is None or len(array_data) < 1:
+                        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
+                        continue
+                    # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
                     deal_rank(array_data)
+                    # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~3', ranking_array)
                     deal_action()
+                    # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4', action_area)
                     con_data = []
                     for k in range(0, len(ranking_array)):
                         con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
@@ -816,6 +834,8 @@ def load_area():  # 载入位置文件初始化区域列表
 
 def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
     ball_area_array = []
+    if len(ball_array) < 1 or cap_num == '':
+        return
     for ball in ball_array:
         if ball[4] < 0.35:  # 置信度小于 0.45 的数据不处理
             continue
@@ -827,7 +847,7 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
             for area in area_Code[cap_num]:
                 pts = np.array(area['coordinates'], np.int32)
                 Result = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
-                if Result > -1.0:
+                if Result > -1.0 and len(ball) == 8:
                     ball[6] = area['area_code']
                     ball[7] = area['direction']
                     ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向
@@ -841,10 +861,10 @@ def filter_max_area(lists):  # 在区域范围内如果出现两个相同的球�
     for sublist in lists:
         key, area = sublist[5], sublist[6]
         if (key not in max_area) or (area > max_area[key]):
-            max_area[key] = area
+            max_area[key] = copy.deepcopy(area)
     filtered_list = []
     for sublist in lists:
-        if (sublist[6] == max_area[sublist[5]]):  # 选取同一区域置信度最大的球添加到修正后的队列
+        if sublist[6] == max_area[sublist[5]]:  # 选取同一区域置信度最大的球添加到修正后的队列
             filtered_list.append(copy.deepcopy(sublist))
             # print(filtered_list)
     return filtered_list
@@ -855,7 +875,7 @@ def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球
     for sublist in lists:
         value, key = sublist[4], sublist[5]
         if key not in max_values or max_values[key] < value:
-            max_values[key] = value
+            max_values[key] = copy.deepcopy(value)
     filtered_list = []
     for sublist in lists:
         if sublist[4] == max_values[sublist[5]]:  # 选取置信度最大的球添加到修正后的队列
@@ -874,13 +894,28 @@ class MyUi(QMainWindow, Ui_MainWindow):
         super(MyUi, self).setupUi(MainWindow)
 
         tb = self.tableWidget_Results
-        tb.horizontalHeader().resizeSection(0, 10)
-        tb.horizontalHeader().resizeSection(1, 5)
-        tb.horizontalHeader().resizeSection(2, 10)
-        # tb.horizontalHeader().resizeSection(1, 80)
-        # tb.setColumnHidden(3, True)
+        tb.horizontalHeader().resizeSection(0, 100)
+        tb.horizontalHeader().resizeSection(1, 120)
+        tb.horizontalHeader().resizeSection(2, 50)
+        tb.horizontalHeader().resizeSection(3, 50)
+        tb.horizontalHeader().resizeSection(4, 200)
+        tb.horizontalHeader().resizeSection(5, 200)
+        tb.horizontalHeader().resizeSection(6, 100)
+        tb.horizontalHeader().resizeSection(7, 100)
+
+        tb.setColumnHidden(0, True)
         tb.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+
+        # 允许用户调整行表头宽度
+        tb.setCornerButtonEnabled(True)
+        tb.verticalHeader().setFixedWidth(100)
+
+        # 获取 CornerButton
+        corner_button = tb.findChild(QAbstractButton)
+        if corner_button:
+            # 安装事件过滤器，自定义绘制文字
+            corner_button.installEventFilter(self)  # 事件过滤器用于处理重绘
 
         tb_audio = self.tableWidget_Audio
         tb_audio.horizontalHeader().resizeSection(0, 180)
@@ -922,6 +957,42 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb_sources.setColumnHidden(2, True)
         tb_sources.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_sources.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+
+    def eventFilter(self, obj, event):
+        # 检测到 CornerButton 的 Paint 事件
+        if isinstance(obj, QAbstractButton) and event.type() == QEvent.Paint:
+            # 自定义绘制逻辑
+            painter = QPainter(obj)
+            painter.save()
+
+            # 获取按钮区域
+            rect = obj.rect()
+
+            # 绘制背景（模拟按钮的上表面，颜色为 rgb(245, 245, 245)）
+            painter.setBrush(QBrush(QColor(245, 245, 245)))  # 浅灰色背景
+            painter.setPen(Qt.NoPen)  # 无边框线
+            painter.drawRect(rect)
+
+            # 绘制顶部和左侧的高光（模拟光源）
+            highlight_pen = QPen(QColor("#ffffff"), 2)  # 白色高光
+            painter.setPen(highlight_pen)
+            painter.drawLine(rect.topLeft(), rect.topRight())  # 顶部边线
+            painter.drawLine(rect.topLeft(), rect.bottomLeft())  # 左侧边线
+
+            # 绘制底部和右侧的阴影
+            shadow_pen = QPen(QColor("#a0a0a0"), 2)  # 深灰色阴影
+            painter.setPen(shadow_pen)
+            painter.drawLine(rect.bottomLeft(), rect.bottomRight())  # 底部边线
+            painter.drawLine(rect.topRight(), rect.bottomRight())  # 右侧边线
+
+            # 设置绘制区域和文字样式
+            painter.setPen(Qt.black)
+            painter.drawText(obj.rect(), Qt.AlignCenter, "期号")
+
+            painter.restore()
+            return True  # 阻止默认绘制事件
+
+        return super().eventFilter(obj, event)
 
     def generateMenu(self, pos):
         tb_step = self.tableWidget_Step
@@ -1291,18 +1362,20 @@ class ScreenShotThead(QThread):
                     print('识别正确:', obs_res[1])
                 tb_source = ui.tableWidget_Sources
                 for row_num in range(0, tb_source.rowCount()):
-                    if tb_source.item(row_num, 1).text() == '浏览器':
+                    if tb_source.item(row_num, 1).text() == '期号时间组件':
                         item_id = source_list[row_num][2]
                         flg_enable = False
                         res = cl_requst.set_scene_item_enabled('现场', item_id,
                                                                flg_enable)  # 打开视频来源
                         print(res)
+                        time.sleep(0.1)
                     if tb_source.item(row_num, 1).text() == '画中画':
                         item_id = source_list[row_num][2]
                         flg_enable = False
                         res = cl_requst.set_scene_item_enabled('现场', item_id,
                                                                flg_enable)  # 打开视频来源
                         print(res)
+                        time.sleep(0.1)
                     if tb_source.item(row_num, 1).text() == '结算页':
                         item_id = source_list[row_num][2]
                         flg_enable = True
@@ -1642,8 +1715,10 @@ class PlanCmdThead(QThread):
                                     sc.GASetExtDoBit(1, 0)  # 关闭闸门
                                     sc.GASetExtDoBit(0, 0)  # 关闭弹射
                         if plan_num == len(plan_list) - 1:
-                            action_area[0] = 1
+                            action_area[2] = 1  # 写入标志 1 为独占写入
+                            action_area[0] = 0
                             action_area[1] += 1
+                            action_area[2] = 0  # 写入标志 0 为任意写入
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 非测试模式才关闭
                     # 流程完成则打开终点开关，关闭闸门，关闭弹射
                     print('另外开关~~~~~~~~~')
@@ -2005,6 +2080,7 @@ def load_main_yaml():
         try:
             f = open(file, 'r', encoding='utf-8')
             main_all = yaml.safe_load(f)
+            print(main_all)
             f.close()
 
             s485.s485_Axis_No = main_all['s485_Axis_No']
@@ -2031,8 +2107,8 @@ def load_main_yaml():
             # 赋值变量
             init_array = main_all['init_array']
             color_ch = main_all['color_ch']
-            udpServer_addr = (int(main_all['udpServer_addr'][0]), int(main_all['udpServer_addr'][1]))
-            tcpServer_addr = (int(main_all['tcpServer_addr'][0]), int(main_all['tcpServer_addr'][1]))
+            udpServer_addr = (main_all['udpServer_addr'][0], int(main_all['udpServer_addr'][1]))
+            tcpServer_addr = (main_all['tcpServer_addr'][0], int(main_all['tcpServer_addr'][1]))
             wakeup_addr = main_all['wakeup_addr']
             balls_count = int(main_all['balls_count'])
             rtsp_url = main_all['rtsp_url']
@@ -2141,7 +2217,7 @@ def cmd_stop():
 # 打开运动卡
 def card_start():
     global flg_start
-    cardnum = ui.lineEdit_CarNo.text()
+    cardnum = ui.lineEdit_CardNo.text()
     if cardnum.isdigit() and not (flg_start['card']):
         res = sc.card_open(int(cardnum))
         print(res)
@@ -2176,6 +2252,14 @@ def cmd_run():
 
 def card_reset():
     Axis_Thead.run_flg = True
+
+
+def card_close_all():
+    if flg_start['card']:
+        for index in range(0, 16):
+            sc.GASetExtDoBit(index, 0)
+            time.sleep(0.1)
+        ui.textBrowser.append(succeed('已经关闭所有机关！'))
 
 
 # 实时轴位置入表
@@ -2835,77 +2919,6 @@ def show_points(color):
                 ai_points[index][0].hide()
 
 
-def play_audio():
-    pass
-
-
-"****************************************卫星图_结束***********************************************"
-
-"****************************************分机结果_开始***********************************************"
-
-
-class CameraLabel(QLabel):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.Camera_index = 'main_Camera'
-        self.img_data = []  # 图资料
-        for num in range(0, 10):
-            self.img_data.append('./img/ball/%s.png' % str(num + 1))
-        self.images = [QPixmap(img) for img in self.img_data]
-        self.fit_images = [QPixmap('./img/ball/No.png'), QPixmap('./img/ball/Yes.png')]
-
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_positions)  # 定时触发更新
-        self.timer.start(1000)  # 每1秒更新一次
-
-    def update_positions(self):
-        # 触发重绘
-        self.update()
-
-    # 通过重载paintEvent方法进行自定义绘制
-    def paintEvent(self, event):
-        # 调用父类的 paintEvent 以确保 QLabel 正常显示文本或图片
-        super().paintEvent(event)
-
-        """绘制并排显示的图片"""
-        painter = QPainter(self)
-
-        # 当前 x 轴绘制位置
-        x_offset = 0
-        x_space = 2
-
-        # 逐个绘制图片
-        for index in range(8):
-            ball_radius = 23
-            rect = QRect(x_offset, 0, ball_radius, ball_radius)
-            # 使用高质量的缩放方式
-            if self.Camera_index == 'main_Camera':
-                scaled_img = self.images[main_Camera[index] - 1].scaled(rect.size(), Qt.KeepAspectRatio,
-                                                                        Qt.SmoothTransformation)
-            elif self.Camera_index == 'monitor_Camera':
-                scaled_img = self.images[monitor_Camera[index] - 1].scaled(rect.size(), Qt.KeepAspectRatio,
-                                                                           Qt.SmoothTransformation)
-            else:
-                scaled_img = self.fit_images[fit_Camera[index]].scaled(rect.size(), Qt.KeepAspectRatio,
-                                                                       Qt.SmoothTransformation)
-            painter.drawPixmap(rect, scaled_img)  # 在 (x_offset, 50) 位置绘制图片
-            x_offset += ball_radius + x_space  # 更新下一个图片的 x_offset
-
-    # 重写鼠标按下事件处理函数
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
-            print("QLabel 被左键点击")
-            if self.Camera_index == 'main_Camera':
-                ui.lineEdit_result_send.setText(str(main_Camera[:8]))
-            elif self.Camera_index == 'monitor_Camera':
-                ui.lineEdit_result_send.setText(str(monitor_Camera[:8]))
-        elif event.button() == Qt.RightButton:
-            print("QLabel 被右键点击")
-
-
-"****************************************分机结果_结束***********************************************"
-
-
 class AudioThead(QThread):
     _signal = Signal(object)
 
@@ -2970,6 +2983,118 @@ def music_ctl():
         pygame.mixer.music.stop()
 
 
+def play_audio():
+    pass
+
+
+"****************************************卫星图_结束***********************************************"
+
+"****************************************摄像头识别结果_开始***********************************************"
+
+
+class CameraLabel(QLabel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.Camera_index = 'main_Camera'
+        self.img_data = []  # 图资料
+        for num in range(0, 10):
+            self.img_data.append('./img/ball/%s.png' % str(num + 1))
+        self.images = [QPixmap(img) for img in self.img_data]
+        self.fit_images = [QPixmap('./img/ball/No.png'), QPixmap('./img/ball/Yes.png')]
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_positions)  # 定时触发更新
+        self.timer.start(1000)  # 每1秒更新一次
+
+    def update_positions(self):
+        # 触发重绘
+        self.update()
+
+    # 通过重载paintEvent方法进行自定义绘制
+    def paintEvent(self, event):
+        # 调用父类的 paintEvent 以确保 QLabel 正常显示文本或图片
+        super().paintEvent(event)
+
+        """绘制并排显示的图片"""
+        painter = QPainter(self)
+
+        # 当前 x 轴绘制位置
+        x_offset = 0
+        x_space = 2
+
+        # 逐个绘制图片
+        for index in range(8):
+            ball_radius = 23
+            rect = QRect(x_offset, 0, ball_radius, ball_radius)
+            # 使用高质量的缩放方式
+            if self.Camera_index == 'main_Camera':
+                scaled_img = self.images[main_Camera[index] - 1].scaled(rect.size(), Qt.KeepAspectRatio,
+                                                                        Qt.SmoothTransformation)
+            elif self.Camera_index == 'monitor_Camera':
+                scaled_img = self.images[monitor_Camera[index] - 1].scaled(rect.size(), Qt.KeepAspectRatio,
+                                                                           Qt.SmoothTransformation)
+            else:
+                scaled_img = self.fit_images[fit_Camera[index]].scaled(rect.size(), Qt.KeepAspectRatio,
+                                                                       Qt.SmoothTransformation)
+            painter.drawPixmap(rect, scaled_img)  # 在 (x_offset, 50) 位置绘制图片
+            x_offset += ball_radius + x_space  # 更新下一个图片的 x_offset
+
+    # 重写鼠标按下事件处理函数
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            print("QLabel 被左键点击")
+            if self.Camera_index == 'main_Camera':
+                ui.lineEdit_result_send.setText(str(main_Camera[:8]))
+            elif self.Camera_index == 'monitor_Camera':
+                ui.lineEdit_result_send.setText(str(monitor_Camera[:8]))
+        elif event.button() == Qt.RightButton:
+            print("QLabel 被右键点击")
+
+
+"****************************************摄像头识别结果_结束***********************************************"
+
+"****************************************直播大厅_开始****************************************************"
+
+
+def result_test_init():
+    global labels
+    tb_result = ui.tableWidget_Results
+    for datas_ in datas:
+        row_count = tb_result.rowCount()
+        tb_result.setRowCount(row_count + 1)
+        labels.append(str(datas_["term"]))
+        for index, key in enumerate(datas_):
+            if index > 0:
+                item = QTableWidgetItem(str(datas_[key]))
+                item.setTextAlignment(Qt.AlignCenter)
+                tb_result.setItem(row_count, index - 1, item)
+    tb_result.setVerticalHeaderLabels(labels)
+    for index in range(len(labels)):
+        tb_result.verticalHeaderItem(index).setTextAlignment(Qt.AlignCenter)
+
+
+def result_data2table():
+    global labels
+    url = 'http://127.0.0.1:8000/v2/forecast/A'
+    datas = requests.get(url).json()
+    print(datas)
+    tb_result = ui.tableWidget_Results
+    row_count = tb_result.rowCount()
+    tb_result.setRowCount(row_count + 1)
+
+    labels.append(str(datas["term"]))
+    tb_result.setVerticalHeaderLabels(labels)
+    tb_result.verticalHeaderItem(len(labels) - 1).setTextAlignment(Qt.AlignCenter)
+    for index, key in enumerate(datas):
+        if index > 0:
+            item = QTableWidgetItem(str(datas[key]))
+            item.setTextAlignment(Qt.AlignCenter)
+            tb_result.setItem(row_count, index - 1, item)
+
+
+"****************************************直播大厅_结束****************************************************"
+
+
 class TestThead(QThread):
     _signal = Signal(object)
 
@@ -3008,17 +3133,10 @@ def test_signal_accept(msg):
         print("轴数据显示错误！")
 
 
-def card_close_all():
-    if flg_start['card']:
-        for index in range(0, 16):
-            sc.GASetExtDoBit(index, 0)
-            time.sleep(0.1)
-        ui.textBrowser.append(succeed('已经关闭所有机关！'))
-
-
 def my_test():
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    save_main_yaml()
+    result_data2table()
+    # save_main_yaml()
     # 加载音效
     # sound_effect = pygame.mixer.Sound('D:/pythonProject/Main_controller/mp3/07_冰原起泡准备声1.wav')
     # sound_effect.play(loops=10, maxtime=5000)  # 播放音效
@@ -3161,6 +3279,7 @@ if __name__ == '__main__':
     ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardStop.clicked.connect(cmd_stop)
+    ui.pushButton_CardStop_2.clicked.connect(cmd_stop)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardRun_2.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
@@ -3173,6 +3292,9 @@ if __name__ == '__main__':
     ui.pushButton_Draw.clicked.connect(open_draw)
     ui.pushButton_test_2.clicked.connect(my_test)
     ui.pushButton_CardCloseAll.clicked.connect(card_close_all)
+    ui.pushButton_CardClose.clicked.connect(card_close_all)
+
+    ui.pushButton.clicked.connect(result_data2table)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
@@ -3206,7 +3328,7 @@ if __name__ == '__main__':
     load_area()  # 初始化区域划分
     # print(area_Code)
 
-    action_area = [1, 0]  # 触发镜头向下一个位置活动的点位
+    action_area = [1, 0, 0]  # 触发镜头向下一个位置活动的点位 action_area[区域, 圈数, 可写]
     balls_count = 8  # 运行球数
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
@@ -3237,7 +3359,7 @@ if __name__ == '__main__':
                 'black': '黑',
                 'pink': '粉',
                 'White': '白'}
-    udpServer_addr = ('0.0.0.0', 8080)  # 接收图像识别结果
+    udpServer_addr = ('0.0.0.0', 19734)  # 接收图像识别结果
     tcpServer_addr = ('0.0.0.0', 9999)  # pingpong 发送网页排名
     result_tcpServer_addr = ('0.0.0.0', 8888)  # pingpong 发送网页排名
     httpServer_addr = ('0.0.0.0', 8081)  # 接收网络数据包控制
@@ -3411,5 +3533,9 @@ if __name__ == '__main__':
     ui.pushButton_Save_Ball.clicked.connect(save_main_yaml)
 
     "**************************参数设置_结束*****************************"
+    "**************************直播大厅_开始*****************************"
+    labels = []
+    result_test_init()
+    "**************************直播大厅_结束*****************************"
 
     sys.exit(app.exec())
