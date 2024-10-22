@@ -112,6 +112,8 @@ init_array:
   - 0
   - 0
   - 0
+map_line: ./img/09_沙漠.json
+map_picture: ./img/09_沙漠.jpg
 music_1:
 - false
 - ./mp3/07_冰原背景音乐1.mp3
@@ -121,6 +123,8 @@ music_2:
 music_3:
 - true
 - ./mp3/07_冰原背景音乐3.mp3
+obs_script_addr: http://127.0.0.1:8899
+recognition_addr: http://127.0.0.1:6066
 rtsp_url: rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101
 s485_Axis_No: COM23
 s485_Cam_No: COM1

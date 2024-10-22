@@ -39,9 +39,9 @@ def reload_browser_source(source_name):
     ws.close()
 
 
-if __name__ == "__main__":
-    # 你在 OBS 中的浏览器源名称
-    reload_browser_source("浏览器")
+# if __name__ == "__main__":
+#     # 你在 OBS 中的浏览器源名称
+#     reload_browser_source("浏览器")
 
 
 def test1():
@@ -59,6 +59,22 @@ def test2():
     Second = int((t - ranking_time_start) % 60)
     print('%s"%s' % (minute, Second))
 
-#
-# if __name__ == '__main__':
-#     test2()
+
+import subprocess
+import os
+
+
+def play_movie():
+    # 替换为你的视频文件路径
+    video_path = r"D:\pythonProject\Main_controller\mp3\07_冰原背景音乐2.mp3"
+    picture_path = r"D:\pythonProject\Main_controller\img\09_沙漠.jpg"
+
+    # 使用 explorer 调用默认播放器打开文件
+    # subprocess.run(['explorer', video_path], shell=True)
+
+    # os.startfile(video_path)
+    os.startfile(picture_path)
+
+
+if __name__ == '__main__':
+    play_movie()

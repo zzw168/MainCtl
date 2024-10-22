@@ -279,8 +279,8 @@ def get_picture(scence_current):
         'sort': '1',  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
     }
     try:
-        res = requests.post(url="http://127.0.0.1:6066", data=form_data, timeout=5)
-        r_list = eval(res.text)  # 返回 [图片字节码，排名列表]
+        res = requests.post(url=recognition_addr, data=form_data, timeout=5)
+        r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
         return r_list
     except:
         img = img.encode('ascii')
@@ -319,8 +319,8 @@ def get_rtsp(rtsp_url):
                         'img': jpg_base64,
                         'sort': '10',  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
                     }
-                    res = requests.post(url="http://127.0.0.1:6066", data=form_data, timeout=5)
-                    r_list = eval(res.text)  # 返回 [图片字节码，排名列表]
+                    res = requests.post(url=recognition_addr, data=form_data, timeout=5)
+                    r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
                     return r_list
                 except:
                     print('终点识别服务没有开启！')
@@ -472,19 +472,17 @@ def reset_ranking_array():
                 con_data[i][j] = init_array[i][5]  # con_data 数据表数组
             else:
                 con_data[i][j] = 0
-    action_area = [1, 0, 0]  # 初始化触发区域
+    action_area = [0, 0, 0]  # 初始化触发区域
     z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
     z_ranking_time = ['TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'OUT', 'OUT']  # 初始化网页排名时间
     tcp_ranking_thread.sleep_time = 1  # 重置排名数据包发送时间
     if flg_start['obs']:
         try:
-            res = requests.get(url="http://127.0.0.1:8899/reset")
+            res = requests.get(url="%s/reset" % obs_script_addr)
             print(res)
         except:
             print('OBS脚本链接错误！')
-
-
-# print(ball_sort)
+    activate_browser()  # 刷新OBS中排名浏览器
 
 
 def to_num(res):  # 按最新排名排列数组
@@ -931,24 +929,24 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb_ai.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_ai.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
-        tb_Step = self.tableWidget_Step
-        tb_Step.horizontalHeader().resizeSection(0, 10)
-        tb_Step.horizontalHeader().resizeSection(1, 40)
-        tb_Step.horizontalHeader().resizeSection(7, 50)
-        tb_Step.horizontalHeader().resizeSection(8, 50)
-        tb_Step.horizontalHeader().resizeSection(9, 50)
-        tb_Step.horizontalHeader().resizeSection(10, 60)
-        tb_Step.horizontalHeader().resizeSection(11, 40)
-        tb_Step.horizontalHeader().resizeSection(12, 50)
-        tb_Step.horizontalHeader().resizeSection(13, 60)
-        tb_Step.horizontalHeader().resizeSection(14, 50)
-        tb_Step.horizontalHeader().resizeSection(15, 50)
-        tb_Step.setColumnHidden(13, True)
-        tb_Step.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
-        tb_Step.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_step = self.tableWidget_Step
+        tb_step.horizontalHeader().resizeSection(0, 10)
+        tb_step.horizontalHeader().resizeSection(1, 40)
+        tb_step.horizontalHeader().resizeSection(7, 50)
+        tb_step.horizontalHeader().resizeSection(8, 50)
+        tb_step.horizontalHeader().resizeSection(9, 50)
+        tb_step.horizontalHeader().resizeSection(10, 60)
+        tb_step.horizontalHeader().resizeSection(11, 40)
+        tb_step.horizontalHeader().resizeSection(12, 50)
+        tb_step.horizontalHeader().resizeSection(13, 60)
+        tb_step.horizontalHeader().resizeSection(14, 50)
+        tb_step.horizontalHeader().resizeSection(15, 50)
+        tb_step.setColumnHidden(13, True)
+        tb_step.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_step.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
-        tb_Step.setContextMenuPolicy(Qt.CustomContextMenu)
-        tb_Step.customContextMenuRequested.connect(self.generateMenu)
+        tb_step.setContextMenuPolicy(Qt.CustomContextMenu)
+        tb_step.customContextMenuRequested.connect(self.generateMenu)
 
         tb_sources = self.tableWidget_Sources
         tb_sources.horizontalHeader().resizeSection(0, 10)
@@ -1141,7 +1139,6 @@ class ReStartThead(QThread):
                 self._signal.emit(t)
             if ui.checkBox_restart.isChecked():
                 reset_ranking_array()  # 初始化排名，位置变量
-                activate_browser()  # 刷新OBS中排名浏览器
                 PlanCmd_Thead.run_flg = True
             # print("循环启动！")
             self.run_flg = False
@@ -1251,7 +1248,6 @@ class PlanBallNumThead(QThread):
     def __init__(self):
         super(PlanBallNumThead, self).__init__()
         self.run_flg = False
-
         self.running = True
 
     def stop(self):
@@ -1277,12 +1273,9 @@ class PlanBallNumThead(QThread):
                             num = int(value[0] / 2)
                             if num != num_old:
                                 t = time.time()
-                                if num_old < len(z_ranking_time):
-                                    # minute = int((t - ranking_time_start) / 60)
-                                    # Second = int((t - ranking_time_start) % 60)
-                                    # z_ranking_time[num_old] = "%s'%s" % (minute, Second)
+                                if num_old < len(z_ranking_time):  # 保存每个球到达终点的时间
                                     z_ranking_time[num_old] = '%.2f"' % (t - ranking_time_start)
-                                    if not tcp_ranking_thread.send_time_flg:
+                                    if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
                                         tcp_ranking_thread.send_time_data = [num, z_ranking_time[num - 1]]
                                         tcp_ranking_thread.send_time_flg = True
                                 self._signal.emit(num)
@@ -1290,6 +1283,7 @@ class PlanBallNumThead(QThread):
                             if num >= balls_count:
                                 break
                             elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
+                                # 超时则跳出循环计球
                                 sc.GASetDiReverseCount()  # 输入次数归0
                                 # self._signal.emit(0)
                                 break
@@ -1298,14 +1292,16 @@ class PlanBallNumThead(QThread):
                             self._signal.emit(fail("运动板x输入通信出错！"))
                             break
                         time.sleep(0.01)
-                    tcp_ranking_thread.sleep_time = 1  # 恢复正常排名数据包发送频率
-                    ScreenShot_Thead.run_flg = True  # 终点截图识别线程
-                    Audio_Thead.run_flg = False
-                    ui.checkBox_main_music.setChecked(False)
                 else:
                     print("次数归0 失败！")
                     flg_start['card'] = False
                     self._signal.emit(fail("运动板x输入通信出错！"))
+
+                tcp_ranking_thread.sleep_time = 1  # 恢复正常前端排名数据包发送频率
+                ScreenShot_Thead.run_flg = True  # 终点截图识别线程
+                Audio_Thead.run_flg = False  # 停止卫星图音效播放线程
+                Ai_Thead.run_flg = False  # 停止卫星图AI播放线程
+                ui.checkBox_main_music.setChecked(False)
             except:
                 print("接收运动卡输入 运行出错！")
                 flg_start['card'] = False
@@ -1346,17 +1342,18 @@ class ScreenShotThead(QThread):
             print('截图结果识别运行！')
             try:
                 for t in range(int(ui.lineEdit_time_send_result.text()), 0, -1):
-                    if int(ui.lineEdit_ball_num.text()) >= 8:
+                    # 开始倒数截图识别
+                    if int(ui.lineEdit_ball_num.text()) >= balls_count:  # 当全部球到达终点，则跳出倒数
                         break
                     print('结果倒数：', t)
                     time.sleep(1)
                 obs_res = get_picture('终点1')  # 拍摄来源
                 if obs_res:
                     self._signal.emit(obs_res)
-                monitor_res = get_rtsp(rtsp_url)
+                monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
                 if monitor_res:
                     self._signal.emit(monitor_res)
-                res = requests.get(url="http://127.0.0.1:8899/stop")  # 发送信号，停止OBS计时
+                res = requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
                 print('比赛结束:', res)
                 if obs_res[1] == monitor_res[1]:
                     print('识别正确:', obs_res[1])
@@ -1468,54 +1465,18 @@ class PlanObsThead(QThread):
                                 cl_requst.set_scene_item_enabled(scene_name, item_id,
                                                                  flg_enable)  # 打开视频来源
                                 break
-                    elif obs_msg[0] in ['12']:
-                        # print(obs_msg[1])
-                        obs_res = get_picture(obs_msg[1])  # 拍摄来源
-                        if obs_res:
-                            self._signal.emit(obs_res)
-                        monitor_res = get_rtsp(rtsp_url)
-                        if monitor_res:
-                            print(monitor_res[0][:60])
-                            self._signal.emit(monitor_res)
+                        self._signal.emit(succeed("OBS 来源切换完成！"))
                 else:
                     print('没有切换的场景！')
             except:
-                print("OBS 截图中断！")
+                print("OBS 切换中断！")
                 flg_start['obs'] = False
                 self._signal.emit(fail("OBS 场景切换中断！"))
             self.run_flg = False
 
 
 def PlanObs_signal_accept(msg):
-    global main_Camera, monitor_Camera, fit_Camera
-    try:
-        if isinstance(msg, list):
-            img = msg[0]
-            msg_list = eval(msg[1])
-            pixmap = QPixmap()
-            pixmap.loadFromData(img)
-            pixmap = pixmap.scaled(int(400 * 1.6), int(225 * 1.6))
-            if msg[2] == 'obs':
-                ui.label_main_picture.setPixmap(pixmap)
-                main_Camera = camera_to_num(msg_list)
-            elif msg[2] == 'monitor':
-                ui.label_monitor_picture.setPixmap(pixmap)
-                monitor_Camera = camera_to_num(msg_list)
-            for index in range(len(main_Camera)):
-                fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
-            if perfect_Camera == fit_Camera:
-                ui.lineEdit_result_send.setText(str(main_Camera[:8]))
-            msg_list = eval(msg[1])
-
-            color_list = ''
-            for m in msg_list:
-                if m in color_ch.keys():
-                    color_list = '%s %s' % (color_list, color_ch[m])
-            ui.textBrowser_background_data.append(color_list)
-        else:
-            ui.textBrowser.append(str(msg))
-    except:
-        print('OBS 操作失败！')
+    ui.textBrowser.append(str(msg))
 
 
 '''
@@ -1595,7 +1556,8 @@ class PlanCmdThead(QThread):
             if not self.run_flg:
                 continue
             if flg_start['card'] and action_area[1] < max_lap_count:
-                Audio_Thead.run_flg = True
+                Audio_Thead.run_flg = True  # 开启音频播放线程
+                Ai_Thead.run_flg = True  # 开启AI播放线程
                 ui.checkBox_main_music.setChecked(True)
                 self._signal.emit(succeed("运动流程：开始！"))
                 self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
@@ -1605,10 +1567,10 @@ class PlanCmdThead(QThread):
                     if (not self.run_flg) or (not flg_start['card']):
                         print('动作未开始！')
                         break
-                    if plan_list[plan_num][0] == '1' and (
-                            (action_area[1] < int(plan_list[plan_num][1]) or (
-                                    int(plan_list[plan_num][1]) == 0))):  # 是否勾选,且在圈数范围内
-                        self._signal.emit(plan_num)
+                    if (plan_list[plan_num][0] == '1' and  # 是否勾选,且在圈数范围内
+                            ((action_area[1] < int(plan_list[plan_num][1]) or  # 运行圈数在设定圈数范围内
+                              (int(plan_list[plan_num][1]) == 0)))):  # 或者设定圈数的值为 0 时，可以忽略圈数执行
+                        self._signal.emit(plan_num)  # 控制列表跟踪变色的信号
                         try:
                             sc.card_move(1, int(plan_list[plan_num][2]), vel=int(plan_list[plan_num][7]),
                                          dAcc=float(plan_list[plan_num][8]),
@@ -1638,15 +1600,15 @@ class PlanCmdThead(QThread):
 
                             # print("开启机关")
                             if int(plan_list[plan_num][12]) != 0:
-                                if '-' in plan_list[plan_num][12]:
+                                if '-' in plan_list[plan_num][12]:  # 带负号即关闭机关
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 0)
-                                else:
+                                else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_num][12])) - 1, 1)
-                                if plan_list[plan_num][12] == '2':  # 闸门机关打开即开始计时
+                                if plan_list[plan_num][12] == '2':  # 闸门机关打开即开始OBS的python脚本计时
                                     ranking_time_start = time.time()
                                     if flg_start['obs']:
                                         try:
-                                            res = requests.get(url="http://127.0.0.1:8899/start")
+                                            res = requests.get(url="%s/start" % obs_script_addr)
                                             print('比赛开始：', res, ranking_time_start)
                                         except:
                                             print('OBS脚本开始错误！')
@@ -1668,7 +1630,7 @@ class PlanCmdThead(QThread):
                             self._signal.emit(fail("运动板通信出错！"))
 
                         if ui.checkBox_test.isChecked():
-                            time.sleep(2)  # 测试期间停两秒切换下一个动作
+                            time.sleep(2)  # 测试模式停两秒切换下一个动作
                         elif int(plan_list[plan_num][14]) <= 0:
                             pass  # 负数则直接下一个动作
                         else:
@@ -1677,16 +1639,17 @@ class PlanCmdThead(QThread):
                                 if not self.run_flg:
                                     print('动作等待中！')
                                     break
+                                # 判断镜头点位在运行区域内则进入下一个动作循环
                                 if (int(camera_points[int(plan_list[plan_num][14])][cb_index + 1][0][0])
                                         in [action_area[0], action_area[0] - 1, action_area[0] + 1]):
                                     break
                                 # if int(plan_list[plan_num][13]) in [action_area[0], action_area[0] - 1, action_area[0] + 1]:
                                 #     break
                                 t_over += 1
-                                if t_over == 60:
+                                if t_over == 60:  # 每个动作最长等待6秒时间
                                     print('等待超时！')
                                     break
-                                if self.cmd_next:
+                                if self.cmd_next:  # 手动进入下一个动作
                                     break
                                 time.sleep(0.1)
                         if self.cmd_next:  # 快速执行下一个动作
@@ -1698,36 +1661,37 @@ class PlanCmdThead(QThread):
                                     PlanCam_Thead.camitem = [int(plan_list[plan_num][10]),
                                                              int(plan_list[plan_num][11])]
                                     PlanCam_Thead.run_flg = True  # 摄像头线程
-                                time.sleep(int(plan_list[plan_num][11]))
-                            plan_col_count = len(plan_list[plan_num])
+                                time.sleep(int(plan_list[plan_num][11]))  # 延时，等待镜头缩放完成
+
+                            plan_col_count = len(plan_list[plan_num])  # 固定最后一项为OBS场景切换
                             if '_' in plan_list[plan_num][plan_col_count - 1]:
                                 PlanObs_Thead.plan_obs = plan_list[plan_num][plan_col_count - 1]
                                 PlanObs_Thead.run_flg = True  # 切换场景线程
-                                print('######################', len(plan_list), plan_num)
+
                             if (len(plan_list) - 6 <= plan_num) and (
-                                    action_area[1] >= max_lap_count - 1):
-                                if len(plan_list) - 3 <= plan_num:
+                                    action_area[1] >= max_lap_count - 1):  # 到达最后一圈终点前区域，则打开终点及相应机关
+                                if len(plan_list) - 3 <= plan_num:  # 到达最后两个动作时，触发球计数器启动
                                     PlanBallNum_Thead.run_flg = True  # 终点计数器线程
-                                    tcp_ranking_thread.sleep_time = 0.1  # 终点时间发送设置
+                                    tcp_ranking_thread.sleep_time = 0.1  # 终点前端排名时间发送设置
                                 if not ui.checkBox_test.isChecked():  # 非测试模式才关闭
                                     # 流程完成则打开终点开关，关闭闸门，关闭弹射
                                     sc.GASetExtDoBit(3, 1)  # 打开终点开关
                                     sc.GASetExtDoBit(1, 0)  # 关闭闸门
                                     sc.GASetExtDoBit(0, 0)  # 关闭弹射
-                        if plan_num == len(plan_list) - 1:
+                        if plan_num == len(plan_list) - 1:  # 每执行完最后一个动作，action_area[1]圈数自动增加一圈
                             action_area[2] = 1  # 写入标志 1 为独占写入
                             action_area[0] = 0
                             action_area[1] += 1
                             action_area[2] = 0  # 写入标志 0 为任意写入
-                if not ui.checkBox_test.isChecked() and not self.run_flg:  # 非测试模式才关闭
-                    # 流程完成则打开终点开关，关闭闸门，关闭弹射
+                if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断关闭
+                    # 强制中断则打开终点开关，关闭闸门，关闭弹射
                     print('另外开关~~~~~~~~~')
                     sc.GASetExtDoBit(3, 1)  # 打开终点开关
                     sc.GASetExtDoBit(1, 0)  # 关闭闸门
                     sc.GASetExtDoBit(0, 0)  # 关闭弹射
                 if ui.checkBox_test.isChecked():  # 如果是测试模式，不用算圈数
                     self.run_flg = False
-            else:
+            else:  # 运行出错，或者超出圈数，流程完成时执行
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
                     sc.GASetExtDoBit(3, 1)  # 打开终点开关
                     sc.GASetExtDoBit(1, 0)  # 关闭闸门
@@ -2027,6 +1991,9 @@ def save_main_yaml():
     global wakeup_addr
     global balls_count
     global rtsp_url
+    global recognition_addr
+    global obs_script_addr
+    global map_data
     file = "main_config.yml"
     if os.path.exists(file):
         try:
@@ -2039,8 +2006,12 @@ def save_main_yaml():
                 main_all['balls_count'] = ui.lineEdit_balls_count.text()
                 main_all['wakeup_addr'] = ui.lineEdit_wakeup_addr.text()
                 main_all['rtsp_url'] = ui.lineEdit_rtsp_url.text()
+                main_all['recognition_addr'] = ui.lineEdit_recognition_addr.text()
+                main_all['obs_script_addr'] = ui.lineEdit_obs_script_addr.text()
                 main_all['tcpServer_addr'][1] = ui.lineEdit_TcpServer_Port.text()
                 main_all['udpServer_addr'][1] = ui.lineEdit_UdpServer_Port.text()
+                main_all['map_picture'] = ui.lineEdit_map_picture.text()
+                main_all['map_line'] = ui.lineEdit_map_line.text()
                 for index in range(1, 4):
                     main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                     main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -2056,8 +2027,11 @@ def save_main_yaml():
                 wakeup_addr = main_all['wakeup_addr']
                 balls_count = int(main_all['balls_count'])
                 rtsp_url = main_all['rtsp_url']
+                recognition_addr = main_all['recognition_addr']
+                obs_script_addr = main_all['obs_script_addr']
                 s485.s485_Axis_No = main_all['s485_Axis_No']
                 s485.s485_Cam_No = main_all['s485_Cam_No']
+                map_data = [main_all['map_picture'], main_all['map_line']]
             with open(file, "w", encoding="utf-8") as f:
                 yaml.dump(main_all, f, allow_unicode=True)
             f.close()
@@ -2075,6 +2049,9 @@ def load_main_yaml():
     global wakeup_addr
     global balls_count
     global rtsp_url
+    global recognition_addr
+    global obs_script_addr
+    global map_data
     file = "main_config.yml"
     if os.path.exists(file):
         try:
@@ -2093,8 +2070,12 @@ def load_main_yaml():
             ui.lineEdit_balls_count.setText(main_all['balls_count'])
             ui.lineEdit_wakeup_addr.setText(main_all['wakeup_addr'])
             ui.lineEdit_rtsp_url.setText(main_all['rtsp_url'])
+            ui.lineEdit_recognition_addr.setText(main_all['recognition_addr'])
+            ui.lineEdit_obs_script_addr.setText(main_all['obs_script_addr'])
             ui.lineEdit_TcpServer_Port.setText(main_all['tcpServer_addr'][1])
             ui.lineEdit_UdpServer_Port.setText(main_all['udpServer_addr'][1])
+            ui.lineEdit_map_picture.setText(main_all['map_picture'])
+            ui.lineEdit_map_line.setText(main_all['map_line'])
             for index in range(1, 4):
                 getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
                 getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -2112,8 +2093,11 @@ def load_main_yaml():
             wakeup_addr = main_all['wakeup_addr']
             balls_count = int(main_all['balls_count'])
             rtsp_url = main_all['rtsp_url']
+            recognition_addr = main_all['recognition_addr']
+            obs_script_addr = main_all['obs_script_addr']
             s485.s485_Axis_No = main_all['s485_Axis_No']
             s485.s485_Cam_No = main_all['s485_Cam_No']
+            map_data = [main_all['map_picture'], main_all['map_line']]
         except:
             pass
     else:
@@ -2246,7 +2230,6 @@ def cmd_run():
     save_plan_yaml()
     p_now = 0
     reset_ranking_array()
-    activate_browser()  # 刷新OBS中排名浏览器
     PlanCmd_Thead.run_flg = True
 
 
@@ -2461,7 +2444,6 @@ class MapLabel(QLabel):
     def __init__(self, picture_size=860, ball_space=11, ball_radius=10, flash_time=30, step_length=2, parent=None):
         super().__init__(parent)
         global map_orbit
-        map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json']  # 卫星地图资料
         img = map_data[0]
         pixmap = QPixmap(img)
         # 设置label的尺寸
@@ -2786,7 +2768,7 @@ def add_audio_points():
     audio_points[audio_points_count][0].move(*audio_points[audio_points_count][num][1])  # 设置初始位置
     audio_points[audio_points_count][0].show()
 
-    audio_points_count = len(audio_points) - 1
+    audio_points_count = len(audio_points) - 1  # 不要0号，所以少一行
     tb = ui.tableWidget_Audio
     tb.setRowCount(audio_points_count)
     row_count = tb.rowCount() - 1
@@ -2821,7 +2803,7 @@ def add_ai_points():
     ai_points[ai_points_count][0].move(*ai_points[ai_points_count][num][1])  # 设置初始位置
     ai_points[ai_points_count][0].show()
 
-    ai_points_count = len(ai_points)
+    ai_points_count = len(ai_points) - 1
     tb = ui.tableWidget_Ai
     tb.setRowCount(ai_points_count)
     row_count = tb.rowCount() - 1
@@ -2889,10 +2871,10 @@ def del_ai_points():
                     return
         ai_points[ai_points_count][0].delete_self()
         ai_points.pop(ai_points_count)
-
-    ai_points_count = len(ai_points)
-    tb = ui.tableWidget_Ai
-    tb.setRowCount(ai_points_count)
+    ai_points_count = len(ai_points) - 1
+    if ai_points_count >= 0:
+        tb = ui.tableWidget_Ai
+        tb.setRowCount(ai_points_count)
 
 
 def show_points(color):
@@ -2937,7 +2919,7 @@ class AudioThead(QThread):
             time.sleep(0.2)
             if not self.run_flg:
                 continue
-            if len(audio_points) <= 0:
+            if len(audio_points) <= 1:
                 continue
             plan_index = ui.comboBox_plan.currentIndex() + 1  # 方案索引
             for index in range(1, len(audio_points)):
@@ -2953,13 +2935,58 @@ class AudioThead(QThread):
                     sound_effect = pygame.mixer.Sound(sound_file)
                     sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
                     area_old = copy.deepcopy(action_area)
-                    print('~~~~~~~~~~~~~', area_old, audio_points[index][plan_index][0][0], action_area[0])
+                    print('Audio~~~~~~~~~~~~~', area_old, audio_points[index][plan_index][0][0], action_area[0])
                     break
 
 
 def audio_signal_accept(msg):
     try:
-        pass
+        print(msg)
+    except:
+        print("轴数据显示错误！")
+
+
+class AiThead(QThread):
+    _signal = Signal(object)
+
+    def __init__(self):
+        super(AiThead, self).__init__()
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+
+    def run(self) -> None:
+        area_old = 0
+        while self.running:
+            time.sleep(0.2)
+            if not self.run_flg:
+                continue
+            if len(ai_points) <= 1:
+                continue
+            plan_index = ui.comboBox_plan.currentIndex() + 1  # 方案索引
+            for index in range(1, len(ai_points)):
+                # print(ai_points[index][plan_index][0][0])
+                if ai_points[index][plan_index][0][0] > 0 and (area_old != action_area) and (
+                        ai_points[index][plan_index][0][0] == action_area[0]):
+                    tb_ai = ui.tableWidget_Ai
+                    sound_file = tb_ai.item(index - 1, 0).text()
+                    sound_times = int(tb_ai.item(index - 1, 1).text())
+                    sound_delay = int(tb_ai.item(index - 1, 2).text())
+                    print(sound_file, sound_times, sound_delay)
+                    # 加载音效
+                    sound_effect = pygame.mixer.Sound(sound_file)
+                    sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
+                    area_old = copy.deepcopy(action_area)
+                    print('Ai~~~~~~~~~~~~~', area_old, ai_points[index][plan_index][0][0], action_area[0])
+                    break
+
+
+def ai_signal_accept(msg):
+    try:
+        print(msg)
     except:
         print("轴数据显示错误！")
 
@@ -2975,10 +3002,10 @@ def music_ctl():
         for index in range(1, 4):
             if getattr(ui, 'radioButton_music_%s' % index).isChecked():
                 mp3_name = getattr(ui, 'lineEdit_music_%s' % index).text()
+                # 加载并播放背景音乐
+                pygame.mixer.music.load(mp3_name)
+                pygame.mixer.music.play(-1)  # 循环播放背景音乐
                 break
-        # 加载并播放背景音乐
-        pygame.mixer.music.load(mp3_name)
-        pygame.mixer.music.play(-1)  # 循环播放背景音乐
     else:
         pygame.mixer.music.stop()
 
@@ -3271,6 +3298,10 @@ if __name__ == '__main__':
     Audio_Thead._signal.connect(audio_signal_accept)
     Audio_Thead.start()
 
+    Ai_Thead = AiThead()  # Ai语言线程
+    Ai_Thead._signal.connect(ai_signal_accept)
+    Ai_Thead.start()
+
     Test_Thead = TestThead()  # 测试线程
     Test_Thead._signal.connect(test_signal_accept)
     Test_Thead.start()
@@ -3364,7 +3395,9 @@ if __name__ == '__main__':
     result_tcpServer_addr = ('0.0.0.0', 8888)  # pingpong 发送网页排名
     httpServer_addr = ('0.0.0.0', 8081)  # 接收网络数据包控制
     udpClient_addr = ("192.168.0.161", 19733)  # 数据发送给其他服务器
-    wakeup_addr = "http://192.168.0.110:8080"  # 唤醒服务器线程
+    wakeup_addr = "http://192.168.0.110:8080"  # 唤醒服务器网址
+    recognition_addr = "http://127.0.0.1:6066"  # 终点识别主机网址
+    obs_script_addr = "http://127.0.0.1:8899"  # OBS 脚本网址
     rtsp_url = 'rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101'  # 主码流
 
     load_ballsort_yaml()
@@ -3447,6 +3480,7 @@ if __name__ == '__main__':
     audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
     ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
     map_orbit = []  # 地图轨迹
+    map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json']  # 卫星地图资料
 
     map_label_big = MapLabel()
     layout_big = QVBoxLayout(ui.widget_map_big)
@@ -3520,10 +3554,14 @@ if __name__ == '__main__':
     ui.lineEdit_TcpServer_Port.editingFinished.connect(save_main_yaml)
     ui.lineEdit_wakeup_addr.editingFinished.connect(save_main_yaml)
     ui.lineEdit_rtsp_url.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_recognition_addr.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_obs_script_addr.editingFinished.connect(save_main_yaml)
     ui.lineEdit_cardNo.editingFinished.connect(save_main_yaml)
     ui.lineEdit_CardNo.editingFinished.connect(save_main_yaml)
     ui.lineEdit_s485_Axis_No.editingFinished.connect(save_main_yaml)
     ui.lineEdit_s485_Cam_No.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_map_picture.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_map_line.editingFinished.connect(save_main_yaml)
     ui.lineEdit_music_1.editingFinished.connect(save_main_yaml)
     ui.lineEdit_music_2.editingFinished.connect(save_main_yaml)
     ui.lineEdit_music_3.editingFinished.connect(save_main_yaml)

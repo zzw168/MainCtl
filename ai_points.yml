@@ -9,7 +9,4 @@ ai_points:
   - - - 0
     - - 67
       - -6
-ai_table:
-- - D:/pythonProject/Main_controller/mp3/example.mp3
-  - '2'
-  - '2'
+ai_table: []
