@@ -113,12 +113,12 @@ class ObsThead(QThread):
         self.run_flg = ''
 
     def run(self) -> None:
-        global cl_requst
+        global cl_request
         global cl_event
         global flg_start
         try:
             if not flg_start['obs']:
-                cl_requst = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
+                cl_request = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
                 cl_event = obs.EventClient()  # 监听 链接配置在 config.toml 文件中
 
                 cl_event.callback.register(on_current_program_scene_changed)  # 场景变化
@@ -207,71 +207,92 @@ def source_enable():  # 开关来源
     item_id = source_list[row_num][2]
     # print(source_list)
     # 打开,关闭来源
-    try:
-        cl_requst.set_scene_item_enabled(scene_name, item_id, s_enable)  # 打开视频来源
-    except:
-        ui.textBrowser.append(fail("OBS 开关来源！"))
+    if flg_start['obs']:
+        try:
+            cl_request.set_scene_item_enabled(scene_name, item_id, s_enable)  # 打开视频来源
+        except:
+            ui.textBrowser.append(fail("OBS 开关来源！"))
+            flg_start['obs'] = False
 
 
 def activate_browser():  # 程序开始，刷新浏览器
-    tb_source = ui.tableWidget_Sources
-    for row_num in range(tb_source.rowCount()):
-        # print(tb_source.item(row_num, 1))
-        if tb_source.item(row_num, 1).text() == '期号时间组件':
-            item_id = source_list[row_num][2]
-            try:
-                print('现场', item_id, False)
-                cl_requst.set_scene_item_enabled('现场', item_id, False)  # 打开视频来源
-                time.sleep(1)
-                cl_requst.set_scene_item_enabled('现场', item_id, True)  # 打开视频来源
-            except:
-                ui.textBrowser.append(fail("OBS 开关浏览器出错！"))
-            break
+    obs_scene = obs_data['obs_scene']
+    item_id = obs_data['source_ranking']
+    if flg_start['obs']:
+        try:
+            print(obs_scene, item_id, False)
+            cl_request.set_scene_item_enabled(obs_scene, item_id, False)  # 打开视频来源
+            time.sleep(1)
+            cl_request.set_scene_item_enabled(obs_scene, item_id, True)  # 打开视频来源
+        except:
+            ui.textBrowser.append(fail("OBS 开关浏览器出错！"))
+            flg_start['obs'] = False
 
 
 def get_scenes_list():  # 刷新所有列表
-    try:
-        res = cl_requst.get_scene_list()  # 获取场景列表
-        res_name = cl_requst.get_current_program_scene()  # 获取激活的场景
-    except:
-        ui.textBrowser.append(fail("OBS 刷新所有列表中断！"))
-        return
-    print('%s' % res_name.scene_name)
-    scene_name = res_name.scene_name
-    cb_scenes = ui.comboBox_Scenes
-    cb_scenes.clear()
-    for i, item in enumerate(res.scenes):
-        print(item)
-        cb_scenes.addItem(item['sceneName'])
-    cb_scenes.setCurrentText(scene_name)
+    if flg_start['obs']:
+        try:
+            res = cl_request.get_scene_list()  # 获取场景列表
+            res_name = cl_request.get_current_program_scene()  # 获取激活的场景
+        except:
+            ui.textBrowser.append(fail("OBS 刷新所有列表中断！"))
+            flg_start['obs'] = False
+            return
+        print('%s' % res_name.scene_name)
+        scene_name = res_name.scene_name
+        cb_scenes = ui.comboBox_Scenes
+        cb_scenes.clear()
+        for i, item in enumerate(res.scenes):
+            print(item)
+            cb_scenes.addItem(item['sceneName'])
+        cb_scenes.setCurrentText(scene_name)
 
 
 def get_source_list(scene_name):  # 取得来源列表
     global source_list
     global scene_now
+    global obs_data
     scene_now = scene_name
-    res = cl_requst.get_scene_item_list(scene_name)
-    source_list = []
-    if res:
-        for item in res.scene_items:
-            source_list.append([item['sceneItemEnabled'], item['sourceName'], item['sceneItemId']])
-            # print('取得来源列表 %s' % item)
-        Source_Thead.run_flg = True
+    if not flg_start['obs']:
+        return
+    try:
+        res = cl_request.get_scene_item_list(scene_name)
+        source_list = []
+        if res:
+            for item in res.scene_items:
+                source_list.append([item['sceneItemEnabled'], item['sourceName'], item['sceneItemId']])
+                # print('取得来源列表 %s' % item)
+                if item['sourceName'] == ui.lineEdit_source_ranking.text():
+                    obs_data['source_ranking'] = int(item['sceneItemId'])
+                elif item['sourceName'] == ui.lineEdit_source_picture.text():
+                    obs_data['source_picture'] = int(item['sceneItemId'])
+                elif item['sourceName'] == ui.lineEdit_source_settlement.text():
+                    obs_data['source_settlement'] = int(item['sceneItemId'])
+            Source_Thead.run_flg = True
+    except:
+        flg_start['obs'] = False
 
 
 def scenes_change():  # 变换场景
-    scene_name = ui.comboBox_Scenes.currentText()
-    try:
-        cl_requst.set_current_program_scene(scene_name)
-    except:
-        ui.textBrowser.append(fail("OBS 变换场景链接中断！"))
+    if flg_start['obs']:
+        scene_name = ui.comboBox_Scenes.currentText()
+        try:
+            cl_request.set_current_program_scene(scene_name)
+        except:
+            ui.textBrowser.append(fail("OBS 变换场景链接中断！"))
+            flg_start['obs'] = False
 
 
 # 截取OBS图片
 def get_picture(scence_current):
     # cl_requst.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
     # time.sleep(1)
-    resp = cl_requst.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
+    if not flg_start['obs']:
+        return
+    try:
+        resp = cl_request.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
+    except:
+        flg_start['obs'] = False
     img = resp.image_data[22:]
     form_data = {
         'CameraType': 'obs',
@@ -455,12 +476,16 @@ def reset_ranking_array():
     global action_area
     global z_ranking_res
     global z_ranking_time
+    global balls_start
     # global previous_position
     ranking_array = []  # 排名数组
     for i in range(0, len(init_array)):
         ranking_array.append([])
         for j in range(0, len(init_array[i])):
             ranking_array[i].append(init_array[i][j])
+    balls_start = 0
+    ui.lineEdit_balls_start.setText('0')
+    ui.lineEdit_ball_start.setText('0')
     ball_sort = []  # 位置寄存器
     for i in range(0, max_area_count + 1):
         ball_sort.append([])
@@ -482,7 +507,8 @@ def reset_ranking_array():
             print(res)
         except:
             print('OBS脚本链接错误！')
-    activate_browser()  # 刷新OBS中排名浏览器
+            flg_start['obs'] = False
+        activate_browser()  # 刷新OBS中排名浏览器
 
 
 def to_num(res):  # 按最新排名排列数组
@@ -741,6 +767,8 @@ class UdpThead(QThread):
 
     def run(self) -> None:
         global con_data
+        global balls_start
+        udp_time_old = 0
         while self.running:
             try:
                 # 3. 等待接收对方发送的数据
@@ -755,6 +783,11 @@ class UdpThead(QThread):
                         continue
                     data_res = eval(res)  # str转换list
                     self._signal.emit(data_res)
+                    if str(data_res[0]).isdigit():
+                        time_interval = int(data_res[0]) - udp_time_old
+                        self._signal.emit(time_interval)
+                        udp_time_old = int(data_res[0])
+
                     array_data = []
                     for i_ in range(1, len(data_res)):  # data_res[0] 是时间戳差值 ms
                         array_data.append(copy.deepcopy(data_res[i_]))
@@ -781,6 +814,7 @@ class UdpThead(QThread):
                         continue
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
                     deal_rank(array_data)
+                    balls_start = len(ball_sort[1][0])  # 更新起点球数
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~3', ranking_array)
                     deal_action()
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4', action_area)
@@ -801,8 +835,22 @@ class UdpThead(QThread):
 
 def udp_signal_accept(msg):
     # print(msg)
-    if ui.checkBox_ShowUdp.isChecked():
-        ui.textBrowser_background_data.append(str(msg))
+    if isinstance(msg, int):
+        bt_udp_time = ui.pushButton_udp_time
+        if msg > 200:
+            bt_udp_time.setText('识别主机超时！%s 毫秒' % msg)
+            if bt_udp_time.styleSheet() != 'background:rgb(255, 0, 0)':
+                bt_udp_time.setStyleSheet('background:rgb(255, 0, 0)')
+        else:
+            if bt_udp_time.styleSheet() != 'background:rgb(0, 255, 0)':
+                bt_udp_time.setStyleSheet('background:rgb(0, 255, 0)')
+                bt_udp_time.setText('图像识别状态正常')
+        if int(ui.lineEdit_ball_start.text()) < balls_start:  # 更新起点球数
+            ui.lineEdit_balls_start.setText(str(balls_start))
+            ui.lineEdit_ball_start.setText(str(balls_start))
+    else:
+        if ui.checkBox_ShowUdp.isChecked():
+            ui.textBrowser_background_data.append(str(msg))
 
 
 def load_area():  # 载入位置文件初始化区域列表
@@ -952,7 +1000,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb_sources.horizontalHeader().resizeSection(0, 10)
         tb_sources.horizontalHeader().resizeSection(1, 160)
         # tb_sources.horizontalHeader().resizeSection(2, 30)
-        tb_sources.setColumnHidden(2, True)
+        # tb_sources.setColumnHidden(2, True)
         tb_sources.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_sources.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
@@ -1340,52 +1388,39 @@ class ScreenShotThead(QThread):
             if not self.run_flg:
                 continue
             print('截图结果识别运行！')
+            for t in range(int(ui.lineEdit_time_send_result.text()), 0, -1):
+                # 开始倒数截图识别
+                if int(ui.lineEdit_ball_num.text()) >= balls_count:  # 当全部球到达终点，则跳出倒数
+                    break
+                print('结果倒数：', t)
+                time.sleep(1)
+            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
+            if obs_res:
+                self._signal.emit(obs_res)
+            monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
+            if monitor_res:
+                self._signal.emit(monitor_res)
+            if not flg_start['obs']:
+                return
+            if obs_res[1] == monitor_res[1]:
+                print('识别正确:', obs_res[1])
             try:
-                for t in range(int(ui.lineEdit_time_send_result.text()), 0, -1):
-                    # 开始倒数截图识别
-                    if int(ui.lineEdit_ball_num.text()) >= balls_count:  # 当全部球到达终点，则跳出倒数
-                        break
-                    print('结果倒数：', t)
-                    time.sleep(1)
-                obs_res = get_picture('终点1')  # 拍摄来源
-                if obs_res:
-                    self._signal.emit(obs_res)
-                monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
-                if monitor_res:
-                    self._signal.emit(monitor_res)
-                res = requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
-                print('比赛结束:', res)
-                if obs_res[1] == monitor_res[1]:
-                    print('识别正确:', obs_res[1])
-                tb_source = ui.tableWidget_Sources
-                for row_num in range(0, tb_source.rowCount()):
-                    if tb_source.item(row_num, 1).text() == '期号时间组件':
-                        item_id = source_list[row_num][2]
-                        flg_enable = False
-                        res = cl_requst.set_scene_item_enabled('现场', item_id,
-                                                               flg_enable)  # 打开视频来源
-                        print(res)
-                        time.sleep(0.1)
-                    if tb_source.item(row_num, 1).text() == '画中画':
-                        item_id = source_list[row_num][2]
-                        flg_enable = False
-                        res = cl_requst.set_scene_item_enabled('现场', item_id,
-                                                               flg_enable)  # 打开视频来源
-                        print(res)
-                        time.sleep(0.1)
-                    if tb_source.item(row_num, 1).text() == '结算页':
-                        item_id = source_list[row_num][2]
-                        flg_enable = True
-                        res = cl_requst.set_scene_item_enabled('现场', item_id,
-                                                               flg_enable)  # 打开视频来源
-                        print(res)
-                if ui.checkBox_restart.isChecked():
-                    ReStart_Thead.run_flg = True  # 1分钟后重启动作
-                    print('1分钟后重启动作!')
+                requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
+
+                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
+                                                  False)  # 打开视频来源
+                time.sleep(0.1)
+                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
+                                                  False)  # 打开视频来源
+                time.sleep(0.1)
+                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
+                                                  True)  # 打开视频来源
             except:
-                print("截图识别中断！")
+                print('OBS 切换操作失败！')
                 flg_start['obs'] = False
-                self._signal.emit(fail("结果截图识别中断！"))
+            if ui.checkBox_restart.isChecked():
+                ReStart_Thead.run_flg = True  # 1分钟后重启动作
+                print('1分钟后重启动作!')
             self.run_flg = False
 
 
@@ -1450,7 +1485,7 @@ class PlanObsThead(QThread):
                     obs_msg = str.split(self.plan_obs, '_')
                     # print(obs_msg)
                     if obs_msg[0] in ['10', '11']:
-                        cl_requst.set_current_program_scene(obs_msg[1])
+                        cl_request.set_current_program_scene(obs_msg[1])
                         self._signal.emit(succeed("OBS 场景切换完成！"))
                     elif obs_msg[0] in ['0', '1']:
                         # print(obs_msg[1])
@@ -1462,8 +1497,8 @@ class PlanObsThead(QThread):
                                 item_id = source_list[row_num][2]
                                 flg_enable = (True if obs_msg[0] == '1' else False)
                                 print(scene_name, item_id, flg_enable)
-                                cl_requst.set_scene_item_enabled(scene_name, item_id,
-                                                                 flg_enable)  # 打开视频来源
+                                cl_request.set_scene_item_enabled(scene_name, item_id,
+                                                                  flg_enable)  # 打开视频来源
                                 break
                         self._signal.emit(succeed("OBS 来源切换完成！"))
                 else:
@@ -1514,13 +1549,14 @@ class AxisThead(QThread):
                                 data['highPos'] = -data['highPos']
                             res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
                             if res == 0:
-                                flg_start['card'] = True
-                                Pos_Thead.run_flg = True
                                 sc.card_move(int(data['nAxisNum']), 0)
                         res = sc.card_update()
                         if res == 0:
+                            flg_start['card'] = True
+                            Pos_Thead.run_flg = True
                             self._signal.emit(succeed('轴复位完成！'))
                         else:
+                            flg_start['card'] = False
                             self._signal.emit(fail('运动卡链接出错！'))
                 else:
                     self._signal.emit(fail('复位串口未连接！'))
@@ -1626,7 +1662,6 @@ class PlanCmdThead(QThread):
                                     sound_effect.play(loops=sound_times, maxtime=sound_delay)  # 播放音效
                         except:
                             print("运动板运行出错！")
-                            flg_start['card'] = False
                             self._signal.emit(fail("运动板通信出错！"))
 
                         if ui.checkBox_test.isChecked():
@@ -2012,6 +2047,11 @@ def save_main_yaml():
                 main_all['udpServer_addr'][1] = ui.lineEdit_UdpServer_Port.text()
                 main_all['map_picture'] = ui.lineEdit_map_picture.text()
                 main_all['map_line'] = ui.lineEdit_map_line.text()
+                main_all['scene_name'] = ui.lineEdit_scene_name.text()
+                main_all['source_ranking'] = ui.lineEdit_source_ranking.text()
+                main_all['source_picture'] = ui.lineEdit_source_picture.text()
+                main_all['source_settlement'] = ui.lineEdit_source_settlement.text()
+                main_all['source_end'] = ui.lineEdit_source_end.text()
                 for index in range(1, 4):
                     main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                     main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -2076,6 +2116,11 @@ def load_main_yaml():
             ui.lineEdit_UdpServer_Port.setText(main_all['udpServer_addr'][1])
             ui.lineEdit_map_picture.setText(main_all['map_picture'])
             ui.lineEdit_map_line.setText(main_all['map_line'])
+            ui.lineEdit_scene_name.setText(main_all['scene_name'])
+            ui.lineEdit_source_ranking.setText(main_all['source_ranking'])
+            ui.lineEdit_source_picture.setText(main_all['source_picture'])
+            ui.lineEdit_source_settlement.setText(main_all['source_settlement'])
+            ui.lineEdit_source_end.setText(main_all['source_end'])
             for index in range(1, 4):
                 getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
                 getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -2238,11 +2283,12 @@ def card_reset():
 
 
 def card_close_all():
-    if flg_start['card']:
-        for index in range(0, 16):
-            sc.GASetExtDoBit(index, 0)
-            time.sleep(0.1)
-        ui.textBrowser.append(succeed('已经关闭所有机关！'))
+    if not flg_start['card']:
+        return
+    for index in range(0, 16):
+        sc.GASetExtDoBit(index, 0)
+        time.sleep(0.1)
+    ui.textBrowser.append(succeed('已经关闭所有机关！'))
 
 
 # 实时轴位置入表
@@ -2335,6 +2381,7 @@ def wakeup_server():
                 flg_start['ai'] = True
         except:
             print('图像识别主机通信失败！')
+            flg_start['ai'] = False
         time.sleep(300)
 
 
@@ -2350,8 +2397,8 @@ def save_images():
     form_data = {
         'saveImgRun': saveImgRun,
         'saveBackground': saveBackground,
-        # 'saveImgNum': '0,1,2,3,4,5,6,7,8',
-        'saveImgNum': '1',
+        'saveImgNum': '0,1,2,3,4,5,6,7,8',
+        # 'saveImgNum': '1',
         # 'saveImgPath': 'D:/saidao',
     }
     try:
@@ -3128,7 +3175,7 @@ class TestThead(QThread):
     def __init__(self):
         super(TestThead, self).__init__()
         self.run_flg = False
-        self.obs_name = '终点1'
+        self.obs_name = ui.lineEdit_source_end.text()
         self.running = True
 
     def stop(self):
@@ -3162,7 +3209,8 @@ def test_signal_accept(msg):
 
 def my_test():
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    result_data2table()
+    print(ui.pushButton_udp_time.styleSheet())
+    # result_data2table()
     # save_main_yaml()
     # 加载音效
     # sound_effect = pygame.mixer.Sound('D:/pythonProject/Main_controller/mp3/07_冰原起泡准备声1.wav')
@@ -3314,6 +3362,7 @@ if __name__ == '__main__':
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardRun_2.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
+    ui.pushButton_Cardreset.clicked.connect(card_reset)
     ui.pushButton_ToTable.clicked.connect(p_to_table)
     ui.pushButton_Obs2Table.clicked.connect(obs_to_table)
     ui.pushButton_Source2Table.clicked.connect(source_to_table)
@@ -3336,8 +3385,10 @@ if __name__ == '__main__':
         OBS 处理
     """
     source_list = []  # OBS来源列表
+    obs_data = {'obs_scene': ui.lineEdit_scene_name.text(), 'source_ranking': 36, 'source_picture': 13,
+                'source_settlement': 26}
     scene_now = ''
-    cl_requst = ''  # 请求
+    cl_request = ''  # 请求
     cl_event = ''  # 监听
 
     Obs_Thead = ObsThead()  # OBS启动线程
@@ -3348,7 +3399,7 @@ if __name__ == '__main__':
     Source_Thead.start()
 
     ui.pushButton_ObsConnect.clicked.connect(obs_open)
-    ui.comboBox_Scenes.currentTextChanged.connect(scenes_change)
+    ui.comboBox_Scenes.activated.connect(scenes_change)
 
     "**************************OBS*****************************"
 
@@ -3361,9 +3412,10 @@ if __name__ == '__main__':
 
     action_area = [1, 0, 0]  # 触发镜头向下一个位置活动的点位 action_area[区域, 圈数, 可写]
     balls_count = 8  # 运行球数
+    balls_start = 0  # 起点球数量
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
-    ball_sort = []  # 位置寄存器
+    ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
 
     # 初始化数据
     max_lap_count = 1  # 最大圈
@@ -3466,7 +3518,6 @@ if __name__ == '__main__':
     Update_Thread.start()
 
     ui.pushButton_save_Ranking.clicked.connect(save_ballsort_yaml)
-    ui.pushButton_reset_Ranking.clicked.connect(reset_ranking_array)
 
     ui.lineEdit_time_send_result.editingFinished.connect(save_ballsort_yaml)
     ui.lineEdit_time_count_ball.editingFinished.connect(save_ballsort_yaml)
@@ -3562,6 +3613,11 @@ if __name__ == '__main__':
     ui.lineEdit_s485_Cam_No.editingFinished.connect(save_main_yaml)
     ui.lineEdit_map_picture.editingFinished.connect(save_main_yaml)
     ui.lineEdit_map_line.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_scene_name.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_source_ranking.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_source_picture.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_source_settlement.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_source_end.editingFinished.connect(save_main_yaml)
     ui.lineEdit_music_1.editingFinished.connect(save_main_yaml)
     ui.lineEdit_music_2.editingFinished.connect(save_main_yaml)
     ui.lineEdit_music_3.editingFinished.connect(save_main_yaml)

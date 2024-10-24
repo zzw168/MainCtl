@@ -38,7 +38,7 @@
          </font>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -757,12 +757,15 @@
                  </widget>
                 </item>
                 <item row="0" column="2">
-                 <widget class="QLineEdit" name="lineEdit_5">
+                 <widget class="QLineEdit" name="lineEdit_balls_start">
                   <property name="maximumSize">
                    <size>
                     <width>30</width>
                     <height>16777215</height>
                    </size>
+                  </property>
+                  <property name="text">
+                   <string>0</string>
                   </property>
                   <property name="readOnly">
                    <bool>true</bool>
@@ -1611,7 +1614,7 @@
         </widget>
         <widget class="QWidget" name="tab_1">
          <attribute name="title">
-          <string>运动参数</string>
+          <string>路径设置</string>
          </attribute>
          <layout class="QGridLayout" name="gridLayout_20">
           <property name="leftMargin">
@@ -2453,7 +2456,7 @@
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>230</height>
+                 <height>248</height>
                 </size>
                </property>
                <property name="font">
@@ -3721,7 +3724,7 @@
                       </size>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                     </widget>
                    </item>
@@ -3752,15 +3755,18 @@
                     </widget>
                    </item>
                    <item row="0" column="0" colspan="4">
-                    <widget class="QPushButton" name="pushButton_reset_Ranking">
+                    <widget class="QPushButton" name="pushButton_udp_time">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
                        <height>10</height>
                       </size>
                      </property>
+                     <property name="styleSheet">
+                      <string notr="true">background:rgb(0, 255, 0)</string>
+                     </property>
                      <property name="text">
-                      <string>重置排名</string>
+                      <string>图像识别状态正常</string>
                      </property>
                     </widget>
                    </item>
@@ -4106,18 +4112,44 @@
                       </size>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_43">
-                      <item row="0" column="0">
-                       <widget class="QLabel" name="label_7">
+                      <item row="1" column="3">
+                       <widget class="QFrame" name="frame_32">
                         <property name="minimumSize">
                          <size>
-                          <width>0</width>
+                          <width>20</width>
                           <height>10</height>
                          </size>
                         </property>
-                        <property name="maximumSize">
+                        <property name="frameShape">
+                         <enum>QFrame::Shape::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Shadow::Raised</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="3">
+                       <widget class="QFrame" name="frame_31">
+                        <property name="minimumSize">
                          <size>
-                          <width>150</width>
-                          <height>16777215</height>
+                          <width>20</width>
+                          <height>10</height>
+                         </size>
+                        </property>
+                        <property name="frameShape">
+                         <enum>QFrame::Shape::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Shadow::Raised</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="4">
+                       <widget class="QPushButton" name="pushButton_CardClose">
+                        <property name="minimumSize">
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
                          </size>
                         </property>
                         <property name="font">
@@ -4128,11 +4160,69 @@
                          </font>
                         </property>
                         <property name="text">
-                         <string>过终点球数：</string>
+                         <string>关闭机关</string>
+                        </property>
+                        <property name="default">
+                         <bool>true</bool>
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="1">
+                      <item row="1" column="4">
+                       <widget class="QPushButton" name="pushButton_Cardreset">
+                        <property name="minimumSize">
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>复位</string>
+                        </property>
+                        <property name="default">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="2">
+                       <widget class="QLineEdit" name="lineEdit_ball_start">
+                        <property name="minimumSize">
+                         <size>
+                          <width>50</width>
+                          <height>10</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>30</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">background:rgb(238, 238, 238)</string>
+                        </property>
+                        <property name="text">
+                         <string>0</string>
+                        </property>
+                        <property name="readOnly">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="2">
                        <widget class="QLineEdit" name="lineEdit_ball_num">
                         <property name="minimumSize">
                          <size>
@@ -4156,17 +4246,26 @@
                         <property name="styleSheet">
                          <string notr="true">background:rgb(238, 238, 238)</string>
                         </property>
+                        <property name="text">
+                         <string>0</string>
+                        </property>
                         <property name="readOnly">
                          <bool>true</bool>
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="3">
-                       <widget class="QPushButton" name="pushButton_CardClose">
+                      <item row="0" column="1">
+                       <widget class="QLabel" name="label_8">
                         <property name="minimumSize">
                          <size>
-                          <width>80</width>
-                          <height>0</height>
+                          <width>0</width>
+                          <height>10</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>150</width>
+                          <height>16777215</height>
                          </size>
                         </property>
                         <property name="font">
@@ -4177,26 +4276,33 @@
                          </font>
                         </property>
                         <property name="text">
-                         <string>关闭机关</string>
-                        </property>
-                        <property name="default">
-                         <bool>true</bool>
+                         <string>起点球数：</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="2">
-                       <widget class="QFrame" name="frame_31">
+                      <item row="1" column="1">
+                       <widget class="QLabel" name="label_7">
                         <property name="minimumSize">
                          <size>
-                          <width>20</width>
+                          <width>0</width>
                           <height>10</height>
                          </size>
                         </property>
-                        <property name="frameShape">
-                         <enum>QFrame::Shape::StyledPanel</enum>
+                        <property name="maximumSize">
+                         <size>
+                          <width>150</width>
+                          <height>16777215</height>
+                         </size>
                         </property>
-                        <property name="frameShadow">
-                         <enum>QFrame::Shadow::Raised</enum>
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>过终点球数：</string>
                         </property>
                        </widget>
                       </item>
@@ -4252,6 +4358,370 @@
              <property name="topMargin">
               <number>0</number>
              </property>
+             <item row="2" column="0">
+              <widget class="QGroupBox" name="groupBox_30">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>600</width>
+                 <height>230</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>OBS场景设置</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_56">
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="lineEdit_scene_name">
+                  <property name="minimumSize">
+                   <size>
+                    <width>300</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>现场</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_65">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>主场景名称：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0" colspan="2">
+                 <widget class="QGroupBox" name="groupBox_31">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>600</width>
+                    <height>180</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="title">
+                   <string>来源切换设置</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_57">
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_69">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>结算页：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="1">
+                    <widget class="QLineEdit" name="lineEdit_source_end">
+                     <property name="minimumSize">
+                      <size>
+                       <width>300</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>终点1</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLineEdit" name="lineEdit_source_picture">
+                     <property name="minimumSize">
+                      <size>
+                       <width>300</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>画中画</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QLineEdit" name="lineEdit_source_settlement">
+                     <property name="minimumSize">
+                      <size>
+                       <width>300</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>结算页</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_67">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>排名时间：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLineEdit" name="lineEdit_source_ranking">
+                     <property name="minimumSize">
+                      <size>
+                       <width>300</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>排名时间组件</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_68">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>画中画：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="0">
+                    <widget class="QLabel" name="label_70">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>终点截图：</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QGroupBox" name="groupBox_29">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>600</width>
+                 <height>100</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>卫星图设置</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_55">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_47">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>图片文件：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEdit_map_picture">
+                  <property name="minimumSize">
+                   <size>
+                    <width>300</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>./img/09_沙漠.jpg</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_48">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>路径文件：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="lineEdit_map_line">
+                  <property name="minimumSize">
+                   <size>
+                    <width>300</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>./img/09_沙漠.json</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
              <item row="0" column="0">
               <widget class="QGroupBox" name="groupBox_26">
                <property name="minimumSize">
@@ -4293,7 +4763,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>./mp3/07_冰原背景音乐3.mp3</string>
@@ -4336,7 +4806,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>./mp3/07_冰原背景音乐2.mp3</string>
@@ -4376,7 +4846,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>./mp3/07_冰原背景音乐1.mp3</string>
@@ -4403,15 +4873,53 @@
                </layout>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="4" column="0">
               <widget class="QGroupBox" name="groupBox_28">
-               <property name="title">
-                <string/>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
                </property>
+               <property name="title">
+                <string>路径设置说明</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_59">
+                <item row="0" column="0">
+                 <widget class="QTextBrowser" name="textBrowser_2">
+                  <property name="html">
+                   <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+hr { height: 1px; border-width: 0; }
+li.unchecked::marker { content: &quot;\2610&quot;; }
+li.checked::marker { content: &quot;\2612&quot;; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'微软雅黑'; font-size:10pt; font-weight:700; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;1.勾选：&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:400;&quot;&gt;勾选了的动作才执行&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;2.圈数：&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:400;&quot;&gt;设置为1则只在第一圈执行该动作，设置为2则在前两圈（第一第二圈）执行该动作，如此类推。。若设置为0则每一圈都执行该动作。&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;3-10：&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:400;&quot;&gt;设置龙门架五轴运动的 坐标，速度，加速减速&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;11.镜头缩放：&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:400;&quot;&gt;设置主镜头的放大，缩小速度，正数为放大拉近镜头，负数为缩小拉远镜头，设置为0 则不放大缩小（需配合延时使用）。&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;12.延时：&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:400;&quot;&gt;控制镜头放大缩小的时间，等待延时时间结束才进行下一动作，当镜头缩放设置为0时则可当作动作延迟等待使用。（例如延时设置5秒，则本动作执行完毕，原地等待5秒后才执行下一动作）&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;13.机关：&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:400;&quot;&gt;输入机关编号，进行机关开启关闭，正数为打开机关，负数为关闭机关&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;14.卫星图：&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:400;&quot;&gt;把卫星图对应的镜头点位填入，则当图像识别判断弹珠到达该点位，就会执行下一动作。&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;15.音效：&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:400;&quot;&gt;把卫星图中对应的音效编号填入，则执行该动作同时会播放相应音效，这个可与卫星图动态点位音效配合使用&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;16.OBS画面：&lt;/span&gt;&lt;span style=&quot; font-size:11pt; font-weight:400;&quot;&gt;动作执行同时控制开关OBS画面&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </item>
-             <item row="1" column="0">
-              <widget class="QGroupBox" name="groupBox_29">
+             <item row="3" column="0">
+              <widget class="QGroupBox" name="groupBox_32">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -4421,7 +4929,7 @@
                <property name="maximumSize">
                 <size>
                  <width>600</width>
-                 <height>100</height>
+                 <height>150</height>
                 </size>
                </property>
                <property name="font">
@@ -4432,14 +4940,14 @@
                 </font>
                </property>
                <property name="title">
-                <string>卫星图设置</string>
+                <string>机关编号说明</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_55">
-                <item row="3" column="1" colspan="2">
-                 <widget class="QLineEdit" name="lineEdit_map_line">
+               <layout class="QGridLayout" name="gridLayout_58">
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEdit_map_picture_2">
                   <property name="minimumSize">
                    <size>
-                    <width>300</width>
+                    <width>0</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -4451,21 +4959,21 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
-                   <string>./img/09_沙漠.json</string>
+                   <string>1</string>
                   </property>
                   <property name="readOnly">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1" colspan="2">
-                 <widget class="QLineEdit" name="lineEdit_map_picture">
+                <item row="1" column="3">
+                 <widget class="QLineEdit" name="lineEdit_map_picture_3">
                   <property name="minimumSize">
                    <size>
-                    <width>300</width>
+                    <width>0</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -4477,18 +4985,164 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
-                   <string>./img/09_沙漠.jpg</string>
+                   <string>5</string>
                   </property>
                   <property name="readOnly">
-                   <bool>false</bool>
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3">
+                 <widget class="QLineEdit" name="lineEdit_map_line_3">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>9</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_71">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>起点闸门：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="lineEdit_map_line_2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>2</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_66">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>弹射：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="lineEdit_map_line_4">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>4</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="QLabel" name="label_74">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>指南针：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="3">
+                 <widget class="QLineEdit" name="lineEdit_map_picture_4">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>11</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
                 <item row="2" column="0">
-                 <widget class="QLabel" name="label_47">
+                 <widget class="QLabel" name="label_72">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -4497,12 +5151,52 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>图片文件：</string>
+                   <string>起点震动：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="lineEdit_map_line_5">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>3</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QLabel" name="label_75">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>起点倒数：</string>
                   </property>
                  </widget>
                 </item>
                 <item row="3" column="0">
-                 <widget class="QLabel" name="label_48">
+                 <widget class="QLabel" name="label_73">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -4511,7 +5205,61 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>路径文件：</string>
+                   <string>终点升降：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2">
+                 <widget class="QLabel" name="label_76">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>地鼠机关：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="3">
+                 <widget class="QLineEdit" name="lineEdit_map_picture_5">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>10</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="QLabel" name="label_77">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>摆锤机关：</string>
                   </property>
                  </widget>
                 </item>
@@ -4574,7 +5322,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>10</string>
@@ -4608,7 +5356,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>COM23</string>
@@ -4646,7 +5394,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="2" colspan="2">
+                <item row="2" column="2">
                  <widget class="QLineEdit" name="lineEdit_s485_Cam_No">
                   <property name="font">
                    <font>
@@ -4656,7 +5404,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>COM1</string>
@@ -4715,7 +5463,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>0.0.0.0</string>
@@ -4749,7 +5497,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>0.0.0.0</string>
@@ -4769,7 +5517,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>9999</string>
@@ -4800,7 +5548,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>http://192.168.0.110:8080</string>
@@ -4831,7 +5579,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>19734</string>
@@ -4862,7 +5610,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101</string>
@@ -4907,7 +5655,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>http://127.0.0.1:6066</string>
@@ -4938,7 +5686,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>http://127.0.0.1:8899</string>
@@ -4977,7 +5725,7 @@
                    </font>
                   </property>
                   <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                   <string/>
                   </property>
                   <property name="text">
                    <string>8</string>
@@ -5072,7 +5820,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>orange</string>
@@ -5098,7 +5846,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>红</string>
@@ -5127,7 +5875,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>purple</string>
@@ -5173,7 +5921,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>red</string>
@@ -5233,7 +5981,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>White</string>
@@ -5265,7 +6013,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>black</string>
@@ -5291,7 +6039,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>蓝</string>
@@ -5390,7 +6138,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>yellow</string>
@@ -5436,7 +6184,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>blue</string>
@@ -5482,7 +6230,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>Brown</string>
@@ -5522,7 +6270,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>黄</string>
@@ -5593,7 +6341,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>green</string>
@@ -5639,7 +6387,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>pink</string>
@@ -5721,7 +6469,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>紫</string>
@@ -5744,7 +6492,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>橙</string>
@@ -5767,7 +6515,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>绿</string>
@@ -5790,7 +6538,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>棕</string>
@@ -5813,7 +6561,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>黑</string>
@@ -5836,7 +6584,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>粉</string>
@@ -5859,7 +6607,7 @@
                       </font>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                      <property name="text">
                       <string>白</string>
