@@ -81,10 +81,12 @@ def on_scene_item_enable_state_changed(data):
 
 # 流状态改变事件
 def on_record_state_changed(data):
+    global record_data
     print("录制状态变化")
     print(data.output_active)
     print(data.output_state)
     print(data.output_path)
+    record_data = [data.output_active, data.output_state, data.output_path]
 
 
 # 流状态改变事件
@@ -301,7 +303,9 @@ def get_picture(scence_current):
         resp = cl_request.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
     except:
         flg_start['obs'] = False
+        return
     img = resp.image_data[22:]
+    str2image_file(img, 'E:/saidao/image/obs_%s.jpg' % int(time.time()))  # 保存图片
     form_data = {
         'CameraType': 'obs',
         'img': img,
@@ -310,6 +314,10 @@ def get_picture(scence_current):
     try:
         res = requests.post(url=recognition_addr, data=form_data, timeout=5)
         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
+        r_img = r_list[0]
+        image_json = open('E:/saidao/image/obs_%s.jpg' % int(time.time()), 'wb')
+        image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+        image_json.close()
         flg_start['ai_end'] = True
         return r_list
     except:
@@ -340,6 +348,8 @@ def get_rtsp(rtsp_url):
     if cap.isOpened():
         ret, frame = cap.read()
         if ret:
+            f = 'E:/saidao/image/rtsp_%s.jpg' % (int(time.time()))
+            cv2.imwrite(f, frame)
             success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
                 # 将 JPEG 数据转换为 Base64 字符串
@@ -352,6 +362,10 @@ def get_rtsp(rtsp_url):
                     }
                     res = requests.post(url=recognition_addr, data=form_data, timeout=5)
                     r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
+                    r_img = r_list[0]
+                    image_json = open('E:/saidao/image/rtsp_%s.jpg' % int(time.time()), 'wb')
+                    image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+                    image_json.close()
                     flg_start['ai_end'] = True
                     return r_list
                 except:
@@ -1454,6 +1468,8 @@ class ScreenShotThread(QThread):
                 time.sleep(0.1)
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
                                                   True)  # 打开视频来源
+                time.sleep(3)
+                cl_request.stop_record()  # 关闭录像
             except:
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
@@ -1666,6 +1682,7 @@ class PlanCmdThread(QThread):
                                     ranking_time_start = time.time()
                                     if flg_start['obs']:
                                         try:
+                                            cl_request.start_record()  # 开启录像
                                             res = requests.get(url="%s/start" % obs_script_addr)
                                             print('比赛开始：', res, ranking_time_start)
                                         except:
@@ -3373,15 +3390,10 @@ def query_sql():
 
 def my_test():
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    res = sc.card_open(int(10))
-    if res == 0:
-        sc.card_move(1, int(200000),
-                     vel=int(100),
-                     dAcc=float(0.3),
-                     dDec=float(0.2),
-                     dVelStart=0.1, dSmoothTime=0)
-        res = sc.card_update()
-        print(res)
+    # cl_request.start_record()
+    # time.sleep(5)
+    # print(record_data[2])
+    # cl_request.stop_record()
     # res = requests.get(recognition_addr)
     # print(res.text)
     # print(ui.pushButton_udp_time.styleSheet())
@@ -3625,7 +3637,8 @@ if __name__ == '__main__':
     """
     source_list = []  # OBS来源列表
     obs_data = {'obs_scene': ui.lineEdit_scene_name.text(), 'source_ranking': 36, 'source_picture': 13,
-                'source_settlement': 26}
+                'source_settlement': 26}  # 各来源ID号初始化{'现场', '排名时间组件', '画中画', '结算页'}
+    record_data = [False, 'OBS_WEBSOCKET_OUTPUT_STARTING', None]  # OBS 录像状态数据
     scene_now = ''
     cl_request = ''  # 请求
     cl_event = ''  # 监听
