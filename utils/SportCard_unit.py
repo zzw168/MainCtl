@@ -70,18 +70,20 @@ class SportCard:
             return fail(("设置位置: %s" % (card_res[res])))
 
     # 更新位置
-    def card_update(self):
-        res = self.card_dll.GA_Update(0xff)
+    def card_update(self, axis_bit: int = 255):
+        nAxis_bit = ctypes.c_long(axis_bit)
+        res = self.card_dll.GA_Update(nAxis_bit)
         if res == 0:
             return res
         else:
             return fail(("更新位置: %s" % (card_res[res])))
 
     # 停止轴运动
-    def card_stop(self, nAxisNum: int, lOption: int = 2):
+    def card_stop(self, nAxisNum: int = 255, lOption: int = 255):
         self.card_dll.GA_Stop.argtypes = [ctypes.c_long, ctypes.c_long]
         self.card_dll.GA_Stop.restype = ctypes.c_int
-        nAxisNum = 2 ** (nAxisNum - 1)
+        # nAxisNum = 2 ** (nAxisNum - 1)
+        # nAxisNum = 0xff
         lMask_c = ctypes.c_long(nAxisNum)
         lOption_c = ctypes.c_long(lOption)
         return self.card_dll.GA_Stop(lMask_c, lOption_c)

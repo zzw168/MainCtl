@@ -1,80 +1,42 @@
-import time
+from PySide6.QtWidgets import QApplication, QMainWindow, QWidget, QMdiArea, QMdiSubWindow
+import sys
 
-import requests
+class MyUi:
+    """主窗口 UI 类。"""
+    def setupUi(self, MainWindow):
+        MainWindow.setWindowTitle("Main Window")
+        MainWindow.setGeometry(100, 100, 800, 600)
 
-import websocket
-import json
-import time
+        # 添加 QMdiArea 到主窗口中，用于管理子窗口
+        self.mdi_area = QMdiArea(MainWindow)
+        MainWindow.setCentralWidget(self.mdi_area)
 
-# WebSocket 连接配置
-OBS_WEBSOCKET_URL = "ws://localhost:4455"  # 根据你的设置调整
-PASSWORD = "D9AQaWOH0b8Tu0Xn"  # 如果未设置密码，可以留空
+class SpeedUi:
+    """子窗口 UI 类。"""
+    def setupUi(self, MainWidget):
+        MainWidget.setWindowTitle("Speed Widget")
+        MainWidget.setGeometry(200, 200, 300, 200)
 
+def main():
+    app = QApplication(sys.argv)
 
-# 重新加载浏览器源的函数
-def reload_browser_source(source_name):
-    # 创建 WebSocket 连接
-    ws = websocket.create_connection(OBS_WEBSOCKET_URL)
+    # 创建主窗口
+    MainWindow = QMainWindow()
+    ui = MyUi()
+    ui.setupUi(MainWindow)
+    MainWindow.show()
 
-    # 认证请求
-    auth_request = json.dumps({
-        "op": 1,
-        "d": {"rpcVersion": 1, "authentication": PASSWORD}
-    })
-    ws.send(auth_request)
-    time.sleep(1)  # 等待认证完成
+    # 创建子窗口并添加到 MdiArea 中
+    MainWidget = QWidget()
+    speed_ui = SpeedUi()
+    speed_ui.setupUi(MainWidget)
 
-    # 重载浏览器源
-    reload_request = json.dumps({
-        "op": 6,
-        "d": {
-            "requestType": "BroadcastCustomEvent",
-            "requestId": "reload-source",
-            "requestData": {
-                "sourceName": source_name
-            }
-        }
-    })
-    ws.send(reload_request)
-    ws.close()
+    sub_window = QMdiSubWindow()  # 创建 MDI 子窗口
+    sub_window.setWidget(MainWidget)  # 将子窗口的 widget 设置给 MDI 子窗口
+    ui.mdi_area.addSubWindow(sub_window)  # 将 MDI 子窗口添加到主窗口的 MDI 区域
+    sub_window.show()  # 显示子窗口
 
+    sys.exit(app.exec())
 
-# if __name__ == "__main__":
-#     # 你在 OBS 中的浏览器源名称
-#     reload_browser_source("浏览器")
-
-
-def test1():
-    # res = requests.get(url="http://127.0.0.1:8899/start")
-    res = requests.get(url="http://127.0.0.1:8899/stop")
-    # res = requests.get(url="http://127.0.0.1:8899/reset")
-    # res = requests.get(url="http://127.0.0.1:8899/period?term=开始")
-    print(res)
-
-
-def test2():
-    t = time.time()
-    ranking_time_start = t - 386
-    minute = int((t - ranking_time_start) / 60)
-    Second = int((t - ranking_time_start) % 60)
-    print('%s"%s' % (minute, Second))
-
-
-import subprocess
-import os
-
-
-def play_movie():
-    # 替换为你的视频文件路径
-    video_path = r"D:\pythonProject\Main_controller\mp3\07_冰原背景音乐2.mp3"
-    picture_path = r"D:\pythonProject\Main_controller\img\09_沙漠.jpg"
-
-    # 使用 explorer 调用默认播放器打开文件
-    # subprocess.run(['explorer', video_path], shell=True)
-
-    # os.startfile(video_path)
-    os.startfile(picture_path)
-
-
-if __name__ == '__main__':
-    play_movie()
+if __name__ == "__main__":
+    main()

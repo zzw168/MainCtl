@@ -38,7 +38,7 @@ class Serial485:
         return self.ser.is_open
 
     # 镜头缩放开关
-    def cam_zoom_on_off(self):
+    def cam_zoom_off(self):
         if self.ser.is_open:
             hexCmd = "81 01 04 07 00 FF"  # 停止运动
             hexCmd = hexCmd.replace(' ', '')  # 去除空格

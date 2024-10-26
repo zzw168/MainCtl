@@ -26,7 +26,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1363, 975)
+        MainWindow.resize(1328, 954)
         MainWindow.setMinimumSize(QSize(100, 0))
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
@@ -41,6 +41,7 @@ class Ui_MainWindow(object):
         font.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font.setPointSize(10)
         self.tabWidget_Ranking.setFont(font)
+        self.tabWidget_Ranking.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.tab_0 = QWidget()
         self.tab_0.setObjectName(u"tab_0")
         self.gridLayout_11 = QGridLayout(self.tab_0)
@@ -91,10 +92,10 @@ class Ui_MainWindow(object):
         self.groupBox.setStyleSheet(u"")
         self.gridLayout_9 = QGridLayout(self.groupBox)
         self.gridLayout_9.setObjectName(u"gridLayout_9")
-        self.radioButton = QRadioButton(self.groupBox)
-        self.radioButton.setObjectName(u"radioButton")
+        self.radioButton_start_game = QRadioButton(self.groupBox)
+        self.radioButton_start_game.setObjectName(u"radioButton_start_game")
 
-        self.gridLayout_9.addWidget(self.radioButton, 0, 0, 1, 1)
+        self.gridLayout_9.addWidget(self.radioButton_start_game, 0, 0, 1, 1)
 
         self.radioButton_2 = QRadioButton(self.groupBox)
         self.radioButton_2.setObjectName(u"radioButton_2")
@@ -169,47 +170,72 @@ class Ui_MainWindow(object):
         self.groupBox_status_2.setFont(font1)
         self.gridLayout_3 = QGridLayout(self.groupBox_status_2)
         self.gridLayout_3.setObjectName(u"gridLayout_3")
-        self.status_server1 = QToolButton(self.groupBox_status_2)
-        self.status_server1.setObjectName(u"status_server1")
-        self.status_server1.setFont(font1)
-        self.status_server1.setAutoFillBackground(False)
-        self.status_server1.setStyleSheet(u"background:rgb(255, 0, 0)")
-        self.status_server1.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
-        self.status_server1.setAutoRaise(True)
-        self.status_server1.setArrowType(Qt.ArrowType.NoArrow)
-
-        self.gridLayout_3.addWidget(self.status_server1, 0, 0, 1, 2)
-
-        self.status_server2 = QToolButton(self.groupBox_status_2)
-        self.status_server2.setObjectName(u"status_server2")
-        self.status_server2.setFont(font1)
-        self.status_server2.setAutoFillBackground(False)
-        self.status_server2.setStyleSheet(u"background:rgb(255, 0, 0)")
-        self.status_server2.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
-        self.status_server2.setAutoRaise(True)
-
-        self.gridLayout_3.addWidget(self.status_server2, 0, 2, 1, 2)
-
-        self.status_sportsCards = QToolButton(self.groupBox_status_2)
-        self.status_sportsCards.setObjectName(u"status_sportsCards")
-        self.status_sportsCards.setFont(font1)
-        self.status_sportsCards.setAutoFillBackground(False)
-        self.status_sportsCards.setStyleSheet(u"background:rgb(0, 255, 0)")
-        self.status_sportsCards.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
-        self.status_sportsCards.setAutoRaise(True)
-
-        self.gridLayout_3.addWidget(self.status_sportsCards, 0, 4, 1, 2)
-
         self.frame_4 = QFrame(self.groupBox_status_2)
         self.frame_4.setObjectName(u"frame_4")
         self.frame_4.setMinimumSize(QSize(70, 0))
         self.frame_4.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_4.setFrameShadow(QFrame.Shadow.Raised)
 
-        self.gridLayout_3.addWidget(self.frame_4, 0, 6, 2, 1)
+        self.gridLayout_3.addWidget(self.frame_4, 0, 4, 3, 1)
+
+        self.status_card = QToolButton(self.groupBox_status_2)
+        self.status_card.setObjectName(u"status_card")
+        self.status_card.setMinimumSize(QSize(80, 0))
+        self.status_card.setFont(font1)
+        self.status_card.setAutoFillBackground(False)
+        self.status_card.setStyleSheet(u"background:rgb(0, 255, 0)")
+        self.status_card.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.status_card.setAutoRaise(True)
+
+        self.gridLayout_3.addWidget(self.status_card, 0, 2, 1, 2)
+
+        self.status_server = QToolButton(self.groupBox_status_2)
+        self.status_server.setObjectName(u"status_server")
+        self.status_server.setMinimumSize(QSize(80, 0))
+        self.status_server.setFont(font1)
+        self.status_server.setAutoFillBackground(False)
+        self.status_server.setStyleSheet(u"background:rgb(255, 0, 0)")
+        self.status_server.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.status_server.setAutoRaise(True)
+        self.status_server.setArrowType(Qt.ArrowType.NoArrow)
+
+        self.gridLayout_3.addWidget(self.status_server, 0, 0, 1, 1)
+
+        self.status_ai = QToolButton(self.groupBox_status_2)
+        self.status_ai.setObjectName(u"status_ai")
+        self.status_ai.setFont(font1)
+        self.status_ai.setAutoFillBackground(False)
+        self.status_ai.setStyleSheet(u"background:rgb(255, 0, 0)")
+        self.status_ai.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.status_ai.setAutoRaise(True)
+
+        self.gridLayout_3.addWidget(self.status_ai, 0, 1, 1, 1)
+
+        self.status_ai_end = QToolButton(self.groupBox_status_2)
+        self.status_ai_end.setObjectName(u"status_ai_end")
+        self.status_ai_end.setMinimumSize(QSize(80, 0))
+        self.status_ai_end.setFont(font1)
+        self.status_ai_end.setAutoFillBackground(False)
+        self.status_ai_end.setStyleSheet(u"background:rgb(0, 255, 0)")
+        self.status_ai_end.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.status_ai_end.setAutoRaise(True)
+
+        self.gridLayout_3.addWidget(self.status_ai_end, 1, 2, 1, 1)
+
+        self.status_s485 = QToolButton(self.groupBox_status_2)
+        self.status_s485.setObjectName(u"status_s485")
+        self.status_s485.setMinimumSize(QSize(80, 0))
+        self.status_s485.setFont(font1)
+        self.status_s485.setAutoFillBackground(False)
+        self.status_s485.setStyleSheet(u"background:rgb(0, 255, 0)")
+        self.status_s485.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
+        self.status_s485.setAutoRaise(True)
+
+        self.gridLayout_3.addWidget(self.status_s485, 1, 1, 1, 1)
 
         self.status_obs = QToolButton(self.groupBox_status_2)
         self.status_obs.setObjectName(u"status_obs")
+        self.status_obs.setMinimumSize(QSize(80, 0))
         self.status_obs.setFont(font1)
         self.status_obs.setAutoFillBackground(False)
         self.status_obs.setStyleSheet(u"background:rgb(0, 255, 0)")
@@ -217,36 +243,6 @@ class Ui_MainWindow(object):
         self.status_obs.setAutoRaise(True)
 
         self.gridLayout_3.addWidget(self.status_obs, 1, 0, 1, 1)
-
-        self.status_mainlenses = QToolButton(self.groupBox_status_2)
-        self.status_mainlenses.setObjectName(u"status_mainlenses")
-        self.status_mainlenses.setFont(font1)
-        self.status_mainlenses.setAutoFillBackground(False)
-        self.status_mainlenses.setStyleSheet(u"background:rgb(0, 255, 0)")
-        self.status_mainlenses.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
-        self.status_mainlenses.setAutoRaise(True)
-
-        self.gridLayout_3.addWidget(self.status_mainlenses, 1, 1, 1, 2)
-
-        self.status_Recognition = QToolButton(self.groupBox_status_2)
-        self.status_Recognition.setObjectName(u"status_Recognition")
-        self.status_Recognition.setFont(font1)
-        self.status_Recognition.setAutoFillBackground(False)
-        self.status_Recognition.setStyleSheet(u"background:rgb(255, 0, 0)")
-        self.status_Recognition.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
-        self.status_Recognition.setAutoRaise(True)
-
-        self.gridLayout_3.addWidget(self.status_Recognition, 1, 3, 1, 2)
-
-        self.status_Extension = QToolButton(self.groupBox_status_2)
-        self.status_Extension.setObjectName(u"status_Extension")
-        self.status_Extension.setFont(font1)
-        self.status_Extension.setAutoFillBackground(False)
-        self.status_Extension.setStyleSheet(u"background:rgb(0, 255, 0)")
-        self.status_Extension.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
-        self.status_Extension.setAutoRaise(True)
-
-        self.gridLayout_3.addWidget(self.status_Extension, 1, 5, 1, 1)
 
 
         self.gridLayout_12.addWidget(self.groupBox_status_2, 0, 2, 1, 1)
@@ -337,18 +333,18 @@ class Ui_MainWindow(object):
 
         self.gridLayout_12.addWidget(self.groupBox_2, 1, 2, 2, 1)
 
-        self.pushButton = QPushButton(self.frame_3)
-        self.pushButton.setObjectName(u"pushButton")
-        self.pushButton.setMinimumSize(QSize(100, 50))
+        self.pushButton_start_game = QPushButton(self.frame_3)
+        self.pushButton_start_game.setObjectName(u"pushButton_start_game")
+        self.pushButton_start_game.setMinimumSize(QSize(100, 50))
         font2 = QFont()
         font2.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font2.setPointSize(12)
         font2.setBold(True)
-        self.pushButton.setFont(font2)
-        self.pushButton.setAutoDefault(False)
-        self.pushButton.setFlat(False)
+        self.pushButton_start_game.setFont(font2)
+        self.pushButton_start_game.setAutoDefault(False)
+        self.pushButton_start_game.setFlat(False)
 
-        self.gridLayout_12.addWidget(self.pushButton, 2, 3, 1, 1)
+        self.gridLayout_12.addWidget(self.pushButton_start_game, 2, 3, 1, 1)
 
         self.frame = QFrame(self.frame_3)
         self.frame.setObjectName(u"frame")
@@ -588,35 +584,35 @@ class Ui_MainWindow(object):
         self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout = QHBoxLayout(self.frame_6)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.pushButton_add = QPushButton(self.frame_6)
-        self.pushButton_add.setObjectName(u"pushButton_add")
-        self.pushButton_add.setMaximumSize(QSize(100, 16777215))
+        self.pushButton_ready = QPushButton(self.frame_6)
+        self.pushButton_ready.setObjectName(u"pushButton_ready")
+        self.pushButton_ready.setMaximumSize(QSize(100, 16777215))
 
-        self.horizontalLayout.addWidget(self.pushButton_add)
+        self.horizontalLayout.addWidget(self.pushButton_ready)
 
-        self.pushButton_save = QPushButton(self.frame_6)
-        self.pushButton_save.setObjectName(u"pushButton_save")
-        self.pushButton_save.setMaximumSize(QSize(100, 16777215))
+        self.pushButton_start_game_2 = QPushButton(self.frame_6)
+        self.pushButton_start_game_2.setObjectName(u"pushButton_start_game_2")
+        self.pushButton_start_game_2.setMaximumSize(QSize(100, 16777215))
 
-        self.horizontalLayout.addWidget(self.pushButton_save)
+        self.horizontalLayout.addWidget(self.pushButton_start_game_2)
 
-        self.pushButton_update = QPushButton(self.frame_6)
-        self.pushButton_update.setObjectName(u"pushButton_update")
-        self.pushButton_update.setMaximumSize(QSize(100, 16777215))
+        self.pushButton_close_all = QPushButton(self.frame_6)
+        self.pushButton_close_all.setObjectName(u"pushButton_close_all")
+        self.pushButton_close_all.setMaximumSize(QSize(100, 16777215))
 
-        self.horizontalLayout.addWidget(self.pushButton_update)
+        self.horizontalLayout.addWidget(self.pushButton_close_all)
 
-        self.pushButton_once = QPushButton(self.frame_6)
-        self.pushButton_once.setObjectName(u"pushButton_once")
-        self.pushButton_once.setMaximumSize(QSize(100, 16777215))
+        self.pushButton_collect_ball = QPushButton(self.frame_6)
+        self.pushButton_collect_ball.setObjectName(u"pushButton_collect_ball")
+        self.pushButton_collect_ball.setMaximumSize(QSize(100, 16777215))
 
-        self.horizontalLayout.addWidget(self.pushButton_once)
+        self.horizontalLayout.addWidget(self.pushButton_collect_ball)
 
-        self.pushButton_start = QPushButton(self.frame_6)
-        self.pushButton_start.setObjectName(u"pushButton_start")
-        self.pushButton_start.setMaximumSize(QSize(100, 16777215))
+        self.pushButton_end_game = QPushButton(self.frame_6)
+        self.pushButton_end_game.setObjectName(u"pushButton_end_game")
+        self.pushButton_end_game.setMaximumSize(QSize(100, 16777215))
 
-        self.horizontalLayout.addWidget(self.pushButton_start)
+        self.horizontalLayout.addWidget(self.pushButton_end_game)
 
 
         self.gridLayout_10.addWidget(self.frame_6, 1, 0, 1, 1)
@@ -781,6 +777,7 @@ class Ui_MainWindow(object):
         self.pushButton_rename = QPushButton(self.frame_13)
         self.pushButton_rename.setObjectName(u"pushButton_rename")
         self.pushButton_rename.setFont(font1)
+        self.pushButton_rename.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_13.addWidget(self.pushButton_rename, 0, 11, 1, 1)
 
@@ -794,6 +791,7 @@ class Ui_MainWindow(object):
         self.pushButton_fsave.setObjectName(u"pushButton_fsave")
         self.pushButton_fsave.setMinimumSize(QSize(100, 0))
         self.pushButton_fsave.setFont(font1)
+        self.pushButton_fsave.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_13.addWidget(self.pushButton_fsave, 0, 3, 1, 1)
 
@@ -999,6 +997,7 @@ class Ui_MainWindow(object):
         self.pushButton_ToTable.setObjectName(u"pushButton_ToTable")
         self.pushButton_ToTable.setMinimumSize(QSize(0, 30))
         self.pushButton_ToTable.setFont(font1)
+        self.pushButton_ToTable.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_19.addWidget(self.pushButton_ToTable, 0, 1, 1, 1)
 
@@ -1016,6 +1015,7 @@ class Ui_MainWindow(object):
         self.pushButton_CardRun.setObjectName(u"pushButton_CardRun")
         self.pushButton_CardRun.setMinimumSize(QSize(0, 30))
         self.pushButton_CardRun.setFont(font1)
+        self.pushButton_CardRun.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_24.addWidget(self.pushButton_CardRun, 1, 0, 1, 1)
 
@@ -1047,6 +1047,7 @@ class Ui_MainWindow(object):
         self.pushButton_CardStop.setObjectName(u"pushButton_CardStop")
         self.pushButton_CardStop.setMinimumSize(QSize(0, 30))
         self.pushButton_CardStop.setFont(font1)
+        self.pushButton_CardStop.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_24.addWidget(self.pushButton_CardStop, 2, 0, 1, 1)
 
@@ -1054,6 +1055,7 @@ class Ui_MainWindow(object):
         self.pushButton_CardStart.setObjectName(u"pushButton_CardStart")
         self.pushButton_CardStart.setMinimumSize(QSize(0, 30))
         self.pushButton_CardStart.setFont(font1)
+        self.pushButton_CardStart.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_24.addWidget(self.pushButton_CardStart, 0, 1, 1, 1)
 
@@ -1061,6 +1063,7 @@ class Ui_MainWindow(object):
         self.pushButton_CardReset.setObjectName(u"pushButton_CardReset")
         self.pushButton_CardReset.setMinimumSize(QSize(0, 30))
         self.pushButton_CardReset.setFont(font1)
+        self.pushButton_CardReset.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_24.addWidget(self.pushButton_CardReset, 1, 1, 1, 1)
 
@@ -1068,6 +1071,7 @@ class Ui_MainWindow(object):
         self.pushButton_CardNext.setObjectName(u"pushButton_CardNext")
         self.pushButton_CardNext.setMinimumSize(QSize(0, 30))
         self.pushButton_CardNext.setFont(font1)
+        self.pushButton_CardNext.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_24.addWidget(self.pushButton_CardNext, 2, 1, 1, 1)
 
@@ -1075,6 +1079,7 @@ class Ui_MainWindow(object):
         self.pushButton_CardCloseAll.setObjectName(u"pushButton_CardCloseAll")
         self.pushButton_CardCloseAll.setMinimumSize(QSize(0, 30))
         self.pushButton_CardCloseAll.setFont(font1)
+        self.pushButton_CardCloseAll.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_24.addWidget(self.pushButton_CardCloseAll, 3, 0, 1, 2)
 
@@ -1129,6 +1134,7 @@ class Ui_MainWindow(object):
         self.pushButton_ObsConnect.setObjectName(u"pushButton_ObsConnect")
         self.pushButton_ObsConnect.setMinimumSize(QSize(0, 30))
         self.pushButton_ObsConnect.setFont(font1)
+        self.pushButton_ObsConnect.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_6.addWidget(self.pushButton_ObsConnect, 0, 0, 1, 1)
 
@@ -1136,6 +1142,7 @@ class Ui_MainWindow(object):
         self.pushButton_Obs_delete.setObjectName(u"pushButton_Obs_delete")
         self.pushButton_Obs_delete.setMinimumSize(QSize(0, 30))
         self.pushButton_Obs_delete.setFont(font1)
+        self.pushButton_Obs_delete.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_6.addWidget(self.pushButton_Obs_delete, 0, 1, 1, 1)
 
@@ -1143,6 +1150,7 @@ class Ui_MainWindow(object):
         self.pushButton_Obs2Table.setObjectName(u"pushButton_Obs2Table")
         self.pushButton_Obs2Table.setMinimumSize(QSize(0, 30))
         self.pushButton_Obs2Table.setFont(font1)
+        self.pushButton_Obs2Table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_6.addWidget(self.pushButton_Obs2Table, 1, 0, 1, 1)
 
@@ -1150,6 +1158,7 @@ class Ui_MainWindow(object):
         self.pushButton_Source2Table.setObjectName(u"pushButton_Source2Table")
         self.pushButton_Source2Table.setMinimumSize(QSize(0, 30))
         self.pushButton_Source2Table.setFont(font1)
+        self.pushButton_Source2Table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_6.addWidget(self.pushButton_Source2Table, 1, 1, 1, 1)
 
@@ -1194,6 +1203,10 @@ class Ui_MainWindow(object):
         self.gridLayout_20.addWidget(self.frame_10, 0, 1, 3, 1)
 
         self.tabWidget_Ranking.addTab(self.tab_1, "")
+        self.frame_13.raise_()
+        self.frame_23.raise_()
+        self.frame_10.raise_()
+        self.tableWidget_Step.raise_()
         self.tab_2 = QWidget()
         self.tab_2.setObjectName(u"tab_2")
         self.gridLayout_39 = QGridLayout(self.tab_2)
@@ -1336,6 +1349,7 @@ class Ui_MainWindow(object):
 
         self.pushButton_save_Ai = QPushButton(self.groupBox_19)
         self.pushButton_save_Ai.setObjectName(u"pushButton_save_Ai")
+        self.pushButton_save_Ai.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
 
         self.gridLayout_44.addWidget(self.pushButton_save_Ai, 0, 2, 1, 1)
 
@@ -1730,69 +1744,71 @@ class Ui_MainWindow(object):
 
         self.gridLayout_48.addWidget(self.groupBox_25, 0, 0, 1, 1)
 
-        self.groupBox_27 = QGroupBox(self.groupBox_18)
-        self.groupBox_27.setObjectName(u"groupBox_27")
-        self.groupBox_27.setMinimumSize(QSize(0, 10))
-        self.gridLayout_47 = QGridLayout(self.groupBox_27)
+        self.groupBox_33 = QGroupBox(self.groupBox_18)
+        self.groupBox_33.setObjectName(u"groupBox_33")
+        self.groupBox_33.setMinimumSize(QSize(0, 10))
+        self.gridLayout_47 = QGridLayout(self.groupBox_33)
         self.gridLayout_47.setObjectName(u"gridLayout_47")
-        self.lineEdit_time_count_ball = QLineEdit(self.groupBox_27)
+        self.lineEdit_time_count_ball = QLineEdit(self.groupBox_33)
         self.lineEdit_time_count_ball.setObjectName(u"lineEdit_time_count_ball")
         self.lineEdit_time_count_ball.setMinimumSize(QSize(0, 10))
         self.lineEdit_time_count_ball.setMaximumSize(QSize(50, 16777215))
 
         self.gridLayout_47.addWidget(self.lineEdit_time_count_ball, 2, 1, 1, 1)
 
-        self.label_28 = QLabel(self.groupBox_27)
+        self.label_28 = QLabel(self.groupBox_33)
         self.label_28.setObjectName(u"label_28")
         self.label_28.setMinimumSize(QSize(0, 10))
         self.label_28.setFont(font1)
 
         self.gridLayout_47.addWidget(self.label_28, 0, 0, 1, 1)
 
-        self.label_41 = QLabel(self.groupBox_27)
+        self.label_41 = QLabel(self.groupBox_33)
         self.label_41.setObjectName(u"label_41")
         self.label_41.setMinimumSize(QSize(0, 10))
         self.label_41.setFont(font1)
 
         self.gridLayout_47.addWidget(self.label_41, 2, 0, 1, 1)
 
-        self.label_29 = QLabel(self.groupBox_27)
+        self.label_29 = QLabel(self.groupBox_33)
         self.label_29.setObjectName(u"label_29")
         self.label_29.setMinimumSize(QSize(0, 10))
         self.label_29.setFont(font1)
 
         self.gridLayout_47.addWidget(self.label_29, 0, 2, 1, 1)
 
-        self.label_40 = QLabel(self.groupBox_27)
+        self.label_40 = QLabel(self.groupBox_33)
         self.label_40.setObjectName(u"label_40")
         self.label_40.setMinimumSize(QSize(0, 10))
         self.label_40.setFont(font1)
 
         self.gridLayout_47.addWidget(self.label_40, 2, 2, 1, 1)
 
-        self.lineEdit_time_send_result = QLineEdit(self.groupBox_27)
+        self.lineEdit_time_send_result = QLineEdit(self.groupBox_33)
         self.lineEdit_time_send_result.setObjectName(u"lineEdit_time_send_result")
         self.lineEdit_time_send_result.setMinimumSize(QSize(0, 10))
         self.lineEdit_time_send_result.setMaximumSize(QSize(50, 16777215))
 
         self.gridLayout_47.addWidget(self.lineEdit_time_send_result, 0, 1, 1, 1)
 
-        self.pushButton_CardRun_2 = QPushButton(self.groupBox_27)
+        self.pushButton_CardRun_2 = QPushButton(self.groupBox_33)
         self.pushButton_CardRun_2.setObjectName(u"pushButton_CardRun_2")
         self.pushButton_CardRun_2.setMinimumSize(QSize(0, 10))
         self.pushButton_CardRun_2.setFont(font1)
+        self.pushButton_CardRun_2.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_47.addWidget(self.pushButton_CardRun_2, 0, 3, 1, 1)
 
-        self.pushButton_CardStop_2 = QPushButton(self.groupBox_27)
+        self.pushButton_CardStop_2 = QPushButton(self.groupBox_33)
         self.pushButton_CardStop_2.setObjectName(u"pushButton_CardStop_2")
         self.pushButton_CardStop_2.setMinimumSize(QSize(0, 10))
         self.pushButton_CardStop_2.setFont(font1)
+        self.pushButton_CardStop_2.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_47.addWidget(self.pushButton_CardStop_2, 2, 3, 1, 1)
 
 
-        self.gridLayout_48.addWidget(self.groupBox_27, 1, 0, 1, 1)
+        self.gridLayout_48.addWidget(self.groupBox_33, 1, 0, 1, 1)
 
         self.groupBox_24 = QGroupBox(self.groupBox_18)
         self.groupBox_24.setObjectName(u"groupBox_24")
@@ -1819,6 +1835,7 @@ class Ui_MainWindow(object):
         self.pushButton_CardClose.setObjectName(u"pushButton_CardClose")
         self.pushButton_CardClose.setMinimumSize(QSize(80, 0))
         self.pushButton_CardClose.setFont(font1)
+        self.pushButton_CardClose.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_43.addWidget(self.pushButton_CardClose, 0, 4, 1, 1)
 
@@ -1826,6 +1843,7 @@ class Ui_MainWindow(object):
         self.pushButton_Cardreset.setObjectName(u"pushButton_Cardreset")
         self.pushButton_Cardreset.setMinimumSize(QSize(80, 0))
         self.pushButton_Cardreset.setFont(font1)
+        self.pushButton_Cardreset.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_43.addWidget(self.pushButton_Cardreset, 1, 4, 1, 1)
 
@@ -1981,44 +1999,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_54.addWidget(self.groupBox_30, 2, 0, 1, 1)
 
-        self.groupBox_29 = QGroupBox(self.frame_24)
-        self.groupBox_29.setObjectName(u"groupBox_29")
-        self.groupBox_29.setMinimumSize(QSize(0, 0))
-        self.groupBox_29.setMaximumSize(QSize(600, 100))
-        self.groupBox_29.setFont(font1)
-        self.gridLayout_55 = QGridLayout(self.groupBox_29)
-        self.gridLayout_55.setObjectName(u"gridLayout_55")
-        self.label_47 = QLabel(self.groupBox_29)
-        self.label_47.setObjectName(u"label_47")
-        self.label_47.setFont(font5)
-
-        self.gridLayout_55.addWidget(self.label_47, 0, 0, 1, 1)
-
-        self.lineEdit_map_picture = QLineEdit(self.groupBox_29)
-        self.lineEdit_map_picture.setObjectName(u"lineEdit_map_picture")
-        self.lineEdit_map_picture.setMinimumSize(QSize(300, 0))
-        self.lineEdit_map_picture.setFont(font4)
-        self.lineEdit_map_picture.setReadOnly(False)
-
-        self.gridLayout_55.addWidget(self.lineEdit_map_picture, 0, 1, 1, 1)
-
-        self.label_48 = QLabel(self.groupBox_29)
-        self.label_48.setObjectName(u"label_48")
-        self.label_48.setFont(font5)
-
-        self.gridLayout_55.addWidget(self.label_48, 1, 0, 1, 1)
-
-        self.lineEdit_map_line = QLineEdit(self.groupBox_29)
-        self.lineEdit_map_line.setObjectName(u"lineEdit_map_line")
-        self.lineEdit_map_line.setMinimumSize(QSize(300, 0))
-        self.lineEdit_map_line.setFont(font4)
-        self.lineEdit_map_line.setReadOnly(False)
-
-        self.gridLayout_55.addWidget(self.lineEdit_map_line, 1, 1, 1, 1)
-
-
-        self.gridLayout_54.addWidget(self.groupBox_29, 1, 0, 1, 1)
-
         self.groupBox_26 = QGroupBox(self.frame_24)
         self.groupBox_26.setObjectName(u"groupBox_26")
         self.groupBox_26.setMinimumSize(QSize(0, 0))
@@ -2072,19 +2052,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_54.addWidget(self.groupBox_26, 0, 0, 1, 1)
 
-        self.groupBox_28 = QGroupBox(self.frame_24)
-        self.groupBox_28.setObjectName(u"groupBox_28")
-        self.groupBox_28.setFont(font1)
-        self.gridLayout_59 = QGridLayout(self.groupBox_28)
-        self.gridLayout_59.setObjectName(u"gridLayout_59")
-        self.textBrowser_2 = QTextBrowser(self.groupBox_28)
-        self.textBrowser_2.setObjectName(u"textBrowser_2")
-
-        self.gridLayout_59.addWidget(self.textBrowser_2, 0, 0, 1, 1)
-
-
-        self.gridLayout_54.addWidget(self.groupBox_28, 4, 0, 1, 1)
-
         self.groupBox_32 = QGroupBox(self.frame_24)
         self.groupBox_32.setObjectName(u"groupBox_32")
         self.groupBox_32.setMinimumSize(QSize(0, 0))
@@ -2096,7 +2063,7 @@ class Ui_MainWindow(object):
         self.lineEdit_map_picture_2.setObjectName(u"lineEdit_map_picture_2")
         self.lineEdit_map_picture_2.setMinimumSize(QSize(0, 0))
         self.lineEdit_map_picture_2.setFont(font4)
-        self.lineEdit_map_picture_2.setReadOnly(True)
+        self.lineEdit_map_picture_2.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_picture_2, 0, 1, 1, 1)
 
@@ -2104,7 +2071,7 @@ class Ui_MainWindow(object):
         self.lineEdit_map_picture_3.setObjectName(u"lineEdit_map_picture_3")
         self.lineEdit_map_picture_3.setMinimumSize(QSize(0, 0))
         self.lineEdit_map_picture_3.setFont(font4)
-        self.lineEdit_map_picture_3.setReadOnly(True)
+        self.lineEdit_map_picture_3.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_picture_3, 1, 3, 1, 1)
 
@@ -2112,7 +2079,7 @@ class Ui_MainWindow(object):
         self.lineEdit_map_line_3.setObjectName(u"lineEdit_map_line_3")
         self.lineEdit_map_line_3.setMinimumSize(QSize(0, 0))
         self.lineEdit_map_line_3.setFont(font4)
-        self.lineEdit_map_line_3.setReadOnly(True)
+        self.lineEdit_map_line_3.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_line_3, 0, 3, 1, 1)
 
@@ -2126,7 +2093,7 @@ class Ui_MainWindow(object):
         self.lineEdit_map_line_2.setObjectName(u"lineEdit_map_line_2")
         self.lineEdit_map_line_2.setMinimumSize(QSize(0, 0))
         self.lineEdit_map_line_2.setFont(font4)
-        self.lineEdit_map_line_2.setReadOnly(True)
+        self.lineEdit_map_line_2.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_line_2, 1, 1, 1, 1)
 
@@ -2140,7 +2107,7 @@ class Ui_MainWindow(object):
         self.lineEdit_map_line_4.setObjectName(u"lineEdit_map_line_4")
         self.lineEdit_map_line_4.setMinimumSize(QSize(0, 0))
         self.lineEdit_map_line_4.setFont(font4)
-        self.lineEdit_map_line_4.setReadOnly(True)
+        self.lineEdit_map_line_4.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_line_4, 3, 1, 1, 1)
 
@@ -2154,7 +2121,7 @@ class Ui_MainWindow(object):
         self.lineEdit_map_picture_4.setObjectName(u"lineEdit_map_picture_4")
         self.lineEdit_map_picture_4.setMinimumSize(QSize(0, 0))
         self.lineEdit_map_picture_4.setFont(font4)
-        self.lineEdit_map_picture_4.setReadOnly(True)
+        self.lineEdit_map_picture_4.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_picture_4, 3, 3, 1, 1)
 
@@ -2168,7 +2135,7 @@ class Ui_MainWindow(object):
         self.lineEdit_map_line_5.setObjectName(u"lineEdit_map_line_5")
         self.lineEdit_map_line_5.setMinimumSize(QSize(0, 0))
         self.lineEdit_map_line_5.setFont(font4)
-        self.lineEdit_map_line_5.setReadOnly(True)
+        self.lineEdit_map_line_5.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_line_5, 2, 1, 1, 1)
 
@@ -2194,7 +2161,7 @@ class Ui_MainWindow(object):
         self.lineEdit_map_picture_5.setObjectName(u"lineEdit_map_picture_5")
         self.lineEdit_map_picture_5.setMinimumSize(QSize(0, 0))
         self.lineEdit_map_picture_5.setFont(font4)
-        self.lineEdit_map_picture_5.setReadOnly(True)
+        self.lineEdit_map_picture_5.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_picture_5, 2, 3, 1, 1)
 
@@ -2206,6 +2173,67 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout_54.addWidget(self.groupBox_32, 3, 0, 1, 1)
+
+        self.groupBox_29 = QGroupBox(self.frame_24)
+        self.groupBox_29.setObjectName(u"groupBox_29")
+        self.groupBox_29.setMinimumSize(QSize(0, 0))
+        self.groupBox_29.setMaximumSize(QSize(600, 100))
+        self.groupBox_29.setFont(font1)
+        self.gridLayout_55 = QGridLayout(self.groupBox_29)
+        self.gridLayout_55.setObjectName(u"gridLayout_55")
+        self.label_47 = QLabel(self.groupBox_29)
+        self.label_47.setObjectName(u"label_47")
+        self.label_47.setFont(font5)
+
+        self.gridLayout_55.addWidget(self.label_47, 0, 0, 1, 1)
+
+        self.lineEdit_map_picture = QLineEdit(self.groupBox_29)
+        self.lineEdit_map_picture.setObjectName(u"lineEdit_map_picture")
+        self.lineEdit_map_picture.setMinimumSize(QSize(300, 0))
+        self.lineEdit_map_picture.setFont(font4)
+        self.lineEdit_map_picture.setReadOnly(False)
+
+        self.gridLayout_55.addWidget(self.lineEdit_map_picture, 0, 1, 1, 1)
+
+        self.label_48 = QLabel(self.groupBox_29)
+        self.label_48.setObjectName(u"label_48")
+        self.label_48.setFont(font5)
+
+        self.gridLayout_55.addWidget(self.label_48, 1, 0, 1, 1)
+
+        self.lineEdit_map_line = QLineEdit(self.groupBox_29)
+        self.lineEdit_map_line.setObjectName(u"lineEdit_map_line")
+        self.lineEdit_map_line.setMinimumSize(QSize(300, 0))
+        self.lineEdit_map_line.setFont(font4)
+        self.lineEdit_map_line.setReadOnly(False)
+
+        self.gridLayout_55.addWidget(self.lineEdit_map_line, 1, 1, 1, 1)
+
+
+        self.gridLayout_54.addWidget(self.groupBox_29, 1, 0, 1, 1)
+
+        self.groupBox_28 = QGroupBox(self.frame_24)
+        self.groupBox_28.setObjectName(u"groupBox_28")
+        self.groupBox_28.setFont(font1)
+        self.gridLayout_59 = QGridLayout(self.groupBox_28)
+        self.gridLayout_59.setObjectName(u"gridLayout_59")
+        self.textBrowser_total_msg = QTextBrowser(self.groupBox_28)
+        self.textBrowser_total_msg.setObjectName(u"textBrowser_total_msg")
+        self.textBrowser_total_msg.setFont(font5)
+        self.textBrowser_total_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.textBrowser_total_msg.setReadOnly(False)
+
+        self.gridLayout_59.addWidget(self.textBrowser_total_msg, 0, 1, 1, 1)
+
+        self.textBrowser_save_msg = QTextBrowser(self.groupBox_28)
+        self.textBrowser_save_msg.setObjectName(u"textBrowser_save_msg")
+        self.textBrowser_save_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.textBrowser_save_msg.setReadOnly(False)
+
+        self.gridLayout_59.addWidget(self.textBrowser_save_msg, 0, 2, 1, 1)
+
+
+        self.gridLayout_54.addWidget(self.groupBox_28, 4, 0, 1, 1)
 
 
         self.gridLayout_36.addWidget(self.frame_24, 0, 1, 2, 1)
@@ -2701,12 +2729,18 @@ class Ui_MainWindow(object):
 
         self.gridLayout_36.addWidget(self.frame_20, 0, 0, 2, 1)
 
-        self.frame_27 = QFrame(self.tab_4)
-        self.frame_27.setObjectName(u"frame_27")
-        self.frame_27.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_27.setFrameShadow(QFrame.Shadow.Raised)
+        self.groupBox_27 = QGroupBox(self.tab_4)
+        self.groupBox_27.setObjectName(u"groupBox_27")
+        self.groupBox_27.setFont(font1)
+        self.gridLayout_60 = QGridLayout(self.groupBox_27)
+        self.gridLayout_60.setObjectName(u"gridLayout_60")
+        self.textBrowser_3 = QTextBrowser(self.groupBox_27)
+        self.textBrowser_3.setObjectName(u"textBrowser_3")
 
-        self.gridLayout_36.addWidget(self.frame_27, 0, 2, 2, 1)
+        self.gridLayout_60.addWidget(self.textBrowser_3, 0, 0, 1, 1)
+
+
+        self.gridLayout_36.addWidget(self.groupBox_27, 0, 2, 2, 1)
 
         self.tabWidget_Ranking.addTab(self.tab_4, "")
 
@@ -2720,12 +2754,12 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.tabWidget_Ranking.setCurrentIndex(0)
-        self.pushButton.setDefault(True)
-        self.pushButton_add.setDefault(True)
-        self.pushButton_save.setDefault(True)
-        self.pushButton_update.setDefault(True)
-        self.pushButton_once.setDefault(True)
-        self.pushButton_start.setDefault(True)
+        self.pushButton_start_game.setDefault(True)
+        self.pushButton_ready.setDefault(True)
+        self.pushButton_start_game_2.setDefault(True)
+        self.pushButton_close_all.setDefault(True)
+        self.pushButton_collect_ball.setDefault(True)
+        self.pushButton_end_game.setDefault(True)
         self.pushButton_2.setDefault(True)
         self.pushButton_3.setDefault(True)
         self.pushButton_add_4.setDefault(True)
@@ -2774,7 +2808,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem8 = self.tableWidget_Results.horizontalHeaderItem(8)
         ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"\u590d\u76d8", None));
         self.groupBox.setTitle(QCoreApplication.translate("MainWindow", u"\u76d8\u53e3\u72b6\u6001", None))
-        self.radioButton.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u76d8", None))
+        self.radioButton_start_game.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u76d8", None))
         self.radioButton_2.setText(QCoreApplication.translate("MainWindow", u"\u5c01\u76d8", None))
         self.radioButton_3.setText(QCoreApplication.translate("MainWindow", u"\u6a21\u62df", None))
         self.checkBox.setText(QCoreApplication.translate("MainWindow", u"\u9ed1\u5c4f", None))
@@ -2784,13 +2818,12 @@ class Ui_MainWindow(object):
         self.status_lenses.setText(QCoreApplication.translate("MainWindow", u"\u955c\u5934\u72b6\u6001", None))
         self.status_track.setText(QCoreApplication.translate("MainWindow", u"\u8f68\u9053\u72b6\u6001", None))
         self.groupBox_status_2.setTitle(QCoreApplication.translate("MainWindow", u"\u72b6\u60012", None))
-        self.status_server1.setText(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u670d\u52a1\u5668", None))
-        self.status_server2.setText(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u670d\u52a1\u56682", None))
-        self.status_sportsCards.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5361", None))
+        self.status_card.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5361", None))
+        self.status_server.setText(QCoreApplication.translate("MainWindow", u"\u5206\u673a", None))
+        self.status_ai.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u50cf\u8bc6\u522b", None))
+        self.status_ai_end.setText(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u670d\u52a1\u5668", None))
+        self.status_s485.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u955c\u5934", None))
         self.status_obs.setText(QCoreApplication.translate("MainWindow", u"OBS\u72b6\u6001", None))
-        self.status_mainlenses.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u955c\u5934", None))
-        self.status_Recognition.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u50cf\u8bc6\u522b1", None))
-        self.status_Extension.setText(QCoreApplication.translate("MainWindow", u"\u5206\u673a1", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"\u529f\u80fd", None))
         self.checkBox_2.setText(QCoreApplication.translate("MainWindow", u"\u8df3\u8fc7\u8d77\u70b9\u8bc6\u522b", None))
         self.checkBox_7.setText(QCoreApplication.translate("MainWindow", u"\u672c\u5c40\u7ed3\u675f\u540e\u81ea\u52a8\u9ed1\u5c4f", None))
@@ -2799,7 +2832,7 @@ class Ui_MainWindow(object):
         self.checkBox_6.setText(QCoreApplication.translate("MainWindow", u"\u4e00\u5f39\u5c04", None))
         self.checkBox_5.setText(QCoreApplication.translate("MainWindow", u"\u5173\u8b66\u62a5", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u9501\u5b9a\u671f\u53f7", None))
-        self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u542f\u52a8", None))
+        self.pushButton_start_game.setText(QCoreApplication.translate("MainWindow", u"\u542f\u52a8", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
         self.lineEdit_balls_start.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.label.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u73e0\u5b50\u6570\u91cf\uff1a", None))
@@ -2827,11 +2860,11 @@ class Ui_MainWindow(object):
         self.pushButton_update_8.setText(QCoreApplication.translate("MainWindow", u"8", None))
         self.pushButton_save_10.setText(QCoreApplication.translate("MainWindow", u"9", None))
         self.pushButton_update_7.setText(QCoreApplication.translate("MainWindow", u"10", None))
-        self.pushButton_add.setText(QCoreApplication.translate("MainWindow", u"\u51c6\u5907", None))
-        self.pushButton_save.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb", None))
-        self.pushButton_update.setText(QCoreApplication.translate("MainWindow", u"\u5168\u90e8\u5173", None))
-        self.pushButton_once.setText(QCoreApplication.translate("MainWindow", u"\u6536\u73e0", None))
-        self.pushButton_start.setText(QCoreApplication.translate("MainWindow", u"\u7ed3\u675f", None))
+        self.pushButton_ready.setText(QCoreApplication.translate("MainWindow", u"\u51c6\u5907", None))
+        self.pushButton_start_game_2.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb", None))
+        self.pushButton_close_all.setText(QCoreApplication.translate("MainWindow", u"\u5168\u90e8\u5173", None))
+        self.pushButton_collect_ball.setText(QCoreApplication.translate("MainWindow", u"\u6536\u73e0", None))
+        self.pushButton_end_game.setText(QCoreApplication.translate("MainWindow", u"\u7ed3\u675f", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u8d5b\u679c\u786e\u8ba4 \u8bc6\u522b\u72b6\u6001", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u673a\uff1a  ", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"\u9009", None))
@@ -2852,15 +2885,15 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem9 = self.tableWidget_Step.horizontalHeaderItem(1)
         ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"\u5708\u6570", None));
         ___qtablewidgetitem10 = self.tableWidget_Step.horizontalHeaderItem(2)
-        ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"\u5de6\u53f3", None));
+        ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"\u8f741", None));
         ___qtablewidgetitem11 = self.tableWidget_Step.horizontalHeaderItem(3)
-        ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"\u524d\u540e", None));
+        ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"\u8f742", None));
         ___qtablewidgetitem12 = self.tableWidget_Step.horizontalHeaderItem(4)
-        ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"\u4e0a\u4e0b", None));
+        ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"\u8f743", None));
         ___qtablewidgetitem13 = self.tableWidget_Step.horizontalHeaderItem(5)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"\u5934\u65cb\u8f6c", None));
+        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"\u8f744", None));
         ___qtablewidgetitem14 = self.tableWidget_Step.horizontalHeaderItem(6)
-        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"\u5934\u4e0a\u4e0b", None));
+        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"\u8f745", None));
         ___qtablewidgetitem15 = self.tableWidget_Step.horizontalHeaderItem(7)
         ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"\u901f\u5ea6", None));
         ___qtablewidgetitem16 = self.tableWidget_Step.horizontalHeaderItem(8)
@@ -3040,17 +3073,6 @@ class Ui_MainWindow(object):
         self.lineEdit_source_ranking.setText(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u65f6\u95f4\u7ec4\u4ef6", None))
         self.label_68.setText(QCoreApplication.translate("MainWindow", u"\u753b\u4e2d\u753b\uff1a", None))
         self.label_70.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u622a\u56fe\uff1a", None))
-        self.groupBox_29.setTitle(QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe\u8bbe\u7f6e", None))
-        self.label_47.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u7247\u6587\u4ef6\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_map_picture.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_map_picture.setText(QCoreApplication.translate("MainWindow", u"./img/09_\u6c99\u6f20.jpg", None))
-        self.label_48.setText(QCoreApplication.translate("MainWindow", u"\u8def\u5f84\u6587\u4ef6\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_map_line.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_map_line.setText(QCoreApplication.translate("MainWindow", u"./img/09_\u6c99\u6f20.json", None))
         self.groupBox_26.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3\u8bbe\u7f6e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_music_3.setToolTip("")
@@ -3067,35 +3089,6 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_music_1.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e501.mp3", None))
         self.radioButton_music_background_3.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e503\uff1a", None))
-        self.groupBox_28.setTitle(QCoreApplication.translate("MainWindow", u"\u8def\u5f84\u8bbe\u7f6e\u8bf4\u660e", None))
-        self.textBrowser_2.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"hr { height: 1px; border-width: 0; }\n"
-"li.unchecked::marker { content: \"\\2610\"; }\n"
-"li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'\u5fae\u8f6f\u96c5\u9ed1'; font-size:10pt; font-weight:700; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">1.\u52fe\u9009\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u52fe\u9009\u4e86\u7684\u52a8\u4f5c\u624d\u6267\u884c</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">2.\u5708\u6570\uff1a</span><span style=\" font-size:1"
-                        "1pt; font-weight:400;\">\u8bbe\u7f6e\u4e3a1\u5219\u53ea\u5728\u7b2c\u4e00\u5708\u6267\u884c\u8be5\u52a8\u4f5c\uff0c\u8bbe\u7f6e\u4e3a2\u5219\u5728\u524d\u4e24\u5708\uff08\u7b2c\u4e00\u7b2c\u4e8c\u5708\uff09\u6267\u884c\u8be5\u52a8\u4f5c\uff0c\u5982\u6b64\u7c7b\u63a8\u3002\u3002\u82e5\u8bbe\u7f6e\u4e3a0\u5219\u6bcf\u4e00\u5708\u90fd\u6267\u884c\u8be5\u52a8\u4f5c\u3002</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">3-10\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8bbe\u7f6e\u9f99\u95e8\u67b6\u4e94\u8f74\u8fd0\u52a8\u7684 \u5750\u6807\uff0c\u901f\u5ea6\uff0c\u52a0\u901f\u51cf\u901f</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">11.\u955c\u5934\u7f29\u653e\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8bbe\u7f6e\u4e3b\u955c\u5934\u7684\u653e"
-                        "\u5927\uff0c\u7f29\u5c0f\u901f\u5ea6\uff0c\u6b63\u6570\u4e3a\u653e\u5927\u62c9\u8fd1\u955c\u5934\uff0c\u8d1f\u6570\u4e3a\u7f29\u5c0f\u62c9\u8fdc\u955c\u5934\uff0c\u8bbe\u7f6e\u4e3a0 \u5219\u4e0d\u653e\u5927\u7f29\u5c0f\uff08\u9700\u914d\u5408\u5ef6\u65f6\u4f7f\u7528\uff09\u3002</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">12.\u5ef6\u65f6\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u63a7\u5236\u955c\u5934\u653e\u5927\u7f29\u5c0f\u7684\u65f6\u95f4\uff0c\u7b49\u5f85\u5ef6\u65f6\u65f6\u95f4\u7ed3\u675f\u624d\u8fdb\u884c\u4e0b\u4e00\u52a8\u4f5c\uff0c\u5f53\u955c\u5934\u7f29\u653e\u8bbe\u7f6e\u4e3a0\u65f6\u5219\u53ef\u5f53\u4f5c\u52a8\u4f5c\u5ef6\u8fdf\u7b49\u5f85\u4f7f\u7528\u3002\uff08\u4f8b\u5982\u5ef6\u65f6\u8bbe\u7f6e5\u79d2\uff0c\u5219\u672c\u52a8\u4f5c\u6267\u884c\u5b8c\u6bd5\uff0c\u539f\u5730\u7b49\u5f855\u79d2\u540e\u624d\u6267\u884c\u4e0b\u4e00\u52a8\u4f5c\uff09</sp"
-                        "an></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">13.\u673a\u5173\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8f93\u5165\u673a\u5173\u7f16\u53f7\uff0c\u8fdb\u884c\u673a\u5173\u5f00\u542f\u5173\u95ed\uff0c\u6b63\u6570\u4e3a\u6253\u5f00\u673a\u5173\uff0c\u8d1f\u6570\u4e3a\u5173\u95ed\u673a\u5173</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">14.\u536b\u661f\u56fe\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u628a\u536b\u661f\u56fe\u5bf9\u5e94\u7684\u955c\u5934\u70b9\u4f4d\u586b\u5165\uff0c\u5219\u5f53\u56fe\u50cf\u8bc6\u522b\u5224\u65ad\u5f39\u73e0\u5230\u8fbe\u8be5\u70b9\u4f4d\uff0c\u5c31\u4f1a\u6267\u884c\u4e0b\u4e00\u52a8\u4f5c\u3002</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block"
-                        "-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">15.\u97f3\u6548\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u628a\u536b\u661f\u56fe\u4e2d\u5bf9\u5e94\u7684\u97f3\u6548\u7f16\u53f7\u586b\u5165\uff0c\u5219\u6267\u884c\u8be5\u52a8\u4f5c\u540c\u65f6\u4f1a\u64ad\u653e\u76f8\u5e94\u97f3\u6548\uff0c\u8fd9\u4e2a\u53ef\u4e0e\u536b\u661f\u56fe\u52a8\u6001\u70b9\u4f4d\u97f3\u6548\u914d\u5408\u4f7f\u7528</span></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">16.OBS\u753b\u9762\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u52a8\u4f5c\u6267\u884c\u540c\u65f6\u63a7\u5236\u5f00\u5173OBS\u753b\u9762</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-"
-                        "bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
         self.groupBox_32.setTitle(QCoreApplication.translate("MainWindow", u"\u673a\u5173\u7f16\u53f7\u8bf4\u660e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_map_picture_2.setToolTip("")
@@ -3137,6 +3130,18 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_map_picture_5.setText(QCoreApplication.translate("MainWindow", u"10", None))
         self.label_77.setText(QCoreApplication.translate("MainWindow", u"\u6446\u9524\u673a\u5173\uff1a", None))
+        self.groupBox_29.setTitle(QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe\u8bbe\u7f6e", None))
+        self.label_47.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u7247\u6587\u4ef6\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_map_picture.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_map_picture.setText(QCoreApplication.translate("MainWindow", u"./img/09_\u6c99\u6f20.jpg", None))
+        self.label_48.setText(QCoreApplication.translate("MainWindow", u"\u8def\u5f84\u6587\u4ef6\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_map_line.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_map_line.setText(QCoreApplication.translate("MainWindow", u"./img/09_\u6c99\u6f20.json", None))
+        self.groupBox_28.setTitle(QCoreApplication.translate("MainWindow", u"\u603b\u63a7\u4fe1\u606f\u53c2\u7167", None))
         self.groupBox_17.setTitle(QCoreApplication.translate("MainWindow", u"\u786c\u4ef6\u7aef\u53e3\u8bbe\u7f6e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_cardNo.setToolTip("")
@@ -3302,6 +3307,54 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_Color_Ch_10.setText(QCoreApplication.translate("MainWindow", u"\u767d", None))
         self.pushButton_Save_Ball.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u5f39\u73e0", None))
+        self.groupBox_27.setTitle(QCoreApplication.translate("MainWindow", u"\u8def\u5f84\u8bbe\u7f6e\u8bf4\u660e", None))
+        self.textBrowser_3.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
+"p, li { white-space: pre-wrap; }\n"
+"hr { height: 1px; border-width: 0; }\n"
+"li.unchecked::marker { content: \"\\2610\"; }\n"
+"li.checked::marker { content: \"\\2612\"; }\n"
+"</style></head><body style=\" font-family:'\u5fae\u8f6f\u96c5\u9ed1'; font-size:10pt; font-weight:700; font-style:normal;\">\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">1.\u52fe\u9009\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u52fe\u9009\u4e86\u7684\u52a8\u4f5c\u624d\u6267\u884c\u3002</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
+"<p styl"
+                        "e=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">2.\u5708\u6570\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8bbe\u7f6e\u4e3a </span><span style=\" font-size:11pt;\">1 </span><span style=\" font-size:11pt; font-weight:400;\">\u5219\u53ea\u5728\u7b2c\u4e00\u5708\u6267\u884c\u8be5\u52a8\u4f5c\uff0c\u8bbe\u7f6e\u4e3a </span><span style=\" font-size:11pt;\">2 </span><span style=\" font-size:11pt; font-weight:400;\">\u5219\u5728\u524d\u4e24\u5708\uff08\u7b2c\u4e00\u7b2c\u4e8c\u5708\uff09\u6267\u884c\u8be5\u52a8\u4f5c\uff0c\u5982\u6b64\u7c7b\u63a8... \u82e5\u8bbe\u7f6e\u4e3a </span><span style=\" font-size:11pt;\">0 </span><span style=\" font-size:11pt; font-weight:400;\">\u5219\u6bcf\u4e00\u5708\u90fd\u6267\u884c\u8be5\u52a8\u4f5c\u3002</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-si"
+                        "ze:11pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">3-10\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8bbe\u7f6e\u9f99\u95e8\u67b6\u4e94\u8f74\u8fd0\u52a8\u7684 \u5750\u6807\uff0c\u901f\u5ea6\uff0c\u52a0\u901f\u51cf\u901f\u3002</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">11.\u955c\u5934\u7f29\u653e\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8bbe\u7f6e\u4e3b\u955c\u5934\u7684\u653e\u5927\uff0c\u7f29\u5c0f\u901f\u5ea6\uff0c\u6b63\u6570\u4e3a\u653e\u5927\u62c9\u8fd1\u955c\u5934\uff0c\u8d1f\u6570\u4e3a\u7f29\u5c0f\u62c9"
+                        "\u8fdc\u955c\u5934\uff0c\u8bbe\u7f6e\u4e3a </span><span style=\" font-size:11pt;\">0 </span><span style=\" font-size:11pt; font-weight:400;\">\u5219\u4e0d\u653e\u5927\u7f29\u5c0f\uff08\u9700\u914d\u5408\u5ef6\u65f6\u4f7f\u7528\uff09\u3002</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">12.\u5ef6\u65f6\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u63a7\u5236\u955c\u5934\u653e\u5927\u7f29\u5c0f\u7684\u65f6\u95f4\uff0c\u7b49\u5f85\u5ef6\u65f6\u65f6\u95f4\u7ed3\u675f\u624d\u8fdb\u884c\u4e0b\u4e00\u52a8\u4f5c\uff0c\u5f53\u955c\u5934\u7f29\u653e\u8bbe\u7f6e\u4e3a </span><span style=\" font-size:11pt;\">0 </span><span style=\" font-size:11pt; font-weight:400;\">\u65f6\u5219\u53ef\u5f53\u4f5c"
+                        "\u52a8\u4f5c\u5ef6\u8fdf\u7b49\u5f85\u4f7f\u7528\u3002\uff08\u4f8b\u5982\u5ef6\u65f6\u8bbe\u7f6e</span><span style=\" font-size:11pt;\">5</span><span style=\" font-size:11pt; font-weight:400;\">\u79d2\uff0c\u5219\u672c\u52a8\u4f5c\u6267\u884c\u5b8c\u6bd5\uff0c\u539f\u5730\u7b49\u5f85</span><span style=\" font-size:11pt;\">5</span><span style=\" font-size:11pt; font-weight:400;\">\u79d2\u540e\u624d\u6267\u884c\u4e0b\u4e00\u52a8\u4f5c\uff09\u3002</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">13.\u673a\u5173\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8f93\u5165\u673a\u5173\u7f16\u53f7\uff0c\u8fdb\u884c\u673a\u5173\u5f00\u542f\u5173\u95ed\uff0c\u6b63\u6570\u4e3a\u6253\u5f00\u673a\u5173"
+                        "\uff0c\u8d1f\u6570\u4e3a\u5173\u95ed\u673a\u5173\u3002</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">14.\u536b\u661f\u56fe\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u628a\u536b\u661f\u56fe\u5bf9\u5e94\u7684\u955c\u5934\u70b9\u4f4d\u586b\u5165\uff0c\u5219\u5f53\u56fe\u50cf\u8bc6\u522b\u5224\u65ad\u5f39\u73e0\u5230\u8fbe\u8be5\u70b9\u4f4d\uff0c\u5c31\u4f1a\u6267\u884c\u4e0b\u4e00\u52a8\u4f5c\u3002</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0p"
+                        "x; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">15.\u97f3\u6548\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u628a\u536b\u661f\u56fe\u4e2d\u5bf9\u5e94\u7684\u97f3\u6548\u7f16\u53f7\u586b\u5165\uff0c\u5219\u6267\u884c\u8be5\u52a8\u4f5c\u540c\u65f6\u4f1a\u64ad\u653e\u76f8\u5e94\u97f3\u6548\uff0c\u8fd9\u4e2a\u53ef\u4e0e\u536b\u661f\u56fe\u52a8\u6001\u70b9\u4f4d\u97f3\u6548\u914d\u5408\u4f7f\u7528\u3002</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">16.OBS\u753b\u9762\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u52a8\u4f5c\u6267\u884c\u540c\u65f6\u63a7\u5236\u5f00\u5173OBS\u753b\u9762\u3002</span></p>\n"
+"<p style=\"-qt-paragraph-type:empty;"
+                        " margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bo"
+                        "ttom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-inde"
+                        "nt:0; text-indent:0px;\"><br /></p>\n"
+"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_4), QCoreApplication.translate("MainWindow", u"\u53c2\u6570\u8bbe\u7f6e", None))
     # retranslateUi
 
