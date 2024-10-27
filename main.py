@@ -7,6 +7,7 @@ import subprocess
 import sys
 import threading
 import time
+from http.client import responses
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from time import sleep
 
@@ -295,8 +296,7 @@ def scenes_change():  # 变换场景
 
 # 截取OBS图片
 def get_picture(scence_current):
-    # cl_requst.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
-    # time.sleep(1)
+    global lottery_term
     if not flg_start['obs']:
         return
     try:
@@ -305,7 +305,8 @@ def get_picture(scence_current):
         flg_start['obs'] = False
         return
     img = resp.image_data[22:]
-    str2image_file(img, 'E:/saidao/image/obs_%s.jpg' % int(time.time()))  # 保存图片
+    lottery_term[6] = 'E:/saidao/image/obs_%s.jpg' % lottery_term[0]
+    str2image_file(img, 'E:/saidao/image/obs_%s.jpg' % lottery_term[0])  # 保存图片
     form_data = {
         'CameraType': 'obs',
         'img': img,
@@ -315,7 +316,7 @@ def get_picture(scence_current):
         res = requests.post(url=recognition_addr, data=form_data, timeout=5)
         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
         r_img = r_list[0]
-        image_json = open('E:/saidao/image/obs_%s.jpg' % int(time.time()), 'wb')
+        image_json = open('E:/saidao/image/obs_%s_end.jpg' % lottery_term[0], 'wb')
         image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
         image_json.close()
         flg_start['ai_end'] = True
@@ -348,7 +349,7 @@ def get_rtsp(rtsp_url):
     if cap.isOpened():
         ret, frame = cap.read()
         if ret:
-            f = 'E:/saidao/image/rtsp_%s.jpg' % (int(time.time()))
+            f = 'E:/saidao/image/rtsp_%s.jpg' % lottery_term[0]
             cv2.imwrite(f, frame)
             success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
@@ -363,7 +364,7 @@ def get_rtsp(rtsp_url):
                     res = requests.post(url=recognition_addr, data=form_data, timeout=5)
                     r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
                     r_img = r_list[0]
-                    image_json = open('E:/saidao/image/rtsp_%s.jpg' % int(time.time()), 'wb')
+                    image_json = open('E:/saidao/image/rtsp_%s_end.jpg' % lottery_term[0], 'wb')
                     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
                     image_json.close()
                     flg_start['ai_end'] = True
@@ -532,6 +533,7 @@ def reset_ranking_array():
     if flg_start['obs']:
         try:
             res = requests.get(url="%s/reset" % obs_script_addr)
+            get_lottery_term()  # 获取新一期期号
             print(res)
         except:
             print('OBS脚本链接错误！')
@@ -763,7 +765,7 @@ class TcpResultThread(QThread):
                         datalist = {
                             'type': 'updata',
                             'data': {
-                                'qh': "9555059",
+                                'qh': str(lottery_term[0]),
                                 'rank': [{"mc": z_ranking_res[0], "time": z_ranking_time[0]},
                                          {"mc": z_ranking_res[1], "time": z_ranking_time[1]},
                                          {"mc": z_ranking_res[2], "time": z_ranking_time[2]},
@@ -1081,6 +1083,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
         return super().eventFilter(obj, event)
 
     def generateMenu(self, pos):
+        global plan_list
         tb_step = self.tableWidget_Step
 
         menu = QMenu()
@@ -1104,6 +1107,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
             if row_count != 0:
                 p = tb_step.currentRow()
                 for row in range(p, row_count - 1):
+                    plan_list[row] = copy.deepcopy(plan_list[row + 1])
                     print('%d' % row)
                     for col in range(0, tb_step.columnCount() - 1):
                         if col == 0:
@@ -1141,14 +1145,17 @@ class MyUi(QMainWindow, Ui_MainWindow):
                             item.setTextAlignment(Qt.AlignCenter)
                             tb_step.setItem(row, col, item)
                 tb_step.setRowCount(row_count - 1)
+                plan_list.pop()
         if action == item3:
             tb_step = self.tableWidget_Step
             row_count = tb_step.rowCount()
             col_count = tb_step.columnCount()
             tb_step.setRowCount(row_count + 1)
+            plan_list.append([])
             row = tb_step.currentRow()
             if row_count > 0:  # 下移表格
                 for r in range(row_count, row, -1):
+                    plan_list[r] = copy.deepcopy(plan_list[r - 1])
                     cb = QCheckBox()
                     cb.setStyleSheet('QCheckBox{margin:6px};')
                     tb_step.setCellWidget(r, 0, cb)
@@ -1436,6 +1443,7 @@ class ScreenShotThread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
+        global lottery_term
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -1469,7 +1477,10 @@ class ScreenShotThread(QThread):
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
                                                   True)  # 打开视频来源
                 time.sleep(3)
-                cl_request.stop_record()  # 关闭录像
+                video_name = cl_request.stop_record()  # 关闭录像
+                lottery_term[3] = 0  # 新一期比赛的状态（0.已结束）
+                lottery_term[7] = video_name  # 视频保存路径
+                lottery_term[4] = z__
             except:
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
@@ -1649,6 +1660,7 @@ class PlanCmdThread(QThread):
     def run(self) -> None:
         global action_area
         global ranking_time_start
+        global lottery_term
         axis_list = [1, 2, 4, 8, 16]
         while self.running:
             time.sleep(0.1)
@@ -1680,6 +1692,8 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_num][12][0])) - 1, 1)
                                 if plan_list[plan_num][12][0] == '2':  # 闸门机关打开即开始OBS的python脚本计时
                                     ranking_time_start = time.time()
+                                    lottery_term[1] = int(ranking_time_start)  # 新一期比赛的开始时间
+                                    lottery_term[3] = 1  # 新一期比赛的状态（1.进行中）
                                     if flg_start['obs']:
                                         try:
                                             cl_request.start_record()  # 开启录像
@@ -3258,6 +3272,17 @@ def result_test_init():
         tb_result.verticalHeaderItem(index).setTextAlignment(Qt.AlignCenter)
 
 
+def get_lottery_term():
+    global lottery_term
+    try:
+        url = 'http://127.0.0.1:8000/v2/forecast/A'
+        data = requests.get(url).json()
+    except:
+        print('分机链接错误！')
+        return
+    lottery_term[0] = data["term"]
+
+
 def result_data2table():
     global labels
     url = 'http://127.0.0.1:8000/v2/forecast/A'
@@ -3312,15 +3337,19 @@ def test_status_signal_accept(msg):
                 getattr(ui, 'status_%s' % flg).setStyleSheet('background:rgb(255, 0, 0)')
 
 
-def start_bat():
+def start_ai_end_bat():
     current_working_dir = os.getcwd()
     subprocess.Popen(
         ["%s\start_recognition.bat" % current_working_dir],
         shell=True)
     print("%s\start_recognition.bat" % current_working_dir)
-    # subprocess.Popen(
-    #     ["%s\start_nodejs.bat" % current_working_dir],
-    #     shell=True)
+
+
+def start_lottery_server_bat():
+    current_working_dir = os.getcwd()
+    subprocess.Popen(
+        ["%s\start_nodejs.bat" % current_working_dir],
+        shell=True)
 
 
 def test_ai_end():
@@ -3331,7 +3360,7 @@ def test_ai_end():
             flg_start['ai_end'] = True
             ui.status_ai_end.setStyleSheet('background:rgb(0,255,0)')
     except:
-        start_bat()
+        start_ai_end_bat()
         flg_start['ai_end'] = False
 
 
@@ -3390,6 +3419,8 @@ def query_sql():
 
 def my_test():
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
+    lottery_term = [0] * 9
+    print(lottery_term)
     # cl_request.start_record()
     # time.sleep(5)
     # print(record_data[2])
@@ -3624,7 +3655,7 @@ if __name__ == '__main__':
     ui.pushButton_CardCloseAll.clicked.connect(card_close_all)
     ui.pushButton_CardClose.clicked.connect(card_close_all)
 
-    ui.pushButton_ready.clicked.connect(start_bat)
+    ui.pushButton_ready.clicked.connect(start_ai_end_bat)
     ui.pushButton_start_game.clicked.connect(result_data2table)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
@@ -3881,6 +3912,8 @@ if __name__ == '__main__':
     "**************************参数设置_结束*****************************"
     "**************************直播大厅_开始*****************************"
     labels = []
+    lottery_term = [0] * 9  # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 图片, 录像, 复盘]
+    start_lottery_server_bat()  # 模拟开奖王服务器
     result_test_init()
     "**************************直播大厅_结束*****************************"
 
