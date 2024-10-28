@@ -232,9 +232,9 @@ def activate_browser():  # 程序开始，刷新浏览器
     if flg_start['obs']:
         try:
             print(obs_scene, item_id, False)
-            cl_request.set_scene_item_enabled(obs_scene, item_id, False)  # 打开视频来源
+            cl_request.set_scene_item_enabled(obs_scene, item_id, False)  # 关闭排位组件
             time.sleep(1)
-            cl_request.set_scene_item_enabled(obs_scene, item_id, True)  # 打开视频来源
+            cl_request.set_scene_item_enabled(obs_scene, item_id, True)  # 打开排位组件
         except:
             ui.textBrowser.append(fail("OBS 开关浏览器出错！"))
             flg_start['obs'] = False
@@ -306,7 +306,7 @@ def get_picture(scence_current):
         return
     img = resp.image_data[22:]
     lottery_term[6] = 'E:/saidao/image/obs_%s.jpg' % lottery_term[0]
-    str2image_file(img, 'E:/saidao/image/obs_%s.jpg' % lottery_term[0])  # 保存图片
+    str2image_file(img, lottery_term[6])  # 保存图片
     form_data = {
         'CameraType': 'obs',
         'img': img,
@@ -505,6 +505,10 @@ def reset_ranking_array():
     global z_ranking_time
     global balls_start
     # global previous_position
+    balls_start = 0
+    ui.lineEdit_balls_start.setText('0')
+    ui.lineEdit_ball_start.setText('0')
+    ui.lineEdit_ball_num.setText('0')
     if ui.checkBox_test.isChecked():
         return
     ranking_array = []  # 排名数组
@@ -512,9 +516,6 @@ def reset_ranking_array():
         ranking_array.append([])
         for j in range(0, len(init_array[i])):
             ranking_array[i].append(init_array[i][j])
-    balls_start = 0
-    ui.lineEdit_balls_start.setText('0')
-    ui.lineEdit_ball_start.setText('0')
     ball_sort = []  # 位置寄存器
     for i in range(0, max_area_count + 1):
         ball_sort.append([])
@@ -533,7 +534,6 @@ def reset_ranking_array():
     if flg_start['obs']:
         try:
             res = requests.get(url="%s/reset" % obs_script_addr)
-            get_lottery_term()  # 获取新一期期号
             print(res)
         except:
             print('OBS脚本链接错误！')
@@ -979,26 +979,30 @@ class MyUi(QMainWindow, Ui_MainWindow):
     def setupUi(self, MainWindow):
         super(MyUi, self).setupUi(MainWindow)
 
-        tb = self.tableWidget_Results
-        tb.horizontalHeader().resizeSection(0, 100)
-        tb.horizontalHeader().resizeSection(1, 120)
-        tb.horizontalHeader().resizeSection(2, 50)
-        tb.horizontalHeader().resizeSection(3, 50)
-        tb.horizontalHeader().resizeSection(4, 200)
-        tb.horizontalHeader().resizeSection(5, 200)
-        tb.horizontalHeader().resizeSection(6, 100)
-        tb.horizontalHeader().resizeSection(7, 100)
+        tb_result = self.tableWidget_Results
+        tb_result.horizontalHeader().resizeSection(0, 100)
+        tb_result.horizontalHeader().resizeSection(1, 150)
+        tb_result.horizontalHeader().resizeSection(2, 50)
+        tb_result.horizontalHeader().resizeSection(3, 50)
+        tb_result.horizontalHeader().resizeSection(4, 200)
+        tb_result.horizontalHeader().resizeSection(5, 200)
+        tb_result.horizontalHeader().resizeSection(6, 200)
+        tb_result.horizontalHeader().resizeSection(7, 200)
+        tb_result.horizontalHeader().resizeSection(8, 150)
 
-        tb.setColumnHidden(0, True)
-        tb.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
-        tb.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_result.setColumnHidden(0, True)
+        tb_result.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_result.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+
+        tb_result.setContextMenuPolicy(Qt.CustomContextMenu)
+        tb_result.customContextMenuRequested.connect(self.resultMenu)
 
         # 允许用户调整行表头宽度
-        tb.setCornerButtonEnabled(True)
-        tb.verticalHeader().setFixedWidth(100)
+        tb_result.setCornerButtonEnabled(True)
+        tb_result.verticalHeader().setFixedWidth(100)
 
         # 获取 CornerButton
-        corner_button = tb.findChild(QAbstractButton)
+        corner_button = tb_result.findChild(QAbstractButton)
         if corner_button:
             # 安装事件过滤器，自定义绘制文字
             corner_button.installEventFilter(self)  # 事件过滤器用于处理重绘
@@ -1081,6 +1085,34 @@ class MyUi(QMainWindow, Ui_MainWindow):
             return True  # 阻止默认绘制事件
 
         return super().eventFilter(obj, event)
+
+    def resultMenu(self, pos):
+        global plan_list
+        tb_result = self.tableWidget_Results
+        row_num = tb_result.currentRow()
+
+        menu = QMenu()
+        item0 = menu.addAction("查看图片")
+        item1 = menu.addAction("观看录像")
+        item2 = menu.addAction("发送赛果")
+        item3 = menu.addAction("取消当局")
+        item4 = menu.addAction("刷新")
+
+        screenPos = tb_result.mapToGlobal(pos)
+
+        action = menu.exec(screenPos)
+        if action == item0:
+            exe_path = tb_result.item(row_num, 6).text()
+            os.startfile(exe_path)
+        if action == item1:
+            exe_path = tb_result.item(row_num, 7).text()
+            os.startfile(exe_path)
+        if action == item2:
+            pass
+        if action == item3:
+            pass
+        if action == item4:
+            pass
 
     def generateMenu(self, pos):
         global plan_list
@@ -1234,7 +1266,10 @@ class ReStartThread(QThread):
                 countdown = int(countdown)
             else:
                 countdown = 300
-            for t in range(countdown, 0, -1):
+            lottery = get_lottery_term(countdown)
+            if lottery:
+                self._signal.emit(lottery)
+            for t in range(countdown, -1, -1):
                 if not ui.checkBox_restart.isChecked():
                     self.run_flg = False
                     break
@@ -1243,16 +1278,21 @@ class ReStartThread(QThread):
             if ui.checkBox_restart.isChecked():
                 reset_ranking_array()  # 初始化排名，位置变量
                 PlanCmd_Thread.run_flg = True
-            # print("循环启动！")
+            print("循环启动！")
             self.run_flg = False
 
 
 def time_signal_accept(msg):
+    if isinstance(msg, bool):
+        lottery_data2table()
     # print(msg)
-    if int(msg) == 1:
-        plan_refresh()
-        ui.lineEdit_ball_num.setText('0')
-    ui.lineEdit_time.setText(str(msg))
+    else:
+        if int(msg) == 1:
+            plan_refresh()
+            ui.lineEdit_ball_num.setText('0')
+        ui.lineEdit_time.setText(str(msg))
+        tb_result = ui.tableWidget_Results
+        tb_result.item(0, 2).setText(str(msg))
 
 
 '''
@@ -1478,12 +1518,24 @@ class ScreenShotThread(QThread):
                                                   True)  # 打开视频来源
                 time.sleep(3)
                 video_name = cl_request.stop_record()  # 关闭录像
-                lottery_term[3] = 0  # 新一期比赛的状态（0.已结束）
-                lottery_term[7] = video_name  # 视频保存路径
-                lottery_term[4] = z__
+                lottery_term[7] = video_name.output_path  # 视频保存路径
+                lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+                lottery_term[4] = str(z_ranking_res)  # 排名
+                timestamp = time.time()
+                local_time = time.localtime(timestamp)
+                end_time = time.strftime("%Y-%m-%d %H:%M:%S", local_time)
+                lottery_term[8] = end_time
+                self._signal.emit('save_video')
+                lottery2database()  # 保存数据库
             except:
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
+
+            if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
+                ui.checkBox_restart.setChecked(False)
+            if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
+                ui.checkBox_restart.setChecked(False)
+                ui.checkBox_black_screen.setChecked(True)
             if ui.checkBox_restart.isChecked():
                 ReStart_Thread.run_flg = True  # 1分钟后重启动作
                 print('1分钟后重启动作!')
@@ -1518,6 +1570,13 @@ def ScreenShot_signal_accept(msg):
                 if m in color_ch.keys():
                     color_list = '%s %s' % (color_list, color_ch[m])
             ui.textBrowser_background_data.append(color_list)
+        elif msg == 'save_video':
+            tb_result = ui.tableWidget_Results
+            tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（0.已结束）
+            tb_result.item(0, 4).setText(lottery_term[4])  # 自动赛果
+            tb_result.item(0, 6).setText(lottery_term[6])  # 照片保存路径
+            tb_result.item(0, 7).setText(lottery_term[7])  # 视频保存路径
+            tb_result.item(0, 8).setText(lottery_term[8])  # 存档时间
         else:
             ui.textBrowser.append(str(msg))
     except:
@@ -1662,6 +1721,7 @@ class PlanCmdThread(QThread):
         global ranking_time_start
         global lottery_term
         axis_list = [1, 2, 4, 8, 16]
+        max_delay_time = 0
         while self.running:
             time.sleep(0.1)
             if not self.run_flg:
@@ -1674,52 +1734,52 @@ class PlanCmdThread(QThread):
                 self._signal.emit(succeed("运动流程：开始！"))
                 self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
                 cb_index = ui.comboBox_plan.currentIndex()
-                for plan_num in range(0, len(plan_list)):
-                    print('第 %s 个动作，识别在第 %s 区 %s 圈！' % (plan_num + 1, action_area[0], action_area[1]))
-                    if (not self.run_flg) or (not flg_start['card']):
+                for plan_index in range(0, len(plan_list)):
+                    print('第 %s 个动作，识别在第 %s 区 %s 圈！' % (plan_index + 1, action_area[0], action_area[1]))
+                    if (not self.run_flg) or (not flg_start['card']):  # 强制停止线程
                         print('动作未开始！')
                         break
-                    if (plan_list[plan_num][0] == '1' and  # 是否勾选,且在圈数范围内
-                            ((action_area[1] < int(plan_list[plan_num][1][0]) or  # 运行圈数在设定圈数范围内
-                              (int(plan_list[plan_num][1][0]) == 0)))):  # 或者设定圈数的值为 0 时，可以忽略圈数执行
-                        self._signal.emit(plan_num)  # 控制列表跟踪变色的信号
+                    if (plan_list[plan_index][0] == '1' and  # 是否勾选,且在圈数范围内
+                            ((action_area[1] < int(plan_list[plan_index][1][0]) or  # 运行圈数在设定圈数范围内
+                              (int(plan_list[plan_index][1][0]) == 0)))):  # 或者设定圈数的值为 0 时，可以忽略圈数执行
+                        self._signal.emit(plan_index)  # 控制列表跟踪变色的信号
+
                         try:
                             # print("开启机关")
-                            if int(plan_list[plan_num][12][0]) != 0:
-                                if '-' in plan_list[plan_num][12][0]:  # 带负号即关闭机关
-                                    sc.GASetExtDoBit(abs(int(plan_list[plan_num][12][0])) - 1, 0)
+                            if int(plan_list[plan_index][12][0]) != 0:
+                                if '-' in plan_list[plan_index][12][0]:  # 带负号即关闭机关
+                                    sc.GASetExtDoBit(abs(int(plan_list[plan_index][12][0])) - 1, 0)
                                 else:  # 不带负号即开启机关
-                                    sc.GASetExtDoBit(abs(int(plan_list[plan_num][12][0])) - 1, 1)
-                                if plan_list[plan_num][12][0] == '2':  # 闸门机关打开即开始OBS的python脚本计时
+                                    sc.GASetExtDoBit(abs(int(plan_list[plan_index][12][0])) - 1, 1)
+                                if plan_list[plan_index][12][0] == '2':  # 闸门机关打开
                                     ranking_time_start = time.time()
-                                    lottery_term[1] = int(ranking_time_start)  # 新一期比赛的开始时间
-                                    lottery_term[3] = 1  # 新一期比赛的状态（1.进行中）
+                                    lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
+                                    self._signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     if flg_start['obs']:
                                         try:
-                                            cl_request.start_record()  # 开启录像
-                                            res = requests.get(url="%s/start" % obs_script_addr)
-                                            print('比赛开始：', res, ranking_time_start)
+                                            cl_request.start_record()  # 开启OBS录像
+                                            res = requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
                                         except:
                                             print('OBS脚本开始错误！')
-                            if int(plan_list[plan_num][15][0]) > 0:  # 播放音效
+                            if int(plan_list[plan_index][15][0]) > 0:  # 播放音效
                                 tb_audio = ui.tableWidget_Audio
                                 audio_row_count = tb_audio.rowCount()
                                 # print('~~~~~~~~~~~~~~~~~~~~音效', plan_list[plan_num][15])
-                                if int(plan_list[plan_num][15][0]) - 1 < audio_row_count:
-                                    sound_file = tb_audio.item(int(plan_list[plan_num][15][0]) - 1, 0).text()
-                                    sound_times = int(tb_audio.item(int(plan_list[plan_num][15][0]) - 1, 1).text())
+                                if int(plan_list[plan_index][15][0]) - 1 < audio_row_count:
+                                    sound_file = tb_audio.item(int(plan_list[plan_index][15][0]) - 1, 0).text()
+                                    sound_times = int(tb_audio.item(int(plan_list[plan_index][15][0]) - 1, 1).text())
                                     sound_delay = int(
-                                        tb_audio.item(int(plan_list[plan_num][15][0]) - 1, 2).text()) * 1000
+                                        tb_audio.item(int(plan_list[plan_index][15][0]) - 1, 2).text()) * 1000
                                     print(sound_file, sound_times, sound_delay)
                                     # 加载音效
                                     sound_effect = pygame.mixer.Sound(sound_file)
                                     sound_effect.play(loops=sound_times, maxtime=sound_delay)  # 播放音效
                             # 轴运动
                             axis_bit = 0
-                            delay_time = 0
+                            max_delay_time = 0
                             delay_list = []
-                            for index, speed_item in enumerate(plan_list[plan_num][7]):
-                                sc.card_move(index + 1, int(plan_list[plan_num][index + 2][0]),
+                            for index, speed_item in enumerate(plan_list[plan_index][7]):
+                                sc.card_move(index + 1, int(plan_list[plan_index][index + 2][0]),
                                              vel=int(speed_item[0]),
                                              dAcc=float(speed_item[1]),
                                              dDec=float(speed_item[2]),
@@ -1728,8 +1788,8 @@ class PlanCmdThread(QThread):
                                     axis_bit += axis_list[index]
                                 else:
                                     delay_list.append([axis_list[index], float(format(float(speed_item[3]), ".2f"))])
-                                if delay_time < float(format(float(speed_item[3]), ".2f")):
-                                    delay_time = float(format(float(speed_item[3]), ".2f"))
+                                if max_delay_time < float(format(float(speed_item[3]), ".2f")):
+                                    max_delay_time = float(format(float(speed_item[3]), ".2f"))
                             if axis_bit != 0:
                                 res = sc.card_update(axis_bit)
                                 if res != 0:
@@ -1737,7 +1797,7 @@ class PlanCmdThread(QThread):
                                     flg_start['card'] = False
                                     self._signal.emit(fail("运动板通信出错！"))
                             old_time = 0
-                            for t in range(0, int(delay_time * 100) + 1):  # 延迟轴
+                            for t in range(0, int(max_delay_time * 100) + 1):  # 延迟轴
                                 for index in range(len(delay_list)):
                                     if t >= delay_list[index][1] * 100 > old_time:
                                         sc.card_update(delay_list[index][0])
@@ -1749,7 +1809,7 @@ class PlanCmdThread(QThread):
 
                         if ui.checkBox_test.isChecked():
                             time.sleep(2)  # 测试模式停两秒切换下一个动作
-                        elif int(plan_list[plan_num][14][0]) <= 0:
+                        elif int(plan_list[plan_index][14][0]) <= 0:
                             pass  # 负数则直接下一个动作
                         else:
                             t_over = 0
@@ -1758,7 +1818,7 @@ class PlanCmdThread(QThread):
                                     print('动作等待中！')
                                     break
                                 # 判断镜头点位在运行区域内则进入下一个动作循环
-                                if (int(camera_points[int(plan_list[plan_num][14][0])][cb_index + 1][0][0])
+                                if (int(camera_points[int(plan_list[plan_index][14][0])][cb_index + 1][0][0])
                                         in [action_area[0], action_area[0] - 1, action_area[0] + 1]):
                                     break
                                 # if int(plan_list[plan_num][13]) in [action_area[0], action_area[0] - 1, action_area[0] + 1]:
@@ -1774,22 +1834,23 @@ class PlanCmdThread(QThread):
                             self.cmd_next = False
                             continue
                         if self.run_flg:
-                            if int(plan_list[plan_num][11][0]) != 0:  # 摄像头延时，也可以用作动作延时
-                                if int(plan_list[plan_num][10][0]) != 0:  # 摄像头缩放
-                                    PlanCam_Thread.camitem = [int(plan_list[plan_num][10][0]),
-                                                              int(plan_list[plan_num][11][0])]
+                            delay_time = int(plan_list[plan_index][11][0]) - max_delay_time
+                            if delay_time > 0:  # 摄像头延时，也可以用作动作延时
+                                if int(plan_list[plan_index][10][0]) != 0:  # 摄像头缩放
+                                    PlanCam_Thread.camitem = [int(plan_list[plan_index][10][0]),
+                                                              int(plan_list[plan_index][11][0])]
                                     PlanCam_Thread.run_flg = True  # 摄像头线程
-                                time.sleep(int(plan_list[plan_num][11][0]))  # 延时，等待镜头缩放完成
+                                time.sleep(delay_time)  # 延时，等待镜头缩放完成
 
-                            plan_col_count = len(plan_list[plan_num])  # 固定最后一项为OBS场景切换
-                            if '_' in plan_list[plan_num][plan_col_count - 1]:
-                                PlanObs_Thread.plan_obs = plan_list[plan_num][plan_col_count - 1]
+                            plan_col_count = len(plan_list[plan_index])  # 固定最后一项为OBS场景切换
+                            if '_' in plan_list[plan_index][plan_col_count - 1]:
+                                PlanObs_Thread.plan_obs = plan_list[plan_index][plan_col_count - 1]
                                 PlanObs_Thread.run_flg = True  # 切换场景线程
 
                             if (not ui.checkBox_test.isChecked()
-                                    and (len(plan_list) - 6 <= plan_num)
+                                    and (len(plan_list) - 6 <= plan_index)
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
-                                if len(plan_list) - 3 <= plan_num:  # 到达最后两个动作时，触发球计数器启动
+                                if len(plan_list) - 3 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
                                     PlanBallNum_Thread.run_flg = True  # 终点计数器线程
                                     tcp_ranking_thread.sleep_time = 0.1  # 终点前端排名时间发送设置
                                 if not ui.checkBox_test.isChecked():  # 非测试模式才关闭
@@ -1798,7 +1859,7 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(1, 0)  # 关闭闸门
                                     sc.GASetExtDoBit(0, 0)  # 关闭弹射
                             if (not ui.checkBox_test.isChecked()
-                                    and plan_num == len(plan_list) - 1):  # 每执行完最后一个动作，action_area[1]圈数自动增加一圈
+                                    and plan_index == len(plan_list) - 1):  # 每执行完最后一个动作，action_area[1]圈数自动增加一圈
                                 action_area[2] = 1  # 写入标志 1 为独占写入
                                 action_area[0] = 0
                                 action_area[1] += 1
@@ -1823,11 +1884,11 @@ class PlanCmdThread(QThread):
                 self.run_flg = False
 
 
-def signal_accept(message):
+def signal_accept(msg):
     global p_now
     # print(message)
     try:
-        if isinstance(message, int):
+        if isinstance(msg, int):
             # print('动作位置 %s %s' % (message, p_now))
             if ui.checkBox_follow.isChecked():
                 tb_step = ui.tableWidget_Step
@@ -1836,11 +1897,14 @@ def signal_accept(message):
                 for col in range(1, col_num - 2):
                     if col != 7:
                         tb_step.item(p_now, col).setBackground(QBrush(QColor(255, 255, 255)))
-                        tb_step.item(message, col).setBackground(QBrush(QColor(255, 0, 255)))
-                p_now = message
+                        tb_step.item(msg, col).setBackground(QBrush(QColor(255, 0, 255)))
+                p_now = msg
+        elif msg == '进行中':
+            tb_result = ui.tableWidget_Results
+            tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
         else:
-            ui.textBrowser.append(str(message))
-            if str(message) == succeed("运动流程：完成！"):
+            ui.textBrowser.append(str(msg))
+            if str(msg) == succeed("运动流程：完成！"):
                 p_now = 0
     except:
         print("运行数据处理出错！")
@@ -2346,10 +2410,18 @@ def sel_all():
 
 def cmd_run():
     global p_now
-    save_plan_yaml()
     p_now = 0
+    plan_refresh()
     reset_ranking_array()
     PlanCmd_Thread.run_flg = True
+
+
+def cmd_loop():
+    global p_now
+    p_now = 0
+    ui.checkBox_restart.setChecked(True)
+    ui.radioButton_start_game.setChecked(True)
+    ReStart_Thread.run_flg = True
 
 
 # 进入下一步动作
@@ -3255,51 +3327,100 @@ class CameraLabel(QLabel):
 "****************************************直播大厅_开始****************************************************"
 
 
-def result_test_init():
-    global labels
-    tb_result = ui.tableWidget_Results
-    for datas_ in datas:
-        row_count = tb_result.rowCount()
-        tb_result.setRowCount(row_count + 1)
-        labels.append(str(datas_["term"]))
-        for index, key in enumerate(datas_):
-            if index > 0:
-                item = QTableWidgetItem(str(datas_[key]))
-                item.setTextAlignment(Qt.AlignCenter)
-                tb_result.setItem(row_count, index - 1, item)
-    tb_result.setVerticalHeaderLabels(labels)
-    for index in range(len(labels)):
-        tb_result.verticalHeaderItem(index).setTextAlignment(Qt.AlignCenter)
-
-
-def get_lottery_term():
+def lottery_init():
     global lottery_term
     try:
+        conn = create_connection("127.0.0.1", "root", "root", "lottery")
+        if conn:
+            timestamp = time.time()
+            local_time = time.localtime(timestamp)
+            start_time = time.strftime("%Y-%m-%d 00:00:00", local_time)
+            end_time = time.strftime("%Y-%m-%d 23:59:59", local_time)
+
+            select_query = "SELECT * FROM lottery WHERE date BETWEEN %s AND %s"
+            res = fetch_query(conn, select_query, [start_time, end_time])
+            # print("Query Results:", type(res), res)
+            conn.close()
+            # for row in range(len(res) - 1, -1, -1):
+            for row in range(len(res)):
+                for col in range(len(res[row])):
+                    lottery_term[col] = res[row][col]
+                # print(lottery_term)
+                lottery_data2table()
+    except RuntimeError as e:
+        print(f"Runtime error occurred: {e}")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+
+
+def lottery2database():  # 保存数据库
+    global lottery_term
+    try:
+        conn = create_connection("127.0.0.1", "root", "root", "lottery")
+        if conn:
+            insert_query = ("INSERT INTO lottery (term, start_time, count, status, auto_result,"
+                            " confirmation_result, picture_path, video_path, date) "
+                            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)")
+            execute_query(conn, insert_query, [lottery_term[0], lottery_term[1]
+                , lottery_term[2], lottery_term[3], lottery_term[4]
+                , lottery_term[5], lottery_term[6], lottery_term[7]
+                , lottery_term[8]])
+            conn.close()
+    except RuntimeError as e:
+        print(f"Runtime error occurred: {e}")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+
+
+def get_lottery_term(countdown):  # 取得期号
+    global lottery_term
+    global flg_start
+    try:
         url = 'http://127.0.0.1:8000/v2/forecast/A'
-        data = requests.get(url).json()
+        data = requests.get(url, timeout=3).json()
+        print(data)
+        lottery_term[0] = data["term"]
+        timestamp = time.time() + countdown
+        local_time = time.localtime(timestamp)
+        start_time = time.strftime("%Y-%m-%d %H:%M:%S", local_time)
+        lottery_term[1] = start_time
+        lottery_term[2] = '0'
+        lottery_term[3] = '未开始'  # 新一期比赛的状态（2.未开始）
+        lottery_term[4] = ''
+        lottery_term[5] = ''
+        lottery_term[6] = ''
+        lottery_term[7] = ''
+        lottery_term[8] = ''
+        flg_start['server'] = True
+        return True
     except:
         print('分机链接错误！')
-        return
-    lottery_term[0] = data["term"]
+        flg_start['server'] = False
+        return False
 
 
-def result_data2table():
+def lottery_data2table():  # 赛事入表
     global labels
-    url = 'http://127.0.0.1:8000/v2/forecast/A'
-    datas = requests.get(url).json()
-    print(datas)
+    global lottery_term
     tb_result = ui.tableWidget_Results
     row_count = tb_result.rowCount()
+    col_count = tb_result.columnCount()
     tb_result.setRowCount(row_count + 1)
 
-    labels.append(str(datas["term"]))
+    labels.insert(0, str(lottery_term[0]))
     tb_result.setVerticalHeaderLabels(labels)
     tb_result.verticalHeaderItem(len(labels) - 1).setTextAlignment(Qt.AlignCenter)
-    for index, key in enumerate(datas):
-        if index > 0:
-            item = QTableWidgetItem(str(datas[key]))
-            item.setTextAlignment(Qt.AlignCenter)
-            tb_result.setItem(row_count, index - 1, item)
+
+    for col in range(0, col_count):
+        item = QTableWidgetItem('')
+        item.setTextAlignment(Qt.AlignCenter)
+        tb_result.setItem(row_count, col, item)
+    if row_count > 0:  # 下移表格
+        for row in range(row_count, 0, -1):
+            for col in range(0, col_count):
+                tb_result.item(row, col).setText(tb_result.item(row - 1, col).text())
+    for index, value in enumerate(lottery_term):
+        tb_result.item(0, index).setText(str(value))
 
 
 class TestStatusThread(QThread):
@@ -3320,10 +3441,19 @@ class TestStatusThread(QThread):
         while self.running:
             if not self.run_flg:
                 continue
-            if not flg_start['ai_end']:
+            if not flg_start['ai_end']:  # 测试结果识别服务
                 test_ai_end()
             else:
                 time.sleep(3)
+            if not flg_start['server']:  # 测试期号服务器
+                try:
+                    url = 'http://127.0.0.1:8000/v2/forecast/A'
+                    data = requests.get(url, timeout=3).json()
+                    print(data)
+                    flg_start['server'] = True
+                except:
+                    flg_start['server'] = False
+                    # start_lottery_server_bat()
             self._signal.emit('标志')
 
 
@@ -3362,6 +3492,62 @@ def test_ai_end():
     except:
         start_ai_end_bat()
         flg_start['ai_end'] = False
+
+
+def black_screen():  # OBS黑屏
+    if ui.checkBox_black_screen.isChecked() and flg_start['obs']:
+        try:
+            cl_request.set_current_program_scene('黑屏')
+        except:
+            print('obs 黑屏 错误！')
+            ui.textBrowser_msg.append(fail('obs 黑屏 错误！'))
+            flg_start['obs'] = False
+    else:
+        try:
+            cl_request.set_current_program_scene(obs_data['obs_scene'])
+        except:
+            print('obs %s 错误！' % obs_data['obs_scene'])
+            ui.textBrowser_msg.append(fail('obs %s 错误！' % obs_data['obs_scene']))
+            flg_start['obs'] = False
+
+
+def organ_shoot():  # 弹射开关
+    try:
+        index = int(ui.lineEdit_shoot.text()) - 1
+        if ui.checkBox_shoot.isChecked() and flg_start['card']:
+            sc.GASetExtDoBit(index, 1)
+        else:
+            sc.GASetExtDoBit(index, 0)
+    except:
+        print('运动卡电压输出错误！')
+        ui.textBrowser_msg.append(fail('运动卡电压输出错误！'))
+        flg_start['card'] = False
+
+
+def organ_start():  # 开启开关
+    try:
+        index = int(ui.lineEdit_start.text()) - 1
+        if ui.checkBox_start.isChecked() and flg_start['card']:
+            sc.GASetExtDoBit(index, 1)
+        else:
+            sc.GASetExtDoBit(index, 0)
+    except:
+        print('运动卡电压输出错误！')
+        ui.textBrowser_msg.append(fail('运动卡电压输出错误！'))
+        flg_start['card'] = False
+
+
+def organ_end():  # 结束开关
+    try:
+        index = int(ui.lineEdit_end.text()) - 1
+        if ui.checkBox_end.isChecked() and flg_start['card']:
+            sc.GASetExtDoBit(index, 1)
+        else:
+            sc.GASetExtDoBit(index, 0)
+    except:
+        print('运动卡电压输出错误！')
+        ui.textBrowser_msg.append(fail('运动卡电压输出错误！'))
+        flg_start['card'] = False
 
 
 "****************************************直播大厅_结束****************************************************"
@@ -3419,8 +3605,7 @@ def query_sql():
 
 def my_test():
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    lottery_term = [0] * 9
-    print(lottery_term)
+    lottery2database()
     # cl_request.start_record()
     # time.sleep(5)
     # print(record_data[2])
@@ -3582,7 +3767,7 @@ if __name__ == '__main__':
     plan_names = []  # 当前方案名称
     plan_all = {}  # 所有方案资料
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
-    p_now = 0  # 保存方案运行位置
+    p_now = 0  # 保存方案在列表中运行位置
     flg_key_run = True  # 键盘控制标志
     flg_start = {'card': False, 's485': False, 'obs': False, 'ai': False, 'ai_end': False, 'server': False}  # 各硬件启动标志
 
@@ -3656,10 +3841,15 @@ if __name__ == '__main__':
     ui.pushButton_CardClose.clicked.connect(card_close_all)
 
     ui.pushButton_ready.clicked.connect(start_ai_end_bat)
-    ui.pushButton_start_game.clicked.connect(result_data2table)
+    ui.pushButton_start_game.clicked.connect(cmd_loop)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
+
+    ui.checkBox_shoot.checkStateChanged.connect(organ_shoot)
+    ui.checkBox_start.checkStateChanged.connect(organ_start)
+    ui.checkBox_end.checkStateChanged.connect(organ_end)
+
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
     ui.tableWidget_Step.itemChanged.connect(table_change)
 
@@ -3912,9 +4102,15 @@ if __name__ == '__main__':
     "**************************参数设置_结束*****************************"
     "**************************直播大厅_开始*****************************"
     labels = []
-    lottery_term = [0] * 9  # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 图片, 录像, 复盘]
-    start_lottery_server_bat()  # 模拟开奖王服务器
-    result_test_init()
+    lottery_term = ['0'] * 9  # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 图片, 录像, 复盘]
+    # start_lottery_server_bat()  # 模拟开奖王服务器
+    lottery_init()
+
+    ui.radioButton_start_game.clicked.connect(lambda: ui.checkBox_restart.setChecked(True))
+    ui.radioButton_stop_game.clicked.connect(lambda: ui.checkBox_restart.setChecked(False))
+    ui.radioButton_test_game.clicked.connect(lambda: ui.checkBox_test.setChecked(True))
+    ui.checkBox_black_screen.checkStateChanged.connect(black_screen)
+
     "**************************直播大厅_结束*****************************"
 
     sys.exit(app.exec())
