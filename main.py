@@ -146,6 +146,7 @@ class ObsThread(QThread):
 def obs_signal_accept(msg):
     print(msg)
     ui.textBrowser.append(msg)
+    ui.textBrowser_msg.append(msg)
     if '成功' in msg:
         get_scenes_list()  # 获取所有场景
         get_source_list(ui.comboBox_Scenes.currentText())
@@ -228,13 +229,18 @@ def source_enable():  # 开关来源
 
 def activate_browser():  # 程序开始，刷新浏览器
     obs_scene = obs_data['obs_scene']
-    item_id = obs_data['source_ranking']
+    item_ranking = obs_data['source_ranking']
+    item_settlement = obs_data['source_settlement']
     if flg_start['obs']:
         try:
-            print(obs_scene, item_id, False)
-            cl_request.set_scene_item_enabled(obs_scene, item_id, False)  # 关闭排位组件
+            print(obs_scene, item_ranking, False)
+            cl_request.set_scene_item_enabled(obs_scene, item_ranking, False)  # 关闭排位组件
+            time.sleep(0.5)
+            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
             time.sleep(1)
-            cl_request.set_scene_item_enabled(obs_scene, item_id, True)  # 打开排位组件
+            cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
+            time.sleep(0.5)
+            cl_request.set_scene_item_enabled(obs_scene, item_settlement, True)  # 打开结算页
         except:
             ui.textBrowser.append(fail("OBS 开关浏览器出错！"))
             flg_start['obs'] = False
@@ -747,6 +753,7 @@ class TcpResultThread(QThread):
     def __init__(self):
         super(TcpResultThread, self).__init__()
         self.running = True
+        self.run_flg = False
 
     def stop(self):
         self.run_flg = False
@@ -759,7 +766,7 @@ class TcpResultThread(QThread):
             try:
                 con, addr = tcp_result_socket.accept()
                 print("Accepted. {0}, {1}".format(con, str(addr)))
-                if con:
+                if con and self.run_flg:
                     self._signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
                     with WebsocketServer(con) as ws:
                         datalist = {
@@ -777,6 +784,7 @@ class TcpResultThread(QThread):
                                          {"mc": z_ranking_res[8], "time": z_ranking_time[8]},
                                          {"mc": z_ranking_res[9], "time": z_ranking_time[9]}]}}
                         ws.send(json.dumps(datalist))
+                    self.run_flg = False
             except Exception as e:
                 # print(e)
                 self._signal.emit("pingpong 错误：%s" % e)
@@ -810,7 +818,7 @@ class UdpThread(QThread):
             try:
                 # 3. 等待接收对方发送的数据
                 recv_data = udp_socket.recvfrom(10240)  # 1024表示本次接收的最大字节数
-                if recv_data[0] is None:
+                if len(recv_data) < 1:
                     print('UDP无数据！', recv_data[0])
                     continue
                 if self.run_flg:
@@ -819,12 +827,13 @@ class UdpThread(QThread):
                         print('UDP_res无数据！', recv_data[0])
                         continue
                     data_res = eval(res)  # str转换list
+                    if len(recv_data) < 2:
+                        continue
                     self._signal.emit(data_res)
                     if str(data_res[0]).isdigit():
                         time_interval = int(data_res[0]) - udp_time_old
                         self._signal.emit(time_interval)
                         udp_time_old = int(data_res[0])
-
                     array_data = []
                     for i_ in range(1, len(data_res)):  # data_res[0] 是时间戳差值 ms
                         array_data.append(copy.deepcopy(data_res[i_]))
@@ -1135,106 +1144,111 @@ class MyUi(QMainWindow, Ui_MainWindow):
             # del_host()
             row_count = tb_step.rowCount()
             col_count = tb_step.columnCount()
+            row_num = tb_step.currentRow()
             print(row_count)
             if row_count != 0:
-                p = tb_step.currentRow()
-                for row in range(p, row_count - 1):
-                    plan_list[row] = copy.deepcopy(plan_list[row + 1])
-                    print('%d' % row)
+                for row_num in range(row_num, row_count - 1):
+                    plan_list[row_num] = copy.deepcopy(plan_list[row_num + 1])
+                    print('%d' % row_num)
                     for col in range(0, tb_step.columnCount() - 1):
                         if col == 0:
                             cb = QCheckBox()
                             cb.setStyleSheet('QCheckBox{margin:6px};')
-                            cb.setChecked(tb_step.cellWidget(row + 1, col).isChecked())
-                            tb_step.setCellWidget(row, col, cb)
+                            cb.setChecked(tb_step.cellWidget(row_num + 1, col).isChecked())
+                            tb_step.setCellWidget(row_num, col, cb)
                         elif col == col_count - 2:
-                            cell_widget = tb_step.cellWidget(row + 1, col)
+                            cell_widget = tb_step.cellWidget(row_num + 1, col)
                             if cell_widget:
-                                if tb_step.item(row, col):
-                                    tb_step.item(row, col).setText('')
+                                if tb_step.item(row_num, col):
+                                    tb_step.item(row_num, col).setText('')
                                 if isinstance(cell_widget, QCheckBox):
                                     cb = QCheckBox()
                                     cb.setStyleSheet('QCheckBox{margin:6px};')
-                                    cb.setText(tb_step.cellWidget(row + 1, col).text())
-                                    cb.setChecked(tb_step.cellWidget(row + 1, col).isChecked())
-                                    tb_step.setCellWidget(row, col, cb)
+                                    cb.setText(tb_step.cellWidget(row_num + 1, col).text())
+                                    cb.setChecked(tb_step.cellWidget(row_num + 1, col).isChecked())
+                                    tb_step.setCellWidget(row_num, col, cb)
                                 elif isinstance(cell_widget, QRadioButton):
                                     rb = QRadioButton()
                                     rb.setStyleSheet('QRadioButton{margin:6px};')
-                                    rb.setText(tb_step.cellWidget(row + 1, col).text())
-                                    rb.setChecked(tb_step.cellWidget(row + 1, col).isChecked())
-                                    tb_step.setCellWidget(row, col, rb)
+                                    rb.setText(tb_step.cellWidget(row_num + 1, col).text())
+                                    rb.setChecked(tb_step.cellWidget(row_num + 1, col).isChecked())
+                                    tb_step.setCellWidget(row_num, col, rb)
                             else:
-                                if tb_step.cellWidget(row, col):
-                                    tb_step.removeCellWidget(row, col)
-                                    item = QTableWidgetItem(tb_step.item(row + 1, col).text())
+                                if tb_step.cellWidget(row_num, col):
+                                    tb_step.removeCellWidget(row_num, col)
+                                    item = QTableWidgetItem(tb_step.item(row_num + 1, col).text())
                                     item.setTextAlignment(Qt.AlignCenter)
-                                    tb_step.setItem(row, col, item)
+                                    tb_step.setItem(row_num, col, item)
                         elif col == 7:
                             pass
                         else:
-                            item = QTableWidgetItem(tb_step.item(row + 1, col).text())
+                            item = QTableWidgetItem(tb_step.item(row_num + 1, col).text())
                             item.setTextAlignment(Qt.AlignCenter)
-                            tb_step.setItem(row, col, item)
+                            tb_step.setItem(row_num, col, item)
                 tb_step.setRowCount(row_count - 1)
-                plan_list.pop()
+                plan_list.pop(row_num)
         if action == item3:
             tb_step = self.tableWidget_Step
             row_count = tb_step.rowCount()
             col_count = tb_step.columnCount()
             tb_step.setRowCount(row_count + 1)
             plan_list.append([])
-            row = tb_step.currentRow()
+            row_num = tb_step.currentRow()
             if row_count > 0:  # 下移表格
-                for r in range(row_count, row, -1):
-                    plan_list[r] = copy.deepcopy(plan_list[r - 1])
+                for row in range(row_count, row_num, -1):
+                    plan_list[row] = copy.deepcopy(plan_list[row - 1])
                     cb = QCheckBox()
                     cb.setStyleSheet('QCheckBox{margin:6px};')
-                    tb_step.setCellWidget(r, 0, cb)
-                    tb_step.cellWidget(r, 0).setChecked(tb_step.cellWidget(r - 1, 0).isChecked())
+                    tb_step.setCellWidget(row, 0, cb)
+                    tb_step.cellWidget(row, 0).setChecked(tb_step.cellWidget(row - 1, 0).isChecked())
 
                     for col in range(1, tb_step.columnCount() - 1):
                         if col == col_count - 2:
-                            cell_widget = tb_step.cellWidget(r - 1, col)
+                            cell_widget = tb_step.cellWidget(row - 1, col)
                             if cell_widget:
                                 if isinstance(cell_widget, QCheckBox):
                                     cb = QCheckBox()
                                     cb.setStyleSheet('QCheckBox{margin:6px};')
-                                    cb.setText(tb_step.cellWidget(r - 1, col).text())
-                                    cb.setChecked(tb_step.cellWidget(r - 1, col).isChecked())
-                                    tb_step.setCellWidget(r, col, cb)
+                                    cb.setText(tb_step.cellWidget(row - 1, col).text())
+                                    cb.setChecked(tb_step.cellWidget(row - 1, col).isChecked())
+                                    tb_step.setCellWidget(row, col, cb)
                                 elif isinstance(cell_widget, QRadioButton):
                                     rb = QRadioButton()
                                     rb.setStyleSheet('QRadioButton{margin:6px};')
-                                    rb.setText(tb_step.cellWidget(r - 1, col).text())
-                                    rb.setChecked(tb_step.cellWidget(r - 1, col).isChecked())
-                                    tb_step.setCellWidget(r, col, rb)
+                                    rb.setText(tb_step.cellWidget(row - 1, col).text())
+                                    rb.setChecked(tb_step.cellWidget(row - 1, col).isChecked())
+                                    tb_step.setCellWidget(row, col, rb)
                             else:
-                                if tb_step.cellWidget(r, col):  # 删除本行控件
-                                    tb_step.removeCellWidget(r, col)
-                                    item = QTableWidgetItem(tb_step.item(r - 1, col).text())
+                                if tb_step.cellWidget(row, col):  # 删除本行控件
+                                    tb_step.removeCellWidget(row, col)
+                                    item = QTableWidgetItem(tb_step.item(row - 1, col).text())
                                     item.setTextAlignment(Qt.AlignCenter)
                                     # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                                    tb_step.setItem(r, col, item)
+                                    tb_step.setItem(row, col, item)
                         elif col == 7:
                             btn = QPushButton("速度设置")
                             btn.clicked.connect(load_speed)  # 传递行号
-                            tb_step.setCellWidget(r, 7, btn)
+                            tb_step.setCellWidget(row, 7, btn)
                         else:
-                            item = QTableWidgetItem(tb_step.item(r - 1, col).text())
+                            item = QTableWidgetItem(tb_step.item(row - 1, col).text())
                             item.setTextAlignment(Qt.AlignCenter)
                             # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                            tb_step.setItem(r, col, item)
+                            tb_step.setItem(row, col, item)
             else:
                 cb = QCheckBox()
                 cb.setStyleSheet('QCheckBox{margin:6px};')
                 tb_step.setCellWidget(0, 0, cb)
 
-                for r in range(1, tb_step.columnCount() - 1):
-                    item = QTableWidgetItem('0')
-                    item.setTextAlignment(Qt.AlignCenter)
-                    # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                    tb_step.setItem(0, r, item)
+                for col in range(1, tb_step.columnCount() - 1):
+                    if col == 7:
+                        btn = QPushButton("速度设置")
+                        btn.clicked.connect(load_speed)  # 传递行号
+                        tb_step.setCellWidget(0, 7, btn)
+                    else:
+                        item = QTableWidgetItem('0')
+                        item.setTextAlignment(Qt.AlignCenter)
+                        # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                        tb_step.setItem(0, col, item)
 
 
 '''
@@ -1514,6 +1528,7 @@ class ScreenShotThread(QThread):
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
                                                   False)  # 打开视频来源
                 time.sleep(0.1)
+                tcp_result_thread.run_flg = True
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
                                                   True)  # 打开视频来源
                 time.sleep(3)
@@ -1904,6 +1919,7 @@ def signal_accept(msg):
             tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
         else:
             ui.textBrowser.append(str(msg))
+            ui.textBrowser_msg.append(str(msg))
             if str(msg) == succeed("运动流程：完成！"):
                 p_now = 0
     except:
@@ -2448,6 +2464,7 @@ def card_start():
         if res == 0:
             # flg_start['card'] = True
             ui.textBrowser.append(succeed('启动板卡：%s' % card_res[res]))
+            ui.textBrowser_msg.append(succeed('启动板卡：%s' % card_res[res]))
         else:
             ui.textBrowser.append(res)
     else:
@@ -2458,6 +2475,7 @@ def card_start():
         if flg_start['s485']:
             Axis_Thread.run_flg = True  # 轴复位
         ui.textBrowser.append(succeed('串口链接：%s' % flg_start['s485']))
+        ui.textBrowser_msg.append(succeed('串口链接：%s' % flg_start['s485']))
     else:
         ui.textBrowser.append(fail('串口链接：%s' % flg_start['s485']))
     if not flg_start['obs']:
@@ -2484,6 +2502,7 @@ def card_close_all():
         sc.GASetExtDoBit(index, 0)
         time.sleep(0.1)
     ui.textBrowser.append(succeed('已经关闭所有机关！'))
+    ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
 
 
 # 实时轴位置入表
@@ -2578,6 +2597,23 @@ def wakeup_server():
             print('图像识别主机通信失败！')
             flg_start['ai'] = False
         time.sleep(300)
+
+
+def stop_server():  # 关闭识别服务器
+    global flg_start
+    form_data = {
+        'requestType': 'set_run_toggle',
+        'run_toggle': '0',
+    }
+    try:
+        cmd_stop()
+        r = requests.post(url=wakeup_addr, data=form_data)
+        print(r.text)
+        if r == 'ok':
+            flg_start['ai'] = False
+    except:
+        print('图像识别主机通信失败！')
+        flg_start['ai'] = False
 
 
 def save_images():
@@ -3512,9 +3548,11 @@ def black_screen():  # OBS黑屏
 
 
 def organ_shoot():  # 弹射开关
+    if not flg_start['card']:
+        return
     try:
         index = int(ui.lineEdit_shoot.text()) - 1
-        if ui.checkBox_shoot.isChecked() and flg_start['card']:
+        if ui.checkBox_shoot.isChecked():
             sc.GASetExtDoBit(index, 1)
         else:
             sc.GASetExtDoBit(index, 0)
@@ -3525,9 +3563,11 @@ def organ_shoot():  # 弹射开关
 
 
 def organ_start():  # 开启开关
+    if not flg_start['card']:
+        return
     try:
         index = int(ui.lineEdit_start.text()) - 1
-        if ui.checkBox_start.isChecked() and flg_start['card']:
+        if ui.checkBox_start.isChecked():
             sc.GASetExtDoBit(index, 1)
         else:
             sc.GASetExtDoBit(index, 0)
@@ -3538,9 +3578,11 @@ def organ_start():  # 开启开关
 
 
 def organ_end():  # 结束开关
+    if not flg_start['card']:
+        return
     try:
         index = int(ui.lineEdit_end.text()) - 1
-        if ui.checkBox_end.isChecked() and flg_start['card']:
+        if ui.checkBox_end.isChecked():
             sc.GASetExtDoBit(index, 1)
         else:
             sc.GASetExtDoBit(index, 0)
@@ -4110,6 +4152,16 @@ if __name__ == '__main__':
     ui.radioButton_stop_game.clicked.connect(lambda: ui.checkBox_restart.setChecked(False))
     ui.radioButton_test_game.clicked.connect(lambda: ui.checkBox_test.setChecked(True))
     ui.checkBox_black_screen.checkStateChanged.connect(black_screen)
+
+    ui.pushButton_ready.clicked.connect(card_start)
+    ui.pushButton_start_game_2.clicked.connect(cmd_run)
+    ui.pushButton_close_all.clicked.connect(card_close_all)
+    ui.pushButton_collect_ball.clicked.connect(lambda: ui.checkBox_end.setChecked(True))
+    ui.pushButton_end_game.clicked.connect(cmd_stop)
+    ui.pushButton_Stop_All.clicked.connect(cmd_stop)
+    ui.pushButton_end_all.clicked.connect(stop_server)
+
+    ui.checkBox_shoot_0.checkStateChanged.connect(lambda: ui.checkBox_shoot.setChecked(ui.checkBox_shoot_0.isChecked()))
 
     "**************************直播大厅_结束*****************************"
 
