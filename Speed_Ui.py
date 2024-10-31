@@ -162,7 +162,7 @@ class Ui_Dialog_Set_Speed(object):
         ___qtablewidgetitem2 = self.tableWidget_Set_Speed.horizontalHeaderItem(2)
         ___qtablewidgetitem2.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u51cf\u901f", None));
         ___qtablewidgetitem3 = self.tableWidget_Set_Speed.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u5ef6\u65f6", None));
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u5ef6\u65f6(\u79d2)", None));
         ___qtablewidgetitem4 = self.tableWidget_Set_Speed.verticalHeaderItem(0)
         ___qtablewidgetitem4.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u8f741", None));
         ___qtablewidgetitem5 = self.tableWidget_Set_Speed.verticalHeaderItem(1)

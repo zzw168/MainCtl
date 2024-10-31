@@ -42,8 +42,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             results = model.predict(
                 source=img,
                 conf=0.65,
-                save=True,
-                save_txt=True,
+                save=False,
+                save_txt=False,
                 save_conf=False,
                 save_crop=False,
                 visualize=False,

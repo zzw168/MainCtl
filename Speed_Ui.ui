@@ -125,7 +125,7 @@
         </column>
         <column>
          <property name="text">
-          <string>延时</string>
+          <string>延时(秒)</string>
          </property>
         </column>
         <item row="0" column="0">

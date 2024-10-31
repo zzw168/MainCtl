@@ -41,7 +41,7 @@
          <enum>Qt::FocusPolicy::StrongFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -147,14 +147,14 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_9">
                 <item row="0" column="0">
-                 <widget class="QRadioButton" name="radioButton_start_game">
+                 <widget class="QRadioButton" name="radioButton_start_betting">
                   <property name="text">
                    <string>开盘</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="0">
-                 <widget class="QRadioButton" name="radioButton_stop_game">
+                 <widget class="QRadioButton" name="radioButton_stop_betting">
                   <property name="text">
                    <string>封盘</string>
                   </property>
@@ -1441,7 +1441,7 @@
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QLineEdit" name="lineEdit_6">
+                 <widget class="QLineEdit" name="lineEdit_Main_Camera">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -1452,7 +1452,7 @@
                  </widget>
                 </item>
                 <item row="1" column="2">
-                 <widget class="QPushButton" name="pushButton_2">
+                 <widget class="QPushButton" name="pushButton_Main_Camera">
                   <property name="text">
                    <string>选</string>
                   </property>
@@ -1482,7 +1482,7 @@
                  </widget>
                 </item>
                 <item row="2" column="1">
-                 <widget class="QLineEdit" name="lineEdit_7">
+                 <widget class="QLineEdit" name="lineEdit_Backup_Camera">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -1493,7 +1493,7 @@
                  </widget>
                 </item>
                 <item row="2" column="2">
-                 <widget class="QPushButton" name="pushButton_3">
+                 <widget class="QPushButton" name="pushButton_Backup_Camera">
                   <property name="text">
                    <string>选</string>
                   </property>
@@ -1509,7 +1509,7 @@
                  </widget>
                 </item>
                 <item row="3" column="0" colspan="2">
-                 <widget class="QLineEdit" name="lineEdit_8">
+                 <widget class="QLineEdit" name="lineEdit_Send_Result">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -1520,7 +1520,7 @@
                  </widget>
                 </item>
                 <item row="3" column="2">
-                 <widget class="QCheckBox" name="checkBox_8">
+                 <widget class="QCheckBox" name="checkBox_Auto_Send">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -1543,7 +1543,7 @@
                   </property>
                   <layout class="QHBoxLayout" name="horizontalLayout_3">
                    <item>
-                    <widget class="QPushButton" name="pushButton_add_4">
+                    <widget class="QPushButton" name="pushButton_Send_Result">
                      <property name="maximumSize">
                       <size>
                        <width>100</width>
@@ -1565,7 +1565,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_save_12">
+                    <widget class="QPushButton" name="pushButton_Cancel_Result">
                      <property name="maximumSize">
                       <size>
                        <width>100</width>
