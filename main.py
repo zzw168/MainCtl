@@ -29,11 +29,9 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QChec
 import obsws_python as obs
 import pygame
 
-import Speed_Ui
 from Speed_Ui import Ui_Dialog_Set_Speed
 from utils import tool_unit
 from utils.SportCard_unit import *
-from utils.test_data import datas
 from utils.tool_unit import *
 from utils.Serial485_unit import *
 from MainCtl_Ui import *
@@ -719,7 +717,7 @@ class TcpRankingThread(QThread):
                 con, addr = tcp_ranking_socket.accept()
                 print("Accepted. {0}, {1}".format(con, str(addr)))
                 if con:
-                    self._signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
+                    # self._signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
                     with WebsocketServer(con) as ws:
                         # ws.send('pong')
                         while self.run_flg:
@@ -739,12 +737,12 @@ class TcpRankingThread(QThread):
                                 ws.send(json.dumps(d))
                                 self.send_time_flg = False
                             except Exception as e:
-                                # print("pingpong 错误：", e)
-                                self._signal.emit("pingpong 错误：%s" % e)
+                                print("pingpong 错误：", e)
+                                # self._signal.emit("pingpong 错误：%s" % e)
                                 break
             except Exception as e:
-                # print(e)
-                self._signal.emit("pingpong 错误：%s" % e)
+                print("pingpong 错误：%s" % e)
+                # self._signal.emit("pingpong 错误：%s" % e)
                 # break
 
 
@@ -768,6 +766,13 @@ class TcpResultThread(QThread):
                 con, addr = tcp_result_socket.accept()
                 print("Accepted. {0}, {1}".format(con, str(addr)))
                 if con and self.run_flg:
+                    with WebsocketServer(con) as ws:
+                        datalist = {'type': 'updata',
+                                    'data': {'qh': str(lottery_term[0]), 'rank': []}}
+                        for index in range(len(z_ranking_res)):
+                            datalist["data"]['rank'].append(
+                                {"mc": z_ranking_res[index], "time": ('%s"' % z_ranking_time[index])})
+                        ws.send(json.dumps(datalist))
                     if not ui.radioButton_test_game.isChecked():  # 非测试模式
                         result_data = {"raceTrackID": Track_number, "term": str(term),
                                        "actualResultOpeningTime": betting_end_time,
@@ -776,18 +781,15 @@ class TcpResultThread(QThread):
                         for index in range(len(z_ranking_res)):
                             result_data["timings"].append(
                                 {"pm": index + 1, "id": z_ranking_res[index], "time": z_ranking_time[index]})
+                        print(result_data)
                         post_result(term, betting_end_time, result_data)  # 发送最终排名给服务器
                         post_upload(term, lottery_term[6])  # 上传结果图片
                         self._signal.emit(succeed('第%s期 结束！' % term))
-                    with WebsocketServer(con) as ws:
-                        datalist = {'type': 'updata',
-                                    'data': {'qh': str(lottery_term[0]), 'rank': []}}
-                        for index in range(len(z_ranking_res)):
-                            datalist["data"]['rank'].append({"mc": z_ranking_res[index], "time": z_ranking_time[index]})
-                        ws.send(json.dumps(datalist))
+
                     self.run_flg = False
             except Exception as e:
-                self._signal.emit("pingpong 错误：%s" % e)
+                print("pingpong 错误：%s" % e)
+                # self._signal.emit("pingpong 错误：%s" % e)
                 # break
 
 
@@ -1280,6 +1282,11 @@ class ReStartThread(QThread):
             if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                 response = get_term()
                 if len(response) > 2:
+                    if term == response['term']:
+                        self._signal.emit('term')
+                        if time.time() < betting_end_time:
+                            time.sleep(3)
+                            continue
                     term = response['term']
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
@@ -1319,6 +1326,8 @@ def time_signal_accept(msg):
     if isinstance(msg, bool):
         lottery_data2table()
     # print(msg)
+    elif msg == 'term':
+        ui.textBrowser_msg.append(fail('期号重复！'))
     elif msg == 'error':
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
     else:
@@ -1459,9 +1468,9 @@ class PlanBallNumThread(QThread):
                             if num != num_old:
                                 t = time.time()
                                 if num_old < len(z_ranking_time):  # 保存每个球到达终点的时间
-                                    z_ranking_time[num_old] = '%.2f"' % (t - ranking_time_start)
+                                    z_ranking_time[num_old] = '%.2f' % (t - ranking_time_start)
                                     if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
-                                        tcp_ranking_thread.send_time_data = [num, z_ranking_time[num - 1]]
+                                        tcp_ranking_thread.send_time_data = [num, '%s"' % z_ranking_time[num - 1]]
                                         tcp_ranking_thread.send_time_flg = True
                                 self._signal.emit(num)
                                 num_old = num
@@ -1558,21 +1567,20 @@ class ScreenShotThread(QThread):
             try:
                 requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
 
-                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
-                                                  False)  # 打开视频来源
+                tcp_result_thread.run_flg = True
+                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
+                                                  True)  # 打开视频来源
                 time.sleep(0.1)
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
                                                   False)  # 打开视频来源
                 time.sleep(0.1)
-                tcp_result_thread.run_flg = True
-                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
-                                                  True)  # 打开视频来源
+                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
+                                                  False)  # 打开视频来源
                 time.sleep(3)
                 video_name = cl_request.stop_record()  # 关闭录像
                 lottery_term[7] = video_name.output_path  # 视频保存路径
                 lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
                 lottery_term[4] = str(z_ranking_res)  # 排名
-                betting_end_time = time.time()
                 if not ui.radioButton_test_game.isChecked():  # 非测试模式
                     post_end(term, betting_end_time, status=1)  # 发送游戏结束信号给服务器
                 local_time = time.localtime(betting_end_time)
