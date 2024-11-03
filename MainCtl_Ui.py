@@ -104,6 +104,7 @@ class Ui_MainWindow(object):
 
         self.radioButton_test_game = QRadioButton(self.groupBox)
         self.radioButton_test_game.setObjectName(u"radioButton_test_game")
+        self.radioButton_test_game.setChecked(True)
 
         self.gridLayout_9.addWidget(self.radioButton_test_game, 2, 0, 1, 1)
 
@@ -297,38 +298,25 @@ class Ui_MainWindow(object):
         self.groupBox_2.setFont(font1)
         self.gridLayout_8 = QGridLayout(self.groupBox_2)
         self.gridLayout_8.setObjectName(u"gridLayout_8")
-        self.lineEdit_4 = QLineEdit(self.groupBox_2)
-        self.lineEdit_4.setObjectName(u"lineEdit_4")
-        self.lineEdit_4.setMaximumSize(QSize(30, 16777215))
+        self.label_12 = QLabel(self.groupBox_2)
+        self.label_12.setObjectName(u"label_12")
+        self.label_12.setMaximumSize(QSize(85, 16777215))
+        self.label_12.setFont(font1)
+        self.label_12.setAutoFillBackground(False)
 
-        self.gridLayout_8.addWidget(self.lineEdit_4, 0, 2, 1, 1)
+        self.gridLayout_8.addWidget(self.label_12, 0, 1, 1, 1)
 
-        self.lineEdit = QLineEdit(self.groupBox_2)
-        self.lineEdit.setObjectName(u"lineEdit")
-        self.lineEdit.setMaximumSize(QSize(60, 16777215))
+        self.checkBox_continue_term = QCheckBox(self.groupBox_2)
+        self.checkBox_continue_term.setObjectName(u"checkBox_continue_term")
+        self.checkBox_continue_term.setFont(font1)
 
-        self.gridLayout_8.addWidget(self.lineEdit, 0, 1, 1, 1)
+        self.gridLayout_8.addWidget(self.checkBox_continue_term, 0, 3, 1, 1)
 
-        self.lineEdit_3 = QLineEdit(self.groupBox_2)
-        self.lineEdit_3.setObjectName(u"lineEdit_3")
-        self.lineEdit_3.setMaximumSize(QSize(60, 16777215))
+        self.lineEdit_term = QLineEdit(self.groupBox_2)
+        self.lineEdit_term.setObjectName(u"lineEdit_term")
+        self.lineEdit_term.setMaximumSize(QSize(80, 16777215))
 
-        self.gridLayout_8.addWidget(self.lineEdit_3, 0, 3, 1, 1)
-
-        self.lineEdit_2 = QLineEdit(self.groupBox_2)
-        self.lineEdit_2.setObjectName(u"lineEdit_2")
-        self.lineEdit_2.setMaximumSize(QSize(60, 16777215))
-
-        self.gridLayout_8.addWidget(self.lineEdit_2, 0, 0, 1, 1)
-
-        self.frame_5 = QFrame(self.groupBox_2)
-        self.frame_5.setObjectName(u"frame_5")
-        self.frame_5.setMinimumSize(QSize(50, 0))
-        self.frame_5.setMaximumSize(QSize(100, 16777215))
-        self.frame_5.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.gridLayout_8.addWidget(self.frame_5, 0, 4, 1, 1)
+        self.gridLayout_8.addWidget(self.lineEdit_term, 0, 2, 1, 1)
 
 
         self.gridLayout_12.addWidget(self.groupBox_2, 1, 2, 2, 1)
@@ -415,6 +403,7 @@ class Ui_MainWindow(object):
 
         self.textBrowser_msg = QTextBrowser(self.frame_2)
         self.textBrowser_msg.setObjectName(u"textBrowser_msg")
+        self.textBrowser_msg.setReadOnly(False)
 
         self.gridLayout_10.addWidget(self.textBrowser_msg, 4, 0, 1, 1)
 
@@ -2124,7 +2113,7 @@ class Ui_MainWindow(object):
         self.lineEdit_shoot.setObjectName(u"lineEdit_shoot")
         self.lineEdit_shoot.setMinimumSize(QSize(0, 0))
         self.lineEdit_shoot.setFont(font4)
-        self.lineEdit_shoot.setReadOnly(False)
+        self.lineEdit_shoot.setReadOnly(True)
 
         self.gridLayout_58.addWidget(self.lineEdit_shoot, 0, 1, 1, 1)
 
@@ -2140,7 +2129,7 @@ class Ui_MainWindow(object):
         self.lineEdit_start_count.setObjectName(u"lineEdit_start_count")
         self.lineEdit_start_count.setMinimumSize(QSize(0, 0))
         self.lineEdit_start_count.setFont(font4)
-        self.lineEdit_start_count.setReadOnly(False)
+        self.lineEdit_start_count.setReadOnly(True)
 
         self.gridLayout_58.addWidget(self.lineEdit_start_count, 0, 3, 1, 1)
 
@@ -2154,7 +2143,7 @@ class Ui_MainWindow(object):
         self.lineEdit_start.setObjectName(u"lineEdit_start")
         self.lineEdit_start.setMinimumSize(QSize(0, 0))
         self.lineEdit_start.setFont(font4)
-        self.lineEdit_start.setReadOnly(False)
+        self.lineEdit_start.setReadOnly(True)
 
         self.gridLayout_58.addWidget(self.lineEdit_start, 1, 1, 1, 1)
 
@@ -2168,7 +2157,7 @@ class Ui_MainWindow(object):
         self.lineEdit_end.setObjectName(u"lineEdit_end")
         self.lineEdit_end.setMinimumSize(QSize(0, 0))
         self.lineEdit_end.setFont(font4)
-        self.lineEdit_end.setReadOnly(False)
+        self.lineEdit_end.setReadOnly(True)
 
         self.gridLayout_58.addWidget(self.lineEdit_end, 3, 1, 1, 1)
 
@@ -2196,7 +2185,7 @@ class Ui_MainWindow(object):
         self.lineEdit_shake.setObjectName(u"lineEdit_shake")
         self.lineEdit_shake.setMinimumSize(QSize(0, 0))
         self.lineEdit_shake.setFont(font4)
-        self.lineEdit_shake.setReadOnly(False)
+        self.lineEdit_shake.setReadOnly(True)
 
         self.gridLayout_58.addWidget(self.lineEdit_shake, 2, 1, 1, 1)
 
@@ -2893,6 +2882,8 @@ class Ui_MainWindow(object):
         self.checkBox_shoot_0.setText(QCoreApplication.translate("MainWindow", u"\u4e00\u5f39\u5c04", None))
         self.checkBox_5.setText(QCoreApplication.translate("MainWindow", u"\u5173\u8b66\u62a5", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u9501\u5b9a\u671f\u53f7", None))
+        self.label_12.setText(QCoreApplication.translate("MainWindow", u"\u5f53\u524d\u91cd\u590d\u671f\u53f7\uff1a", None))
+        self.checkBox_continue_term.setText(QCoreApplication.translate("MainWindow", u"\u91cd\u590d\u6267\u884c", None))
         self.pushButton_start_game.setText(QCoreApplication.translate("MainWindow", u"\u542f\u52a8", None))
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
         self.lineEdit_balls_start.setText(QCoreApplication.translate("MainWindow", u"0", None))

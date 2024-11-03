@@ -802,7 +802,9 @@ class TcpResultThread(QThread):
                                 self._signal.emit(succeed('第%s期 结束！' % term))
                             if ui.checkBox_restart.isChecked():
                                 ReStart_Thread.run_flg = True  # 1分钟后重启动作
-                            self.send_type = ''
+                                self.send_type = ''
+                            else:
+                                self.run_flg = False
                         elif self.send_type == 'time':
                             datalist = {'type': 'time',
                                         'data': str(term)}
@@ -1310,8 +1312,11 @@ class ReStartThread(QThread):
                     if term == response['term']:
                         self._signal.emit('term')
                         if time.time() < betting_end_time:
-                            time.sleep(3)
-                            continue
+                            if not ui.checkBox_continue_term.isChecked():
+                                time.sleep(3)
+                                continue
+                            else:
+                                ui.checkBox_continue_term.setChecked(False)
                     term = response['term']
                     tcp_result_thread.send_type = 'time'
                     betting_start_time = response['scheduledGameStartTime']
@@ -1319,6 +1324,8 @@ class ReStartThread(QThread):
                     countdown = int(betting_start_time) - int(time.time())
                     print(betting_start_time, countdown)
                     if countdown < 0:  # 时间错误，30秒后开赛
+                        betting_start_time = int(time.time())
+                        betting_end_time = int(time.time()) + 30
                         countdown = str(30)
                     else:
                         countdown = str(countdown)
@@ -1326,7 +1333,6 @@ class ReStartThread(QThread):
                     if lottery:
                         self._signal.emit(lottery)
                 else:  # 封盘模式，退出循环
-                    term = '封盘'
                     tcp_result_thread.send_type = 'time'
                     self._signal.emit('error')
                     self.run_flg = False
@@ -1355,6 +1361,7 @@ def time_signal_accept(msg):
         lottery_data2table()
     # print(msg)
     elif msg == 'term':
+        ui.lineEdit_term.setText(str(term))
         ui.textBrowser_msg.append(fail('期号重复，3秒后重新获取！'))
     elif msg == 'error':
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
@@ -1847,7 +1854,7 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_index][12][0])) - 1, 0)
                                 else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_index][12][0])) - 1, 1)
-                                if plan_list[plan_index][12][0] == '2':  # 闸门机关打开
+                                if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
                                     if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                                         post_start(term, betting_start_time)  # 发送开始信号给服务器
                                         ranking_time_start = time.time()  # 每个球的起跑时间

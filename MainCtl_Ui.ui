@@ -165,6 +165,9 @@
                   <property name="text">
                    <string>模拟</string>
                   </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item row="3" column="0">
@@ -646,65 +649,50 @@
                 <string>锁定期号</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_8">
-                <item row="0" column="2">
-                 <widget class="QLineEdit" name="lineEdit_4">
+                <item row="0" column="1">
+                 <widget class="QLabel" name="label_12">
                   <property name="maximumSize">
                    <size>
-                    <width>30</width>
+                    <width>85</width>
                     <height>16777215</height>
                    </size>
                   </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="lineEdit">
-                  <property name="maximumSize">
-                   <size>
-                    <width>60</width>
-                    <height>16777215</height>
-                   </size>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>当前重复期号：</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="3">
-                 <widget class="QLineEdit" name="lineEdit_3">
-                  <property name="maximumSize">
-                   <size>
-                    <width>60</width>
-                    <height>16777215</height>
-                   </size>
+                 <widget class="QCheckBox" name="checkBox_continue_term">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>重复执行</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QLineEdit" name="lineEdit_2">
+                <item row="0" column="2">
+                 <widget class="QLineEdit" name="lineEdit_term">
                   <property name="maximumSize">
                    <size>
-                    <width>60</width>
+                    <width>80</width>
                     <height>16777215</height>
                    </size>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="4">
-                 <widget class="QFrame" name="frame_5">
-                  <property name="minimumSize">
-                   <size>
-                    <width>50</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>100</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::Shape::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Shadow::Raised</enum>
                   </property>
                  </widget>
                 </item>
@@ -894,7 +882,11 @@
               </widget>
              </item>
              <item row="4" column="0">
-              <widget class="QTextBrowser" name="textBrowser_msg"/>
+              <widget class="QTextBrowser" name="textBrowser_msg">
+               <property name="readOnly">
+                <bool>false</bool>
+               </property>
+              </widget>
              </item>
              <item row="3" column="0">
               <widget class="QFrame" name="frame_7">
@@ -5051,7 +5043,7 @@
                    <string>1</string>
                   </property>
                   <property name="readOnly">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -5103,7 +5095,7 @@
                    <string>9</string>
                   </property>
                   <property name="readOnly">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -5143,7 +5135,7 @@
                    <string>2</string>
                   </property>
                   <property name="readOnly">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -5183,7 +5175,7 @@
                    <string>4</string>
                   </property>
                   <property name="readOnly">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -5263,7 +5255,7 @@
                    <string>3</string>
                   </property>
                   <property name="readOnly">
-                   <bool>false</bool>
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
