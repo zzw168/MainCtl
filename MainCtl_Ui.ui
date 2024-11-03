@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1328</width>
-    <height>954</height>
+    <width>1326</width>
+    <height>1022</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -541,7 +541,7 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_16">
                 <item row="0" column="0">
-                 <widget class="QCheckBox" name="checkBox_2">
+                 <widget class="QCheckBox" name="checkBox_Pass_Recognition_Start">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -569,7 +569,7 @@
                  </widget>
                 </item>
                 <item row="1" column="0">
-                 <widget class="QCheckBox" name="checkBox_3">
+                 <widget class="QCheckBox" name="checkBox_Pass_Ranking_Twice">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -1645,9 +1645,6 @@
              <enum>QFrame::Shadow::Raised</enum>
             </property>
             <layout class="QGridLayout" name="gridLayout_13">
-             <item row="0" column="10">
-              <widget class="QLineEdit" name="lineEdit_rename"/>
-             </item>
              <item row="0" column="2">
               <widget class="QComboBox" name="comboBox_plan">
                <property name="minimumSize">
@@ -1665,67 +1662,21 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="7">
-              <widget class="QCheckBox" name="checkBox_test">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>测试模式</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="4">
-              <widget class="QFrame" name="frame_14">
-               <property name="minimumSize">
-                <size>
-                 <width>50</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::Shape::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Shadow::Raised</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="label_22">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>选择方案：</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="8">
-              <widget class="QFrame" name="frame_19">
-               <property name="minimumSize">
-                <size>
-                 <width>50</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::Shape::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Shadow::Raised</enum>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="11">
+              <widget class="QLabel" name="label_23">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>方案名称：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="13">
               <widget class="QPushButton" name="pushButton_rename">
                <property name="font">
                 <font>
@@ -1745,8 +1696,8 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="9">
-              <widget class="QLabel" name="label_23">
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="checkBox_selectall">
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
@@ -1755,7 +1706,7 @@
                 </font>
                </property>
                <property name="text">
-                <string>方案名称：</string>
+                <string>全选</string>
                </property>
               </widget>
              </item>
@@ -1785,8 +1736,8 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QCheckBox" name="checkBox_selectall">
+             <item row="0" column="1">
+              <widget class="QLabel" name="label_22">
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
@@ -1795,11 +1746,11 @@
                 </font>
                </property>
                <property name="text">
-                <string>全选</string>
+                <string>选择方案：</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="5">
+             <item row="0" column="7">
               <widget class="QCheckBox" name="checkBox_follow">
                <property name="font">
                 <font>
@@ -1814,10 +1765,30 @@
               </widget>
              </item>
              <item row="0" column="6">
-              <widget class="QFrame" name="frame_29">
+              <widget class="QLabel" name="label_80">
                <property name="minimumSize">
                 <size>
-                 <width>50</width>
+                 <width>20</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>秒</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="10">
+              <widget class="QFrame" name="frame_19">
+               <property name="minimumSize">
+                <size>
+                 <width>25</width>
                  <height>0</height>
                 </size>
                </property>
@@ -1826,6 +1797,68 @@
                </property>
                <property name="frameShadow">
                 <enum>QFrame::Shadow::Raised</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="5">
+              <widget class="QLineEdit" name="lineEdit_Stay_Time">
+               <property name="maximumSize">
+                <size>
+                 <width>40</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>10</string>
+               </property>
+               <property name="frame">
+                <bool>true</bool>
+               </property>
+               <property name="echoMode">
+                <enum>QLineEdit::EchoMode::Normal</enum>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignCenter</set>
+               </property>
+               <property name="clearButtonEnabled">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="12">
+              <widget class="QLineEdit" name="lineEdit_rename"/>
+             </item>
+             <item row="0" column="9">
+              <widget class="QCheckBox" name="checkBox_test">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>测试模式</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="4">
+              <widget class="QLabel" name="label_79">
+               <property name="minimumSize">
+                <size>
+                 <width>60</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="text">
+                <string>动作时间：</string>
                </property>
               </widget>
              </item>
@@ -1980,12 +2013,6 @@
              <enum>QFrame::Shadow::Raised</enum>
             </property>
             <layout class="QGridLayout" name="gridLayout_34">
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
              <item row="0" column="0">
               <widget class="QGroupBox" name="groupBox_6">
                <property name="font">
@@ -2413,6 +2440,20 @@
                       <string>机关操作</string>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_61">
+                      <item row="1" column="0">
+                       <widget class="QCheckBox" name="checkBox_shoot">
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>弹射</string>
+                        </property>
+                       </widget>
+                      </item>
                       <item row="1" column="2">
                        <widget class="QCheckBox" name="checkBox_end">
                         <property name="font">
@@ -2427,20 +2468,6 @@
                         </property>
                         <property name="checked">
                          <bool>false</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="0">
-                       <widget class="QCheckBox" name="checkBox_shoot">
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>弹射</string>
                         </property>
                        </widget>
                       </item>
@@ -2461,12 +2488,62 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="3">
+                      <item row="2" column="1">
+                       <widget class="QLineEdit" name="lineEdit_OutNo">
+                        <property name="maximumSize">
+                         <size>
+                          <width>40</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>5</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignmentFlag::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="0">
+                       <widget class="QLabel" name="label_78">
+                        <property name="minimumSize">
+                         <size>
+                          <width>60</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>输出号：</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="2">
+                       <widget class="QCheckBox" name="checkBox_switch">
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>开关</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="3" rowspan="2">
                        <widget class="QPushButton" name="pushButton_CardCloseAll">
                         <property name="minimumSize">
                          <size>
                           <width>0</width>
-                          <height>0</height>
+                          <height>50</height>
                          </size>
                         </property>
                         <property name="font">
@@ -2764,6 +2841,18 @@
              </item>
              <item row="3" column="0">
               <widget class="QGroupBox" name="groupBox_10">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>300</width>
+                 <height>50</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
@@ -3288,18 +3377,18 @@
              <enum>QFrame::Shadow::Raised</enum>
             </property>
             <layout class="QGridLayout" name="gridLayout_40">
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-             <item row="0" column="0" rowspan="2">
-              <widget class="QGroupBox" name="groupBox_5">
+             <item row="0" column="2">
+              <widget class="QGroupBox" name="groupBox_8">
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
+                 <width>300</width>
                  <height>10</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>300</width>
+                 <height>16777215</height>
                 </size>
                </property>
                <property name="font">
@@ -3310,29 +3399,157 @@
                 </font>
                </property>
                <property name="title">
-                <string>索尼摄像机识别结果</string>
+                <string>识别数据</string>
                </property>
-               <property name="alignment">
-                <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_15">
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_main_picture">
+               <layout class="QGridLayout" name="gridLayout_28">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_11">
                   <property name="minimumSize">
                    <size>
-                    <width>300</width>
+                    <width>0</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>核对结果：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QWidget" name="widget_camera_sony" native="true">
+                  <property name="minimumSize">
+                   <size>
+                    <width>200</width>
+                    <height>38</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="0" colspan="2">
+                 <widget class="QCheckBox" name="checkBox_ShowUdp">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>显示服务器数据</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_9">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>索尼摄像机：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_16">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>发送结果:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_10">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>监控摄像机：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="lineEdit_result_send">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>30</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大圈数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QWidget" name="widget_camera_fit" native="true">
+                  <property name="minimumSize">
+                   <size>
+                    <width>200</width>
+                    <height>38</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QWidget" name="widget_camera_monitor" native="true">
+                  <property name="minimumSize">
+                   <size>
+                    <width>200</width>
+                    <height>38</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="QPushButton" name="pushButton_test_2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>50</width>
                     <height>10</height>
                    </size>
                   </property>
                   <property name="text">
-                   <string/>
+                   <string>测试</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="0" colspan="3">
+                 <widget class="QTextBrowser" name="textBrowser_background_data">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>10</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
                </layout>
               </widget>
              </item>
-             <item row="0" column="1" rowspan="2">
+             <item row="0" column="1" rowspan="3">
               <widget class="QGroupBox" name="groupBox_9">
                <property name="minimumSize">
                 <size>
@@ -3370,181 +3587,18 @@
                </layout>
               </widget>
              </item>
-             <item row="0" column="2">
-              <widget class="QGroupBox" name="groupBox_8">
+             <item row="1" column="2">
+              <widget class="QGroupBox" name="groupBox_12">
                <property name="minimumSize">
                 <size>
-                 <width>300</width>
-                 <height>10</height>
+                 <width>50</width>
+                 <height>50</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>300</width>
                  <height>16777215</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="title">
-                <string>识别数据</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_28">
-                <item row="8" column="0" colspan="2">
-                 <widget class="QTextBrowser" name="textBrowser_background_data">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>10</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QWidget" name="widget_camera_sony" native="true">
-                  <property name="minimumSize">
-                   <size>
-                    <width>200</width>
-                    <height>38</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QLineEdit" name="lineEdit_result_send">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>10</height>
-                   </size>
-                  </property>
-                  <property name="toolTip">
-                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大圈数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_9">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>10</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>索尼摄像机：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QWidget" name="widget_camera_monitor" native="true">
-                  <property name="minimumSize">
-                   <size>
-                    <width>200</width>
-                    <height>38</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_10">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>10</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>监控摄像机：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QWidget" name="widget_camera_fit" native="true">
-                  <property name="minimumSize">
-                   <size>
-                    <width>200</width>
-                    <height>38</height>
-                   </size>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_11">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>10</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>核对结果：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="6" column="0" colspan="2">
-                 <widget class="QPushButton" name="pushButton_test_2">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>10</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>测试</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="7" column="0" colspan="2">
-                 <widget class="QCheckBox" name="checkBox_ShowUdp">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>10</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>显示服务器数据</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_16">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>10</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>发送结果:</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QGroupBox" name="groupBox_12">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>10</height>
                 </size>
                </property>
                <property name="font">
@@ -3584,6 +3638,44 @@
                   </property>
                   <property name="text">
                    <string>转换TXT</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="0" rowspan="3">
+              <widget class="QGroupBox" name="groupBox_5">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>10</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>索尼摄像机识别结果</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_15">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_main_picture">
+                  <property name="minimumSize">
+                   <size>
+                    <width>300</width>
+                    <height>10</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
                   </property>
                  </widget>
                 </item>
@@ -3790,7 +3882,7 @@
                     <number>0</number>
                    </property>
                    <property name="bottomMargin">
-                    <number>0</number>
+                    <number>6</number>
                    </property>
                    <item row="2" column="0">
                     <widget class="QLabel" name="label_15">
@@ -3927,6 +4019,12 @@
                    <string>终点设置</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_48">
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>6</number>
+                   </property>
                    <item row="0" column="0">
                     <widget class="QGroupBox" name="groupBox_25">
                      <property name="minimumSize">

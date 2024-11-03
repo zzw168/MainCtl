@@ -1,4 +1,5 @@
 balls_count: '8'
+Stay_Time: '10'
 cardNo: '10'
 color_ch:
   Brown: 棕
