@@ -1066,11 +1066,12 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb_step.horizontalHeader().resizeSection(8, 50)
         tb_step.horizontalHeader().resizeSection(9, 50)
         tb_step.horizontalHeader().resizeSection(10, 60)
-        tb_step.horizontalHeader().resizeSection(11, 40)
+        tb_step.horizontalHeader().resizeSection(11, 60)
         tb_step.horizontalHeader().resizeSection(12, 50)
         tb_step.horizontalHeader().resizeSection(13, 60)
         tb_step.horizontalHeader().resizeSection(14, 50)
         tb_step.horizontalHeader().resizeSection(15, 50)
+        tb_step.horizontalHeader().resizeSection(16, 40)
         tb_step.setColumnHidden(8, True)
         tb_step.setColumnHidden(9, True)
         tb_step.setColumnHidden(13, True)
@@ -1775,9 +1776,11 @@ class AxisThread(QThread):
                 s485_data = s485.get_axis_pos()
                 # print(s485_data)
                 if len(s485_data) > 0:
+                    five_axis = eval(ui.lineEdit_five_axis.text())
                     for data in s485_data:
-                        if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
-                            data['highPos'] = -data['highPos']
+                        # if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
+                        data['highPos'] = data['highPos'] * five_axis[data['nAxisNum'] - 1]
+                        print(data['nAxisNum'], data['highPos'])
                         res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
                         if res == 0:
                             sc.card_move(int(data['nAxisNum']), 0)
@@ -1824,7 +1827,6 @@ class PlanCmdThread(QThread):
         global ranking_time_start
         global lottery_term
         axis_list = [1, 2, 4, 8, 16]
-        max_delay_time = 0
         while self.running:
             time.sleep(0.1)
             if not self.run_flg:
@@ -1857,9 +1859,9 @@ class PlanCmdThread(QThread):
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
                                     if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                                         post_start(term, betting_start_time)  # 发送开始信号给服务器
-                                        ranking_time_start = time.time()  # 每个球的起跑时间
                                         lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                         self._signal.emit('进行中')  # 修改结果列表中的赛事状态
+                                    ranking_time_start = time.time()  # 每个球的起跑时间
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
                                         try:
                                             cl_request.start_record()  # 开启OBS录像
@@ -1914,8 +1916,10 @@ class PlanCmdThread(QThread):
 
                         if ui.checkBox_test.isChecked():
                             time.sleep(2)  # 测试模式停两秒切换下一个动作
-                        elif int(plan_list[plan_index][14][0]) <= 0:
-                            pass  # 负数则直接下一个动作
+                        elif int(plan_list[plan_index][14][0]) == 0:
+                            pass  # 0则直接下一个动作
+                        elif int(plan_list[plan_index][14][0]) < 0:
+                            time.sleep(abs(float(plan_list[plan_index][14][0])))  # 负数则等待对应秒数再进行下一个动作
                         else:
                             t_over = 0
                             while True:  # 正式运行，等待球进入触发区域再进行下一个动作
@@ -1929,7 +1933,8 @@ class PlanCmdThread(QThread):
                                 # if int(plan_list[plan_num][13]) in [action_area[0], action_area[0] - 1, action_area[0] + 1]:
                                 #     break
                                 t_over += 1
-                                if t_over >= int(ui.lineEdit_Stay_Time.text()) * 10:  # 每个动作最长等待10秒时间
+                                if (plan_list[plan_index][16][0] != '0' and
+                                        t_over >= abs(float(plan_list[plan_index][16][0])) * 10):  # 每个动作超时时间
                                     print('等待超时！')
                                     break
                                 if self.cmd_next:  # 手动进入下一个动作
@@ -1941,13 +1946,11 @@ class PlanCmdThread(QThread):
                             continue
                         if self.run_flg:
                             # 摄像头缩放
-                            delay_time = int(plan_list[plan_index][11][0]) - max_delay_time
-                            if delay_time > 0:  # 摄像头延时，也可以用作动作延时
-                                if int(plan_list[plan_index][10][0]) != 0:  # 摄像头缩放
-                                    PlanCam_Thread.camitem = [int(plan_list[plan_index][10][0]),
-                                                              int(plan_list[plan_index][11][0])]
-                                    PlanCam_Thread.run_flg = True  # 摄像头线程
-                                time.sleep(delay_time)  # 延时，等待镜头缩放完成
+                            if int(plan_list[plan_index][10][0]) != 0:  # 摄像头缩放
+                                PlanCam_Thread.camitem = [int(plan_list[plan_index][10][0]),
+                                                          int(plan_list[plan_index][11][0])]
+                                PlanCam_Thread.run_flg = True  # 摄像头线程
+                            time.sleep(int(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
                             # 场景切换
                             plan_col_count = len(plan_list[plan_index])  # 固定最后一项为OBS场景切换
                             if '_' in plan_list[plan_index][plan_col_count - 1]:
@@ -2460,6 +2463,7 @@ def load_main_yaml():
             ui.lineEdit_CardNo.setText(main_all['cardNo'])
             ui.lineEdit_s485_Axis_No.setText(main_all['s485_Axis_No'])
             ui.lineEdit_s485_Cam_No.setText(main_all['s485_Cam_No'])
+            ui.lineEdit_five_axis.setText(main_all['five_axis'])
             ui.lineEdit_balls_count.setText(main_all['balls_count'])
             ui.lineEdit_wakeup_addr.setText(main_all['wakeup_addr'])
             ui.lineEdit_rtsp_url.setText(main_all['rtsp_url'])
@@ -2474,7 +2478,11 @@ def load_main_yaml():
             ui.lineEdit_source_picture.setText(main_all['source_picture'])
             ui.lineEdit_source_settlement.setText(main_all['source_settlement'])
             ui.lineEdit_source_end.setText(main_all['source_end'])
-            ui.lineEdit_Stay_Time.setText(main_all['Stay_Time'])
+            ui.lineEdit_shoot.setText(main_all['lineEdit_shoot'])
+            ui.lineEdit_start.setText(main_all['lineEdit_start'])
+            ui.lineEdit_shake.setText(main_all['lineEdit_shake'])
+            ui.lineEdit_end.setText(main_all['lineEdit_end'])
+            ui.pushButton_start_game.setEnabled(main_all['pushButton_start_game'])
             for index in range(1, 4):
                 getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
                 getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -2496,9 +2504,11 @@ def load_main_yaml():
             obs_script_addr = main_all['obs_script_addr']
             s485.s485_Axis_No = main_all['s485_Axis_No']
             s485.s485_Cam_No = main_all['s485_Cam_No']
+            print(main_all['map_picture'], main_all['map_line'])
             map_data = [main_all['map_picture'], main_all['map_line']]
+            print(main_all['map_picture'], main_all['map_line'])
         except:
-            pass
+            print('初始化出错~！')
     else:
         print("文件不存在")
 
@@ -2904,7 +2914,7 @@ class MapLabel(QLabel):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.Antialiasing)
 
-        if ui.checkBox_show_orbit.isChecked():
+        if ui.checkBox_show_orbit.isChecked():  # 绘制路径
             for index in range(len(self.path_points)):
                 part = len(self.path_points) / (max_area_count - balls_count + 1)
                 if index % int(part) == 0:
@@ -2931,14 +2941,15 @@ class MapLabel(QLabel):
                 # 绘制球
                 painter.drawEllipse(int(x - self.ball_radius), int(y - self.ball_radius),
                                     self.ball_radius * 2, self.ball_radius * 2)
-                font = QFont("Arial", int(12 * self.picture_size / 860), QFont.Bold)  # 字体：Arial，大小：16，加粗
-                painter.setFont(font)
-                if str(self.positions[index_position][2]) == '1':
-                    painter.setPen('gray')
-                else:
-                    painter.setPen('white')
-                painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
-                                 str(self.positions[index_position][2]))
+                if self.picture_size >= 800:
+                    font = QFont("Arial", int(12 * self.picture_size / 860), QFont.Bold)  # 字体：Arial，大小：16，加粗
+                    painter.setFont(font)
+                    if str(self.positions[index_position][2]) == '1':
+                        painter.setPen('gray')
+                    else:
+                        painter.setPen('white')
+                    painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
+                                     str(self.positions[index_position][2]))
 
     def mouseReleaseEvent(self, event: QMouseEvent):
         """释放鼠标时停止拖动"""
@@ -4186,10 +4197,11 @@ if __name__ == '__main__':
     recognition_addr = "http://127.0.0.1:6066"  # 终点识别主机网址
     obs_script_addr = "http://127.0.0.1:8899"  # OBS 脚本网址
     rtsp_url = 'rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101'  # 主码流
+    map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json']  # 卫星地图资料
 
-    load_ballsort_yaml()
     load_main_yaml()
-    # print(map_data)
+    print(map_data)
+    load_ballsort_yaml()
 
     # 初始化列表
     con_data = []  # 排名数组
@@ -4266,7 +4278,6 @@ if __name__ == '__main__':
     audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
     ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
     map_orbit = []  # 地图轨迹
-    map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json']  # 卫星地图资料
 
     map_label_big = MapLabel()
     layout_big = QVBoxLayout(ui.widget_map_big)
@@ -4389,7 +4400,6 @@ if __name__ == '__main__':
     ui.pushButton_Send_Result.clicked.connect(send_result)
 
     ui.checkBox_shoot_0.checkStateChanged.connect(lambda: ui.checkBox_shoot.setChecked(ui.checkBox_shoot_0.isChecked()))
-
     "**************************直播大厅_结束*****************************"
 
     sys.exit(app.exec())
