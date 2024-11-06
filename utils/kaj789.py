@@ -89,6 +89,9 @@ def post_upload(term, img_path):  # 上传图片
 
 
 def post_marble_results(term, comments='Invalid Term'):  # 比赛异常，上传这个结果取消比赛
+    control_headers = {
+        'Authorization': 'Bearer e8baaf8c-d6c2-4287-afbe-a95ae1eed235',
+    }
     # comments = [Out Ball, Trap Ball,'Invalid Term']
     post_marble_results_url = 'https://control.kaj789.com/marbleResults'
     marble_results_data = {
@@ -96,7 +99,7 @@ def post_marble_results(term, comments='Invalid Term'):  # 比赛异常，上传
         "term": str(term),
         "comments": comments
     }
-    response = requests.post(post_marble_results_url, headers=headers, json=marble_results_data)
+    response = requests.post(post_marble_results_url, headers=control_headers, json=marble_results_data)
     print(marble_results_data)
     print('marble_results:', response.text)
     return response.text

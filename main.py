@@ -421,7 +421,7 @@ def deal_rank(integration_qiu_array):
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
                 if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
-                    if result_count >= max_area_count - balls_count - 15:
+                    if result_count >= max_area_count - balls_count - 6:
                         ranking_array[r_index][8] += 1
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = 0
@@ -433,7 +433,7 @@ def deal_rank(integration_qiu_array):
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < 5)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
                             (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
-                             or ranking_array[0][6] - ranking_array[r_index][6] > 5
+                                    # or ranking_array[0][6] - ranking_array[r_index][6] > 5
                             ))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
                         or (q_item[6] < 8 and ranking_array[r_index][6] >= max_area_count - balls_count - 6)):  # 跨圈情况
                     for r_i in range(0, len(q_item)):
@@ -787,12 +787,19 @@ class TcpResultThread(QThread):
                                 result_data = {"raceTrackID": Track_number, "term": str(term),
                                                "actualResultOpeningTime": betting_end_time,
                                                "result": z_ranking_res,
-                                               "timings": []}
+                                               "timings": "[]"}
+                                data_temp = []
                                 for index in range(len(z_ranking_res)):
-                                    result_data["timings"].append(
-                                        {"pm": index + 1, "id": z_ranking_res[index],
-                                         "time": z_ranking_time[index]})
-                                # print(result_data)
+                                    if is_natural_num(z_ranking_time[index]):
+                                        data_temp.append(
+                                            {"pm": index + 1, "id": z_ranking_res[index],
+                                             "time": float(z_ranking_time[index])})
+                                    else:
+                                        data_temp.append(
+                                            {"pm": index + 1, "id": z_ranking_res[index],
+                                             "time": z_ranking_time[index]})
+                                result_data["timings"] = json.dumps(data_temp)
+                                print(result_data)
                                 try:
                                     post_end(term, betting_end_time, status=1)  # 发送游戏结束信号给服务器
                                     post_result(term, betting_end_time, result_data)  # 发送最终排名给服务器
@@ -848,7 +855,7 @@ class UdpThread(QThread):
                 # 3. 等待接收对方发送的数据
                 recv_data = udp_socket.recvfrom(10240)  # 1024表示本次接收的最大字节数
                 if len(recv_data) < 1:
-                    print('UDP无数据！', recv_data[0])
+                    print('UDP无数据！')
                     continue
                 if self.run_flg:
                     res = recv_data[0].decode('utf8')
@@ -857,9 +864,10 @@ class UdpThread(QThread):
                         continue
                     data_res = eval(res)  # str转换list
                     if len(recv_data) < 2:
+                        print('UDP_recv_data无数据！', res)
                         continue
                     self._signal.emit(data_res)
-                    if str(data_res[0]).isdigit():
+                    if str(data_res[0]).isdigit():  # UDP数据包时间间隔
                         time_interval = int(data_res[0]) - udp_time_old
                         self._signal.emit(time_interval)
                         udp_time_old = int(data_res[0])
@@ -885,7 +893,6 @@ class UdpThread(QThread):
                     else:
                         array_data = filter_max_value(array_data)  # 在平时球位置追踪，以置信度为准
                     if array_data is None or len(array_data) < 1:
-                        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
                         continue
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
                     deal_rank(array_data)
@@ -1175,7 +1182,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
             col_count = tb_step.columnCount()
             row_num = tb_step.currentRow()
             print(row_count)
-            if row_count != 0:
+            if row_count > 1:
                 for row_num in range(row_num, row_count - 1):
                     plan_list[row_num] = copy.deepcopy(plan_list[row_num + 1])
                     print('%d' % row_num)
@@ -1531,6 +1538,12 @@ class PlanBallNumThread(QThread):
                             self._signal.emit(fail("运动板x输入通信出错！"))
                             break
                         time.sleep(0.01)
+
+                    for index in range(num_old, len(z_ranking_time)):
+                        if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
+                            tcp_ranking_thread.send_time_data = [index + 1, '%s"' % z_ranking_time[index]]
+                            tcp_ranking_thread.send_time_flg = True
+                        time.sleep(0.5)
                 else:
                     print("次数归0 失败！")
                     flg_start['card'] = False
@@ -1678,6 +1691,7 @@ def ScreenShot_signal_accept(msg):
             tb_result = ui.tableWidget_Results
             tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（0.已结束）
             tb_result.item(0, 4).setText(lottery_term[4])  # 自动赛果
+            tb_result.item(0, 5).setText(lottery_term[5])  # 手动赛果
             tb_result.item(0, 6).setText(lottery_term[6])  # 照片保存路径
             tb_result.item(0, 7).setText(lottery_term[7])  # 视频保存路径
             tb_result.item(0, 8).setText(lottery_term[8])  # 存档时间
@@ -1776,7 +1790,6 @@ class AxisThread(QThread):
                 s485_data = s485.get_axis_pos()
                 # print(s485_data)
                 if len(s485_data) > 0:
-                    five_axis = eval(ui.lineEdit_five_axis.text())
                     for data in s485_data:
                         # if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
                         data['highPos'] = data['highPos'] * five_axis[data['nAxisNum'] - 1]
@@ -2032,61 +2045,79 @@ def keyboard_release(key):
             if key == key.up:
                 print('前')
                 flg_key_run = True
-                sc.card_setpos(2, pValue[1] + 30000)
+                pos = pValue[1] + 30000 * five_axis[1]
+                if pos <= 0:
+                    pos = 0
+                sc.card_setpos(2, pos)
                 sc.card_update()
 
             if key == key.down:
                 print('后')
                 flg_key_run = True
-                sc.card_setpos(2, pValue[1] - 30000)
+                pos = pValue[1] - 30000 * five_axis[1]
+                if pos <= 0:
+                    pos = 0
+                sc.card_setpos(2, pos)
                 sc.card_update()
 
             if key == key.left:
                 print('左')
                 flg_key_run = True
-                sc.card_setpos(1, pValue[0] + 30000)
+                pos = pValue[0] - 30000 * five_axis[0]
+                if pos <= 0:
+                    pos = 0
+                sc.card_setpos(1, pos)
                 sc.card_update()
 
             if key == key.right:
                 print('右')
                 flg_key_run = True
-                sc.card_setpos(1, pValue[0] - 30000)
+                pos = pValue[0] + 30000 * five_axis[0]
+                if pos <= 0:
+                    pos = 0
+                sc.card_setpos(1, pos)
                 sc.card_update()
 
             if key == key.insert:
                 print('上')
                 flg_key_run = True
-                sc.card_setpos(3, pValue[2] - 30000)
+                pos = pValue[2] - 30000 * five_axis[2]
+                if pos <= 0:
+                    pos = 0
+                sc.card_setpos(3, pos)
                 sc.card_update()
 
             if key == key.delete:
                 print('下')
                 flg_key_run = True
-                sc.card_setpos(3, pValue[2] + 30000)
+                pos = pValue[2] + 30000 * five_axis[2]
+                if pos <= 0:
+                    pos = 0
+                sc.card_setpos(3, pos)
                 sc.card_update()
 
             if key == key.home:
                 print('头左')
                 flg_key_run = True
-                sc.card_setpos(4, pValue[3] - 30000)
+                sc.card_setpos(4, pValue[3] - 30000 * five_axis[3])
                 sc.card_update()
 
             if key == key.end:
                 print('头右')
                 flg_key_run = True
-                sc.card_setpos(4, pValue[3] + 30000)
+                sc.card_setpos(4, pValue[3] + 30000 * five_axis[3])
                 sc.card_update()
 
             if key == key.page_up:
                 print('头上')
                 flg_key_run = True
-                sc.card_setpos(5, pValue[4] - 30000)
+                sc.card_setpos(5, pValue[4] + 30000 * five_axis[4])
                 sc.card_update()
 
             if key == key.page_down:
                 print('头下')
                 flg_key_run = True
-                sc.card_setpos(5, pValue[4] + 30000)
+                sc.card_setpos(5, pValue[4] - 30000 * five_axis[4])
                 sc.card_update()
 
         except AttributeError:
@@ -2118,62 +2149,80 @@ def keyboard_press(key):
             if key == key.up:
                 print('前')
                 if flg_key_run:
-                    sc.card_move(2, pos=2000000)
+                    pos = 2000000 * five_axis[1]
+                    if pos <= 0:
+                        pos = 0
+                    sc.card_move(2, pos=pos)
                     sc.card_update()
                     flg_key_run = False
 
             elif key == key.down:
                 print('后')
                 if flg_key_run:
-                    sc.card_move(2, pos=-2000000)
+                    pos = -2000000 * five_axis[1]
+                    if pos <= 0:
+                        pos = 0
+                    sc.card_move(2, pos=pos)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.left:
                 print('左')
                 if flg_key_run:
-                    sc.card_move(1, pos=2000000)
+                    pos = -2000000 * five_axis[0]
+                    if pos <= 0:
+                        pos = 0
+                    sc.card_move(1, pos=pos)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.right:
                 print('右')
                 if flg_key_run:
-                    sc.card_move(1, pos=-2000000)
+                    pos = 2000000 * five_axis[0]
+                    if pos <= 0:
+                        pos = 0
+                    sc.card_move(1, pos=pos)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.insert:
                 print('上')
                 if flg_key_run:
-                    sc.card_move(3, pos=-2000000)
+                    pos = -2000000 * five_axis[2]
+                    if pos <= 0:
+                        pos = 0
+                    sc.card_move(3, pos=pos)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.delete:
                 print('下')
                 if flg_key_run:
-                    sc.card_move(3, pos=2000000)
+                    pos = 2000000 * five_axis[2]
+                    if pos <= 0:
+                        pos = 0
+                    sc.card_move(3, pos=pos)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.home:
                 print('头左')
                 if flg_key_run:
-                    sc.card_move(4, pos=-2000000)
+                    sc.card_move(4, pos=-2000000 * five_axis[3])
                     sc.card_update()
                     flg_key_run = False
             elif key == key.end:
                 print('头右')
                 if flg_key_run:
-                    sc.card_move(4, pos=2000000)
+                    sc.card_move(4, pos=2000000 * five_axis[3])
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_up:
                 print('头下')
                 if flg_key_run:
-                    sc.card_move(5, pos=-2000000)
+                    sc.card_move(5, pos=2000000 * five_axis[4])
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_down:
                 print('头上')
                 if flg_key_run:
-                    sc.card_move(5, pos=2000000)
+                    sc.card_move(5, pos=-2000000 * five_axis[4])
                     sc.card_update()
                     flg_key_run = False
         except AttributeError:
@@ -2448,6 +2497,7 @@ def load_main_yaml():
     global recognition_addr
     global obs_script_addr
     global map_data
+    global five_axis
     file = "main_config.yml"
     if os.path.exists(file):
         try:
@@ -2504,9 +2554,8 @@ def load_main_yaml():
             obs_script_addr = main_all['obs_script_addr']
             s485.s485_Axis_No = main_all['s485_Axis_No']
             s485.s485_Cam_No = main_all['s485_Cam_No']
-            print(main_all['map_picture'], main_all['map_line'])
             map_data = [main_all['map_picture'], main_all['map_line']]
-            print(main_all['map_picture'], main_all['map_line'])
+            five_axis = eval(ui.lineEdit_five_axis.text())
         except:
             print('初始化出错~！')
     else:
@@ -3787,7 +3836,9 @@ def backup2result():
 
 
 def cancel_betting():
-    post_marble_results(term)
+    res = post_marble_results(term)
+    if 'Invalid Term' in res:
+        lottery_term[5] = '取消比赛'
 
 
 def send_result():
@@ -3798,7 +3849,7 @@ def send_result():
                    "timings": []}
     for index in range(len(result_list)):
         result_data["timings"].append(
-            {"pm": index + 1, "id": result_list[index], "time": z_ranking_time[index]})
+            {"pm": index + 1, "id": result_list[index], "time": float(z_ranking_time[index])})
     post_end(term, betting_end_time, status=0)  # 发送游戏结束信号给服务器， 0: 不正常
     post_result(term, betting_end_time, result_data)  # 发送最终排名给服务器
 
@@ -4198,6 +4249,7 @@ if __name__ == '__main__':
     obs_script_addr = "http://127.0.0.1:8899"  # OBS 脚本网址
     rtsp_url = 'rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101'  # 主码流
     map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json']  # 卫星地图资料
+    five_axis = [1, 1, 1, 1, 1]
 
     load_main_yaml()
     print(map_data)
