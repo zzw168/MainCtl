@@ -1071,7 +1071,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb_ai.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
         tb_step = self.tableWidget_Step
-        tb_step.horizontalHeader().resizeSection(0, 10)
+        tb_step.horizontalHeader().resizeSection(0, 30)
         tb_step.horizontalHeader().resizeSection(1, 40)
         tb_step.horizontalHeader().resizeSection(7, 80)
         tb_step.horizontalHeader().resizeSection(8, 50)
@@ -1194,7 +1194,21 @@ class MyUi(QMainWindow, Ui_MainWindow):
                     for col in range(0, tb_step.columnCount() - 1):
                         if col == 0:
                             cb = QCheckBox()
-                            cb.setStyleSheet('QCheckBox{margin:6px};')
+                            cb.setStyleSheet("""
+                                                QCheckBox{margin:6px;padding-left: 1px;padding-top: 1px;}
+                                                QCheckBox::indicator:checked {
+                                                    background-color: lightgreen;
+                                                    border: 2px solid green;
+                                                }
+                                                QCheckBox::indicator:unchecked {
+                                                    background-color: lightgray;
+                                                    border: 2px solid gray;
+                                                }
+                                                QCheckBox::indicator {
+                                                    width: 10px;
+                                                    height: 10px;
+                                                }
+                                            """)
                             cb.setChecked(tb_step.cellWidget(row_num + 1, col).isChecked())
                             tb_step.setCellWidget(row_num, col, cb)
                         elif col == col_count - 2:
@@ -1239,7 +1253,21 @@ class MyUi(QMainWindow, Ui_MainWindow):
                 for row in range(row_count, row_num, -1):
                     plan_list[row] = copy.deepcopy(plan_list[row - 1])
                     cb = QCheckBox()
-                    cb.setStyleSheet('QCheckBox{margin:6px};')
+                    cb.setStyleSheet("""
+                                        QCheckBox{margin:6px;padding-left: 1px;padding-top: 1px;}
+                                        QCheckBox::indicator:checked {
+                                            background-color: lightgreen;
+                                            border: 2px solid green;
+                                        }
+                                        QCheckBox::indicator:unchecked {
+                                            background-color: lightgray;
+                                            border: 2px solid gray;
+                                        }
+                                        QCheckBox::indicator {
+                                            width: 10px;
+                                            height: 10px;
+                                        }
+                                    """)
                     tb_step.setCellWidget(row, 0, cb)
                     tb_step.cellWidget(row, 0).setChecked(tb_step.cellWidget(row - 1, 0).isChecked())
 
@@ -1277,7 +1305,22 @@ class MyUi(QMainWindow, Ui_MainWindow):
                             tb_step.setItem(row, col, item)
             else:
                 cb = QCheckBox()
-                cb.setStyleSheet('QCheckBox{margin:6px};')
+                cb.setStyleSheet("""
+                                    QCheckBox{margin:6px;padding-left: 1px;padding-top: 1px;}
+                                    
+                                    QCheckBox::indicator:checked {
+                                    background-color: lightgreen;
+                                    border: 2px solid green;
+                                    }
+                                    QCheckBox::indicator:unchecked {
+                                        background-color: lightgray;
+                                        border: 2px solid gray;
+                                    }
+                                    QCheckBox::indicator {
+                                        width: 10px;
+                                        height: 10px;
+                                    }
+                                """)
                 tb_step.setCellWidget(0, 0, cb)
 
                 for col in range(1, tb_step.columnCount() - 1):
@@ -1417,7 +1460,7 @@ class PosThread(QThread):
                     for i in range(0, 5):
                         (res, pValue[i], pClock) = sc.get_pos(i + 1)
                     self._signal.emit(pValue)
-                    # time.sleep(0.1)
+
                 except:
                     pass
             self.run_flg = False
@@ -1934,7 +1977,10 @@ class PlanCmdThread(QThread):
                             self._signal.emit(fail("运动板通信出错！"))
 
                         if ui.checkBox_test.isChecked():
-                            time.sleep(2)  # 测试模式停两秒切换下一个动作
+                            if float(plan_list[plan_index][16][0]) >= 0:
+                                time.sleep(float(plan_list[plan_index][16][0]))
+                            else:
+                                time.sleep(2)  # 测试模式停两秒切换下一个动作
                         elif int(plan_list[plan_index][14][0]) == 0:
                             pass  # 0则直接下一个动作
                         elif int(plan_list[plan_index][14][0]) < 0:
@@ -2054,88 +2100,102 @@ def keyboard_release(key):
                 print('前')
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
-                pos = pValue[1] + 30000 * five_axis[1]
-                if pos <= 0:
-                    pos = 0
-                sc.card_setpos(2, pos)
+                Pos_Thread.run_flg = False
+                pValue[1] = pValue[1] + 30000 * five_key[1]
+                if pValue[1] <= 0:
+                    pValue[1] = 0
+                sc.card_setpos(2, pValue[1])
                 sc.card_update()
 
             if key == key.down:
                 print('后')
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
-                pos = pValue[1] - 30000 * five_axis[1]
-                if pos <= 0:
-                    pos = 0
-                sc.card_setpos(2, pos)
+                Pos_Thread.run_flg = False
+                pValue[1] = pValue[1] - 30000 * five_key[1]
+                if pValue[1] <= 0:
+                    pValue[1] = 0
+                sc.card_setpos(2, pValue[1])
                 sc.card_update()
 
             if key == key.left:
                 print('左')
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
-                pos = pValue[0] - 30000 * five_axis[0]
-                if pos <= 0:
-                    pos = 0
-                sc.card_setpos(1, pos)
+                Pos_Thread.run_flg = False
+                pValue[0] = pValue[0] - 30000 * five_key[0]
+                if pValue[0] <= 0:
+                    pValue[0] = 0
+                sc.card_setpos(1, pValue[0])
                 sc.card_update()
 
             if key == key.right:
                 print('右')
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
-                pos = pValue[0] + 30000 * five_axis[0]
-                if pos <= 0:
-                    pos = 0
-                sc.card_setpos(1, pos)
+                Pos_Thread.run_flg = False
+                pValue[0] = pValue[0] + 30000 * five_key[0]
+                if pValue[0] <= 0:
+                    pValue[0] = 0
+                sc.card_setpos(1, pValue[0])
                 sc.card_update()
 
             if key == key.insert:
                 print('上')
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
-                pos = pValue[2] - 30000 * five_axis[2]
-                if pos <= 0:
-                    pos = 0
-                sc.card_setpos(3, pos)
+                Pos_Thread.run_flg = False
+                pValue[2] = pValue[2] - 30000 * five_key[2]
+                if pValue[2] <= 0:
+                    pValue[2] = 0
+                sc.card_setpos(3, pValue[2])
                 sc.card_update()
 
             if key == key.delete:
                 print('下')
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
-                pos = pValue[2] + 30000 * five_axis[2]
-                if pos <= 0:
-                    pos = 0
-                sc.card_setpos(3, pos)
+                Pos_Thread.run_flg = False
+                pValue[2] = pValue[2] + 30000 * five_key[2]
+                if pValue[2] <= 0:
+                    pValue[2] = 0
+                sc.card_setpos(3, pValue[2])
                 sc.card_update()
 
             if key == key.home:
                 print('头左')
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
-                sc.card_setpos(4, pValue[3] - 30000 * five_axis[3])
+                Pos_Thread.run_flg = False
+                pValue[3] = pValue[3] - 30000 * five_key[3]
+                sc.card_setpos(4, pValue[3])
                 sc.card_update()
 
             if key == key.end:
                 print('头右')
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
-                sc.card_setpos(4, pValue[3] + 30000 * five_axis[3])
+                Pos_Thread.run_flg = False
+                pValue[3] = pValue[3] + 30000 * five_key[3]
+                sc.card_setpos(4, pValue[3])
                 sc.card_update()
 
             if key == key.page_up:
                 print('头上')
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
-                sc.card_setpos(5, pValue[4] + 30000 * five_axis[4])
+                Pos_Thread.run_flg = False
+                pValue[4] = pValue[4] + 30000 * five_key[4]
+                sc.card_setpos(5, pValue[4])
                 sc.card_update()
 
             if key == key.page_down:
                 print('头下')
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
-                sc.card_setpos(5, pValue[4] - 30000 * five_axis[4])
+                Pos_Thread.run_flg = False
+                pValue[4] = pValue[4] - 30000 * five_key[4]
+                sc.card_setpos(5, pValue[4])
                 sc.card_update()
 
         except AttributeError:
@@ -2170,7 +2230,7 @@ def keyboard_press(key):
                 print('前')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = 2000000 * five_axis[1]
+                    pos = 2000000 * five_key[1]
                     if pos <= 0:
                         pos = 0
                     sc.card_move(2, pos=pos)
@@ -2181,7 +2241,7 @@ def keyboard_press(key):
                 print('后')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = -2000000 * five_axis[1]
+                    pos = -2000000 * five_key[1]
                     if pos <= 0:
                         pos = 0
                     sc.card_move(2, pos=pos)
@@ -2191,7 +2251,7 @@ def keyboard_press(key):
                 print('左')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = -2000000 * five_axis[0]
+                    pos = -2000000 * five_key[0]
                     if pos <= 0:
                         pos = 0
                     sc.card_move(1, pos=pos)
@@ -2201,7 +2261,7 @@ def keyboard_press(key):
                 print('右')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = 2000000 * five_axis[0]
+                    pos = 2000000 * five_key[0]
                     if pos <= 0:
                         pos = 0
                     sc.card_move(1, pos=pos)
@@ -2211,7 +2271,7 @@ def keyboard_press(key):
                 print('上')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = -2000000 * five_axis[2]
+                    pos = -2000000 * five_key[2]
                     if pos <= 0:
                         pos = 0
                     sc.card_move(3, pos=pos)
@@ -2221,7 +2281,7 @@ def keyboard_press(key):
                 print('下')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = 2000000 * five_axis[2]
+                    pos = 2000000 * five_key[2]
                     if pos <= 0:
                         pos = 0
                     sc.card_move(3, pos=pos)
@@ -2231,28 +2291,28 @@ def keyboard_press(key):
                 print('头左')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    sc.card_move(4, pos=-2000000 * five_axis[3])
+                    sc.card_move(4, pos=-2000000 * five_key[3], vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.end:
                 print('头右')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    sc.card_move(4, pos=2000000 * five_axis[3])
+                    sc.card_move(4, pos=2000000 * five_key[3], vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_up:
                 print('头下')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    sc.card_move(5, pos=2000000 * five_axis[4])
+                    sc.card_move(5, pos=2000000 * five_key[4], vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_down:
                 print('头上')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    sc.card_move(5, pos=-2000000 * five_axis[4])
+                    sc.card_move(5, pos=-2000000 * five_key[4], vel=50)
                     sc.card_update()
                     flg_key_run = False
         except AttributeError:
@@ -2403,7 +2463,22 @@ def plan_refresh():  # 刷新方案列表
     for num, plan in enumerate(plan_list):
         tb_step.setRowCount(num + 1)
         cb = QCheckBox()
-        cb.setStyleSheet('QCheckBox{margin:6px};')
+        cb.setStyleSheet("""
+            QCheckBox{margin:6px;padding-left: 1px;padding-top: 1px;}
+            
+            QCheckBox::indicator:checked {
+                background-color: lightgreen;
+                border: 2px solid green;
+            }
+            QCheckBox::indicator:unchecked {
+                background-color: lightgray;
+                border: 2px solid gray;
+            }
+            QCheckBox::indicator {
+                width: 10px;
+                height: 10px;
+            }
+        """)
         tb_step.setCellWidget(num, 0, cb)
         if plan[0] == '1':
             tb_step.cellWidget(num, 0).setChecked(True)
@@ -2536,69 +2611,72 @@ def load_main_yaml():
     global obs_script_addr
     global map_data
     global five_axis
+    global five_key
     global Track_number
     file = "main_config.yml"
     if os.path.exists(file):
-        try:
-            f = open(file, 'r', encoding='utf-8')
-            main_all = yaml.safe_load(f)
-            # print(main_all)
-            f.close()
+        # try:
+        f = open(file, 'r', encoding='utf-8')
+        main_all = yaml.safe_load(f)
+        # print(main_all)
+        f.close()
 
-            s485.s485_Axis_No = main_all['s485_Axis_No']
-            s485.s485_Cam_No = main_all['s485_Cam_No']
+        s485.s485_Axis_No = main_all['s485_Axis_No']
+        s485.s485_Cam_No = main_all['s485_Cam_No']
 
-            ui.lineEdit_cardNo.setText(main_all['cardNo'])
-            ui.lineEdit_CardNo.setText(main_all['cardNo'])
-            ui.lineEdit_s485_Axis_No.setText(main_all['s485_Axis_No'])
-            ui.lineEdit_s485_Cam_No.setText(main_all['s485_Cam_No'])
-            ui.lineEdit_five_axis.setText(main_all['five_axis'])
-            ui.lineEdit_balls_count.setText(main_all['balls_count'])
-            ui.lineEdit_wakeup_addr.setText(main_all['wakeup_addr'])
-            ui.lineEdit_rtsp_url.setText(main_all['rtsp_url'])
-            ui.lineEdit_recognition_addr.setText(main_all['recognition_addr'])
-            ui.lineEdit_obs_script_addr.setText(main_all['obs_script_addr'])
-            ui.lineEdit_TcpServer_Port.setText(main_all['tcpServer_addr'][1])
-            ui.lineEdit_UdpServer_Port.setText(main_all['udpServer_addr'][1])
-            ui.lineEdit_map_picture.setText(main_all['map_picture'])
-            ui.lineEdit_map_line.setText(main_all['map_line'])
-            ui.lineEdit_scene_name.setText(main_all['scene_name'])
-            ui.lineEdit_source_ranking.setText(main_all['source_ranking'])
-            ui.lineEdit_source_picture.setText(main_all['source_picture'])
-            ui.lineEdit_source_settlement.setText(main_all['source_settlement'])
-            ui.lineEdit_source_end.setText(main_all['source_end'])
-            ui.lineEdit_shoot.setText(main_all['lineEdit_shoot'])
-            ui.lineEdit_start.setText(main_all['lineEdit_start'])
-            ui.lineEdit_shake.setText(main_all['lineEdit_shake'])
-            ui.lineEdit_end.setText(main_all['lineEdit_end'])
-            ui.lineEdit_Track_number.setText(main_all['Track_number'])
-            ui.pushButton_start_game.setEnabled(main_all['pushButton_start_game'])
-            for index in range(1, 4):
-                getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
-                getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
-                getattr(ui, 'radioButton_music_background_%s' % index).setChecked(main_all['music_%s' % index][0])
-            for index in range(1, 11):
-                eng = main_all['init_array'][index - 1][5]
-                ch = main_all['color_ch'][eng]
-                getattr(ui, 'lineEdit_Color_Eng_%s' % index).setText(eng)
-                getattr(ui, 'lineEdit_Color_Ch_%s' % index).setText(ch)
-            # 赋值变量
-            init_array = main_all['init_array']
-            color_ch = main_all['color_ch']
-            udpServer_addr = (main_all['udpServer_addr'][0], int(main_all['udpServer_addr'][1]))
-            tcpServer_addr = (main_all['tcpServer_addr'][0], int(main_all['tcpServer_addr'][1]))
-            wakeup_addr = main_all['wakeup_addr']
-            balls_count = int(main_all['balls_count'])
-            rtsp_url = main_all['rtsp_url']
-            recognition_addr = main_all['recognition_addr']
-            obs_script_addr = main_all['obs_script_addr']
-            s485.s485_Axis_No = main_all['s485_Axis_No']
-            s485.s485_Cam_No = main_all['s485_Cam_No']
-            map_data = [main_all['map_picture'], main_all['map_line']]
-            five_axis = eval(ui.lineEdit_five_axis.text())
-            Track_number = main_all['Track_number']
-        except:
-            print('初始化出错~！')
+        ui.lineEdit_cardNo.setText(main_all['cardNo'])
+        ui.lineEdit_CardNo.setText(main_all['cardNo'])
+        ui.lineEdit_s485_Axis_No.setText(main_all['s485_Axis_No'])
+        ui.lineEdit_s485_Cam_No.setText(main_all['s485_Cam_No'])
+        ui.lineEdit_five_axis.setText(main_all['five_axis'])
+        ui.lineEdit_five_key.setText(main_all['five_key'])
+        ui.lineEdit_balls_count.setText(main_all['balls_count'])
+        ui.lineEdit_wakeup_addr.setText(main_all['wakeup_addr'])
+        ui.lineEdit_rtsp_url.setText(main_all['rtsp_url'])
+        ui.lineEdit_recognition_addr.setText(main_all['recognition_addr'])
+        ui.lineEdit_obs_script_addr.setText(main_all['obs_script_addr'])
+        ui.lineEdit_TcpServer_Port.setText(main_all['tcpServer_addr'][1])
+        ui.lineEdit_UdpServer_Port.setText(main_all['udpServer_addr'][1])
+        ui.lineEdit_map_picture.setText(main_all['map_picture'])
+        ui.lineEdit_map_line.setText(main_all['map_line'])
+        ui.lineEdit_scene_name.setText(main_all['scene_name'])
+        ui.lineEdit_source_ranking.setText(main_all['source_ranking'])
+        ui.lineEdit_source_picture.setText(main_all['source_picture'])
+        ui.lineEdit_source_settlement.setText(main_all['source_settlement'])
+        ui.lineEdit_source_end.setText(main_all['source_end'])
+        ui.lineEdit_shoot.setText(main_all['lineEdit_shoot'])
+        ui.lineEdit_start.setText(main_all['lineEdit_start'])
+        ui.lineEdit_shake.setText(main_all['lineEdit_shake'])
+        ui.lineEdit_end.setText(main_all['lineEdit_end'])
+        ui.lineEdit_Track_number.setText(main_all['Track_number'])
+        ui.pushButton_start_game.setEnabled(main_all['pushButton_start_game'])
+        for index in range(1, 4):
+            getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
+            getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
+            getattr(ui, 'radioButton_music_background_%s' % index).setChecked(main_all['music_%s' % index][0])
+        for index in range(1, 11):
+            eng = main_all['init_array'][index - 1][5]
+            ch = main_all['color_ch'][eng]
+            getattr(ui, 'lineEdit_Color_Eng_%s' % index).setText(eng)
+            getattr(ui, 'lineEdit_Color_Ch_%s' % index).setText(ch)
+        # 赋值变量
+        init_array = main_all['init_array']
+        color_ch = main_all['color_ch']
+        udpServer_addr = (main_all['udpServer_addr'][0], int(main_all['udpServer_addr'][1]))
+        tcpServer_addr = (main_all['tcpServer_addr'][0], int(main_all['tcpServer_addr'][1]))
+        wakeup_addr = main_all['wakeup_addr']
+        balls_count = int(main_all['balls_count'])
+        rtsp_url = main_all['rtsp_url']
+        recognition_addr = main_all['recognition_addr']
+        obs_script_addr = main_all['obs_script_addr']
+        s485.s485_Axis_No = main_all['s485_Axis_No']
+        s485.s485_Cam_No = main_all['s485_Cam_No']
+        map_data = [main_all['map_picture'], main_all['map_line']]
+        five_axis = eval(ui.lineEdit_five_axis.text())
+        five_key = eval(ui.lineEdit_five_key.text())
+        Track_number = main_all['Track_number']
+    # except:
+    #     print('初始化出错~！')
     else:
         print("文件不存在")
 
@@ -4307,6 +4385,7 @@ if __name__ == '__main__':
     rtsp_url = 'rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101'  # 主码流
     map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json']  # 卫星地图资料
     five_axis = [1, 1, 1, 1, 1]
+    five_key = [1, 1, 1, 1, 1]
     Track_number = "J"  # 轨道直播编号
 
     load_main_yaml()

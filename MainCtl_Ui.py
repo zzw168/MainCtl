@@ -766,6 +766,7 @@ class Ui_MainWindow(object):
         self.checkBox_follow = QCheckBox(self.frame_13)
         self.checkBox_follow.setObjectName(u"checkBox_follow")
         self.checkBox_follow.setFont(font1)
+        self.checkBox_follow.setStyleSheet(u"QCheckBox::indicator:checked {background-color: green;border: 2px solid green;}QCheckBox::indicator:unchecked {background-color: lightgray; border: 2px solid gray}")
 
         self.gridLayout_13.addWidget(self.checkBox_follow, 0, 5, 1, 1)
 
@@ -2300,24 +2301,17 @@ class Ui_MainWindow(object):
         self.groupBox_17.setFont(font1)
         self.gridLayout_35 = QGridLayout(self.groupBox_17)
         self.gridLayout_35.setObjectName(u"gridLayout_35")
-        self.label_33 = QLabel(self.groupBox_17)
-        self.label_33.setObjectName(u"label_33")
-        self.label_33.setFont(font5)
+        self.label_80 = QLabel(self.groupBox_17)
+        self.label_80.setObjectName(u"label_80")
+        self.label_80.setFont(font5)
 
-        self.gridLayout_35.addWidget(self.label_33, 0, 0, 1, 2)
-
-        self.lineEdit_cardNo = QLineEdit(self.groupBox_17)
-        self.lineEdit_cardNo.setObjectName(u"lineEdit_cardNo")
-        self.lineEdit_cardNo.setFont(font4)
-        self.lineEdit_cardNo.setReadOnly(False)
-
-        self.gridLayout_35.addWidget(self.lineEdit_cardNo, 0, 2, 1, 1)
+        self.gridLayout_35.addWidget(self.label_80, 0, 3, 1, 1)
 
         self.label_79 = QLabel(self.groupBox_17)
         self.label_79.setObjectName(u"label_79")
         self.label_79.setFont(font5)
 
-        self.gridLayout_35.addWidget(self.label_79, 4, 0, 1, 1)
+        self.gridLayout_35.addWidget(self.label_79, 5, 0, 1, 1)
 
         self.label_38 = QLabel(self.groupBox_17)
         self.label_38.setObjectName(u"label_38")
@@ -2331,18 +2325,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_35.addWidget(self.label_36, 1, 0, 1, 2)
 
-        self.lineEdit_Track_number = QLineEdit(self.groupBox_17)
-        self.lineEdit_Track_number.setObjectName(u"lineEdit_Track_number")
-        self.lineEdit_Track_number.setFont(font4)
-        self.lineEdit_Track_number.setReadOnly(False)
+        self.lineEdit_cardNo = QLineEdit(self.groupBox_17)
+        self.lineEdit_cardNo.setObjectName(u"lineEdit_cardNo")
+        self.lineEdit_cardNo.setFont(font4)
+        self.lineEdit_cardNo.setReadOnly(False)
 
-        self.gridLayout_35.addWidget(self.lineEdit_Track_number, 0, 4, 1, 1)
-
-        self.label_80 = QLabel(self.groupBox_17)
-        self.label_80.setObjectName(u"label_80")
-        self.label_80.setFont(font5)
-
-        self.gridLayout_35.addWidget(self.label_80, 0, 3, 1, 1)
+        self.gridLayout_35.addWidget(self.lineEdit_cardNo, 0, 2, 1, 1)
 
         self.lineEdit_s485_Axis_No = QLineEdit(self.groupBox_17)
         self.lineEdit_s485_Axis_No.setObjectName(u"lineEdit_s485_Axis_No")
@@ -2350,6 +2338,19 @@ class Ui_MainWindow(object):
         self.lineEdit_s485_Axis_No.setReadOnly(False)
 
         self.gridLayout_35.addWidget(self.lineEdit_s485_Axis_No, 1, 2, 1, 3)
+
+        self.lineEdit_Track_number = QLineEdit(self.groupBox_17)
+        self.lineEdit_Track_number.setObjectName(u"lineEdit_Track_number")
+        self.lineEdit_Track_number.setFont(font4)
+        self.lineEdit_Track_number.setReadOnly(False)
+
+        self.gridLayout_35.addWidget(self.lineEdit_Track_number, 0, 4, 1, 1)
+
+        self.label_33 = QLabel(self.groupBox_17)
+        self.label_33.setObjectName(u"label_33")
+        self.label_33.setFont(font5)
+
+        self.gridLayout_35.addWidget(self.label_33, 0, 0, 1, 2)
 
         self.lineEdit_s485_Cam_No = QLineEdit(self.groupBox_17)
         self.lineEdit_s485_Cam_No.setObjectName(u"lineEdit_s485_Cam_No")
@@ -2361,7 +2362,19 @@ class Ui_MainWindow(object):
         self.lineEdit_five_axis.setObjectName(u"lineEdit_five_axis")
         self.lineEdit_five_axis.setFont(font4)
 
-        self.gridLayout_35.addWidget(self.lineEdit_five_axis, 4, 2, 1, 3)
+        self.gridLayout_35.addWidget(self.lineEdit_five_axis, 5, 2, 1, 1)
+
+        self.label_81 = QLabel(self.groupBox_17)
+        self.label_81.setObjectName(u"label_81")
+        self.label_81.setFont(font5)
+
+        self.gridLayout_35.addWidget(self.label_81, 5, 3, 1, 1)
+
+        self.lineEdit_five_key = QLineEdit(self.groupBox_17)
+        self.lineEdit_five_key.setObjectName(u"lineEdit_five_key")
+        self.lineEdit_five_key.setFont(font4)
+
+        self.gridLayout_35.addWidget(self.lineEdit_five_key, 5, 4, 1, 1)
 
 
         self.gridLayout_51.addWidget(self.groupBox_17, 2, 0, 1, 1)
@@ -3226,23 +3239,23 @@ class Ui_MainWindow(object):
         self.lineEdit_map_line.setText(QCoreApplication.translate("MainWindow", u"./img/09_\u6c99\u6f20.json", None))
         self.groupBox_28.setTitle(QCoreApplication.translate("MainWindow", u"\u603b\u63a7\u4fe1\u606f\u53c2\u7167", None))
         self.groupBox_17.setTitle(QCoreApplication.translate("MainWindow", u"\u786c\u4ef6\u7aef\u53e3\u8bbe\u7f6e", None))
-        self.label_33.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5361\u7f51\u7edc\u7f16\u53f7\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_cardNo.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_cardNo.setText(QCoreApplication.translate("MainWindow", u"10", None))
+        self.label_80.setText(QCoreApplication.translate("MainWindow", u"\u8f68\u9053\u7f16\u53f7\uff1a", None))
         self.label_79.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5361\u4e94\u8f74\u65b9\u5411\uff1a", None))
         self.label_38.setText(QCoreApplication.translate("MainWindow", u"S485 \u6444\u50cf\u673a\u7aef\u53e3\uff1a", None))
         self.label_36.setText(QCoreApplication.translate("MainWindow", u"S485 \u8f74\u590d\u4f4d\u7aef\u53e3\uff1a", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_Track_number.setToolTip("")
+        self.lineEdit_cardNo.setToolTip("")
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_Track_number.setText(QCoreApplication.translate("MainWindow", u"I", None))
-        self.label_80.setText(QCoreApplication.translate("MainWindow", u"\u8f68\u9053\u7f16\u53f7\uff1a", None))
+        self.lineEdit_cardNo.setText(QCoreApplication.translate("MainWindow", u"10", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_s485_Axis_No.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_s485_Axis_No.setText(QCoreApplication.translate("MainWindow", u"COM23", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_Track_number.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_Track_number.setText(QCoreApplication.translate("MainWindow", u"I", None))
+        self.label_33.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5361\u7f51\u7edc\u7f16\u53f7\uff1a", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_s485_Cam_No.setToolTip("")
 #endif // QT_CONFIG(tooltip)
@@ -3251,6 +3264,11 @@ class Ui_MainWindow(object):
         self.lineEdit_five_axis.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_five_axis.setText(QCoreApplication.translate("MainWindow", u"[-1,1,1,1,-1]", None))
+        self.label_81.setText(QCoreApplication.translate("MainWindow", u"\u952e\u76d8\u65b9\u5411\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_five_key.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_five_key.setText(QCoreApplication.translate("MainWindow", u"[-1,1,1,1,-1]", None))
         self.groupBox_13.setTitle(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc\u8bbe\u7f6e", None))
         self.label_30.setText(QCoreApplication.translate("MainWindow", u":", None))
 #if QT_CONFIG(tooltip)

@@ -1741,6 +1741,9 @@
                  <bold>true</bold>
                 </font>
                </property>
+               <property name="styleSheet">
+                <string notr="true">QCheckBox::indicator:checked {background-color: green;border: 2px solid green;}QCheckBox::indicator:unchecked {background-color: lightgray; border: 2px solid gray}</string>
+               </property>
                <property name="text">
                 <string>运行跟踪</string>
                </property>
@@ -5522,8 +5525,8 @@
                 <string>硬件端口设置</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_35">
-                <item row="0" column="0" colspan="2">
-                 <widget class="QLabel" name="label_33">
+                <item row="0" column="3">
+                 <widget class="QLabel" name="label_80">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -5532,31 +5535,11 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>运动卡网络编号：</string>
+                   <string>轨道编号：</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="2">
-                 <widget class="QLineEdit" name="lineEdit_cardNo">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>10</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
+                <item row="5" column="0">
                  <widget class="QLabel" name="label_79">
                   <property name="font">
                    <font>
@@ -5598,8 +5581,8 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="4">
-                 <widget class="QLineEdit" name="lineEdit_Track_number">
+                <item row="0" column="2">
+                 <widget class="QLineEdit" name="lineEdit_cardNo">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -5611,24 +5594,10 @@
                    <string/>
                   </property>
                   <property name="text">
-                   <string>I</string>
+                   <string>10</string>
                   </property>
                   <property name="readOnly">
                    <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
-                 <widget class="QLabel" name="label_80">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>轨道编号：</string>
                   </property>
                  </widget>
                 </item>
@@ -5652,6 +5621,40 @@
                   </property>
                  </widget>
                 </item>
+                <item row="0" column="4">
+                 <widget class="QLineEdit" name="lineEdit_Track_number">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>I</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0" colspan="2">
+                 <widget class="QLabel" name="label_33">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>运动卡网络编号：</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="2" column="2" colspan="3">
                  <widget class="QLineEdit" name="lineEdit_s485_Cam_No">
                   <property name="font">
@@ -5669,8 +5672,39 @@
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="2" colspan="3">
+                <item row="5" column="2">
                  <widget class="QLineEdit" name="lineEdit_five_axis">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>[-1,1,1,1,-1]</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="3">
+                 <widget class="QLabel" name="label_81">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>键盘方向：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="4">
+                 <widget class="QLineEdit" name="lineEdit_five_key">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
