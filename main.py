@@ -743,9 +743,8 @@ class TcpRankingThread(QThread):
                                 # self._signal.emit("pingpong 错误：%s" % e)
                                 break
             except Exception as e:
-                print("pingpong 错误：%s" % e)
+                print("pingpong 错误：", e)
                 # self._signal.emit("pingpong 错误：%s" % e)
-                # break
 
 
 class TcpResultThread(QThread):
@@ -772,59 +771,64 @@ class TcpResultThread(QThread):
                     continue
                 with WebsocketServer(con) as ws:
                     while self.run_flg:
-                        if self.send_type == 'updata':
-                            datalist = {'type': 'updata',
-                                        'data': {'qh': str(lottery_term[0]), 'rank': []}}
-                            for index in range(len(z_ranking_res)):
-                                if is_natural_num(z_ranking_time[index]):
-                                    datalist["data"]['rank'].append(
-                                        {"mc": z_ranking_res[index], "time": ('%s"' % z_ranking_time[index])})
-                                else:
-                                    datalist["data"]['rank'].append(
-                                        {"mc": z_ranking_res[index], "time": ('%s' % z_ranking_time[index])})
-                            ws.send(json.dumps(datalist))
-                            if not ui.radioButton_test_game.isChecked():  # 非测试模式
-                                result_data = {"raceTrackID": Track_number, "term": str(term),
-                                               "actualResultOpeningTime": betting_end_time,
-                                               "result": z_ranking_res,
-                                               "timings": "[]"}
-                                data_temp = []
+                        try:
+                            if self.send_type == 'updata':
+                                datalist = {'type': 'updata',
+                                            'data': {'qh': str(lottery_term[0]), 'rank': []}}
                                 for index in range(len(z_ranking_res)):
                                     if is_natural_num(z_ranking_time[index]):
-                                        data_temp.append(
-                                            {"pm": index + 1, "id": z_ranking_res[index],
-                                             "time": float(z_ranking_time[index])})
+                                        datalist["data"]['rank'].append(
+                                            {"mc": z_ranking_res[index], "time": ('%s"' % z_ranking_time[index])})
                                     else:
-                                        data_temp.append(
-                                            {"pm": index + 1, "id": z_ranking_res[index],
-                                             "time": z_ranking_time[index]})
-                                result_data["timings"] = json.dumps(data_temp)
-                                print(result_data)
-                                try:
-                                    post_end(term, betting_end_time, status=1)  # 发送游戏结束信号给服务器
-                                    post_result(term, betting_end_time, result_data)  # 发送最终排名给服务器
-                                    post_upload(term, lottery_term[6])  # 上传结果图片
-                                except:
-                                    print('上传结果错误！')
-                                self._signal.emit(succeed('第%s期 结束！' % term))
-                            if ui.checkBox_restart.isChecked():
-                                ReStart_Thread.run_flg = True  # 1分钟后重启动作
+                                        datalist["data"]['rank'].append(
+                                            {"mc": z_ranking_res[index], "time": ('%s' % z_ranking_time[index])})
+                                ws.send(json.dumps(datalist))
+                                if not ui.radioButton_test_game.isChecked():  # 非测试模式
+                                    result_data = {"raceTrackID": Track_number, "term": str(term),
+                                                   "actualResultOpeningTime": betting_end_time,
+                                                   "result": z_ranking_res,
+                                                   "timings": "[]"}
+                                    data_temp = []
+                                    for index in range(len(z_ranking_res)):
+                                        if is_natural_num(z_ranking_time[index]):
+                                            data_temp.append(
+                                                {"pm": index + 1, "id": z_ranking_res[index],
+                                                 "time": float(z_ranking_time[index])})
+                                        else:
+                                            data_temp.append(
+                                                {"pm": index + 1, "id": z_ranking_res[index],
+                                                 "time": z_ranking_time[index]})
+                                    result_data["timings"] = json.dumps(data_temp)
+                                    print(result_data)
+                                    try:
+                                        post_end(term, betting_end_time, 1, Track_number)  # 发送游戏结束信号给服务器
+                                        post_result(term, betting_end_time, result_data, Track_number)  # 发送最终排名给服务器
+                                        post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
+                                    except:
+                                        print('上传结果错误！')
+                                    self._signal.emit(succeed('第%s期 结束！' % term))
+                                if ui.checkBox_restart.isChecked():
+                                    ReStart_Thread.run_flg = True  # 1分钟后重启动作
+                                    self.send_type = ''
+                                else:
+                                    self.run_flg = False
+                            elif self.send_type == 'time':
+                                datalist = {'type': 'time',
+                                            'data': str(term)}
+                                ws.send(json.dumps(datalist))
                                 self.send_type = ''
-                            else:
                                 self.run_flg = False
-                        elif self.send_type == 'time':
-                            datalist = {'type': 'time',
-                                        'data': str(term)}
-                            ws.send(json.dumps(datalist))
-                            self.send_type = ''
-                            self.run_flg = False
-                        else:
-                            ws.send('pong')
-                            time.sleep(1)
+                            else:
+                                ws.send('pong')
+                                time.sleep(1)
+                        except Exception as e:
+                            print("pingpong 错误：%s" % e)
+                            # self._signal.emit("pingpong 错误：%s" % e)
+                            break
             except Exception as e:
                 print("pingpong 错误：%s" % e)
                 # self._signal.emit("pingpong 错误：%s" % e)
-                # break
+                break
 
 
 def tcp_signal_accept(msg):
@@ -1072,8 +1076,8 @@ class MyUi(QMainWindow, Ui_MainWindow):
         tb_step.horizontalHeader().resizeSection(7, 80)
         tb_step.horizontalHeader().resizeSection(8, 50)
         tb_step.horizontalHeader().resizeSection(9, 50)
-        tb_step.horizontalHeader().resizeSection(10, 60)
-        tb_step.horizontalHeader().resizeSection(11, 60)
+        tb_step.horizontalHeader().resizeSection(10, 65)
+        tb_step.horizontalHeader().resizeSection(11, 40)
         tb_step.horizontalHeader().resizeSection(12, 50)
         tb_step.horizontalHeader().resizeSection(13, 60)
         tb_step.horizontalHeader().resizeSection(14, 50)
@@ -1087,6 +1091,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
 
         tb_step.setContextMenuPolicy(Qt.CustomContextMenu)
         tb_step.customContextMenuRequested.connect(self.generateMenu)
+        tb_step.setEnabled(False)
 
         tb_sources = self.tableWidget_Sources
         tb_sources.horizontalHeader().resizeSection(0, 10)
@@ -1315,7 +1320,7 @@ class ReStartThread(QThread):
             if not self.run_flg:
                 continue
             if not ui.radioButton_test_game.isChecked():  # 非模拟模式
-                response = get_term()
+                response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
                     if term == response['term']:
                         self._signal.emit('term')
@@ -1456,14 +1461,15 @@ class CamThread(QThread):
             print('串口运行')
             if self.camitem[0] != 0:
                 try:
-                    res = s485.cam_zoom_move(self.camitem[0])
+                    print(self.camitem)
+                    res = s485.cam_zoom_step(self.camitem[0] - 1)
                     if not res:
                         flg_start['s485'] = False
                         self._signal.emit(fail("s485通信出错！"))
                         self.run_flg = False
                         continue
-                    time.sleep(self.camitem[1])
-                    s485.cam_zoom_off()
+                    # time.sleep(self.camitem[1])
+                    # s485.cam_zoom_off()
                 except:
                     print("485 运行出错！")
                     flg_start['s485'] = False
@@ -1539,9 +1545,9 @@ class PlanBallNumThread(QThread):
                             break
                         time.sleep(0.01)
 
-                    for index in range(num_old, len(z_ranking_time)):
+                    for index in range(num_old - 1, len(z_ranking_time)):
                         if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
-                            tcp_ranking_thread.send_time_data = [index + 1, '%s"' % z_ranking_time[index]]
+                            tcp_ranking_thread.send_time_data = [index + 1, '%s' % z_ranking_time[index]]
                             tcp_ranking_thread.send_time_flg = True
                         time.sleep(0.5)
                 else:
@@ -1871,7 +1877,7 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_index][12][0])) - 1, 1)
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
                                     if not ui.radioButton_test_game.isChecked():  # 非模拟模式
-                                        post_start(term, betting_start_time)  # 发送开始信号给服务器
+                                        post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
                                         lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                         self._signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     ranking_time_start = time.time()  # 每个球的起跑时间
@@ -1958,12 +1964,13 @@ class PlanCmdThread(QThread):
                             self.cmd_next = False
                             continue
                         if self.run_flg:
+                            time.sleep(int(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
                             # 摄像头缩放
                             if int(plan_list[plan_index][10][0]) != 0:  # 摄像头缩放
                                 PlanCam_Thread.camitem = [int(plan_list[plan_index][10][0]),
                                                           int(plan_list[plan_index][11][0])]
                                 PlanCam_Thread.run_flg = True  # 摄像头线程
-                            time.sleep(int(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
+
                             # 场景切换
                             plan_col_count = len(plan_list[plan_index])  # 固定最后一项为OBS场景切换
                             if '_' in plan_list[plan_index][plan_col_count - 1]:
@@ -2041,9 +2048,11 @@ def signal_accept(msg):
 def keyboard_release(key):
     global flg_key_run
     if ui.checkBox_key.isChecked() and flg_start['card']:
+        tb_step = ui.tableWidget_Step
         try:
             if key == key.up:
                 print('前')
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 pos = pValue[1] + 30000 * five_axis[1]
                 if pos <= 0:
@@ -2053,6 +2062,7 @@ def keyboard_release(key):
 
             if key == key.down:
                 print('后')
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 pos = pValue[1] - 30000 * five_axis[1]
                 if pos <= 0:
@@ -2062,6 +2072,7 @@ def keyboard_release(key):
 
             if key == key.left:
                 print('左')
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 pos = pValue[0] - 30000 * five_axis[0]
                 if pos <= 0:
@@ -2071,6 +2082,7 @@ def keyboard_release(key):
 
             if key == key.right:
                 print('右')
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 pos = pValue[0] + 30000 * five_axis[0]
                 if pos <= 0:
@@ -2080,6 +2092,7 @@ def keyboard_release(key):
 
             if key == key.insert:
                 print('上')
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 pos = pValue[2] - 30000 * five_axis[2]
                 if pos <= 0:
@@ -2089,6 +2102,7 @@ def keyboard_release(key):
 
             if key == key.delete:
                 print('下')
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 pos = pValue[2] + 30000 * five_axis[2]
                 if pos <= 0:
@@ -2098,24 +2112,28 @@ def keyboard_release(key):
 
             if key == key.home:
                 print('头左')
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 sc.card_setpos(4, pValue[3] - 30000 * five_axis[3])
                 sc.card_update()
 
             if key == key.end:
                 print('头右')
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 sc.card_setpos(4, pValue[3] + 30000 * five_axis[3])
                 sc.card_update()
 
             if key == key.page_up:
                 print('头上')
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 sc.card_setpos(5, pValue[4] + 30000 * five_axis[4])
                 sc.card_update()
 
             if key == key.page_down:
                 print('头下')
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 sc.card_setpos(5, pValue[4] - 30000 * five_axis[4])
                 sc.card_update()
@@ -2125,8 +2143,10 @@ def keyboard_release(key):
             # print(key)
         try:
             if key.char == '-':
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 s485.cam_zoom_off()
             elif key.char == '+':
+                tb_step.setEnabled(ui.checkBox_test.isChecked())
                 s485.cam_zoom_off()
         except:
             pass
@@ -2138,17 +2158,18 @@ def keyboard_press(key):
     global flg_key_run
     try:
         if key == key.enter:
-            if not ui.radioButton_start_game.isChecked():
+            if not ui.radioButton_start_betting.isChecked():
                 cmd_stop()
-                sc.card_stop()
     except:
         pass
     if ui.checkBox_key.isChecked() and flg_start['card']:
+        tb_step = ui.tableWidget_Step
         try:
             Pos_Thread.run_flg = True
             if key == key.up:
                 print('前')
                 if flg_key_run:
+                    tb_step.setEnabled(False)
                     pos = 2000000 * five_axis[1]
                     if pos <= 0:
                         pos = 0
@@ -2159,6 +2180,7 @@ def keyboard_press(key):
             elif key == key.down:
                 print('后')
                 if flg_key_run:
+                    tb_step.setEnabled(False)
                     pos = -2000000 * five_axis[1]
                     if pos <= 0:
                         pos = 0
@@ -2168,6 +2190,7 @@ def keyboard_press(key):
             elif key == key.left:
                 print('左')
                 if flg_key_run:
+                    tb_step.setEnabled(False)
                     pos = -2000000 * five_axis[0]
                     if pos <= 0:
                         pos = 0
@@ -2177,6 +2200,7 @@ def keyboard_press(key):
             elif key == key.right:
                 print('右')
                 if flg_key_run:
+                    tb_step.setEnabled(False)
                     pos = 2000000 * five_axis[0]
                     if pos <= 0:
                         pos = 0
@@ -2186,6 +2210,7 @@ def keyboard_press(key):
             elif key == key.insert:
                 print('上')
                 if flg_key_run:
+                    tb_step.setEnabled(False)
                     pos = -2000000 * five_axis[2]
                     if pos <= 0:
                         pos = 0
@@ -2195,6 +2220,7 @@ def keyboard_press(key):
             elif key == key.delete:
                 print('下')
                 if flg_key_run:
+                    tb_step.setEnabled(False)
                     pos = 2000000 * five_axis[2]
                     if pos <= 0:
                         pos = 0
@@ -2204,24 +2230,28 @@ def keyboard_press(key):
             elif key == key.home:
                 print('头左')
                 if flg_key_run:
+                    tb_step.setEnabled(False)
                     sc.card_move(4, pos=-2000000 * five_axis[3])
                     sc.card_update()
                     flg_key_run = False
             elif key == key.end:
                 print('头右')
                 if flg_key_run:
+                    tb_step.setEnabled(False)
                     sc.card_move(4, pos=2000000 * five_axis[3])
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_up:
                 print('头下')
                 if flg_key_run:
+                    tb_step.setEnabled(False)
                     sc.card_move(5, pos=2000000 * five_axis[4])
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_down:
                 print('头上')
                 if flg_key_run:
+                    tb_step.setEnabled(False)
                     sc.card_move(5, pos=-2000000 * five_axis[4])
                     sc.card_update()
                     flg_key_run = False
@@ -2230,15 +2260,17 @@ def keyboard_press(key):
             pass
         try:
             if key.char == '+':
+                tb_step.setEnabled(False)
                 s485.cam_zoom_move(5)
             elif key.char == '-':
+                tb_step.setEnabled(False)
                 s485.cam_zoom_move(-5)
         except:
             pass
             # print(key)
 
 
-def save_speed():
+def accept_speed():
     global plan_list
     tb_speed = speed_ui.tableWidget_Set_Speed
     speed_row_count = tb_speed.rowCount()
@@ -2253,6 +2285,12 @@ def save_speed():
     row_num = tb_step.currentRow()
     plan_list[row_num][7] = copy.deepcopy(speed_list)
     tb_step.cellWidget(row_num, 7).setStyleSheet('background:rgb(0, 255, 0)')
+
+
+def reject_speed():
+    tb_step = ui.tableWidget_Step
+    row_num = tb_step.currentRow()
+    tb_step.cellWidget(row_num, 7).setStyleSheet('background:rgb(255, 0, 0)')
 
 
 def load_speed():
@@ -2498,6 +2536,7 @@ def load_main_yaml():
     global obs_script_addr
     global map_data
     global five_axis
+    global Track_number
     file = "main_config.yml"
     if os.path.exists(file):
         try:
@@ -2532,6 +2571,7 @@ def load_main_yaml():
             ui.lineEdit_start.setText(main_all['lineEdit_start'])
             ui.lineEdit_shake.setText(main_all['lineEdit_shake'])
             ui.lineEdit_end.setText(main_all['lineEdit_end'])
+            ui.lineEdit_Track_number.setText(main_all['Track_number'])
             ui.pushButton_start_game.setEnabled(main_all['pushButton_start_game'])
             for index in range(1, 4):
                 getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
@@ -2556,6 +2596,7 @@ def load_main_yaml():
             s485.s485_Cam_No = main_all['s485_Cam_No']
             map_data = [main_all['map_picture'], main_all['map_line']]
             five_axis = eval(ui.lineEdit_five_axis.text())
+            Track_number = main_all['Track_number']
         except:
             print('初始化出错~！')
     else:
@@ -2580,6 +2621,14 @@ def sel_all():
             tb_step.cellWidget(row, 0).setChecked(False)
 
 
+def edit_enable():
+    tb_step = ui.tableWidget_Step
+    if ui.checkBox_test.isChecked():
+        tb_step.setEnabled(True)
+    else:
+        tb_step.setEnabled(False)
+
+
 def cmd_run():
     global p_now
     p_now = 0
@@ -2593,7 +2642,6 @@ def cmd_run():
 def cmd_loop():
     global p_now
     p_now = 0
-    ui.checkBox_restart.setChecked(True)
     ui.radioButton_start_betting.click()  # 开盘
     ReStart_Thread.run_flg = True
 
@@ -2608,6 +2656,7 @@ def cmd_stop():
     PlanCmd_Thread.run_flg = False
     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
     Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+    sc.card_stop()  # 立即停止
     ui.checkBox_main_music.setChecked(False)
     ui.textBrowser.append(succeed('退出编排动作！'))
     ui.textBrowser_msg.append(succeed('退出编排动作！'))
@@ -2704,7 +2753,7 @@ def table_change():
                 tb_step.item(row, col).setText('')
         elif not is_natural_num(tb_step.item(row, col).text()):
             if tb_step.item(row, col):
-                tb_step.item(row, col).setText(plan_list[row][col])
+                tb_step.item(row, col).setText(plan_list[row][col][0])
     except:
         print("数据表操作出错！")
 
@@ -3681,7 +3730,7 @@ class TestStatusThread(QThread):
 
             if not flg_start['server']:  # 测试期号服务器
                 try:
-                    if test_server():
+                    if test_server(Track_number):
                         flg_start['server'] = True
                     else:
                         flg_start['server'] = False
@@ -3836,7 +3885,7 @@ def backup2result():
 
 
 def cancel_betting():
-    res = post_marble_results(term)
+    res = post_marble_results(term, 'Invalid Term', Track_number)
     if 'Invalid Term' in res:
         lottery_term[5] = '取消比赛'
 
@@ -3850,13 +3899,19 @@ def send_result():
     for index in range(len(result_list)):
         result_data["timings"].append(
             {"pm": index + 1, "id": result_list[index], "time": float(z_ranking_time[index])})
-    post_end(term, betting_end_time, status=0)  # 发送游戏结束信号给服务器， 0: 不正常
-    post_result(term, betting_end_time, result_data)  # 发送最终排名给服务器
+    post_end(term, betting_end_time, 0, Track_number)  # 发送游戏结束信号给服务器， 0: 不正常
+    post_result(term, betting_end_time, result_data, Track_number)  # 发送最终排名给服务器
+
+
+def start_betting():
+    ui.checkBox_restart.setChecked(True)
+    ui.checkBox_test.setChecked(False)
+    post_status(True, Track_number)
 
 
 def stop_betting():
     ui.checkBox_restart.setChecked(False)
-    post_status(False)
+    post_status(False, Track_number)
 
 
 "****************************************直播大厅_结束****************************************************"
@@ -3920,8 +3975,8 @@ def stay_num():
 def my_test():
     global term
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    tcp_result_thread.send_type = 'updata'
-    tcp_result_thread.run_flg = True
+    s = int(ui.lineEdit_result_send.text())
+    s485.cam_zoom_step(s)
     # time.sleep(5)
     # term = '800001'
     # tcp_result_thread.send_type = 'time'
@@ -4077,7 +4132,8 @@ if __name__ == '__main__':
     speed_ui = SpeedUi()
     speed_ui.setupUi(SpeedDialog)
 
-    speed_ui.buttonBox.accepted.connect(save_speed)
+    speed_ui.buttonBox.accepted.connect(accept_speed)
+    speed_ui.buttonBox.rejected.connect(reject_speed)
 
     query_sql()
     sc = SportCard()  # 运动卡
@@ -4168,6 +4224,7 @@ if __name__ == '__main__':
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
+    ui.checkBox_test.checkStateChanged.connect(edit_enable)
 
     ui.checkBox_shoot.checkStateChanged.connect(organ_shoot)
     ui.checkBox_start.checkStateChanged.connect(organ_start)
@@ -4250,6 +4307,7 @@ if __name__ == '__main__':
     rtsp_url = 'rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101'  # 主码流
     map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json']  # 卫星地图资料
     five_axis = [1, 1, 1, 1, 1]
+    Track_number = "J"  # 轨道直播编号
 
     load_main_yaml()
     print(map_data)
@@ -4434,7 +4492,7 @@ if __name__ == '__main__':
     stream_url = ''  # 流链接
     Send_Result = False  # 发送结果标志位
 
-    ui.radioButton_start_betting.clicked.connect(lambda: post_status(True))  # 开盘
+    ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
     # ui.radioButton_test_game.clicked.connect(lambda: ui.checkBox_test.setChecked(True))
     ui.checkBox_black_screen.checkStateChanged.connect(black_screen)

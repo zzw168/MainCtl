@@ -23,6 +23,18 @@ class Serial485:
             return '%s 端口链接失败！' % self.s485_Cam_No
 
     # 发送镜头缩放指令
+    def cam_zoom_step(self, in_out: int = 1):
+        speed = abs(in_out)  # 总共（0-4） 五档调整
+        if self.ser.is_open:
+            hexCmd = "81 01 04 47 0%d 00 00 00 FF" % speed
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
+
+    # 发送镜头缩放指令
     def cam_zoom_move(self, in_out: int = 5):
         speed = abs(in_out)
         if self.ser.is_open:
