@@ -1842,7 +1842,7 @@ class AxisThread(QThread):
                     for data in s485_data:
                         # if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
                         data['highPos'] = data['highPos'] * five_axis[data['nAxisNum'] - 1]
-                        print(data['nAxisNum'], data['highPos'])
+                        # print(data['nAxisNum'], data['highPos'])
                         res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
                         if res == 0:
                             sc.card_move(int(data['nAxisNum']), 0)
@@ -2101,7 +2101,7 @@ def keyboard_release(key):
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
-                pValue[1] = pValue[1] + 30000 * five_key[1]
+                pValue[1] = pValue[1] + 30000 * int(five_key[1])
                 if pValue[1] <= 0:
                     pValue[1] = 0
                 sc.card_setpos(2, pValue[1])
@@ -2112,7 +2112,7 @@ def keyboard_release(key):
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
-                pValue[1] = pValue[1] - 30000 * five_key[1]
+                pValue[1] = pValue[1] - 30000 * int(five_key[1])
                 if pValue[1] <= 0:
                     pValue[1] = 0
                 sc.card_setpos(2, pValue[1])
@@ -2123,7 +2123,7 @@ def keyboard_release(key):
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
-                pValue[0] = pValue[0] - 30000 * five_key[0]
+                pValue[0] = pValue[0] - 30000 * int(five_key[0])
                 if pValue[0] <= 0:
                     pValue[0] = 0
                 sc.card_setpos(1, pValue[0])
@@ -2134,7 +2134,7 @@ def keyboard_release(key):
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
-                pValue[0] = pValue[0] + 30000 * five_key[0]
+                pValue[0] = pValue[0] + 30000 * int(five_key[0])
                 if pValue[0] <= 0:
                     pValue[0] = 0
                 sc.card_setpos(1, pValue[0])
@@ -2145,7 +2145,7 @@ def keyboard_release(key):
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
-                pValue[2] = pValue[2] - 30000 * five_key[2]
+                pValue[2] = pValue[2] - 30000 * int(five_key[2])
                 if pValue[2] <= 0:
                     pValue[2] = 0
                 sc.card_setpos(3, pValue[2])
@@ -2156,7 +2156,7 @@ def keyboard_release(key):
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
-                pValue[2] = pValue[2] + 30000 * five_key[2]
+                pValue[2] = pValue[2] + 30000 * int(five_key[2])
                 if pValue[2] <= 0:
                     pValue[2] = 0
                 sc.card_setpos(3, pValue[2])
@@ -2167,7 +2167,7 @@ def keyboard_release(key):
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
-                pValue[3] = pValue[3] - 30000 * five_key[3]
+                pValue[3] = pValue[3] - 30000 * int(five_key[3])
                 sc.card_setpos(4, pValue[3])
                 sc.card_update()
 
@@ -2176,7 +2176,7 @@ def keyboard_release(key):
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
-                pValue[3] = pValue[3] + 30000 * five_key[3]
+                pValue[3] = pValue[3] + 30000 * int(five_key[3])
                 sc.card_setpos(4, pValue[3])
                 sc.card_update()
 
@@ -2185,7 +2185,7 @@ def keyboard_release(key):
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
-                pValue[4] = pValue[4] + 30000 * five_key[4]
+                pValue[4] = pValue[4] + 30000 * int(five_key[4])
                 sc.card_setpos(5, pValue[4])
                 sc.card_update()
 
@@ -2194,7 +2194,7 @@ def keyboard_release(key):
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
-                pValue[4] = pValue[4] - 30000 * five_key[4]
+                pValue[4] = pValue[4] - 30000 * int(five_key[4])
                 sc.card_setpos(5, pValue[4])
                 sc.card_update()
 
@@ -2230,7 +2230,7 @@ def keyboard_press(key):
                 print('前')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = 2000000 * five_key[1]
+                    pos = 2000000 * int(five_key[1])
                     if pos <= 0:
                         pos = 0
                     sc.card_move(2, pos=pos)
@@ -2241,7 +2241,7 @@ def keyboard_press(key):
                 print('后')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = -2000000 * five_key[1]
+                    pos = -2000000 * int(five_key[1])
                     if pos <= 0:
                         pos = 0
                     sc.card_move(2, pos=pos)
@@ -2251,7 +2251,7 @@ def keyboard_press(key):
                 print('左')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = -2000000 * five_key[0]
+                    pos = -2000000 * int(five_key[0])
                     if pos <= 0:
                         pos = 0
                     sc.card_move(1, pos=pos)
@@ -2261,7 +2261,7 @@ def keyboard_press(key):
                 print('右')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = 2000000 * five_key[0]
+                    pos = 2000000 * int(five_key[0])
                     if pos <= 0:
                         pos = 0
                     sc.card_move(1, pos=pos)
@@ -2271,7 +2271,7 @@ def keyboard_press(key):
                 print('上')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = -2000000 * five_key[2]
+                    pos = -2000000 * int(five_key[2])
                     if pos <= 0:
                         pos = 0
                     sc.card_move(3, pos=pos)
@@ -2281,7 +2281,7 @@ def keyboard_press(key):
                 print('下')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    pos = 2000000 * five_key[2]
+                    pos = 2000000 * int(five_key[2])
                     if pos <= 0:
                         pos = 0
                     sc.card_move(3, pos=pos)
@@ -2291,28 +2291,28 @@ def keyboard_press(key):
                 print('头左')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    sc.card_move(4, pos=-2000000 * five_key[3], vel=50)
+                    sc.card_move(4, pos=-2000000 * int(five_key[3]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.end:
                 print('头右')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    sc.card_move(4, pos=2000000 * five_key[3], vel=50)
+                    sc.card_move(4, pos=2000000 * int(five_key[3]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_up:
                 print('头下')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    sc.card_move(5, pos=2000000 * five_key[4], vel=50)
+                    sc.card_move(5, pos=2000000 * int(five_key[4]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_down:
                 print('头上')
                 if flg_key_run:
                     tb_step.setEnabled(False)
-                    sc.card_move(5, pos=-2000000 * five_key[4], vel=50)
+                    sc.card_move(5, pos=-2000000 * int(five_key[4]), vel=50)
                     sc.card_update()
                     flg_key_run = False
         except AttributeError:
@@ -2541,12 +2541,16 @@ def save_main_yaml():
     global color_ch
     global udpServer_addr
     global tcpServer_addr
+    global result_tcpServer_addr
     global wakeup_addr
     global balls_count
     global rtsp_url
     global recognition_addr
     global obs_script_addr
     global map_data
+    global five_axis
+    global five_key
+
     file = "main_config.yml"
     if os.path.exists(file):
         try:
@@ -2556,12 +2560,15 @@ def save_main_yaml():
                 main_all['cardNo'] = ui.lineEdit_cardNo.text()
                 main_all['s485_Axis_No'] = ui.lineEdit_s485_Axis_No.text()
                 main_all['s485_Cam_No'] = ui.lineEdit_s485_Cam_No.text()
+                main_all['five_axis'] = eval(ui.lineEdit_five_axis.text())
+                main_all['five_key'] = eval(ui.lineEdit_five_key.text())
                 main_all['balls_count'] = ui.lineEdit_balls_count.text()
                 main_all['wakeup_addr'] = ui.lineEdit_wakeup_addr.text()
                 main_all['rtsp_url'] = ui.lineEdit_rtsp_url.text()
                 main_all['recognition_addr'] = ui.lineEdit_recognition_addr.text()
                 main_all['obs_script_addr'] = ui.lineEdit_obs_script_addr.text()
                 main_all['tcpServer_addr'][1] = ui.lineEdit_TcpServer_Port.text()
+                main_all['result_tcpServer_addr'][1] = ui.lineEdit_result_tcpServer_port.text()
                 main_all['udpServer_addr'][1] = ui.lineEdit_UdpServer_Port.text()
                 main_all['map_picture'] = ui.lineEdit_map_picture.text()
                 main_all['map_line'] = ui.lineEdit_map_line.text()
@@ -2589,6 +2596,8 @@ def save_main_yaml():
                 obs_script_addr = main_all['obs_script_addr']
                 s485.s485_Axis_No = main_all['s485_Axis_No']
                 s485.s485_Cam_No = main_all['s485_Cam_No']
+                five_axis = main_all['five_axis']
+                five_key = main_all['five_key']
                 map_data = [main_all['map_picture'], main_all['map_line']]
             with open(file, "w", encoding="utf-8") as f:
                 yaml.dump(main_all, f, allow_unicode=True)
@@ -2604,6 +2613,7 @@ def load_main_yaml():
     global color_ch
     global udpServer_addr
     global tcpServer_addr
+    global result_tcpServer_addr
     global wakeup_addr
     global balls_count
     global rtsp_url
@@ -2621,21 +2631,19 @@ def load_main_yaml():
         # print(main_all)
         f.close()
 
-        s485.s485_Axis_No = main_all['s485_Axis_No']
-        s485.s485_Cam_No = main_all['s485_Cam_No']
-
         ui.lineEdit_cardNo.setText(main_all['cardNo'])
         ui.lineEdit_CardNo.setText(main_all['cardNo'])
         ui.lineEdit_s485_Axis_No.setText(main_all['s485_Axis_No'])
         ui.lineEdit_s485_Cam_No.setText(main_all['s485_Cam_No'])
-        ui.lineEdit_five_axis.setText(main_all['five_axis'])
-        ui.lineEdit_five_key.setText(main_all['five_key'])
+        ui.lineEdit_five_axis.setText(str(main_all['five_axis']))
+        ui.lineEdit_five_key.setText(str(main_all['five_key']))
         ui.lineEdit_balls_count.setText(main_all['balls_count'])
         ui.lineEdit_wakeup_addr.setText(main_all['wakeup_addr'])
         ui.lineEdit_rtsp_url.setText(main_all['rtsp_url'])
         ui.lineEdit_recognition_addr.setText(main_all['recognition_addr'])
         ui.lineEdit_obs_script_addr.setText(main_all['obs_script_addr'])
         ui.lineEdit_TcpServer_Port.setText(main_all['tcpServer_addr'][1])
+        ui.lineEdit_result_tcpServer_port.setText(main_all['result_tcpServer_addr'][1])
         ui.lineEdit_UdpServer_Port.setText(main_all['udpServer_addr'][1])
         ui.lineEdit_map_picture.setText(main_all['map_picture'])
         ui.lineEdit_map_line.setText(main_all['map_line'])
@@ -2664,6 +2672,7 @@ def load_main_yaml():
         color_ch = main_all['color_ch']
         udpServer_addr = (main_all['udpServer_addr'][0], int(main_all['udpServer_addr'][1]))
         tcpServer_addr = (main_all['tcpServer_addr'][0], int(main_all['tcpServer_addr'][1]))
+        result_tcpServer_addr = (main_all['result_tcpServer_addr'][0], int(main_all['result_tcpServer_addr'][1]))
         wakeup_addr = main_all['wakeup_addr']
         balls_count = int(main_all['balls_count'])
         rtsp_url = main_all['rtsp_url']
@@ -2672,8 +2681,8 @@ def load_main_yaml():
         s485.s485_Axis_No = main_all['s485_Axis_No']
         s485.s485_Cam_No = main_all['s485_Cam_No']
         map_data = [main_all['map_picture'], main_all['map_line']]
-        five_axis = eval(ui.lineEdit_five_axis.text())
-        five_key = eval(ui.lineEdit_five_key.text())
+        five_axis = main_all['five_axis']
+        five_key = main_all['five_key']
         Track_number = main_all['Track_number']
     # except:
     #     print('初始化出错~！')
@@ -4045,11 +4054,6 @@ def query_sql():
 "****************************************参数设置_结束****************************************************"
 
 
-def stay_num():
-    if not is_natural_num(ui.lineEdit_Stay_Time.text()):
-        ui.lineEdit_Stay_Time.setText(10)
-
-
 def my_test():
     global term
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
@@ -4535,6 +4539,7 @@ if __name__ == '__main__':
     "**************************参数设置_开始*****************************"
     ui.lineEdit_UdpServer_Port.editingFinished.connect(save_main_yaml)
     ui.lineEdit_TcpServer_Port.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_result_tcpServer_port.editingFinished.connect(save_main_yaml)
     ui.lineEdit_wakeup_addr.editingFinished.connect(save_main_yaml)
     ui.lineEdit_rtsp_url.editingFinished.connect(save_main_yaml)
     ui.lineEdit_recognition_addr.editingFinished.connect(save_main_yaml)
@@ -4543,6 +4548,8 @@ if __name__ == '__main__':
     ui.lineEdit_CardNo.editingFinished.connect(save_main_yaml)
     ui.lineEdit_s485_Axis_No.editingFinished.connect(save_main_yaml)
     ui.lineEdit_s485_Cam_No.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_five_axis.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_five_key.editingFinished.connect(save_main_yaml)
     ui.lineEdit_map_picture.editingFinished.connect(save_main_yaml)
     ui.lineEdit_map_line.editingFinished.connect(save_main_yaml)
     ui.lineEdit_scene_name.editingFinished.connect(save_main_yaml)
