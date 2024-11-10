@@ -6,3 +6,8 @@ pyyaml
 pyserial
 PySide6
 obsws-python
+pygame
+PyInstaller
+pillow
+psutil
+pymysql

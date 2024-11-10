@@ -18,6 +18,7 @@ import psutil
 import pynput
 import requests
 import yaml
+from PIL.ImageOps import scale
 from PyInstaller.utils.hooks.conda import files
 from PySide6 import QtWidgets
 
@@ -175,7 +176,7 @@ class SourceThread(QThread):
             time.sleep(0.1)
             if not self.run_flg:
                 continue
-            self._signal.emit('写表')
+            self._signal.emit('SourceThread 写表')
             self.run_flg = False
 
 
@@ -333,8 +334,8 @@ def get_picture(scence_current):
         flg_start['ai_end'] = False
         img = img.encode('ascii')
         image_byte = base64.b64decode(img)
-        return [image_byte, '[1]', 'obs']
         print('终点识别服务没有开启！')
+        return [image_byte, '[1]', 'obs']
 
 
 # obs 脚本 obs_script_time.py 请求
@@ -407,7 +408,9 @@ def deal_action():
         # if action_area[1] < int(ranking_array[rank_num][8]):  # 不同圈赋值更大圈数
         #     action_area[1] = int(ranking_array[rank_num][8])
         #     print('区域更新~~~~~~~~', action_area[1])
-        if action_area[0] > int(ranking_array[rank_num][6]) and action_area[2] == 0:  # 不同圈，跨圈情况
+        if (action_area[0] > int(ranking_array[rank_num][6])
+                and action_area[1] < int(ranking_array[rank_num][8])
+                and action_area[2] == 0):  # 不同圈，跨圈情况
             action_area[0] = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
         break
 
@@ -739,11 +742,11 @@ class TcpRankingThread(QThread):
                                 ws.send(json.dumps(d))
                                 self.send_time_flg = False
                             except Exception as e:
-                                print("pingpong 错误：", e)
+                                print("pingpong_rank_1 错误：", e)
                                 # self._signal.emit("pingpong 错误：%s" % e)
                                 break
             except Exception as e:
-                print("pingpong 错误：", e)
+                print("pingpong_rank_2 错误：", e)
                 # self._signal.emit("pingpong 错误：%s" % e)
 
 
@@ -753,7 +756,7 @@ class TcpResultThread(QThread):
     def __init__(self):
         super(TcpResultThread, self).__init__()
         self.running = True
-        self.run_flg = True
+        self.run_flg = False
         self.send_type = ''
 
     def stop(self):
@@ -763,6 +766,7 @@ class TcpResultThread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
+        global lottery_term
         while self.running:
             try:
                 con, addr = tcp_result_socket.accept()
@@ -771,10 +775,12 @@ class TcpResultThread(QThread):
                     continue
                 with WebsocketServer(con) as ws:
                     while self.run_flg:
+                        time.sleep(1)
                         try:
                             if self.send_type == 'updata':
+                                self._signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_res))))
                                 datalist = {'type': 'updata',
-                                            'data': {'qh': str(lottery_term[0]), 'rank': []}}
+                                            'data': {'qh': str(term), 'rank': []}}
                                 for index in range(len(z_ranking_res)):
                                     if is_natural_num(z_ranking_time[index]):
                                         datalist["data"]['rank'].append(
@@ -782,6 +788,7 @@ class TcpResultThread(QThread):
                                     else:
                                         datalist["data"]['rank'].append(
                                             {"mc": z_ranking_res[index], "time": ('%s' % z_ranking_time[index])})
+                                print(datalist)
                                 ws.send(json.dumps(datalist))
                                 if not ui.radioButton_test_game.isChecked():  # 非测试模式
                                     result_data = {"raceTrackID": Track_number, "term": str(term),
@@ -799,17 +806,31 @@ class TcpResultThread(QThread):
                                                 {"pm": index + 1, "id": z_ranking_res[index],
                                                  "time": z_ranking_time[index]})
                                     result_data["timings"] = json.dumps(data_temp)
-                                    print(result_data)
+                                    # print(result_data)
                                     try:
                                         post_end(term, betting_end_time, 1, Track_number)  # 发送游戏结束信号给服务器
                                         post_result(term, betting_end_time, result_data, Track_number)  # 发送最终排名给服务器
                                         post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
                                     except:
+                                        self._signal.emit(fail('post_result 上传结果错误！'))
                                         print('上传结果错误！')
-                                    self._signal.emit(succeed('第%s期 结束！' % term))
+
+                                    video_name = cl_request.stop_record()  # 关闭录像
+                                    lottery_term[7] = video_name.output_path  # 视频保存路径
+                                    lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+                                    lottery_term[4] = str(z_ranking_res)  # 排名
+                                    local_time = time.localtime(betting_end_time)
+                                    end_time = time.strftime("%Y-%m-%d %H:%M:%S", local_time)
+                                    lottery_term[8] = end_time
+                                    self._signal.emit('save_video')
+                                    lottery2database()  # 保存数据库
+                                self._signal.emit(succeed('第%s期 结束！' % term))
                                 if ui.checkBox_restart.isChecked():
+                                    if not ui.radioButton_test_game.isChecked():
+                                        self.send_type = ''
+                                    else:
+                                        self.run_flg = False
                                     ReStart_Thread.run_flg = True  # 1分钟后重启动作
-                                    self.send_type = ''
                                 else:
                                     self.run_flg = False
                             elif self.send_type == 'time':
@@ -819,21 +840,31 @@ class TcpResultThread(QThread):
                                 self.send_type = ''
                                 self.run_flg = False
                             else:
-                                ws.send('pong')
-                                time.sleep(1)
+                                datalist = {'type': 'pong',
+                                            'data': str(term)}
+                                ws.send(json.dumps(datalist))
+
                         except Exception as e:
-                            print("pingpong 错误：%s" % e)
+                            print("pingpong_result_1 错误：%s" % e)
                             # self._signal.emit("pingpong 错误：%s" % e)
                             break
             except Exception as e:
-                print("pingpong 错误：%s" % e)
-                # self._signal.emit("pingpong 错误：%s" % e)
-                break
+                print("pingpong_result_2 错误：%s" % e)
+                self._signal.emit("pingpong_result_2 错误：%s" % e)
 
 
 def tcp_signal_accept(msg):
+    if msg == 'save_video':
+        tb_result = ui.tableWidget_Results
+        tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（0.已结束）
+        tb_result.item(0, 4).setText(lottery_term[4])  # 自动赛果
+        tb_result.item(0, 5).setText(lottery_term[5])  # 手动赛果
+        tb_result.item(0, 6).setText(lottery_term[6])  # 照片保存路径
+        tb_result.item(0, 7).setText(lottery_term[7])  # 视频保存路径
+        tb_result.item(0, 8).setText(lottery_term[8])  # 存档时间
     # print(msg)
-    ui.textBrowser_msg.append(msg)
+    else:
+        ui.textBrowser_msg.append(msg)
 
 
 class UdpThread(QThread):
@@ -937,6 +968,8 @@ def udp_signal_accept(msg):
         if int(ui.lineEdit_ball_start.text()) < balls_start:  # 更新起点球数
             ui.lineEdit_balls_start.setText(str(balls_start))
             ui.lineEdit_ball_start.setText(str(balls_start))
+        if int(ui.lineEdit_area.text()) != action_area[0]:  # 更新起点球数
+            ui.lineEdit_area.setText(str(action_area[0]))
     else:
         if ui.checkBox_ShowUdp.isChecked():
             ui.textBrowser_background_data.append(str(msg))
@@ -972,9 +1005,11 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
     if len(ball_array) < 1 or cap_num == '':
         return
     for ball in ball_array:
+        # print(ball)
         if ball[4] < 0.35:  # 置信度小于 0.45 的数据不处理
             continue
-        ball.append(0)
+        if len(ball) == 7:
+            ball.append(0)
         x = (ball[0] + ball[2]) / 2
         y = (ball[1] + ball[3]) / 2
         point = (x, y)
@@ -982,7 +1017,7 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
             for area in area_Code[cap_num]:
                 pts = np.array(area['coordinates'], np.int32)
                 Result = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
-                if Result > -1.0 and len(ball) == 8:
+                if Result > -1.0 and len(ball) <= 8:
                     ball[6] = area['area_code']
                     ball[7] = area['direction']
                     ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向
@@ -1367,12 +1402,11 @@ class ReStartThread(QThread):
                 if len(response) > 2:  # 开盘模式，获取期号正常
                     if term == response['term']:
                         self._signal.emit('term')
-                        if time.time() < betting_end_time:
-                            if not ui.checkBox_continue_term.isChecked():
-                                time.sleep(3)
-                                continue
-                            else:
-                                ui.checkBox_continue_term.setChecked(False)
+                        if not ui.checkBox_continue_term.isChecked():
+                            time.sleep(3)
+                            continue
+                        else:
+                            ui.checkBox_continue_term.setChecked(False)
                     term = response['term']
                     tcp_result_thread.send_type = 'time'
                     betting_start_time = response['scheduledGameStartTime']
@@ -1667,10 +1701,12 @@ class ScreenShotThread(QThread):
                 monitor_Camera = camera_to_num(eval(monitor_res[1]))
                 self._signal.emit(monitor_res)
 
-            if not flg_start['obs']:
-                return
-            if obs_res[1] == monitor_res[1]:
+            if obs_res[1] != '[1]' and obs_res[1] == monitor_res[1]:
                 print('识别正确:', obs_res[1])
+                if len(main_Camera) == len(z_ranking_res):
+                    z_ranking_res = main_Camera
+            else:
+                pass
                 # while True:
                 #     if Send_Result:
                 #         send_list = eval(ui.lineEdit_Send_Result.text())
@@ -1686,9 +1722,10 @@ class ScreenShotThread(QThread):
                     ui.checkBox_restart.setChecked(False)
                     ui.radioButton_stop_betting.click()  # 封盘
                     ui.checkBox_black_screen.click()
+            if not flg_start['obs']:
+                return
             try:
                 requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
-
                 tcp_result_thread.send_type = 'updata'
                 tcp_result_thread.run_flg = True
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
@@ -1699,16 +1736,6 @@ class ScreenShotThread(QThread):
                 time.sleep(0.1)
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                   False)  # 打开视频来源
-                time.sleep(3)
-                video_name = cl_request.stop_record()  # 关闭录像
-                lottery_term[7] = video_name.output_path  # 视频保存路径
-                lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-                lottery_term[4] = str(z_ranking_res)  # 排名
-                local_time = time.localtime(betting_end_time)
-                end_time = time.strftime("%Y-%m-%d %H:%M:%S", local_time)
-                lottery_term[8] = end_time
-                self._signal.emit('save_video')
-                lottery2database()  # 保存数据库
             except:
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
@@ -1735,15 +1762,6 @@ def ScreenShot_signal_accept(msg):
                 fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
             if perfect_Camera == fit_Camera:
                 ui.lineEdit_result_send.setText(str(main_Camera))
-
-        elif msg == 'save_video':
-            tb_result = ui.tableWidget_Results
-            tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（0.已结束）
-            tb_result.item(0, 4).setText(lottery_term[4])  # 自动赛果
-            tb_result.item(0, 5).setText(lottery_term[5])  # 手动赛果
-            tb_result.item(0, 6).setText(lottery_term[6])  # 照片保存路径
-            tb_result.item(0, 7).setText(lottery_term[7])  # 视频保存路径
-            tb_result.item(0, 8).setText(lottery_term[8])  # 存档时间
         else:
             ui.textBrowser.append(str(msg))
     except:
@@ -1923,13 +1941,13 @@ class PlanCmdThread(QThread):
                                         post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
                                         lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                         self._signal.emit('进行中')  # 修改结果列表中的赛事状态
+                                        if flg_start['obs']:  # 非测试模式:
+                                            try:
+                                                cl_request.start_record()  # 开启OBS录像
+                                            except:
+                                                print('OBS脚本开始错误！')
+                                    requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
                                     ranking_time_start = time.time()  # 每个球的起跑时间
-                                    if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
-                                        try:
-                                            cl_request.start_record()  # 开启OBS录像
-                                            requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
-                                        except:
-                                            print('OBS脚本开始错误！')
                             if int(plan_list[plan_index][15][0]) > 0:  # 播放音效
                                 tb_audio = ui.tableWidget_Audio
                                 audio_row_count = tb_audio.rowCount()
@@ -1976,6 +1994,14 @@ class PlanCmdThread(QThread):
                             print("运动板运行出错！")
                             self._signal.emit(fail("运动板通信出错！"))
 
+                        if self.run_flg:
+                            if int(plan_list[plan_index][11][0]) > 0:
+                                time.sleep(int(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
+                            # 摄像头缩放
+                            if 0 < int(plan_list[plan_index][10][0]) <= 5:  # 摄像头缩放
+                                PlanCam_Thread.camitem = [int(plan_list[plan_index][10][0]),
+                                                          int(plan_list[plan_index][11][0])]
+                                PlanCam_Thread.run_flg = True  # 摄像头线程
                         if ui.checkBox_test.isChecked():
                             if float(plan_list[plan_index][16][0]) >= 0:
                                 time.sleep(float(plan_list[plan_index][16][0]))
@@ -1998,10 +2024,16 @@ class PlanCmdThread(QThread):
                                 # if int(plan_list[plan_num][13]) in [action_area[0], action_area[0] - 1, action_area[0] + 1]:
                                 #     break
                                 t_over += 1
-                                if (plan_list[plan_index][16][0] != '0' and
-                                        t_over >= abs(float(plan_list[plan_index][16][0])) * 10):  # 每个动作超时时间
-                                    print('等待超时！')
-                                    break
+                                if plan_list[plan_index][16][0] != '0':
+                                    if t_over >= abs(float(plan_list[plan_index][16][0])) * 10:  # 每个动作超时时间
+                                        self._signal.emit(fail('第 %s 个动作 等待超时！' % str(plan_index + 1)))
+                                        print('等待超时！')
+                                        break
+                                else:
+                                    if t_over >= 100:
+                                        self._signal.emit(fail('第 %s 个动作 等待超过10秒！' % str(plan_index + 1)))
+                                        print('等待超过10秒！')
+                                        break
                                 if self.cmd_next:  # 手动进入下一个动作
                                     break
                                 time.sleep(0.1)
@@ -2010,13 +2042,6 @@ class PlanCmdThread(QThread):
                             self.cmd_next = False
                             continue
                         if self.run_flg:
-                            time.sleep(int(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
-                            # 摄像头缩放
-                            if int(plan_list[plan_index][10][0]) != 0:  # 摄像头缩放
-                                PlanCam_Thread.camitem = [int(plan_list[plan_index][10][0]),
-                                                          int(plan_list[plan_index][11][0])]
-                                PlanCam_Thread.run_flg = True  # 摄像头线程
-
                             # 场景切换
                             plan_col_count = len(plan_list[plan_index])  # 固定最后一项为OBS场景切换
                             if '_' in plan_list[plan_index][plan_col_count - 1]:
@@ -2027,7 +2052,7 @@ class PlanCmdThread(QThread):
                                     and (len(plan_list) - 6 <= plan_index)
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
-                                if len(plan_list) - 2 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
+                                if len(plan_list) - 2 == plan_index:  # 到达最后两个动作时，触发球计数器启动
                                     PlanBallNum_Thread.run_flg = True  # 终点计数器线程
                                     tcp_ranking_thread.sleep_time = 0.1  # 终点前端排名时间发送设置
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
@@ -2202,10 +2227,10 @@ def keyboard_release(key):
             pass
             # print(key)
         try:
-            if key.char == '-':
+            if key.char == '/':
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 s485.cam_zoom_off()
-            elif key.char == '+':
+            elif key.char == '*':
                 tb_step.setEnabled(ui.checkBox_test.isChecked())
                 s485.cam_zoom_off()
         except:
@@ -2319,10 +2344,10 @@ def keyboard_press(key):
             # print(key)
             pass
         try:
-            if key.char == '+':
+            if key.char == '/':
                 tb_step.setEnabled(False)
                 s485.cam_zoom_move(5)
-            elif key.char == '-':
+            elif key.char == '*':
                 tb_step.setEnabled(False)
                 s485.cam_zoom_move(-5)
         except:
@@ -2571,6 +2596,7 @@ def save_main_yaml():
                 main_all['result_tcpServer_addr'][1] = ui.lineEdit_result_tcpServer_port.text()
                 main_all['udpServer_addr'][1] = ui.lineEdit_UdpServer_Port.text()
                 main_all['map_picture'] = ui.lineEdit_map_picture.text()
+                main_all['map_size'] = ui.lineEdit_map_size.text()
                 main_all['map_line'] = ui.lineEdit_map_line.text()
                 main_all['scene_name'] = ui.lineEdit_scene_name.text()
                 main_all['source_ranking'] = ui.lineEdit_source_ranking.text()
@@ -2598,7 +2624,7 @@ def save_main_yaml():
                 s485.s485_Cam_No = main_all['s485_Cam_No']
                 five_axis = main_all['five_axis']
                 five_key = main_all['five_key']
-                map_data = [main_all['map_picture'], main_all['map_line']]
+                map_data = [main_all['map_picture'], main_all['map_line'], main_all['map_size']]
             with open(file, "w", encoding="utf-8") as f:
                 yaml.dump(main_all, f, allow_unicode=True)
             f.close()
@@ -2646,6 +2672,7 @@ def load_main_yaml():
         ui.lineEdit_result_tcpServer_port.setText(main_all['result_tcpServer_addr'][1])
         ui.lineEdit_UdpServer_Port.setText(main_all['udpServer_addr'][1])
         ui.lineEdit_map_picture.setText(main_all['map_picture'])
+        ui.lineEdit_map_size.setText(main_all['map_size'])
         ui.lineEdit_map_line.setText(main_all['map_line'])
         ui.lineEdit_scene_name.setText(main_all['scene_name'])
         ui.lineEdit_source_ranking.setText(main_all['source_ranking'])
@@ -2680,7 +2707,7 @@ def load_main_yaml():
         obs_script_addr = main_all['obs_script_addr']
         s485.s485_Axis_No = main_all['s485_Axis_No']
         s485.s485_Cam_No = main_all['s485_Cam_No']
-        map_data = [main_all['map_picture'], main_all['map_line']]
+        map_data = [main_all['map_picture'], main_all['map_line'], main_all['map_size']]
         five_axis = main_all['five_axis']
         five_key = main_all['five_key']
         Track_number = main_all['Track_number']
@@ -3003,11 +3030,14 @@ class MapLabel(QLabel):
         self.path_points = []
         with open(map_data[1], 'r', encoding='utf-8') as fcc_file:
             fcc_data = json.load(fcc_file)
-        scale = picture_size / 860  # 缩放比例
+        if picture_size == 860:
+            map_scale = 1
+        else:
+            map_scale = picture_size / int(map_data[2])  # 缩放比例
         for p in fcc_data[0]["content"]:
-            self.path_points.append((p['x'] * scale, p['y'] * scale))
+            self.path_points.append((p['x'] * map_scale, p['y'] * map_scale))
         self.path_points = divide_path(self.path_points, step_length)
-        if scale == 1:
+        if map_scale == 1:
             map_orbit = self.path_points
 
         self.ball_space = ball_space  # 球之间的距离
@@ -3126,8 +3156,8 @@ class MapLabel(QLabel):
                 # 绘制球
                 painter.drawEllipse(int(x - self.ball_radius), int(y - self.ball_radius),
                                     self.ball_radius * 2, self.ball_radius * 2)
-                if self.picture_size >= 800:
-                    font = QFont("Arial", int(12 * self.picture_size / 860), QFont.Bold)  # 字体：Arial，大小：16，加粗
+                if self.picture_size == 860:
+                    font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
                     painter.setFont(font)
                     if str(self.positions[index_position][2]) == '1':
                         painter.setPen('gray')
@@ -4057,8 +4087,16 @@ def query_sql():
 def my_test():
     global term
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    s = int(ui.lineEdit_result_send.text())
-    s485.cam_zoom_step(s)
+    if tcp_result_thread.send_type == 'updata':
+        print('~!!~ok')
+        tcp_result_thread.send_type = ''
+        tcp_result_thread.run_flg = True
+    else:
+        print('~!!~updata')
+        tcp_result_thread.send_type = 'updata'
+        tcp_result_thread.run_flg = True
+    # s = int(ui.lineEdit_result_send.text())
+    # s485.cam_zoom_step(s)
     # time.sleep(5)
     # term = '800001'
     # tcp_result_thread.send_type = 'time'
@@ -4346,7 +4384,7 @@ if __name__ == '__main__':
     load_area()  # 初始化区域划分
     # print(area_Code)
 
-    action_area = [1, 0, 0]  # 触发镜头向下一个位置活动的点位 action_area[区域, 圈数, 可写]
+    action_area = [0, 0, 0]  # 触发镜头向下一个位置活动的点位 action_area[区域, 圈数, 可写]
     balls_count = 8  # 运行球数
     balls_start = 0  # 起点球数量
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
@@ -4387,7 +4425,7 @@ if __name__ == '__main__':
     recognition_addr = "http://127.0.0.1:6066"  # 终点识别主机网址
     obs_script_addr = "http://127.0.0.1:8899"  # OBS 脚本网址
     rtsp_url = 'rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101'  # 主码流
-    map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json']  # 卫星地图资料
+    map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json', '860']  # 卫星地图资料
     five_axis = [1, 1, 1, 1, 1]
     five_key = [1, 1, 1, 1, 1]
     Track_number = "J"  # 轨道直播编号
@@ -4551,6 +4589,7 @@ if __name__ == '__main__':
     ui.lineEdit_five_axis.editingFinished.connect(save_main_yaml)
     ui.lineEdit_five_key.editingFinished.connect(save_main_yaml)
     ui.lineEdit_map_picture.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_map_size.editingFinished.connect(save_main_yaml)
     ui.lineEdit_map_line.editingFinished.connect(save_main_yaml)
     ui.lineEdit_scene_name.editingFinished.connect(save_main_yaml)
     ui.lineEdit_source_ranking.editingFinished.connect(save_main_yaml)
@@ -4572,7 +4611,7 @@ if __name__ == '__main__':
     # start_lottery_server_bat()  # 模拟开奖王服务器
     lottery_init()
 
-    term = ''  # 期号
+    term = '8000'  # 期号
     betting_start_time = 0  # 比赛预定开始时间
     betting_end_time = 0  # 比赛预定结束时间
     stream_url = ''  # 流链接

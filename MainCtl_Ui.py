@@ -723,20 +723,65 @@ class Ui_MainWindow(object):
         self.frame_13.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_13 = QGridLayout(self.frame_13)
         self.gridLayout_13.setObjectName(u"gridLayout_13")
-        self.frame_19 = QFrame(self.frame_13)
-        self.frame_19.setObjectName(u"frame_19")
-        self.frame_19.setMinimumSize(QSize(25, 0))
-        self.frame_19.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_19.setFrameShadow(QFrame.Shadow.Raised)
+        self.label_23 = QLabel(self.frame_13)
+        self.label_23.setObjectName(u"label_23")
+        self.label_23.setFont(font1)
 
-        self.gridLayout_13.addWidget(self.frame_19, 0, 8, 1, 1)
+        self.gridLayout_13.addWidget(self.label_23, 0, 8, 1, 1)
+
+        self.label_84 = QLabel(self.frame_13)
+        self.label_84.setObjectName(u"label_84")
+        self.label_84.setMinimumSize(QSize(60, 0))
+        self.label_84.setFont(font1)
+
+        self.gridLayout_13.addWidget(self.label_84, 0, 4, 1, 1)
+
+        self.lineEdit_rename = QLineEdit(self.frame_13)
+        self.lineEdit_rename.setObjectName(u"lineEdit_rename")
+
+        self.gridLayout_13.addWidget(self.lineEdit_rename, 0, 9, 1, 1)
+
+        self.checkBox_follow = QCheckBox(self.frame_13)
+        self.checkBox_follow.setObjectName(u"checkBox_follow")
+        self.checkBox_follow.setFont(font1)
+        self.checkBox_follow.setStyleSheet(u"QCheckBox{margin:6px;padding-left: 1px;padding-top: 1px;}\n"
+"            \n"
+"            QCheckBox::indicator:checked {\n"
+"                background-color: lightgreen;\n"
+"                border: 2px solid green;\n"
+"            }\n"
+"            QCheckBox::indicator:unchecked {\n"
+"                background-color: lightgray;\n"
+"                border: 2px solid gray;\n"
+"            }\n"
+"            QCheckBox::indicator {\n"
+"                width: 10px;\n"
+"                height: 10px;\n"
+"            }")
+        self.checkBox_follow.setChecked(True)
+
+        self.gridLayout_13.addWidget(self.checkBox_follow, 0, 6, 1, 1)
+
+        self.pushButton_fsave = QPushButton(self.frame_13)
+        self.pushButton_fsave.setObjectName(u"pushButton_fsave")
+        self.pushButton_fsave.setMinimumSize(QSize(80, 0))
+        self.pushButton_fsave.setFont(font1)
+        self.pushButton_fsave.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.gridLayout_13.addWidget(self.pushButton_fsave, 0, 3, 1, 1)
 
         self.pushButton_rename = QPushButton(self.frame_13)
         self.pushButton_rename.setObjectName(u"pushButton_rename")
         self.pushButton_rename.setFont(font1)
         self.pushButton_rename.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
-        self.gridLayout_13.addWidget(self.pushButton_rename, 0, 11, 1, 1)
+        self.gridLayout_13.addWidget(self.pushButton_rename, 0, 10, 1, 1)
+
+        self.label_22 = QLabel(self.frame_13)
+        self.label_22.setObjectName(u"label_22")
+        self.label_22.setFont(font1)
+
+        self.gridLayout_13.addWidget(self.label_22, 0, 1, 1, 1)
 
         self.checkBox_test = QCheckBox(self.frame_13)
         self.checkBox_test.setObjectName(u"checkBox_test")
@@ -758,12 +803,13 @@ class Ui_MainWindow(object):
 
         self.gridLayout_13.addWidget(self.checkBox_test, 0, 7, 1, 1)
 
-        self.comboBox_plan = QComboBox(self.frame_13)
-        self.comboBox_plan.setObjectName(u"comboBox_plan")
-        self.comboBox_plan.setMinimumSize(QSize(200, 0))
-        self.comboBox_plan.setFont(font1)
+        self.lineEdit_area = QLineEdit(self.frame_13)
+        self.lineEdit_area.setObjectName(u"lineEdit_area")
+        self.lineEdit_area.setMaximumSize(QSize(30, 16777215))
+        self.lineEdit_area.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_area.setReadOnly(True)
 
-        self.gridLayout_13.addWidget(self.comboBox_plan, 0, 2, 1, 1)
+        self.gridLayout_13.addWidget(self.lineEdit_area, 0, 5, 1, 1)
 
         self.checkBox_selectall = QCheckBox(self.frame_13)
         self.checkBox_selectall.setObjectName(u"checkBox_selectall")
@@ -785,66 +831,13 @@ class Ui_MainWindow(object):
 
         self.gridLayout_13.addWidget(self.checkBox_selectall, 0, 0, 1, 1)
 
-        self.label_22 = QLabel(self.frame_13)
-        self.label_22.setObjectName(u"label_22")
-        self.label_22.setFont(font1)
+        self.comboBox_plan = QComboBox(self.frame_13)
+        self.comboBox_plan.setObjectName(u"comboBox_plan")
+        self.comboBox_plan.setMinimumSize(QSize(180, 0))
+        self.comboBox_plan.setFont(font1)
+        self.comboBox_plan.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
-        self.gridLayout_13.addWidget(self.label_22, 0, 1, 1, 1)
-
-        self.checkBox_follow = QCheckBox(self.frame_13)
-        self.checkBox_follow.setObjectName(u"checkBox_follow")
-        self.checkBox_follow.setFont(font1)
-        self.checkBox_follow.setStyleSheet(u"QCheckBox{margin:6px;padding-left: 1px;padding-top: 1px;}\n"
-"            \n"
-"            QCheckBox::indicator:checked {\n"
-"                background-color: lightgreen;\n"
-"                border: 2px solid green;\n"
-"            }\n"
-"            QCheckBox::indicator:unchecked {\n"
-"                background-color: lightgray;\n"
-"                border: 2px solid gray;\n"
-"            }\n"
-"            QCheckBox::indicator {\n"
-"                width: 10px;\n"
-"                height: 10px;\n"
-"            }")
-
-        self.gridLayout_13.addWidget(self.checkBox_follow, 0, 5, 1, 1)
-
-        self.lineEdit_rename = QLineEdit(self.frame_13)
-        self.lineEdit_rename.setObjectName(u"lineEdit_rename")
-
-        self.gridLayout_13.addWidget(self.lineEdit_rename, 0, 10, 1, 1)
-
-        self.label_23 = QLabel(self.frame_13)
-        self.label_23.setObjectName(u"label_23")
-        self.label_23.setFont(font1)
-
-        self.gridLayout_13.addWidget(self.label_23, 0, 9, 1, 1)
-
-        self.pushButton_fsave = QPushButton(self.frame_13)
-        self.pushButton_fsave.setObjectName(u"pushButton_fsave")
-        self.pushButton_fsave.setMinimumSize(QSize(100, 0))
-        self.pushButton_fsave.setFont(font1)
-        self.pushButton_fsave.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-
-        self.gridLayout_13.addWidget(self.pushButton_fsave, 0, 3, 1, 1)
-
-        self.frame_26 = QFrame(self.frame_13)
-        self.frame_26.setObjectName(u"frame_26")
-        self.frame_26.setMinimumSize(QSize(50, 0))
-        self.frame_26.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_26.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.gridLayout_13.addWidget(self.frame_26, 0, 4, 1, 1)
-
-        self.frame_27 = QFrame(self.frame_13)
-        self.frame_27.setObjectName(u"frame_27")
-        self.frame_27.setMinimumSize(QSize(25, 0))
-        self.frame_27.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_27.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.gridLayout_13.addWidget(self.frame_27, 0, 6, 1, 1)
+        self.gridLayout_13.addWidget(self.comboBox_plan, 0, 2, 1, 1)
 
 
         self.gridLayout_20.addWidget(self.frame_13, 0, 0, 1, 1)
@@ -1197,6 +1190,7 @@ class Ui_MainWindow(object):
         __qtablewidgetitem30 = QTableWidgetItem()
         self.tableWidget_Sources.setHorizontalHeaderItem(2, __qtablewidgetitem30)
         self.tableWidget_Sources.setObjectName(u"tableWidget_Sources")
+        self.tableWidget_Sources.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.tableWidget_Sources.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.tableWidget_Sources.horizontalHeader().setDefaultSectionSize(80)
         self.tableWidget_Sources.horizontalHeader().setStretchLastSection(True)
@@ -2266,23 +2260,23 @@ class Ui_MainWindow(object):
         self.groupBox_29 = QGroupBox(self.frame_24)
         self.groupBox_29.setObjectName(u"groupBox_29")
         self.groupBox_29.setMinimumSize(QSize(0, 0))
-        self.groupBox_29.setMaximumSize(QSize(600, 100))
+        self.groupBox_29.setMaximumSize(QSize(600, 130))
         self.groupBox_29.setFont(font1)
         self.gridLayout_55 = QGridLayout(self.groupBox_29)
         self.gridLayout_55.setObjectName(u"gridLayout_55")
+        self.lineEdit_map_picture = QLineEdit(self.groupBox_29)
+        self.lineEdit_map_picture.setObjectName(u"lineEdit_map_picture")
+        self.lineEdit_map_picture.setMinimumSize(QSize(200, 0))
+        self.lineEdit_map_picture.setFont(font4)
+        self.lineEdit_map_picture.setReadOnly(False)
+
+        self.gridLayout_55.addWidget(self.lineEdit_map_picture, 0, 1, 1, 1)
+
         self.label_47 = QLabel(self.groupBox_29)
         self.label_47.setObjectName(u"label_47")
         self.label_47.setFont(font5)
 
         self.gridLayout_55.addWidget(self.label_47, 0, 0, 1, 1)
-
-        self.lineEdit_map_picture = QLineEdit(self.groupBox_29)
-        self.lineEdit_map_picture.setObjectName(u"lineEdit_map_picture")
-        self.lineEdit_map_picture.setMinimumSize(QSize(300, 0))
-        self.lineEdit_map_picture.setFont(font4)
-        self.lineEdit_map_picture.setReadOnly(False)
-
-        self.gridLayout_55.addWidget(self.lineEdit_map_picture, 0, 1, 1, 1)
 
         self.label_48 = QLabel(self.groupBox_29)
         self.label_48.setObjectName(u"label_48")
@@ -2290,13 +2284,27 @@ class Ui_MainWindow(object):
 
         self.gridLayout_55.addWidget(self.label_48, 1, 0, 1, 1)
 
+        self.label_83 = QLabel(self.groupBox_29)
+        self.label_83.setObjectName(u"label_83")
+        self.label_83.setFont(font5)
+
+        self.gridLayout_55.addWidget(self.label_83, 0, 2, 1, 1)
+
+        self.lineEdit_map_size = QLineEdit(self.groupBox_29)
+        self.lineEdit_map_size.setObjectName(u"lineEdit_map_size")
+        self.lineEdit_map_size.setMinimumSize(QSize(30, 0))
+        self.lineEdit_map_size.setFont(font4)
+        self.lineEdit_map_size.setReadOnly(False)
+
+        self.gridLayout_55.addWidget(self.lineEdit_map_size, 0, 3, 1, 1)
+
         self.lineEdit_map_line = QLineEdit(self.groupBox_29)
         self.lineEdit_map_line.setObjectName(u"lineEdit_map_line")
         self.lineEdit_map_line.setMinimumSize(QSize(300, 0))
         self.lineEdit_map_line.setFont(font4)
         self.lineEdit_map_line.setReadOnly(False)
 
-        self.gridLayout_55.addWidget(self.lineEdit_map_line, 1, 1, 1, 1)
+        self.gridLayout_55.addWidget(self.lineEdit_map_line, 1, 1, 1, 3)
 
 
         self.gridLayout_54.addWidget(self.groupBox_29, 1, 0, 1, 1)
@@ -2904,7 +2912,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(0)
+        self.tabWidget_Ranking.setCurrentIndex(1)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -2916,8 +2924,8 @@ class Ui_MainWindow(object):
         self.pushButton_Send_Result.setDefault(True)
         self.pushButton_Cancel_Result.setDefault(True)
         self.pushButton_update_12.setDefault(True)
-        self.pushButton_rename.setDefault(True)
         self.pushButton_fsave.setDefault(True)
+        self.pushButton_rename.setDefault(True)
         self.pushButton_ToTable.setDefault(True)
         self.pushButton_CardStart.setDefault(True)
         self.pushButton_CardReset.setDefault(True)
@@ -3028,13 +3036,15 @@ class Ui_MainWindow(object):
         self.pushButton_Cancel_Result.setText(QCoreApplication.translate("MainWindow", u"\u53d6\u6d88\u5f53\u5c40", None))
         self.pushButton_update_12.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u8bc6\u522b", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_0), QCoreApplication.translate("MainWindow", u"\u76f4\u64ad\u5927\u5385", None))
-        self.pushButton_rename.setText(QCoreApplication.translate("MainWindow", u"\u91cd\u547d\u540d\u65b9\u6848", None))
-        self.checkBox_test.setText(QCoreApplication.translate("MainWindow", u"\u6d4b\u8bd5\u6a21\u5f0f", None))
-        self.checkBox_selectall.setText(QCoreApplication.translate("MainWindow", u"\u5168\u9009", None))
-        self.label_22.setText(QCoreApplication.translate("MainWindow", u"\u9009\u62e9\u65b9\u6848\uff1a", None))
-        self.checkBox_follow.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u884c\u8ddf\u8e2a", None))
         self.label_23.setText(QCoreApplication.translate("MainWindow", u"\u65b9\u6848\u540d\u79f0\uff1a", None))
+        self.label_84.setText(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u533a\u57df\uff1a", None))
+        self.checkBox_follow.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u884c\u8ddf\u8e2a", None))
         self.pushButton_fsave.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u65b9\u6848", None))
+        self.pushButton_rename.setText(QCoreApplication.translate("MainWindow", u"\u91cd\u547d\u540d\u65b9\u6848", None))
+        self.label_22.setText(QCoreApplication.translate("MainWindow", u"\u9009\u62e9\u65b9\u6848\uff1a", None))
+        self.checkBox_test.setText(QCoreApplication.translate("MainWindow", u"\u7f16\u8f91\u6a21\u5f0f", None))
+        self.lineEdit_area.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.checkBox_selectall.setText(QCoreApplication.translate("MainWindow", u"\u5168\u9009", None))
         ___qtablewidgetitem9 = self.tableWidget_Step.horizontalHeaderItem(1)
         ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"\u5708\u6570", None));
         ___qtablewidgetitem10 = self.tableWidget_Step.horizontalHeaderItem(2)
@@ -3293,12 +3303,17 @@ class Ui_MainWindow(object):
         self.lineEdit_map_picture_5.setText(QCoreApplication.translate("MainWindow", u"10", None))
         self.label_77.setText(QCoreApplication.translate("MainWindow", u"\u6446\u9524\u673a\u5173\uff1a", None))
         self.groupBox_29.setTitle(QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe\u8bbe\u7f6e", None))
-        self.label_47.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u7247\u6587\u4ef6\uff1a", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_map_picture.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_map_picture.setText(QCoreApplication.translate("MainWindow", u"./img/09_\u6c99\u6f20.jpg", None))
+        self.label_47.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u7247\u6587\u4ef6\uff1a", None))
         self.label_48.setText(QCoreApplication.translate("MainWindow", u"\u8def\u5f84\u6587\u4ef6\uff1a", None))
+        self.label_83.setText(QCoreApplication.translate("MainWindow", u"\u5730\u56fe\u5c3a\u5bf8\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_map_size.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_map_size.setText(QCoreApplication.translate("MainWindow", u"860", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_map_line.setToolTip("")
 #endif // QT_CONFIG(tooltip)
