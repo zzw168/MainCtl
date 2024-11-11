@@ -15,9 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QDialog,
-    QDialogButtonBox, QFrame, QGridLayout, QHeaderView,
-    QSizePolicy, QTableWidget, QTableWidgetItem, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QCheckBox,
+    QDialog, QDialogButtonBox, QFrame, QGridLayout,
+    QHeaderView, QSizePolicy, QTableWidget, QTableWidgetItem,
+    QWidget)
 
 class Ui_Dialog_Set_Speed(object):
     def setupUi(self, Dialog_Set_Speed):
@@ -28,6 +29,7 @@ class Ui_Dialog_Set_Speed(object):
         Dialog_Set_Speed.setMaximumSize(QSize(480, 280))
         self.gridLayout = QGridLayout(Dialog_Set_Speed)
         self.gridLayout.setObjectName(u"gridLayout")
+        self.gridLayout.setContentsMargins(-1, 0, -1, -1)
         self.frame = QFrame(Dialog_Set_Speed)
         self.frame.setObjectName(u"frame")
         self.frame.setMinimumSize(QSize(0, 200))
@@ -132,7 +134,15 @@ class Ui_Dialog_Set_Speed(object):
         self.tableWidget_Set_Speed.horizontalHeader().setDefaultSectionSize(80)
         self.tableWidget_Set_Speed.horizontalHeader().setStretchLastSection(True)
 
-        self.gridLayout_2.addWidget(self.tableWidget_Set_Speed, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.tableWidget_Set_Speed, 1, 0, 1, 1)
+
+        self.checkBox_auto_line = QCheckBox(self.frame)
+        self.checkBox_auto_line.setObjectName(u"checkBox_auto_line")
+        font1 = QFont()
+        font1.setPointSize(10)
+        self.checkBox_auto_line.setFont(font1)
+
+        self.gridLayout_2.addWidget(self.checkBox_auto_line, 0, 0, 1, 1)
 
 
         self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
@@ -218,5 +228,6 @@ class Ui_Dialog_Set_Speed(object):
         ___qtablewidgetitem28.setText(QCoreApplication.translate("Dialog_Set_Speed", u"0", None));
         self.tableWidget_Set_Speed.setSortingEnabled(__sortingEnabled)
 
+        self.checkBox_auto_line.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u81ea\u52a8\u8c03\u6574\u5bf9\u89d2\u76f4\u7ebf", None))
     # retranslateUi
 

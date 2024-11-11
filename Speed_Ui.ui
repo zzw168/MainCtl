@@ -26,6 +26,9 @@
    <string>速度设置</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="topMargin">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <widget class="QFrame" name="frame">
      <property name="minimumSize">
@@ -53,7 +56,7 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QTableWidget" name="tableWidget_Set_Speed">
         <property name="minimumSize">
          <size>
@@ -288,6 +291,18 @@
           <set>AlignCenter</set>
          </property>
         </item>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox_auto_line">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>自动调整对角直线</string>
+        </property>
        </widget>
       </item>
      </layout>

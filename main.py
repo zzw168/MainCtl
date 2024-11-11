@@ -241,6 +241,7 @@ def activate_browser():  # 程序开始，刷新浏览器
             time.sleep(1)
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, True)  # 打开结算页
             time.sleep(1)
+            tcp_ranking_thread.run_flg = True  # 打开排名线程
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
             time.sleep(1)
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 打开结算页
@@ -412,7 +413,7 @@ def deal_action():
                 and action_area[1] < int(ranking_array[rank_num][8])
                 and action_area[2] == 0):  # 不同圈，跨圈情况
             action_area[0] = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
-        break
+            break
 
 
 # 处理排名
@@ -584,7 +585,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.send_header('Content-type', 'text/html; charset=utf-8')
         self.end_headers()
         self.wfile.write('你对HTTP服务端发送了POST'.encode('utf-8'))
-        content_length = int(self.headers['Content-Length'])
+        # content_length = int(self.headers['Content-Length'])
+        content_length = int(self.headers.get('Content-Length', 0))
         post_data = self.rfile.read(content_length).decode('utf-8')
         print("客户端发送的post内容=" + post_data)
         if post_data == "start":
@@ -705,7 +707,7 @@ class TcpRankingThread(QThread):
     def __init__(self):
         super(TcpRankingThread, self).__init__()
         self.running = True
-        self.run_flg = True
+        self.run_flg = False
         self.send_time_flg = False
         self.sleep_time = 1
         self.send_time_data = [1, time.strftime('%M"%S', time.localtime(time.time()))]
@@ -913,6 +915,7 @@ class UdpThread(QThread):
                     if len(array_data) < 1:
                         continue
                     if len(array_data[0]) < 7:
+                        self._signal.emit(fail('array_data:%s < 7数据错误！' % array_data[0]))
                         print('array_data < 7数据错误！', array_data[0])
                         continue
                     array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
@@ -920,6 +923,7 @@ class UdpThread(QThread):
                     if array_data is None or len(array_data) < 1:
                         continue
                     if len(array_data[0]) < 8:
+                        self._signal.emit(fail('array_data:%s < 8数据错误！' % array_data[0]))
                         print('array_data < 8数据错误！', array_data[0])
                         continue
                     if action_area[0] >= max_area_count - balls_count and action_area[
@@ -971,6 +975,8 @@ def udp_signal_accept(msg):
         if int(ui.lineEdit_area.text()) != action_area[0]:  # 更新起点球数
             ui.lineEdit_area.setText(str(action_area[0]))
     else:
+        if '错误' in msg:
+            ui.textBrowser_msg.append(msg)
         if ui.checkBox_ShowUdp.isChecked():
             ui.textBrowser_background_data.append(str(msg))
 
@@ -1056,12 +1062,12 @@ def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球
 "************************************图像识别_结束****************************************"
 
 
-class MyUi(QMainWindow, Ui_MainWindow):
+class z_Ui(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
 
     def setupUi(self, MainWindow):
-        super(MyUi, self).setupUi(MainWindow)
+        super(z_Ui, self).setupUi(MainWindow)
 
         tb_result = self.tableWidget_Results
         tb_result.horizontalHeader().resizeSection(0, 100)
@@ -1633,6 +1639,7 @@ class PlanBallNumThread(QThread):
                     self._signal.emit(fail("运动板x输入通信出错！"))
 
                 tcp_ranking_thread.sleep_time = 1  # 恢复正常前端排名数据包发送频率
+                tcp_ranking_thread.run_flg = False  # 关闭排名
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                 Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                 Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
@@ -1937,6 +1944,8 @@ class PlanCmdThread(QThread):
                                 else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(plan_list[plan_index][12][0])) - 1, 1)
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
+                                    requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
+                                    ranking_time_start = time.time()  # 每个球的起跑时间
                                     if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                                         post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
                                         lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
@@ -1946,8 +1955,7 @@ class PlanCmdThread(QThread):
                                                 cl_request.start_record()  # 开启OBS录像
                                             except:
                                                 print('OBS脚本开始错误！')
-                                    requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
-                                    ranking_time_start = time.time()  # 每个球的起跑时间
+
                             if int(plan_list[plan_index][15][0]) > 0:  # 播放音效
                                 tb_audio = ui.tableWidget_Audio
                                 audio_row_count = tb_audio.rowCount()
@@ -1974,9 +1982,9 @@ class PlanCmdThread(QThread):
                                 if float(speed_item[3]) == 0:
                                     axis_bit += axis_list[index]
                                 else:
-                                    delay_list.append([axis_list[index], float(format(float(speed_item[3]), ".2f"))])
-                                if max_delay_time < float(format(float(speed_item[3]), ".2f")):
-                                    max_delay_time = float(format(float(speed_item[3]), ".2f"))
+                                    delay_list.append([axis_list[index], float(format(float(speed_item[3]), ".3f"))])
+                                if max_delay_time < float(format(float(speed_item[3]), ".3f")):
+                                    max_delay_time = float(format(float(speed_item[3]), ".3f"))
                             if axis_bit != 0:  # 非延迟轴
                                 res = sc.card_update(axis_bit)
                                 if res != 0:
@@ -2379,6 +2387,7 @@ def reject_speed():
 
 
 def load_speed():
+    speed_ui.checkBox_auto_line.setChecked(False)
     tb_step = ui.tableWidget_Step
     row_num = tb_step.currentRow()
     speed_list = plan_list[row_num][7]
@@ -4149,7 +4158,7 @@ def my_test():
     # # resp = cl_requst.save_source_screenshot('终点2', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
 
 
-class MyApp(QApplication):
+class z_App(QApplication):
     def __init__(self, argv):
         super().__init__(argv)
         self.aboutToQuit.connect(self.onAboutToQuit)
@@ -4158,10 +4167,6 @@ class MyApp(QApplication):
     def onAboutToQuit(self):
         print("Exiting the application.")
         try:
-            # 执行异步操作（如果有必要，可以解开注释）
-            # data_list = [{'requestType': 'set_run_toggle', 'run_toggle': '0'}]
-            # asyncio.run(post_main(wakeup_addr, data_list))
-
             # 停止所有服务线程
             self.stop_all_threads()
 
@@ -4222,6 +4227,28 @@ class MyApp(QApplication):
             print(f"Error waiting threads: {e}")
 
 
+class z_MainWindow(QMainWindow):
+    def closeEvent(self, event):
+        if ui.radioButton_start_betting.isChecked():
+            QMessageBox.information(ui, "开盘中", "正在开盘中，禁止直接退出！")
+            event.ignore()  # 忽略关闭事件，程序继续运行
+        else:
+            # 创建确认对话框
+            reply = QMessageBox.question(
+                self,
+                "确认退出",
+                "您确定要退出程序吗？",
+                QMessageBox.Yes | QMessageBox.No,
+                QMessageBox.No
+            )
+
+            # 检查用户的响应
+            if reply == QMessageBox.Yes:
+                event.accept()  # 接受关闭事件，程序退出
+            else:
+                event.ignore()  # 忽略关闭事件，程序继续运行
+
+
 "************************************SPEED_UI*********************************************"
 
 
@@ -4232,19 +4259,31 @@ class SpeedUi(QDialog, Ui_Dialog_Set_Speed):
     def setupUi(self, MainWidget):
         super(SpeedUi, self).setupUi(MainWidget)
 
-        tb = self.tableWidget_Set_Speed
+        tb_speed = self.tableWidget_Set_Speed
 
-        tb.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
-        tb.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_speed.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_speed.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+
+
+def auto_line():
+    if speed_ui.checkBox_auto_line.isChecked():
+        tb_speed = speed_ui.tableWidget_Set_Speed
+        tb_step = ui.tableWidget_Step
+        row_index = tb_step.currentRow()
+        x = int(tb_step.item(row_index, 2).text())
+        y = int(tb_step.item(row_index, 3).text())
+        x_speed = int(tb_speed.item(0, 0).text())
+        y_speed = int(x_speed * (y / x))
+        tb_speed.item(1, 0).setText(str(y_speed))
 
 
 "************************************SPEED_UI*********************************************"
 
 if __name__ == '__main__':
-    app = MyApp(sys.argv)
+    app = z_App(sys.argv)
 
-    MainWindow = QMainWindow()
-    ui = MyUi()
+    MainWindow = z_MainWindow()
+    ui = z_Ui()
     ui.setupUi(MainWindow)
     MainWindow.show()
 
@@ -4254,6 +4293,8 @@ if __name__ == '__main__':
 
     speed_ui.buttonBox.accepted.connect(accept_speed)
     speed_ui.buttonBox.rejected.connect(reject_speed)
+    speed_ui.checkBox_auto_line.checkStateChanged.connect(auto_line)
+    speed_ui.tableWidget_Set_Speed.itemChanged.connect(auto_line)
 
     query_sql()
     sc = SportCard()  # 运动卡
