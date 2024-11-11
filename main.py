@@ -1062,12 +1062,12 @@ def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球
 "************************************图像识别_结束****************************************"
 
 
-class z_Ui(QMainWindow, Ui_MainWindow):
+class ZUi(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
 
-    def setupUi(self, MainWindow):
-        super(z_Ui, self).setupUi(MainWindow)
+    def setupUi(self, z_window):
+        super(ZUi, self).setupUi(z_window)
 
         tb_result = self.tableWidget_Results
         tb_result.horizontalHeader().resizeSection(0, 100)
@@ -3421,7 +3421,7 @@ def del_camera_points():
         for index in range(1, len(camera_points[camera_points_count])):
             if num != index and camera_points[camera_points_count][index][0] != 0:  # 如果其中有一个方案存在坐标，则不删
                 print('存在非空方案！')
-                res = QMessageBox.warning(ui, '提示', '其他方案存在该点位！是否强制删除？',
+                res = QMessageBox.warning(z_window, '提示', '其他方案存在该点位！是否强制删除？',
                                           QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
                 print(res)
                 if res == QMessageBox.No:
@@ -3438,7 +3438,7 @@ def del_audio_points():
         for index in range(1, len(audio_points[audio_points_count])):
             if num != index and audio_points[audio_points_count][index][0] != 0:  # 如果其中有一个方案存在坐标，则不删
                 print('存在非空方案！')
-                res = QMessageBox.warning(ui, '提示', '其他方案存在该点位！是否强制删除？',
+                res = QMessageBox.warning(z_window, '提示', '其他方案存在该点位！是否强制删除？',
                                           QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
                 print(res)
                 if res == QMessageBox.No:
@@ -3459,7 +3459,7 @@ def del_ai_points():
         for index in range(1, len(ai_points[ai_points_count])):
             if num != index and ai_points[ai_points_count][index][0] != 0:  # 如果其中有一个方案存在坐标，则不删
                 print('存在非空方案！')
-                res = QMessageBox.warning(ui, '提示', '其他方案存在该点位！是否强制删除？',
+                res = QMessageBox.warning(z_window, '提示', '其他方案存在该点位！是否强制删除？',
                                           QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
                 print(res)
                 if res == QMessageBox.No:
@@ -3849,6 +3849,18 @@ class TestStatusThread(QThread):
         while self.running:
             if not self.run_flg:
                 continue
+            cardnum = ui.lineEdit_CardNo.text()
+            if cardnum.isdigit() and not (flg_start['card']):
+                res = sc.card_open(int(cardnum))
+                print(res)
+                if res == 0:
+                    flg_start['card'] = True
+                    if axis_reset and flg_start['card']:  # 轴复位一次
+                        Axis_Thread.run_flg = True
+                        res_sql = query_sql()  # 加载网络设置 一次
+                        self._signal.emit(res_sql)
+                        axis_reset = False
+
             if not flg_start['ai_end']:  # 测试结果识别服务
                 test_ai_end()
             else:
@@ -3865,9 +3877,6 @@ class TestStatusThread(QThread):
 
             if not flg_start['s485']:
                 flg_start['s485'] = s485.cam_open()
-            elif axis_reset and flg_start['card']:  # 轴复位一次
-                Axis_Thread.run_flg = True
-                axis_reset = False
 
             if not flg_start['obs']:
                 if not Obs_Thread.isRunning():
@@ -3882,24 +3891,26 @@ class TestStatusThread(QThread):
                 except:
                     flg_start['ai'] = False
 
-            cardnum = ui.lineEdit_CardNo.text()
-            if cardnum.isdigit() and not (flg_start['card']):
-                res = sc.card_open(int(cardnum))
-                print(res)
-                if res == 0:
-                    flg_start['card'] = True
-
             self._signal.emit('标志')
 
 
 def test_status_signal_accept(msg):
-    for flg in flg_start.keys():
-        if flg_start[flg]:
-            if getattr(ui, 'status_%s' % flg).styleSheet() != 'background:rgb(0, 255, 0)':
-                getattr(ui, 'status_%s' % flg).setStyleSheet('background:rgb(0, 255, 0)')
+    if isinstance(msg, dict):
+        tb_msg = ui.textBrowser_total_msg
+        for k in msg:
+            tb_msg.append('%s: %s' % (k, msg[k]))
+        if "赛道名称" in msg.keys():
+            z_window.setWindowTitle(msg["赛道名称"])
         else:
-            if getattr(ui, 'status_%s' % flg).styleSheet() != 'background:rgb(255, 0, 0)':
-                getattr(ui, 'status_%s' % flg).setStyleSheet('background:rgb(255, 0, 0)')
+            z_window.setWindowTitle(ui.lineEdit_map_picture.text()[6: -5])
+    else:
+        for flg in flg_start.keys():
+            if flg_start[flg]:
+                if getattr(ui, 'status_%s' % flg).styleSheet() != 'background:rgb(0, 255, 0)':
+                    getattr(ui, 'status_%s' % flg).setStyleSheet('background:rgb(0, 255, 0)')
+            else:
+                if getattr(ui, 'status_%s' % flg).styleSheet() != 'background:rgb(255, 0, 0)':
+                    getattr(ui, 'status_%s' % flg).setStyleSheet('background:rgb(255, 0, 0)')
 
 
 def start_ai_end_bat():
@@ -4075,15 +4086,14 @@ def query_sql():
                                key_value4,
                                key_value5])
             # print("Query Results:", type(res), res)
-            textb_sql = ui.textBrowser_total_msg
+            text_sql = {}
             for index in range(len(res)):
                 for k in key_values:
                     if res[index][3] != '0' and (k in res[index][2]):
-                        textb_sql.append('%s: %s' % (res[index][2], res[index][3]))
-                        if "赛道名称" in res[index][2]:
-                            MainWindow.setWindowTitle(str(res[index][3]))
+                        text_sql[res[index][2]] = res[index][3]
             # 关闭连接
             conn.close()
+            return text_sql
     except RuntimeError as e:
         print(f"Runtime error occurred: {e}")
     except Exception as e:
@@ -4158,7 +4168,7 @@ def my_test():
     # # resp = cl_requst.save_source_screenshot('终点2', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
 
 
-class z_App(QApplication):
+class ZzwApp(QApplication):
     def __init__(self, argv):
         super().__init__(argv)
         self.aboutToQuit.connect(self.onAboutToQuit)
@@ -4227,16 +4237,21 @@ class z_App(QApplication):
             print(f"Error waiting threads: {e}")
 
 
-class z_MainWindow(QMainWindow):
+class ZMainwindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        # 设置窗口图标
+        self.setWindowIcon(QIcon("./icon.ico"))
+
     def closeEvent(self, event):
         if ui.radioButton_start_betting.isChecked():
-            QMessageBox.information(ui, "开盘中", "正在开盘中，禁止直接退出！")
+            QMessageBox.information(self, "开盘中", "正在开盘中，禁止直接退出！")
             event.ignore()  # 忽略关闭事件，程序继续运行
         else:
             # 创建确认对话框
             reply = QMessageBox.question(
                 self,
-                "确认退出",
+                "退出",
                 "您确定要退出程序吗？",
                 QMessageBox.Yes | QMessageBox.No,
                 QMessageBox.No
@@ -4256,8 +4271,8 @@ class SpeedUi(QDialog, Ui_Dialog_Set_Speed):
     def __init__(self):
         super().__init__()
 
-    def setupUi(self, MainWidget):
-        super(SpeedUi, self).setupUi(MainWidget)
+    def setupUi(self, z_dialog):
+        super(SpeedUi, self).setupUi(z_dialog)
 
         tb_speed = self.tableWidget_Set_Speed
 
@@ -4280,14 +4295,14 @@ def auto_line():
 "************************************SPEED_UI*********************************************"
 
 if __name__ == '__main__':
-    app = z_App(sys.argv)
+    app = ZzwApp(sys.argv)
 
-    MainWindow = z_MainWindow()
-    ui = z_Ui()
-    ui.setupUi(MainWindow)
-    MainWindow.show()
+    z_window = ZMainwindow()
+    ui = ZUi()
+    ui.setupUi(z_window)
+    z_window.show()
 
-    SpeedDialog = QDialog(MainWindow)
+    SpeedDialog = QDialog(z_window)
     speed_ui = SpeedUi()
     speed_ui.setupUi(SpeedDialog)
 
@@ -4296,7 +4311,6 @@ if __name__ == '__main__':
     speed_ui.checkBox_auto_line.checkStateChanged.connect(auto_line)
     speed_ui.tableWidget_Set_Speed.itemChanged.connect(auto_line)
 
-    query_sql()
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
 
@@ -4472,7 +4486,6 @@ if __name__ == '__main__':
     Track_number = "J"  # 轨道直播编号
 
     load_main_yaml()
-    print(map_data)
     load_ballsort_yaml()
 
     # 初始化列表
@@ -4501,7 +4514,7 @@ if __name__ == '__main__':
         udp_thread.start()
     except:
         # 使用infomation信息框
-        QMessageBox.information(ui, "UDP", "UDP端口被占用")
+        QMessageBox.information(z_window, "UDP", "UDP端口被占用")
         # sys.exit()
 
     # pingpong 发送排名 15
