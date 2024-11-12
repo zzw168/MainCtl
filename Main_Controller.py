@@ -3,10 +3,12 @@ import json
 import math
 import os
 import random
+import re
 import subprocess
 import sys
 import threading
 import time
+from asyncio import timeout
 from concurrent.futures import ThreadPoolExecutor
 from http.client import responses
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -355,6 +357,11 @@ def obs_script_request():
 
 # 获取网络摄像头图片
 def get_rtsp(rtsp_url):
+    try:
+        ip_address = 'http://%s'%re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
+        requests.get(ip_address)
+    except:
+        return ['', '[1]', 'monitor']
     cap = cv2.VideoCapture(rtsp_url)
     if cap.isOpened():
         ret, frame = cap.read()

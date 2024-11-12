@@ -1,27 +1,12 @@
-from PySide6.QtWidgets import QMainWindow, QApplication, QMessageBox
-import sys
+import re
 
+import requests
 
-class MainWindow(QMainWindow):
-    def closeEvent(self, event):
-        # 创建确认对话框
-        reply = QMessageBox.question(
-            self,
-            "确认退出",
-            "您确定要退出程序吗？",
-            QMessageBox.Yes | QMessageBox.No,
-            QMessageBox.No
-        )
+# 给定的 RTSP URL
+rtsp_url = "rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101"
 
-        # 检查用户的响应
-        if reply == QMessageBox.Yes:
-            event.accept()  # 接受关闭事件，程序退出
-        else:
-            event.ignore()  # 忽略关闭事件，程序继续运行
+# 使用正则表达式匹配 IP 地址
+ip_address = 'http://%s'%re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
+res = requests.get(ip_address)
 
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec_())
+print(res.status_code)  # 输出: 192.168.0.2
