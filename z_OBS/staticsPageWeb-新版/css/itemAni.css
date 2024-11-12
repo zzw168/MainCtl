@@ -1,0 +1,126 @@
+.ball0 .lrItem {
+   animation-delay: 0s;
+ }
+ .ballListRef{
+  animation: rotateX2 1ms linear ;
+ }
+
+ /* 前三加重 */
+ .ball0 .name,
+ .ball0 .time {
+   /* color: #b79b21 !important; */
+   /* text-shadow: 2px 2px 7px #927b18; */
+ }
+
+ .ball1 .name,
+ .ball1 .time {
+   /* color: #cdcdcd !important; */
+   /* text-shadow: 2px 2px 7px #939491; */
+ }
+
+ 
+ .ball2 .name,
+ .ball2 .time {
+   /* color: #b9701f !important; */
+   /* text-shadow: 2px 2px 7px #89541a; */
+ }
+
+
+
+
+ .ball0 .ball {
+  animation-delay: 0.1s;
+}
+
+
+ .ball1 .ball {
+  animation-delay: 0.15s;
+}
+
+
+
+.ball0 {
+  animation-delay: 0.5s !important;
+}
+.ball1 {
+  animation-delay: 0.7s !important;
+}
+
+
+
+
+
+
+
+
+ .ball2 .ball {
+   animation-delay: 0.2s;
+ }
+ .ball2 {
+   animation-delay: 0.8s !important;
+ }
+
+
+ .ball3 .ball {
+   animation-delay: 0.25s;
+ }
+ .ball3 {
+   animation-delay: .9s !important;
+ }
+ 
+
+ .ball4 .ball {
+   animation-delay: 0.3s;
+ }
+ .ball4 {
+   animation-delay: 1.1s!important;
+ }
+
+
+ .ball5 .ball {
+   animation-delay: 0.35s;
+ }
+ .ball5 {
+   animation-delay: 1.3s !important;
+ }
+
+
+
+ .ball6 .ball {
+   animation-delay: 0.4s;
+ }
+ .ball6 {
+   animation-delay: 1.5s !important;
+ }
+
+ 
+ 
+ .ball7 .ball {
+   animation-delay: 0.45s;
+ }
+ .ball7 {
+   animation-delay:1.7s !important;
+ }
+
+ 
+
+ .ball8 .ball {
+   animation-delay: 0.5s;
+ }
+ .ball8 {
+   animation-delay: 1.9s !important;
+ }
+
+ 
+
+ .ball9 .ball {
+   animation-delay: 0.6s;
+ }
+ .ball9 {
+   animation-delay: 2.1s !important;
+ }
+ 
+ #coutDown{
+  animation-delay: .5s !important;
+  margin-top: 30px;
+ }
