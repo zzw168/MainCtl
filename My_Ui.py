@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QMainWindow, QCheckBox, QTableWidgetItem, QMenu
 
 from MainCtl_Ui import Ui_MainWindow
-from main import Flash_Thead
+from Main_Controller import Flash_Thead
 
 
 class MyUi(QMainWindow, Ui_MainWindow):
