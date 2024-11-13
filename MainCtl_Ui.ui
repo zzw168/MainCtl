@@ -4618,414 +4618,7 @@
              <property name="topMargin">
               <number>0</number>
              </property>
-             <item row="2" column="0">
-              <widget class="QGroupBox" name="groupBox_30">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>600</width>
-                 <height>230</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="title">
-                <string>OBS场景设置</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_56">
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="lineEdit_scene_name">
-                  <property name="minimumSize">
-                   <size>
-                    <width>300</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>现场</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_65">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>主场景名称：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0" colspan="2">
-                 <widget class="QGroupBox" name="groupBox_31">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>600</width>
-                    <height>180</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="title">
-                   <string>来源切换设置</string>
-                  </property>
-                  <layout class="QGridLayout" name="gridLayout_57">
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_69">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>结算页：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="1">
-                    <widget class="QLineEdit" name="lineEdit_source_end">
-                     <property name="minimumSize">
-                      <size>
-                       <width>300</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>终点1</string>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QLineEdit" name="lineEdit_source_picture">
-                     <property name="minimumSize">
-                      <size>
-                       <width>300</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>画中画</string>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="QLineEdit" name="lineEdit_source_settlement">
-                     <property name="minimumSize">
-                      <size>
-                       <width>300</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>结算页</string>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_67">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>排名时间：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLineEdit" name="lineEdit_source_ranking">
-                     <property name="minimumSize">
-                      <size>
-                       <width>300</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>排名时间组件</string>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_68">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>画中画：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
-                    <widget class="QLabel" name="label_70">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>终点截图：</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QGroupBox" name="groupBox_26">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>600</width>
-                 <height>150</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="title">
-                <string>主题音设置</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_53">
-                <item row="4" column="1" colspan="2">
-                 <widget class="QLineEdit" name="lineEdit_music_3">
-                  <property name="minimumSize">
-                   <size>
-                    <width>300</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>./mp3/07_冰原背景音乐3.mp3</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QRadioButton" name="radioButton_music_background_2">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>背景音乐2：</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1" colspan="2">
-                 <widget class="QLineEdit" name="lineEdit_music_2">
-                  <property name="minimumSize">
-                   <size>
-                    <width>300</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>./mp3/07_冰原背景音乐2.mp3</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QRadioButton" name="radioButton_music_background_1">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>背景音乐1：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1" colspan="2">
-                 <widget class="QLineEdit" name="lineEdit_music_1">
-                  <property name="minimumSize">
-                   <size>
-                    <width>300</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>./mp3/07_冰原背景音乐1.mp3</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <widget class="QRadioButton" name="radioButton_music_background_3">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>背景音乐3：</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="3" column="0">
+             <item row="4" column="0">
               <widget class="QGroupBox" name="groupBox_32">
                <property name="minimumSize">
                 <size>
@@ -5373,6 +4966,456 @@
                </layout>
               </widget>
              </item>
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="groupBox_26">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>600</width>
+                 <height>150</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>主题音设置</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_53">
+                <item row="4" column="1" colspan="2">
+                 <widget class="QLineEdit" name="lineEdit_music_3">
+                  <property name="minimumSize">
+                   <size>
+                    <width>300</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>./mp3/07_冰原背景音乐3.mp3</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QRadioButton" name="radioButton_music_background_2">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>背景音乐2：</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1" colspan="2">
+                 <widget class="QLineEdit" name="lineEdit_music_2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>300</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>./mp3/07_冰原背景音乐2.mp3</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QRadioButton" name="radioButton_music_background_1">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>背景音乐1：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1" colspan="2">
+                 <widget class="QLineEdit" name="lineEdit_music_1">
+                  <property name="minimumSize">
+                   <size>
+                    <width>300</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>./mp3/07_冰原背景音乐1.mp3</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QRadioButton" name="radioButton_music_background_3">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>背景音乐3：</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QGroupBox" name="groupBox_30">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>600</width>
+                 <height>230</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>OBS场景设置</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_56">
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="lineEdit_scene_name">
+                  <property name="minimumSize">
+                   <size>
+                    <width>300</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>现场</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_65">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>主场景名称：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0" colspan="2">
+                 <widget class="QGroupBox" name="groupBox_31">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>600</width>
+                    <height>180</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="title">
+                   <string>来源切换设置</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_57">
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_69">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>结算页：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="1">
+                    <widget class="QLineEdit" name="lineEdit_source_end">
+                     <property name="minimumSize">
+                      <size>
+                       <width>300</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>终点1</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QLineEdit" name="lineEdit_source_picture">
+                     <property name="minimumSize">
+                      <size>
+                       <width>300</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>画中画</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="QLineEdit" name="lineEdit_source_settlement">
+                     <property name="minimumSize">
+                      <size>
+                       <width>300</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>结算页</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_67">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>排名时间：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QLineEdit" name="lineEdit_source_ranking">
+                     <property name="minimumSize">
+                      <size>
+                       <width>300</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>排名时间组件</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_68">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>画中画：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="0">
+                    <widget class="QLabel" name="label_70">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>终点截图：</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QGroupBox" name="groupBox_28">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>总控信息参照</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_59">
+                <item row="0" column="1">
+                 <widget class="QTextBrowser" name="textBrowser_total_msg">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QTextBrowser" name="textBrowser_save_msg">
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
              <item row="1" column="0">
               <widget class="QGroupBox" name="groupBox_29">
                <property name="minimumSize">
@@ -5521,8 +5564,20 @@
                </layout>
               </widget>
              </item>
-             <item row="4" column="0">
-              <widget class="QGroupBox" name="groupBox_28">
+             <item row="3" column="0">
+              <widget class="QGroupBox" name="groupBox_35">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>600</width>
+                 <height>130</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
@@ -5531,11 +5586,43 @@
                 </font>
                </property>
                <property name="title">
-                <string>总控信息参照</string>
+                <string>结果图片</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_59">
-                <item row="0" column="1">
-                 <widget class="QTextBrowser" name="textBrowser_total_msg">
+               <layout class="QGridLayout" name="gridLayout_62">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>9</number>
+                </property>
+                <item row="0" column="1" colspan="2">
+                 <widget class="QLineEdit" name="lineEdit_Image_Path">
+                  <property name="minimumSize">
+                   <size>
+                    <width>300</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>E:/saidao/image</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_86">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -5543,21 +5630,8 @@
                     <bold>false</bold>
                    </font>
                   </property>
-                  <property name="focusPolicy">
-                   <enum>Qt::FocusPolicy::NoFocus</enum>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QTextBrowser" name="textBrowser_save_msg">
-                  <property name="focusPolicy">
-                   <enum>Qt::FocusPolicy::NoFocus</enum>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
+                  <property name="text">
+                   <string>保存路径：</string>
                   </property>
                  </widget>
                 </item>

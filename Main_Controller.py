@@ -317,7 +317,7 @@ def get_picture(scence_current):
         flg_start['obs'] = False
         return ['', '[1]', 'obs']
     img = resp.image_data[22:]
-    lottery_term[6] = 'E:/saidao/image/obs_%s.jpg' % lottery_term[0]
+    lottery_term[6] = '%s/obs_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0])
     str2image_file(img, lottery_term[6])  # 保存图片
     form_data = {
         'CameraType': 'obs',
@@ -328,7 +328,7 @@ def get_picture(scence_current):
         res = requests.post(url=recognition_addr, data=form_data, timeout=5)
         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
         r_img = r_list[0]
-        image_json = open('E:/saidao/image/obs_%s_end.jpg' % lottery_term[0], 'wb')
+        image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
         image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
         image_json.close()
         flg_start['ai_end'] = True
@@ -343,7 +343,7 @@ def get_picture(scence_current):
 
 # obs 脚本 obs_script_time.py 请求
 def obs_script_request():
-    res = requests.get(url="http://127.0.0.1:8899/start")
+    res = requests.get(url="%s/start" % obs_script_addr)
     # res = requests.get(url="http://127.0.0.1:8899/stop")
     # res = requests.get(url="http://127.0.0.1:8899/reset")
     # res = requests.get(url="http://127.0.0.1:8899/period?term=开始")
@@ -358,7 +358,7 @@ def obs_script_request():
 # 获取网络摄像头图片
 def get_rtsp(rtsp_url):
     try:
-        ip_address = 'http://%s'%re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
+        ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
         requests.get(ip_address)
     except:
         return ['', '[1]', 'monitor']
@@ -366,7 +366,7 @@ def get_rtsp(rtsp_url):
     if cap.isOpened():
         ret, frame = cap.read()
         if ret:
-            f = 'E:/saidao/image/rtsp_%s.jpg' % lottery_term[0]
+            f = '%s/rtsp_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0])
             cv2.imwrite(f, frame)
             success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
@@ -381,7 +381,7 @@ def get_rtsp(rtsp_url):
                     res = requests.post(url=recognition_addr, data=form_data, timeout=5)
                     r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
                     r_img = r_list[0]
-                    image_json = open('E:/saidao/image/rtsp_%s_end.jpg' % lottery_term[0], 'wb')
+                    image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
                     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
                     image_json.close()
                     flg_start['ai_end'] = True
@@ -1637,7 +1637,9 @@ class PlanBallNumThread(QThread):
                                 if time_num > 1:
                                     time_old = time.time()
                                     sec_ += 1
-                                    print('计球倒计时：%s' % sec_)
+                                    self._signal.emit(
+                                        succeed('计球倒计时：%s' %
+                                                str(int(ui.lineEdit_time_count_ball.text()) - sec_)))
                         else:
                             flg_start['card'] = False
                             self._signal.emit(fail("运动板x输入通信出错！"))
@@ -1671,8 +1673,18 @@ def PlanBallNum_signal_accept(msg):
     print('球数 %s' % msg)
     if isinstance(msg, int):
         ui.lineEdit_ball_num.setText(str(msg))
+    elif '计球倒计时' in msg:
+        text_lines = ui.textBrowser_msg.toHtml().splitlines()
+        if len(text_lines) >= 1:
+            if '计球倒计时' in text_lines[-1]:
+                text_lines[-1] = msg
+                new_text = "\n".join(text_lines)
+                ui.textBrowser_msg.setHtml(new_text)
+            else:
+                ui.textBrowser_msg.append(msg)
     else:
         ui.textBrowser.append(msg)
+        ui.textBrowser_msg.append(msg)
 
 
 '''
@@ -1948,17 +1960,17 @@ class PlanCmdThread(QThread):
                         print('动作未开始！')
                         break
                     if (plan_list[plan_index][0] == '1' and  # 是否勾选,且在圈数范围内
-                            (action_area[1] < int(plan_list[plan_index][1][0]) or  # 运行圈数在设定圈数范围内
-                             (int(plan_list[plan_index][1][0]) == 0))):  # 或者设定圈数的值为 0 时，可以忽略圈数执行
+                            (action_area[1] < int(float(plan_list[plan_index][1][0])) or  # 运行圈数在设定圈数范围内
+                             (int(float(plan_list[plan_index][1][0])) == 0))):  # 或者设定圈数的值为 0 时，可以忽略圈数执行
                         self._signal.emit(plan_index)  # 控制列表跟踪变色的信号
 
                         try:
                             # print("开启机关")
-                            if int(plan_list[plan_index][12][0]) != 0:
+                            if int(float(plan_list[plan_index][12][0])) != 0:
                                 if '-' in plan_list[plan_index][12][0]:  # 带负号即关闭机关
-                                    sc.GASetExtDoBit(abs(int(plan_list[plan_index][12][0])) - 1, 0)
+                                    sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 0)
                                 else:  # 不带负号即开启机关
-                                    sc.GASetExtDoBit(abs(int(plan_list[plan_index][12][0])) - 1, 1)
+                                    sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
                                     requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
                                     ranking_time_start = time.time()  # 每个球的起跑时间
@@ -1991,8 +2003,8 @@ class PlanCmdThread(QThread):
                             max_delay_time = 0  # 记录最大延迟时间
                             delay_list = []  # 延迟的轴列表
                             for index, speed_item in enumerate(plan_list[plan_index][7]):
-                                sc.card_move(index + 1, int(plan_list[plan_index][index + 2][0]),
-                                             vel=int(speed_item[0]),
+                                sc.card_move(index + 1, int(float(plan_list[plan_index][index + 2][0])),
+                                             vel=abs(int(float(speed_item[0]))),
                                              dAcc=float(speed_item[1]),
                                              dDec=float(speed_item[2]),
                                              dVelStart=0.1, dSmoothTime=0)
@@ -2023,8 +2035,8 @@ class PlanCmdThread(QThread):
                             if float(plan_list[plan_index][11][0]) > 0:
                                 time.sleep(float(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
                             # 摄像头缩放
-                            if 0 < int(plan_list[plan_index][10][0]) <= 5:  # 摄像头缩放
-                                PlanCam_Thread.camitem = [int(plan_list[plan_index][10][0]),
+                            if 0 < int(float(plan_list[plan_index][10][0])) <= 5:  # 摄像头缩放
+                                PlanCam_Thread.camitem = [int(float(plan_list[plan_index][10][0])),
                                                           float(plan_list[plan_index][11][0])]
                                 PlanCam_Thread.run_flg = True  # 摄像头线程
                         if ui.checkBox_test.isChecked():
@@ -2046,7 +2058,8 @@ class PlanCmdThread(QThread):
                                     self._signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
                                     break
                                 # 判断镜头点位在运行区域内则进入下一个动作循环
-                                if (int(camera_points[int(plan_list[plan_index][14][0])][cb_index + 1][0][0])
+                                if (int(camera_points[abs(int(float(plan_list[plan_index][14][0])))][cb_index + 1][0][
+                                            0])
                                         in [action_area[0], action_area[0] - 1, action_area[0] + 1]):
                                     break
                                 # if int(plan_list[plan_num][13]) in [action_area[0], action_area[0] - 1, action_area[0] + 1]:
@@ -2148,6 +2161,7 @@ def keyboard_release(key):
                 pValue[1] = pValue[1] + 30000 * int(five_key[1])
                 if pValue[1] <= 0:
                     pValue[1] = 0
+                ui.lineEdit_axis1.setText(str(pValue[1]))
                 sc.card_setpos(2, pValue[1])
                 sc.card_update()
 
@@ -2159,6 +2173,7 @@ def keyboard_release(key):
                 pValue[1] = pValue[1] - 30000 * int(five_key[1])
                 if pValue[1] <= 0:
                     pValue[1] = 0
+                ui.lineEdit_axis1.setText(str(pValue[1]))
                 sc.card_setpos(2, pValue[1])
                 sc.card_update()
 
@@ -2170,6 +2185,7 @@ def keyboard_release(key):
                 pValue[0] = pValue[0] - 30000 * int(five_key[0])
                 if pValue[0] <= 0:
                     pValue[0] = 0
+                ui.lineEdit_axis0.setText(str(pValue[0]))
                 sc.card_setpos(1, pValue[0])
                 sc.card_update()
 
@@ -2181,6 +2197,7 @@ def keyboard_release(key):
                 pValue[0] = pValue[0] + 30000 * int(five_key[0])
                 if pValue[0] <= 0:
                     pValue[0] = 0
+                ui.lineEdit_axis0.setText(str(pValue[0]))
                 sc.card_setpos(1, pValue[0])
                 sc.card_update()
 
@@ -2192,6 +2209,7 @@ def keyboard_release(key):
                 pValue[2] = pValue[2] - 30000 * int(five_key[2])
                 if pValue[2] <= 0:
                     pValue[2] = 0
+                ui.lineEdit_axis2.setText(str(pValue[2]))
                 sc.card_setpos(3, pValue[2])
                 sc.card_update()
 
@@ -2203,6 +2221,7 @@ def keyboard_release(key):
                 pValue[2] = pValue[2] + 30000 * int(five_key[2])
                 if pValue[2] <= 0:
                     pValue[2] = 0
+                ui.lineEdit_axis2.setText(str(pValue[2]))
                 sc.card_setpos(3, pValue[2])
                 sc.card_update()
 
@@ -2212,6 +2231,7 @@ def keyboard_release(key):
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[3] = pValue[3] - 30000 * int(five_key[3])
+                ui.lineEdit_axis3.setText(str(pValue[3]))
                 sc.card_setpos(4, pValue[3])
                 sc.card_update()
 
@@ -2221,6 +2241,7 @@ def keyboard_release(key):
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[3] = pValue[3] + 30000 * int(five_key[3])
+                ui.lineEdit_axis3.setText(str(pValue[3]))
                 sc.card_setpos(4, pValue[3])
                 sc.card_update()
 
@@ -2230,6 +2251,7 @@ def keyboard_release(key):
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[4] = pValue[4] + 30000 * int(five_key[4])
+                ui.lineEdit_axis4.setText(str(pValue[4]))
                 sc.card_setpos(5, pValue[4])
                 sc.card_update()
 
@@ -2239,6 +2261,7 @@ def keyboard_release(key):
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[4] = pValue[4] - 30000 * int(five_key[4])
+                ui.lineEdit_axis4.setText(str(pValue[4]))
                 sc.card_setpos(5, pValue[4])
                 sc.card_update()
 
@@ -2618,6 +2641,7 @@ def save_main_yaml():
                 main_all['map_picture'] = ui.lineEdit_map_picture.text()
                 main_all['map_size'] = ui.lineEdit_map_size.text()
                 main_all['map_line'] = ui.lineEdit_map_line.text()
+                main_all['Image_Path'] = ui.lineEdit_Image_Path.text()
                 main_all['scene_name'] = ui.lineEdit_scene_name.text()
                 main_all['source_ranking'] = ui.lineEdit_source_ranking.text()
                 main_all['source_picture'] = ui.lineEdit_source_picture.text()
@@ -2694,6 +2718,7 @@ def load_main_yaml():
         ui.lineEdit_map_picture.setText(main_all['map_picture'])
         ui.lineEdit_map_size.setText(main_all['map_size'])
         ui.lineEdit_map_line.setText(main_all['map_line'])
+        ui.lineEdit_Image_Path.setText(main_all['Image_Path'])
         ui.lineEdit_scene_name.setText(main_all['scene_name'])
         ui.lineEdit_source_ranking.setText(main_all['source_ranking'])
         ui.lineEdit_source_picture.setText(main_all['source_picture'])
@@ -4291,7 +4316,7 @@ class SpeedUi(QDialog, Ui_Dialog_Set_Speed):
         tb_speed.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
 
-def auto_line():
+def auto_line():  # 相对上一个动作走直线
     if speed_ui.checkBox_auto_line.isChecked():
         tb_speed = speed_ui.tableWidget_Set_Speed
         tb_step = ui.tableWidget_Step
@@ -4660,6 +4685,7 @@ if __name__ == '__main__':
     ui.lineEdit_map_picture.editingFinished.connect(save_main_yaml)
     ui.lineEdit_map_size.editingFinished.connect(save_main_yaml)
     ui.lineEdit_map_line.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_Image_Path.editingFinished.connect(save_main_yaml)
     ui.lineEdit_scene_name.editingFinished.connect(save_main_yaml)
     ui.lineEdit_source_ranking.editingFinished.connect(save_main_yaml)
     ui.lineEdit_source_picture.editingFinished.connect(save_main_yaml)

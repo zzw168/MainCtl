@@ -1,12 +1,29 @@
-import re
+from PySide6.QtWidgets import QApplication, QTextBrowser, QVBoxLayout, QWidget
 
-import requests
+app = QApplication([])
 
-# 给定的 RTSP URL
-rtsp_url = "rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101"
+# 创建窗口和 QTextBrowser
+window = QWidget()
+layout = QVBoxLayout()
+text_browser = QTextBrowser()
+layout.addWidget(text_browser)
+window.setLayout(layout)
 
-# 使用正则表达式匹配 IP 地址
-ip_address = 'http://%s'%re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
-res = requests.get(ip_address)
+# 设置初始文本
+initial_text = "第一行\n第二行\n第三行\n第四行\n第五行\n第六行"
+text_browser.setText(initial_text)
 
-print(res.status_code)  # 输出: 192.168.0.2
+# 获取当前文本内容
+text_lines = text_browser.toPlainText().splitlines()
+
+# 修改倒数第一行内容
+if len(text_lines) >= 1:
+    text_lines[-1] = "这是新的倒数第一行内容"
+
+# 将修改后的内容重新设置到 QTextBrowser
+new_text = "\n".join(text_lines)
+text_browser.setText(new_text)
+
+# 显示窗口
+window.show()
+app.exec()

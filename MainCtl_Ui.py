@@ -1992,149 +1992,6 @@ class Ui_MainWindow(object):
         self.gridLayout_54 = QGridLayout(self.frame_24)
         self.gridLayout_54.setObjectName(u"gridLayout_54")
         self.gridLayout_54.setContentsMargins(0, 0, -1, -1)
-        self.groupBox_30 = QGroupBox(self.frame_24)
-        self.groupBox_30.setObjectName(u"groupBox_30")
-        self.groupBox_30.setMinimumSize(QSize(0, 0))
-        self.groupBox_30.setMaximumSize(QSize(600, 230))
-        self.groupBox_30.setFont(font1)
-        self.gridLayout_56 = QGridLayout(self.groupBox_30)
-        self.gridLayout_56.setObjectName(u"gridLayout_56")
-        self.lineEdit_scene_name = QLineEdit(self.groupBox_30)
-        self.lineEdit_scene_name.setObjectName(u"lineEdit_scene_name")
-        self.lineEdit_scene_name.setMinimumSize(QSize(300, 0))
-        self.lineEdit_scene_name.setFont(font4)
-        self.lineEdit_scene_name.setReadOnly(False)
-
-        self.gridLayout_56.addWidget(self.lineEdit_scene_name, 1, 1, 1, 1)
-
-        self.label_65 = QLabel(self.groupBox_30)
-        self.label_65.setObjectName(u"label_65")
-        self.label_65.setFont(font5)
-
-        self.gridLayout_56.addWidget(self.label_65, 1, 0, 1, 1)
-
-        self.groupBox_31 = QGroupBox(self.groupBox_30)
-        self.groupBox_31.setObjectName(u"groupBox_31")
-        self.groupBox_31.setMinimumSize(QSize(0, 0))
-        self.groupBox_31.setMaximumSize(QSize(600, 180))
-        self.groupBox_31.setFont(font1)
-        self.gridLayout_57 = QGridLayout(self.groupBox_31)
-        self.gridLayout_57.setObjectName(u"gridLayout_57")
-        self.label_69 = QLabel(self.groupBox_31)
-        self.label_69.setObjectName(u"label_69")
-        self.label_69.setFont(font5)
-
-        self.gridLayout_57.addWidget(self.label_69, 2, 0, 1, 1)
-
-        self.lineEdit_source_end = QLineEdit(self.groupBox_31)
-        self.lineEdit_source_end.setObjectName(u"lineEdit_source_end")
-        self.lineEdit_source_end.setMinimumSize(QSize(300, 0))
-        self.lineEdit_source_end.setFont(font4)
-        self.lineEdit_source_end.setReadOnly(False)
-
-        self.gridLayout_57.addWidget(self.lineEdit_source_end, 4, 1, 1, 1)
-
-        self.lineEdit_source_picture = QLineEdit(self.groupBox_31)
-        self.lineEdit_source_picture.setObjectName(u"lineEdit_source_picture")
-        self.lineEdit_source_picture.setMinimumSize(QSize(300, 0))
-        self.lineEdit_source_picture.setFont(font4)
-        self.lineEdit_source_picture.setReadOnly(False)
-
-        self.gridLayout_57.addWidget(self.lineEdit_source_picture, 1, 1, 1, 1)
-
-        self.lineEdit_source_settlement = QLineEdit(self.groupBox_31)
-        self.lineEdit_source_settlement.setObjectName(u"lineEdit_source_settlement")
-        self.lineEdit_source_settlement.setMinimumSize(QSize(300, 0))
-        self.lineEdit_source_settlement.setFont(font4)
-        self.lineEdit_source_settlement.setReadOnly(False)
-
-        self.gridLayout_57.addWidget(self.lineEdit_source_settlement, 2, 1, 1, 1)
-
-        self.label_67 = QLabel(self.groupBox_31)
-        self.label_67.setObjectName(u"label_67")
-        self.label_67.setFont(font5)
-
-        self.gridLayout_57.addWidget(self.label_67, 0, 0, 1, 1)
-
-        self.lineEdit_source_ranking = QLineEdit(self.groupBox_31)
-        self.lineEdit_source_ranking.setObjectName(u"lineEdit_source_ranking")
-        self.lineEdit_source_ranking.setMinimumSize(QSize(300, 0))
-        self.lineEdit_source_ranking.setFont(font4)
-        self.lineEdit_source_ranking.setReadOnly(False)
-
-        self.gridLayout_57.addWidget(self.lineEdit_source_ranking, 0, 1, 1, 1)
-
-        self.label_68 = QLabel(self.groupBox_31)
-        self.label_68.setObjectName(u"label_68")
-        self.label_68.setFont(font5)
-
-        self.gridLayout_57.addWidget(self.label_68, 1, 0, 1, 1)
-
-        self.label_70 = QLabel(self.groupBox_31)
-        self.label_70.setObjectName(u"label_70")
-        self.label_70.setFont(font5)
-
-        self.gridLayout_57.addWidget(self.label_70, 4, 0, 1, 1)
-
-
-        self.gridLayout_56.addWidget(self.groupBox_31, 2, 0, 1, 2)
-
-
-        self.gridLayout_54.addWidget(self.groupBox_30, 2, 0, 1, 1)
-
-        self.groupBox_26 = QGroupBox(self.frame_24)
-        self.groupBox_26.setObjectName(u"groupBox_26")
-        self.groupBox_26.setMinimumSize(QSize(0, 0))
-        self.groupBox_26.setMaximumSize(QSize(600, 150))
-        self.groupBox_26.setFont(font1)
-        self.gridLayout_53 = QGridLayout(self.groupBox_26)
-        self.gridLayout_53.setObjectName(u"gridLayout_53")
-        self.lineEdit_music_3 = QLineEdit(self.groupBox_26)
-        self.lineEdit_music_3.setObjectName(u"lineEdit_music_3")
-        self.lineEdit_music_3.setMinimumSize(QSize(300, 0))
-        self.lineEdit_music_3.setFont(font4)
-        self.lineEdit_music_3.setReadOnly(False)
-
-        self.gridLayout_53.addWidget(self.lineEdit_music_3, 4, 1, 1, 2)
-
-        self.radioButton_music_background_2 = QRadioButton(self.groupBox_26)
-        self.radioButton_music_background_2.setObjectName(u"radioButton_music_background_2")
-        self.radioButton_music_background_2.setFont(font5)
-        self.radioButton_music_background_2.setChecked(True)
-
-        self.gridLayout_53.addWidget(self.radioButton_music_background_2, 3, 0, 1, 1)
-
-        self.lineEdit_music_2 = QLineEdit(self.groupBox_26)
-        self.lineEdit_music_2.setObjectName(u"lineEdit_music_2")
-        self.lineEdit_music_2.setMinimumSize(QSize(300, 0))
-        self.lineEdit_music_2.setFont(font4)
-        self.lineEdit_music_2.setReadOnly(False)
-
-        self.gridLayout_53.addWidget(self.lineEdit_music_2, 3, 1, 1, 2)
-
-        self.radioButton_music_background_1 = QRadioButton(self.groupBox_26)
-        self.radioButton_music_background_1.setObjectName(u"radioButton_music_background_1")
-        self.radioButton_music_background_1.setFont(font5)
-
-        self.gridLayout_53.addWidget(self.radioButton_music_background_1, 2, 0, 1, 1)
-
-        self.lineEdit_music_1 = QLineEdit(self.groupBox_26)
-        self.lineEdit_music_1.setObjectName(u"lineEdit_music_1")
-        self.lineEdit_music_1.setMinimumSize(QSize(300, 0))
-        self.lineEdit_music_1.setFont(font4)
-        self.lineEdit_music_1.setReadOnly(False)
-
-        self.gridLayout_53.addWidget(self.lineEdit_music_1, 2, 1, 1, 2)
-
-        self.radioButton_music_background_3 = QRadioButton(self.groupBox_26)
-        self.radioButton_music_background_3.setObjectName(u"radioButton_music_background_3")
-        self.radioButton_music_background_3.setFont(font5)
-
-        self.gridLayout_53.addWidget(self.radioButton_music_background_3, 4, 0, 1, 1)
-
-
-        self.gridLayout_54.addWidget(self.groupBox_26, 0, 0, 1, 1)
-
         self.groupBox_32 = QGroupBox(self.frame_24)
         self.groupBox_32.setObjectName(u"groupBox_32")
         self.groupBox_32.setMinimumSize(QSize(0, 0))
@@ -2255,7 +2112,173 @@ class Ui_MainWindow(object):
         self.gridLayout_58.addWidget(self.label_77, 2, 2, 1, 1)
 
 
-        self.gridLayout_54.addWidget(self.groupBox_32, 3, 0, 1, 1)
+        self.gridLayout_54.addWidget(self.groupBox_32, 4, 0, 1, 1)
+
+        self.groupBox_26 = QGroupBox(self.frame_24)
+        self.groupBox_26.setObjectName(u"groupBox_26")
+        self.groupBox_26.setMinimumSize(QSize(0, 0))
+        self.groupBox_26.setMaximumSize(QSize(600, 150))
+        self.groupBox_26.setFont(font1)
+        self.gridLayout_53 = QGridLayout(self.groupBox_26)
+        self.gridLayout_53.setObjectName(u"gridLayout_53")
+        self.lineEdit_music_3 = QLineEdit(self.groupBox_26)
+        self.lineEdit_music_3.setObjectName(u"lineEdit_music_3")
+        self.lineEdit_music_3.setMinimumSize(QSize(300, 0))
+        self.lineEdit_music_3.setFont(font4)
+        self.lineEdit_music_3.setReadOnly(False)
+
+        self.gridLayout_53.addWidget(self.lineEdit_music_3, 4, 1, 1, 2)
+
+        self.radioButton_music_background_2 = QRadioButton(self.groupBox_26)
+        self.radioButton_music_background_2.setObjectName(u"radioButton_music_background_2")
+        self.radioButton_music_background_2.setFont(font5)
+        self.radioButton_music_background_2.setChecked(True)
+
+        self.gridLayout_53.addWidget(self.radioButton_music_background_2, 3, 0, 1, 1)
+
+        self.lineEdit_music_2 = QLineEdit(self.groupBox_26)
+        self.lineEdit_music_2.setObjectName(u"lineEdit_music_2")
+        self.lineEdit_music_2.setMinimumSize(QSize(300, 0))
+        self.lineEdit_music_2.setFont(font4)
+        self.lineEdit_music_2.setReadOnly(False)
+
+        self.gridLayout_53.addWidget(self.lineEdit_music_2, 3, 1, 1, 2)
+
+        self.radioButton_music_background_1 = QRadioButton(self.groupBox_26)
+        self.radioButton_music_background_1.setObjectName(u"radioButton_music_background_1")
+        self.radioButton_music_background_1.setFont(font5)
+
+        self.gridLayout_53.addWidget(self.radioButton_music_background_1, 2, 0, 1, 1)
+
+        self.lineEdit_music_1 = QLineEdit(self.groupBox_26)
+        self.lineEdit_music_1.setObjectName(u"lineEdit_music_1")
+        self.lineEdit_music_1.setMinimumSize(QSize(300, 0))
+        self.lineEdit_music_1.setFont(font4)
+        self.lineEdit_music_1.setReadOnly(False)
+
+        self.gridLayout_53.addWidget(self.lineEdit_music_1, 2, 1, 1, 2)
+
+        self.radioButton_music_background_3 = QRadioButton(self.groupBox_26)
+        self.radioButton_music_background_3.setObjectName(u"radioButton_music_background_3")
+        self.radioButton_music_background_3.setFont(font5)
+
+        self.gridLayout_53.addWidget(self.radioButton_music_background_3, 4, 0, 1, 1)
+
+
+        self.gridLayout_54.addWidget(self.groupBox_26, 0, 0, 1, 1)
+
+        self.groupBox_30 = QGroupBox(self.frame_24)
+        self.groupBox_30.setObjectName(u"groupBox_30")
+        self.groupBox_30.setMinimumSize(QSize(0, 0))
+        self.groupBox_30.setMaximumSize(QSize(600, 230))
+        self.groupBox_30.setFont(font1)
+        self.gridLayout_56 = QGridLayout(self.groupBox_30)
+        self.gridLayout_56.setObjectName(u"gridLayout_56")
+        self.lineEdit_scene_name = QLineEdit(self.groupBox_30)
+        self.lineEdit_scene_name.setObjectName(u"lineEdit_scene_name")
+        self.lineEdit_scene_name.setMinimumSize(QSize(300, 0))
+        self.lineEdit_scene_name.setFont(font4)
+        self.lineEdit_scene_name.setReadOnly(False)
+
+        self.gridLayout_56.addWidget(self.lineEdit_scene_name, 1, 1, 1, 1)
+
+        self.label_65 = QLabel(self.groupBox_30)
+        self.label_65.setObjectName(u"label_65")
+        self.label_65.setFont(font5)
+
+        self.gridLayout_56.addWidget(self.label_65, 1, 0, 1, 1)
+
+        self.groupBox_31 = QGroupBox(self.groupBox_30)
+        self.groupBox_31.setObjectName(u"groupBox_31")
+        self.groupBox_31.setMinimumSize(QSize(0, 0))
+        self.groupBox_31.setMaximumSize(QSize(600, 180))
+        self.groupBox_31.setFont(font1)
+        self.gridLayout_57 = QGridLayout(self.groupBox_31)
+        self.gridLayout_57.setObjectName(u"gridLayout_57")
+        self.label_69 = QLabel(self.groupBox_31)
+        self.label_69.setObjectName(u"label_69")
+        self.label_69.setFont(font5)
+
+        self.gridLayout_57.addWidget(self.label_69, 2, 0, 1, 1)
+
+        self.lineEdit_source_end = QLineEdit(self.groupBox_31)
+        self.lineEdit_source_end.setObjectName(u"lineEdit_source_end")
+        self.lineEdit_source_end.setMinimumSize(QSize(300, 0))
+        self.lineEdit_source_end.setFont(font4)
+        self.lineEdit_source_end.setReadOnly(False)
+
+        self.gridLayout_57.addWidget(self.lineEdit_source_end, 4, 1, 1, 1)
+
+        self.lineEdit_source_picture = QLineEdit(self.groupBox_31)
+        self.lineEdit_source_picture.setObjectName(u"lineEdit_source_picture")
+        self.lineEdit_source_picture.setMinimumSize(QSize(300, 0))
+        self.lineEdit_source_picture.setFont(font4)
+        self.lineEdit_source_picture.setReadOnly(False)
+
+        self.gridLayout_57.addWidget(self.lineEdit_source_picture, 1, 1, 1, 1)
+
+        self.lineEdit_source_settlement = QLineEdit(self.groupBox_31)
+        self.lineEdit_source_settlement.setObjectName(u"lineEdit_source_settlement")
+        self.lineEdit_source_settlement.setMinimumSize(QSize(300, 0))
+        self.lineEdit_source_settlement.setFont(font4)
+        self.lineEdit_source_settlement.setReadOnly(False)
+
+        self.gridLayout_57.addWidget(self.lineEdit_source_settlement, 2, 1, 1, 1)
+
+        self.label_67 = QLabel(self.groupBox_31)
+        self.label_67.setObjectName(u"label_67")
+        self.label_67.setFont(font5)
+
+        self.gridLayout_57.addWidget(self.label_67, 0, 0, 1, 1)
+
+        self.lineEdit_source_ranking = QLineEdit(self.groupBox_31)
+        self.lineEdit_source_ranking.setObjectName(u"lineEdit_source_ranking")
+        self.lineEdit_source_ranking.setMinimumSize(QSize(300, 0))
+        self.lineEdit_source_ranking.setFont(font4)
+        self.lineEdit_source_ranking.setReadOnly(False)
+
+        self.gridLayout_57.addWidget(self.lineEdit_source_ranking, 0, 1, 1, 1)
+
+        self.label_68 = QLabel(self.groupBox_31)
+        self.label_68.setObjectName(u"label_68")
+        self.label_68.setFont(font5)
+
+        self.gridLayout_57.addWidget(self.label_68, 1, 0, 1, 1)
+
+        self.label_70 = QLabel(self.groupBox_31)
+        self.label_70.setObjectName(u"label_70")
+        self.label_70.setFont(font5)
+
+        self.gridLayout_57.addWidget(self.label_70, 4, 0, 1, 1)
+
+
+        self.gridLayout_56.addWidget(self.groupBox_31, 2, 0, 1, 2)
+
+
+        self.gridLayout_54.addWidget(self.groupBox_30, 2, 0, 1, 1)
+
+        self.groupBox_28 = QGroupBox(self.frame_24)
+        self.groupBox_28.setObjectName(u"groupBox_28")
+        self.groupBox_28.setFont(font1)
+        self.gridLayout_59 = QGridLayout(self.groupBox_28)
+        self.gridLayout_59.setObjectName(u"gridLayout_59")
+        self.textBrowser_total_msg = QTextBrowser(self.groupBox_28)
+        self.textBrowser_total_msg.setObjectName(u"textBrowser_total_msg")
+        self.textBrowser_total_msg.setFont(font5)
+        self.textBrowser_total_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.textBrowser_total_msg.setReadOnly(False)
+
+        self.gridLayout_59.addWidget(self.textBrowser_total_msg, 0, 1, 1, 1)
+
+        self.textBrowser_save_msg = QTextBrowser(self.groupBox_28)
+        self.textBrowser_save_msg.setObjectName(u"textBrowser_save_msg")
+        self.textBrowser_save_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.textBrowser_save_msg.setReadOnly(False)
+
+        self.gridLayout_59.addWidget(self.textBrowser_save_msg, 0, 2, 1, 1)
+
+
+        self.gridLayout_54.addWidget(self.groupBox_28, 5, 0, 1, 1)
 
         self.groupBox_29 = QGroupBox(self.frame_24)
         self.groupBox_29.setObjectName(u"groupBox_29")
@@ -2309,28 +2332,30 @@ class Ui_MainWindow(object):
 
         self.gridLayout_54.addWidget(self.groupBox_29, 1, 0, 1, 1)
 
-        self.groupBox_28 = QGroupBox(self.frame_24)
-        self.groupBox_28.setObjectName(u"groupBox_28")
-        self.groupBox_28.setFont(font1)
-        self.gridLayout_59 = QGridLayout(self.groupBox_28)
-        self.gridLayout_59.setObjectName(u"gridLayout_59")
-        self.textBrowser_total_msg = QTextBrowser(self.groupBox_28)
-        self.textBrowser_total_msg.setObjectName(u"textBrowser_total_msg")
-        self.textBrowser_total_msg.setFont(font5)
-        self.textBrowser_total_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.textBrowser_total_msg.setReadOnly(False)
+        self.groupBox_35 = QGroupBox(self.frame_24)
+        self.groupBox_35.setObjectName(u"groupBox_35")
+        self.groupBox_35.setMinimumSize(QSize(0, 0))
+        self.groupBox_35.setMaximumSize(QSize(600, 130))
+        self.groupBox_35.setFont(font1)
+        self.gridLayout_62 = QGridLayout(self.groupBox_35)
+        self.gridLayout_62.setObjectName(u"gridLayout_62")
+        self.gridLayout_62.setContentsMargins(-1, 0, -1, 9)
+        self.lineEdit_Image_Path = QLineEdit(self.groupBox_35)
+        self.lineEdit_Image_Path.setObjectName(u"lineEdit_Image_Path")
+        self.lineEdit_Image_Path.setMinimumSize(QSize(300, 0))
+        self.lineEdit_Image_Path.setFont(font4)
+        self.lineEdit_Image_Path.setReadOnly(False)
 
-        self.gridLayout_59.addWidget(self.textBrowser_total_msg, 0, 1, 1, 1)
+        self.gridLayout_62.addWidget(self.lineEdit_Image_Path, 0, 1, 1, 2)
 
-        self.textBrowser_save_msg = QTextBrowser(self.groupBox_28)
-        self.textBrowser_save_msg.setObjectName(u"textBrowser_save_msg")
-        self.textBrowser_save_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.textBrowser_save_msg.setReadOnly(False)
+        self.label_86 = QLabel(self.groupBox_35)
+        self.label_86.setObjectName(u"label_86")
+        self.label_86.setFont(font5)
 
-        self.gridLayout_59.addWidget(self.textBrowser_save_msg, 0, 2, 1, 1)
+        self.gridLayout_62.addWidget(self.label_86, 0, 0, 1, 1)
 
 
-        self.gridLayout_54.addWidget(self.groupBox_28, 4, 0, 1, 1)
+        self.gridLayout_54.addWidget(self.groupBox_35, 3, 0, 1, 1)
 
 
         self.gridLayout_36.addWidget(self.frame_24, 0, 1, 2, 1)
@@ -2912,7 +2937,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(1)
+        self.tabWidget_Ranking.setCurrentIndex(0)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3218,49 +3243,6 @@ class Ui_MainWindow(object):
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u7403\u6570\uff1a", None))
         self.label_7.setText(QCoreApplication.translate("MainWindow", u"\u8fc7\u7ec8\u70b9\u7403\u6570\uff1a", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_3), QCoreApplication.translate("MainWindow", u"\u56fe\u50cf\u8bc6\u522b", None))
-        self.groupBox_30.setTitle(QCoreApplication.translate("MainWindow", u"OBS\u573a\u666f\u8bbe\u7f6e", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_scene_name.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_scene_name.setText(QCoreApplication.translate("MainWindow", u"\u73b0\u573a", None))
-        self.label_65.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u573a\u666f\u540d\u79f0\uff1a", None))
-        self.groupBox_31.setTitle(QCoreApplication.translate("MainWindow", u"\u6765\u6e90\u5207\u6362\u8bbe\u7f6e", None))
-        self.label_69.setText(QCoreApplication.translate("MainWindow", u"\u7ed3\u7b97\u9875\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_source_end.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_source_end.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b91", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_source_picture.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_source_picture.setText(QCoreApplication.translate("MainWindow", u"\u753b\u4e2d\u753b", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_source_settlement.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_source_settlement.setText(QCoreApplication.translate("MainWindow", u"\u7ed3\u7b97\u9875", None))
-        self.label_67.setText(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u65f6\u95f4\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_source_ranking.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_source_ranking.setText(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u65f6\u95f4\u7ec4\u4ef6", None))
-        self.label_68.setText(QCoreApplication.translate("MainWindow", u"\u753b\u4e2d\u753b\uff1a", None))
-        self.label_70.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u622a\u56fe\uff1a", None))
-        self.groupBox_26.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3\u8bbe\u7f6e", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_music_3.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_music_3.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e503.mp3", None))
-        self.radioButton_music_background_2.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e502\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_music_2.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_music_2.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e502.mp3", None))
-        self.radioButton_music_background_1.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e501\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_music_1.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_music_1.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e501.mp3", None))
-        self.radioButton_music_background_3.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e503\uff1a", None))
         self.groupBox_32.setTitle(QCoreApplication.translate("MainWindow", u"\u673a\u5173\u7f16\u53f7\u8bf4\u660e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_shoot.setToolTip("")
@@ -3302,6 +3284,50 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_map_picture_5.setText(QCoreApplication.translate("MainWindow", u"10", None))
         self.label_77.setText(QCoreApplication.translate("MainWindow", u"\u6446\u9524\u673a\u5173\uff1a", None))
+        self.groupBox_26.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3\u8bbe\u7f6e", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_music_3.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_music_3.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e503.mp3", None))
+        self.radioButton_music_background_2.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e502\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_music_2.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_music_2.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e502.mp3", None))
+        self.radioButton_music_background_1.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e501\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_music_1.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_music_1.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e501.mp3", None))
+        self.radioButton_music_background_3.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e503\uff1a", None))
+        self.groupBox_30.setTitle(QCoreApplication.translate("MainWindow", u"OBS\u573a\u666f\u8bbe\u7f6e", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_scene_name.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_scene_name.setText(QCoreApplication.translate("MainWindow", u"\u73b0\u573a", None))
+        self.label_65.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u573a\u666f\u540d\u79f0\uff1a", None))
+        self.groupBox_31.setTitle(QCoreApplication.translate("MainWindow", u"\u6765\u6e90\u5207\u6362\u8bbe\u7f6e", None))
+        self.label_69.setText(QCoreApplication.translate("MainWindow", u"\u7ed3\u7b97\u9875\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_source_end.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_source_end.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b91", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_source_picture.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_source_picture.setText(QCoreApplication.translate("MainWindow", u"\u753b\u4e2d\u753b", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_source_settlement.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_source_settlement.setText(QCoreApplication.translate("MainWindow", u"\u7ed3\u7b97\u9875", None))
+        self.label_67.setText(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u65f6\u95f4\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_source_ranking.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_source_ranking.setText(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u65f6\u95f4\u7ec4\u4ef6", None))
+        self.label_68.setText(QCoreApplication.translate("MainWindow", u"\u753b\u4e2d\u753b\uff1a", None))
+        self.label_70.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u622a\u56fe\uff1a", None))
+        self.groupBox_28.setTitle(QCoreApplication.translate("MainWindow", u"\u603b\u63a7\u4fe1\u606f\u53c2\u7167", None))
         self.groupBox_29.setTitle(QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe\u8bbe\u7f6e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_map_picture.setToolTip("")
@@ -3318,7 +3344,12 @@ class Ui_MainWindow(object):
         self.lineEdit_map_line.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_map_line.setText(QCoreApplication.translate("MainWindow", u"./img/09_\u6c99\u6f20.json", None))
-        self.groupBox_28.setTitle(QCoreApplication.translate("MainWindow", u"\u603b\u63a7\u4fe1\u606f\u53c2\u7167", None))
+        self.groupBox_35.setTitle(QCoreApplication.translate("MainWindow", u"\u7ed3\u679c\u56fe\u7247", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_Image_Path.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_Image_Path.setText(QCoreApplication.translate("MainWindow", u"E:/saidao/image", None))
+        self.label_86.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u8def\u5f84\uff1a", None))
         self.groupBox_17.setTitle(QCoreApplication.translate("MainWindow", u"\u786c\u4ef6\u7aef\u53e3\u8bbe\u7f6e", None))
         self.label_80.setText(QCoreApplication.translate("MainWindow", u"\u8f68\u9053\u7f16\u53f7\uff1a", None))
         self.label_79.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5361\u4e94\u8f74\u65b9\u5411\uff1a", None))
