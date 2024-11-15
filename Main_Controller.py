@@ -236,7 +236,6 @@ def activate_browser():  # 程序开始，刷新浏览器
     item_settlement = obs_data['source_settlement']
     if flg_start['obs']:
         try:
-            print(obs_scene, item_ranking, False)
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, False)  # 关闭排位组件
             time.sleep(0.5)
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
@@ -248,7 +247,7 @@ def activate_browser():  # 程序开始，刷新浏览器
             time.sleep(1)
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 打开结算页
         except:
-            ui.textBrowser.append(fail("OBS 开关浏览器出错！"))
+            print("OBS 开关浏览器出错！")
             flg_start['obs'] = False
 
 
@@ -418,14 +417,11 @@ def deal_action():
                 continue
             action_area[0] = int(ranking_array[rank_num][6])  # 同圈中寻找合适区域
             break
-        # if action_area[1] < int(ranking_array[rank_num][8]):  # 不同圈赋值更大圈数
-        #     action_area[1] = int(ranking_array[rank_num][8])
-        #     print('区域更新~~~~~~~~', action_area[1])
-        # if (action_area[0] > int(ranking_array[rank_num][6])
-        #         and action_area[1] < int(ranking_array[rank_num][8])
-        #         and action_area[2] == 0):  # 不同圈，跨圈情况
-        #     action_area[0] = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
-        #     break
+        if action_area[1] < int(ranking_array[rank_num][8]) and action_area[2] == 0:  # 不同圈赋值更大圈数
+            action_area[1] = int(ranking_array[rank_num][8])
+            if action_area[0] > int(ranking_array[rank_num][6]):  # 不同圈，跨圈情况
+                action_area[0] = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
+            break
 
 
 # 处理排名
@@ -530,9 +526,6 @@ def reset_ranking_array():
     global balls_start
     # global previous_position
     balls_start = 0
-    ui.lineEdit_balls_start.setText('0')
-    ui.lineEdit_ball_start.setText('0')
-    ui.lineEdit_ball_num.setText('0')
 
     ranking_array = []  # 排名数组
     for i in range(0, len(init_array)):
@@ -950,7 +943,6 @@ class UdpThread(QThread):
                     balls_start = len(ball_sort[1][0])  # 更新起点球数
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~3', ranking_array)
                     deal_action()
-                    # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~4', action_area)
                     con_data = []
                     for k in range(0, len(ranking_array)):
                         con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
@@ -1441,7 +1433,7 @@ class ReStartThread(QThread):
                         countdown = str(30)
                     else:
                         countdown = str(countdown)
-                    lottery = get_lottery_term()  # 开盘后写表
+                    lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
                     if lottery:
                         self._signal.emit(lottery)
                 else:  # 封盘模式，退出循环
@@ -1455,6 +1447,7 @@ class ReStartThread(QThread):
                 countdown = int(countdown)
             else:
                 countdown = 60
+            self._signal.emit('auto_shoot')
             for t in range(countdown, -1, -1):
                 if not ui.checkBox_restart.isChecked():
                     self.run_flg = False
@@ -1475,12 +1468,16 @@ def time_signal_accept(msg):
     elif msg == 'term':
         ui.lineEdit_term.setText(str(term))
         ui.textBrowser_msg.append(fail('期号重复，3秒后重新获取！'))
+    elif msg == 'auto_shoot':
+        ui.lineEdit_ball_end.setText('0')
+        ui.checkBox_shoot_0.setChecked(True)
+        auto_shoot()  # 自动上珠
     elif msg == 'error':
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
-    else:
+    elif isinstance(msg, int):
         if int(msg) == 1:
             plan_refresh()
-            ui.lineEdit_ball_num.setText('0')
+            ui.lineEdit_ball_end.setText('0')
         ui.lineEdit_time.setText(str(msg))
         if not ui.radioButton_test_game.isChecked():  # 非测试模式
             tb_result = ui.tableWidget_Results
@@ -1670,9 +1667,8 @@ class PlanBallNumThread(QThread):
 
 
 def PlanBallNum_signal_accept(msg):
-    print('球数 %s' % msg)
     if isinstance(msg, int):
-        ui.lineEdit_ball_num.setText(str(msg))
+        ui.lineEdit_ball_end.setText(str(msg))
     elif '计球倒计时' in msg:
         text_lines = ui.textBrowser_msg.toHtml().splitlines()
         if len(text_lines) >= 1:
@@ -1723,7 +1719,7 @@ class ScreenShotThread(QThread):
                 t_count = 5
             for t in range(t_count, 0, -1):
                 # 开始倒数截图识别
-                if int(ui.lineEdit_ball_num.text()) >= balls_start:  # 当全部球到达终点，则跳出倒数
+                if int(ui.lineEdit_ball_end.text()) >= balls_start:  # 当全部球到达终点，则跳出倒数
                     break
                 print('结果倒数：', t)
                 time.sleep(1)
@@ -1863,6 +1859,57 @@ def PlanObs_signal_accept(msg):
 
 
 '''
+    ShootThread(QThread) 弹射上珠线程
+'''
+
+
+class ShootThread(QThread):
+    _signal = Signal(object)
+
+    def __init__(self):
+        super(ShootThread, self).__init__()
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        while self.running:
+            time.sleep(1)
+            if not self.run_flg:
+                continue
+            print('弹射上珠线程！')
+            try:
+                shoot_index = int(ui.lineEdit_shoot.text()) - 1
+                sc.GASetExtDoBit(shoot_index, 1)
+                time.sleep(0.5)
+                end_index = int(ui.lineEdit_end.text()) - 1
+                sc.GASetExtDoBit(end_index, 0)
+                while self.run_flg:
+                    time.sleep(1)
+                    if (ui.lineEdit_balls_auto.text().isdigit()
+                            and int(ui.lineEdit_balls_start.text()) >= int(ui.lineEdit_balls_auto.text())):
+                        break
+                    elif (ui.lineEdit_balls_auto.text().isdigit()
+                          and balls_start >= int(ui.lineEdit_balls_auto.text())):
+                        break
+                shoot_index = int(ui.lineEdit_shoot.text()) - 1
+                sc.GASetExtDoBit(shoot_index, 0)
+                self.run_flg = False
+            except:
+                print("弹射上珠参数出错！")
+                self._signal.emit(fail("弹射上珠参数出错！"))
+            self.run_flg = False
+
+
+def shoot_signal_accept(msg):
+    ui.textBrowser_msg.append(msg)
+
+
+'''
     AxisThread(QThread) 轴复位线程
 '''
 
@@ -1946,6 +1993,10 @@ class PlanCmdThread(QThread):
             time.sleep(0.1)
             if not self.run_flg:
                 continue
+            if (ui.checkBox_shoot_0.isChecked()
+                    and (ui.lineEdit_balls_auto.text().isdigit()
+                         and int(ui.lineEdit_balls_start.text()) < int(ui.lineEdit_balls_auto.text()))):
+                continue  # 如果选择了自动上珠，必须等到珠上齐才开始游戏
             if flg_start['card'] and action_area[1] < max_lap_count:
                 if not ui.checkBox_test.isChecked():  # 如果是测试模式，不播放主题音乐
                     ui.checkBox_main_music.setChecked(True)
@@ -2032,63 +2083,72 @@ class PlanCmdThread(QThread):
                             self._signal.emit(fail("运动板通信出错！"))
 
                         if self.run_flg:
-                            if float(plan_list[plan_index][11][0]) > 0:
-                                time.sleep(float(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
-                            # 摄像头缩放
-                            if 0 < int(float(plan_list[plan_index][10][0])) <= 5:  # 摄像头缩放
-                                PlanCam_Thread.camitem = [int(float(plan_list[plan_index][10][0])),
-                                                          float(plan_list[plan_index][11][0])]
-                                PlanCam_Thread.run_flg = True  # 摄像头线程
-                        if ui.checkBox_test.isChecked():
-                            if float(plan_list[plan_index][16][0]) >= 0:
-                                time.sleep(float(plan_list[plan_index][16][0]))
-                            else:
-                                time.sleep(2)  # 测试模式停两秒切换下一个动作
-                        elif float(plan_list[plan_index][14][0]) == 0:
-                            pass  # 0则直接下一个动作
-                        elif float(plan_list[plan_index][14][0]) < 0:
-                            time.sleep(abs(float(plan_list[plan_index][14][0])))  # 负数则等待对应秒数再进行下一个动作
-                        else:
-                            t_over = 0
-                            while True:  # 正式运行，等待球进入触发区域再进行下一个动作
-                                if not self.run_flg:
-                                    print('动作等待中！')
-                                    break
-                                if not plan_list[plan_index][14][0].isdigit():
-                                    self._signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
-                                    break
-                                # 判断镜头点位在运行区域内则进入下一个动作循环
-                                if (int(camera_points[abs(int(float(plan_list[plan_index][14][0])))][cb_index + 1][0][
-                                            0])
-                                        in [action_area[0], action_area[0] - 1, action_area[0] + 1]):
-                                    break
-                                # if int(plan_list[plan_num][13]) in [action_area[0], action_area[0] - 1, action_area[0] + 1]:
-                                #     break
-                                t_over += 1
-                                if plan_list[plan_index][16][0] != '0':
-                                    if t_over >= abs(float(plan_list[plan_index][16][0])) * 10:  # 每个动作超时时间
-                                        self._signal.emit(fail('第 %s 个动作 等待超时！' % str(plan_index + 1)))
-                                        print('等待超时！')
-                                        break
+                            try:
+                                if float(plan_list[plan_index][11][0]) > 0:
+                                    time.sleep(float(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
+                                # 摄像头缩放
+                                if 0 < int(float(plan_list[plan_index][10][0])) <= 5:  # 摄像头缩放
+                                    PlanCam_Thread.camitem = [int(float(plan_list[plan_index][10][0])),
+                                                              float(plan_list[plan_index][11][0])]
+                                    PlanCam_Thread.run_flg = True  # 摄像头线程
+                            except:
+                                print("摄像头数据出错！")
+                                self._signal.emit(fail("摄像头数据出错！"))
+                        try:
+                            if ui.checkBox_test.isChecked():
+                                if float(plan_list[plan_index][16][0]) >= 0:
+                                    time.sleep(float(plan_list[plan_index][16][0]))
                                 else:
-                                    if t_over >= 100:
-                                        self._signal.emit(fail('第 %s 个动作 等待超过10秒！' % str(plan_index + 1)))
-                                        print('等待超过10秒！')
+                                    time.sleep(2)  # 测试模式停两秒切换下一个动作
+                            elif float(plan_list[plan_index][14][0]) == 0:
+                                pass  # 0则直接下一个动作
+                            elif float(plan_list[plan_index][14][0]) < 0:
+                                time.sleep(abs(float(plan_list[plan_index][14][0])))  # 负数则等待对应秒数再进行下一个动作
+                            else:
+                                t_over = 0
+                                while True:  # 正式运行，等待球进入触发区域再进行下一个动作
+                                    if not self.run_flg:
+                                        print('动作等待中！')
                                         break
-                                if self.cmd_next:  # 手动进入下一个动作
-                                    break
-                                time.sleep(0.1)
+                                    if not plan_list[plan_index][14][0].isdigit():
+                                        self._signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
+                                        break
+                                    # 判断镜头点位在运行区域内则进入下一个动作循环
+                                    if (int(camera_points[abs(int(float(plan_list[plan_index][14][0])))]
+                                            [cb_index + 1][0][0])
+                                            < map_label_big.map_action + 100):
+                                        break
+                                    t_over += 1
+                                    if plan_list[plan_index][16][0] != '0':
+                                        if t_over >= abs(float(plan_list[plan_index][16][0])) * 10:  # 每个动作超时时间
+                                            self._signal.emit(fail('第 %s 个动作 等待超时！' % str(plan_index + 1)))
+                                            print('等待超时！')
+                                            break
+                                    else:
+                                        if t_over >= 150:
+                                            self._signal.emit(fail('第 %s 个动作 等待超过15秒！' % str(plan_index + 1)))
+                                            print('等待超过15秒！')
+                                            break
+                                    if self.cmd_next:  # 手动进入下一个动作
+                                        break
+                                    time.sleep(0.1)
+                        except:
+                            print("动作等待数据出错！")
+                            self._signal.emit(fail("动作等待数据出错！"))
                         if self.cmd_next:  # 快速执行下一个动作
                             self._signal.emit(succeed("跳过动作 %s！" % (plan_index + 1)))
                             self.cmd_next = False
                             continue
                         if self.run_flg:
-                            # 场景切换
-                            plan_col_count = len(plan_list[plan_index])  # 固定最后一项为OBS场景切换
-                            if '_' in plan_list[plan_index][plan_col_count - 1]:
-                                PlanObs_Thread.plan_obs = plan_list[plan_index][plan_col_count - 1]
-                                PlanObs_Thread.run_flg = True  # 切换场景线程
-
+                            try:
+                                # 场景切换
+                                plan_col_count = len(plan_list[plan_index])  # 固定最后一项为OBS场景切换
+                                if '_' in plan_list[plan_index][plan_col_count - 1]:
+                                    PlanObs_Thread.plan_obs = plan_list[plan_index][plan_col_count - 1]
+                                    PlanObs_Thread.run_flg = True  # 切换场景线程
+                            except:
+                                print("场景数据出错！")
+                                self._signal.emit(fail("场景数据出错！"))
                             if (not ui.checkBox_test.isChecked()
                                     and (len(plan_list) - 6 <= plan_index)
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
@@ -2103,6 +2163,7 @@ class PlanCmdThread(QThread):
                             # 圈数统计
                             if (not ui.checkBox_test.isChecked()
                                     and plan_index == len(plan_list) - 1):  # 每执行完最后一个动作，action_area[1]圈数自动增加一圈
+                                map_label_big.map_action = 0
                                 action_area[2] = 1  # 写入标志 1 为独占写入
                                 action_area[0] = 0
                                 action_area[1] += 1
@@ -2708,6 +2769,7 @@ def load_main_yaml():
         ui.lineEdit_five_axis.setText(str(main_all['five_axis']))
         ui.lineEdit_five_key.setText(str(main_all['five_key']))
         ui.lineEdit_balls_count.setText(main_all['balls_count'])
+        ui.lineEdit_balls_auto.setText(main_all['balls_count'])
         ui.lineEdit_wakeup_addr.setText(main_all['wakeup_addr'])
         ui.lineEdit_rtsp_url.setText(main_all['rtsp_url'])
         ui.lineEdit_recognition_addr.setText(main_all['recognition_addr'])
@@ -2746,7 +2808,7 @@ def load_main_yaml():
         tcpServer_addr = (main_all['tcpServer_addr'][0], int(main_all['tcpServer_addr'][1]))
         result_tcpServer_addr = (main_all['result_tcpServer_addr'][0], int(main_all['result_tcpServer_addr'][1]))
         wakeup_addr = main_all['wakeup_addr']
-        balls_count = int(main_all['balls_count'])
+        balls_count = abs(int(float(main_all['balls_count'])))
         rtsp_url = main_all['rtsp_url']
         recognition_addr = main_all['recognition_addr']
         obs_script_addr = main_all['obs_script_addr']
@@ -2795,6 +2857,7 @@ def cmd_run():
     plan_refresh()
     reset_ranking_array()
     ui.radioButton_test_game.setChecked(True)  # 模拟模式
+    auto_shoot()  # 自动上珠
     PlanCmd_Thread.run_flg = True
 
 
@@ -2812,7 +2875,8 @@ def cmd_next():
 
 # 关闭动作循环
 def cmd_stop():
-    PlanCmd_Thread.run_flg = False
+    PlanCmd_Thread.run_flg = False  # 停止运动
+    ReStart_Thread.run_flg = False  # 停止循环
     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
     Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
     sc.card_stop()  # 立即停止
@@ -3028,8 +3092,11 @@ class DraggableLabel(QLabel):
             area_part = 0
             for index in range(len(map_orbit)):
                 if abs(map_orbit[index][0] - x) < 10 and abs(map_orbit[index][1] - y) < 10:
-                    part = len(map_orbit) / (max_area_count - balls_count + 1)
-                    area_part = index // part
+                    if self.color == 'red':
+                        area_part = index
+                    else:
+                        part = len(map_orbit) / (max_area_count - balls_count + 1)
+                        area_part = index // part
                     x = int(map_orbit[index][0])
                     y = int(map_orbit[index][1])
                     self.move(int(x - self.width() / 2), int(y - self.height() / 2))
@@ -3058,6 +3125,7 @@ class MapLabel(QLabel):
     def __init__(self, picture_size=860, ball_space=11, ball_radius=10, flash_time=30, step_length=2, parent=None):
         super().__init__(parent)
         global map_orbit
+        self.map_action = 0  # 地图触发点位
         img = map_data[0]
         pixmap = QPixmap(img)
         self.picture_size = picture_size
@@ -3068,9 +3136,9 @@ class MapLabel(QLabel):
 
         self.color_names = {'red': QColor(255, 0, 0), 'green': QColor(0, 255, 0), 'blue': QColor(0, 0, 255),
                             'pink': QColor(255, 0, 255), 'yellow': QColor(255, 255, 0), 'black': QColor(0, 0, 0),
-                            'purple': QColor(128, 0, 128), 'orange': QColor(255, 165, 0)}
-        # , 'White': QColor(248, 248, 255),
-        # 'Brown': QColor(139, 69, 19)}
+                            'purple': QColor(128, 0, 128), 'orange': QColor(255, 165, 0)
+            , 'White': QColor(248, 248, 255),
+                            'Brown': QColor(139, 69, 19)}
 
         self.path_points = []
         with open(map_data[1], 'r', encoding='utf-8') as fcc_file:
@@ -3102,7 +3170,7 @@ class MapLabel(QLabel):
     def update_positions(self):
         # 更新每个小球的位置
         p_num = 0
-        for num in range(0, len(ranking_array)):
+        for num in range(0, balls_count):
             if ranking_array[num][5] in self.color_names.keys():
                 color = self.color_names[ranking_array[num][5]]
                 if ranking_array[num][6] == 0:  # 起点
@@ -3162,7 +3230,8 @@ class MapLabel(QLabel):
                 # if index >= len(self.path_points):
                 #     self.positions[p_num][0] = 0  # 回到起点循环运动
                 p_num += 1
-
+        if self.positions[0][0] - self.map_action < 300:
+            self.map_action = self.positions[0][0]  # 赋值实时位置
         # 触发重绘
         self.update()
 
@@ -3202,14 +3271,24 @@ class MapLabel(QLabel):
                 painter.drawEllipse(int(x - self.ball_radius), int(y - self.ball_radius),
                                     self.ball_radius * 2, self.ball_radius * 2)
                 if self.picture_size == 860:
-                    font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
-                    painter.setFont(font)
                     if str(self.positions[index_position][2]) == '1':
+                        font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
+                        painter.setFont(font)
                         painter.setPen('gray')
+                        painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
+                                         str(self.positions[index_position][2]))
+                    elif str(self.positions[index_position][2]) == '10':
+                        font = QFont("Arial", 11, QFont.Bold)  # 字体：Arial，大小：16，加粗
+                        painter.setFont(font)
+                        painter.setPen('black')
+                        painter.drawText(int(x - self.ball_radius / 2 - 4), int(y + self.ball_radius / 2),
+                                         str(self.positions[index_position][2]))
                     else:
+                        font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
+                        painter.setFont(font)
                         painter.setPen('white')
-                    painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
-                                     str(self.positions[index_position][2]))
+                        painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
+                                         str(self.positions[index_position][2]))
 
     def mouseReleaseEvent(self, event: QMouseEvent):
         """释放鼠标时停止拖动"""
@@ -3556,8 +3635,9 @@ class AudioThread(QThread):
             plan_index = ui.comboBox_plan.currentIndex() + 1  # 方案索引
             for index in range(1, len(audio_points)):
                 # print(audio_points[index][plan_index][0])
-                if audio_points[index][plan_index][0][0] > 0 and (area_old != action_area) and (
-                        audio_points[index][plan_index][0][0] == action_area[0]):
+                if (audio_points[index][plan_index][0][0] > 0
+                        and (area_old != action_area)
+                        and (audio_points[index][plan_index][0][0] == action_area[0])):
                     tb_audio = ui.tableWidget_Audio
                     sound_file = tb_audio.item(index - 1, 0).text()
                     sound_times = int(tb_audio.item(index - 1, 1).text())
@@ -3602,8 +3682,9 @@ class AiThread(QThread):
             plan_index = ui.comboBox_plan.currentIndex() + 1  # 方案索引
             for index in range(1, len(ai_points)):
                 # print(ai_points[index][plan_index][0][0])
-                if ai_points[index][plan_index][0][0] > 0 and (area_old != action_area) and (
-                        ai_points[index][plan_index][0][0] == action_area[0]):
+                if (ai_points[index][plan_index][0][0] > 0
+                        and (area_old != action_area)
+                        and (ai_points[index][plan_index][0][0] == action_area[0])):
                     tb_ai = ui.tableWidget_Ai
                     sound_file = tb_ai.item(index - 1, 0).text()
                     sound_times = int(tb_ai.item(index - 1, 1).text())
@@ -4084,7 +4165,21 @@ def start_betting():
 
 def stop_betting():
     ui.checkBox_restart.setChecked(False)
+    ReStart_Thread.run_flg = False  # 停止循环
     post_status(False, Track_number)
+
+
+def auto_shoot():  # 自动上珠
+    global balls_start
+    global ball_sort
+    if ui.checkBox_shoot_0.isChecked():
+        ball_sort[1][0] = []
+        balls_start = 0
+        ui.lineEdit_balls_start.setText('0')
+        ui.lineEdit_ball_start.setText('0')
+        Shoot_Thread.run_flg = True
+    else:
+        Shoot_Thread.run_flg = False
 
 
 "****************************************直播大厅_结束****************************************************"
@@ -4245,6 +4340,7 @@ class ZzwApp(QApplication):
             TestStatus_Thread.stop()
             listener.stop()
             ScreenShot_Thread.stop()
+            Shoot_Thread.stop()
         except Exception as e:
             print(f"Error stopping threads: {e}")
 
@@ -4269,6 +4365,7 @@ class ZzwApp(QApplication):
             TestStatus_Thread.wait()
             listener.join()
             ScreenShot_Thread.wait()
+            Shoot_Thread.wait()
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -4375,6 +4472,10 @@ if __name__ == '__main__':
     PlanObs_Thread = PlanObsThread()  # OBS场景切换方案 3
     PlanObs_Thread._signal.connect(PlanObs_signal_accept)
     PlanObs_Thread.start()
+
+    Shoot_Thread = ShootThread()  # 自动上球 3
+    Shoot_Thread._signal.connect(shoot_signal_accept)
+    Shoot_Thread.start()
 
     PlanCam_Thread = CamThread()  # 摄像头运行方案 4
     PlanCam_Thread._signal.connect(signal_accept)
@@ -4729,7 +4830,6 @@ if __name__ == '__main__':
     ui.pushButton_Cancel_Result.clicked.connect(cancel_betting)
     ui.pushButton_Send_Result.clicked.connect(send_result)
 
-    ui.checkBox_shoot_0.checkStateChanged.connect(lambda: ui.checkBox_shoot.setChecked(ui.checkBox_shoot_0.isChecked()))
     "**************************直播大厅_结束*****************************"
 
     sys.exit(app.exec())

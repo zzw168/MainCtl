@@ -543,21 +543,7 @@
                 <string>功能</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_16">
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="checkBox_Pass_Recognition_Start">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>跳过起点识别</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
+                <item row="0" column="3">
                  <widget class="QCheckBox" name="checkBox_end_BlackScreen">
                   <property name="font">
                    <font>
@@ -571,8 +557,63 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0">
+                <item row="0" column="0" colspan="3">
+                 <widget class="QCheckBox" name="checkBox_Pass_Recognition_Start">
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>跳过起点识别</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QCheckBox" name="checkBox_shoot_0">
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>自动上珠</string>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" colspan="3">
                  <widget class="QCheckBox" name="checkBox_Pass_Ranking_Twice">
+                  <property name="minimumSize">
+                   <size>
+                    <width>180</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>180</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -585,7 +626,21 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="1">
+                <item row="2" column="3">
+                 <widget class="QCheckBox" name="checkBox_5">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>关警报</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3">
                  <widget class="QCheckBox" name="checkBox_end_stop">
                   <property name="font">
                    <font>
@@ -599,22 +654,27 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
-                 <widget class="QCheckBox" name="checkBox_shoot_0">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="lineEdit_balls_auto">
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
                   </property>
                   <property name="text">
-                   <string>一弹射</string>
+                   <string>8</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
-                 <widget class="QCheckBox" name="checkBox_5">
+                <item row="2" column="2">
+                 <widget class="QLabel" name="label_85">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -623,7 +683,7 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>关警报</string>
+                   <string>粒</string>
                   </property>
                  </widget>
                 </item>
@@ -761,6 +821,9 @@
                   </property>
                   <property name="text">
                    <string>0</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                   <property name="readOnly">
                    <bool>true</bool>
@@ -4483,7 +4546,7 @@
                        </widget>
                       </item>
                       <item row="1" column="2">
-                       <widget class="QLineEdit" name="lineEdit_ball_num">
+                       <widget class="QLineEdit" name="lineEdit_ball_end">
                         <property name="minimumSize">
                          <size>
                           <width>50</width>
