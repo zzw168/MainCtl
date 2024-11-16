@@ -1737,15 +1737,21 @@ class ScreenShotThread(QThread):
                 if len(main_Camera) == len(z_ranking_res):
                     z_ranking_res = main_Camera
             else:
-                pass
-                # while True:
-                #     if Send_Result:
-                #         send_list = eval(ui.lineEdit_Send_Result.text())
-                #         if len(send_list) == len(z_ranking_res):
-                #             z_ranking_res = send_list
-                #             break
-                #     time.sleep(1)
-                # Send_Result = False
+                if not ui.checkBox_Pass_Ranking_Twice.isChecked():
+                    pass  # 警报声
+                    while True:
+                        if Send_Result:
+                            send_res = ui.lineEdit_Send_Result.text()
+                            if send_res != '':
+                                send_list = eval(ui.lineEdit_Send_Result.text())
+                                if len(send_list) == len(z_ranking_res):
+                                    z_ranking_res = send_list
+                                    break
+                            else:
+                                self._signal.emit('send_res')
+                                Send_Result = False
+                        time.sleep(1)
+                    Send_Result = False
             if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                 if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
                     ui.radioButton_stop_betting.click()  # 封盘
@@ -1793,6 +1799,8 @@ def ScreenShot_signal_accept(msg):
                 fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
             if perfect_Camera == fit_Camera:
                 ui.lineEdit_result_send.setText(str(main_Camera))
+        elif msg == 'send_res':
+            ui.lineEdit_Send_Result.setText(ui.lineEdit_Main_Camera.text())
         else:
             ui.textBrowser.append(str(msg))
     except:
@@ -2202,6 +2210,8 @@ def signal_accept(msg):
         elif msg == '进行中':
             tb_result = ui.tableWidget_Results
             tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
+        elif '完成' in msg:
+            ui.checkBox_main_music.setChecked(False)
         else:
             ui.textBrowser.append(str(msg))
             ui.textBrowser_msg.append(str(msg))
@@ -2851,8 +2861,6 @@ def edit_enable():
 
 
 def cmd_run():
-    global p_now
-    p_now = 0
     save_plan_yaml()
     plan_refresh()
     reset_ranking_array()
@@ -2862,8 +2870,6 @@ def cmd_run():
 
 
 def cmd_loop():
-    global p_now
-    p_now = 0
     ui.radioButton_start_betting.click()  # 开盘
     ReStart_Thread.run_flg = True
 
@@ -2880,10 +2886,6 @@ def cmd_stop():
     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
     Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
     sc.card_stop()  # 立即停止
-    ui.checkBox_main_music.setChecked(False)
-    ui.textBrowser.append(succeed('退出编排动作！'))
-    ui.textBrowser_msg.append(succeed('退出编排动作！'))
-    # reset_ranking_array()
 
 
 def card_start():
@@ -4145,16 +4147,18 @@ def cancel_betting():
 
 
 def send_result():
-    result_list = eval(ui.lineEdit_Send_Result.text())
-    result_data = {"raceTrackID": Track_number, "term": str(term),
-                   "actualResultOpeningTime": betting_end_time,
-                   "result": result_list,
-                   "timings": []}
-    for index in range(len(result_list)):
-        result_data["timings"].append(
-            {"pm": index + 1, "id": result_list[index], "time": float(z_ranking_time[index])})
-    post_end(term, betting_end_time, 0, Track_number)  # 发送游戏结束信号给服务器， 0: 不正常
-    post_result(term, betting_end_time, result_data, Track_number)  # 发送最终排名给服务器
+    global Send_Result
+    Send_Result = True
+    # result_list = eval(ui.lineEdit_Send_Result.text())
+    # result_data = {"raceTrackID": Track_number, "term": str(term),
+    #                "actualResultOpeningTime": betting_end_time,
+    #                "result": result_list,
+    #                "timings": []}
+    # for index in range(len(result_list)):
+    #     result_data["timings"].append(
+    #         {"pm": index + 1, "id": result_list[index], "time": float(z_ranking_time[index])})
+    # post_end(term, betting_end_time, 0, Track_number)  # 发送游戏结束信号给服务器， 0: 不正常
+    # post_result(term, betting_end_time, result_data, Track_number)  # 发送最终排名给服务器
 
 
 def start_betting():

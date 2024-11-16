@@ -279,6 +279,7 @@ class Ui_MainWindow(object):
         self.checkBox_Pass_Ranking_Twice.setMinimumSize(QSize(180, 0))
         self.checkBox_Pass_Ranking_Twice.setMaximumSize(QSize(180, 16777215))
         self.checkBox_Pass_Ranking_Twice.setFont(font1)
+        self.checkBox_Pass_Ranking_Twice.setChecked(True)
 
         self.gridLayout_16.addWidget(self.checkBox_Pass_Ranking_Twice, 1, 0, 1, 3)
 

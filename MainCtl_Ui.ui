@@ -624,6 +624,9 @@
                   <property name="text">
                    <string>跳过二次排名</string>
                   </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item row="2" column="3">
