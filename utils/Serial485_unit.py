@@ -20,7 +20,7 @@ class Serial485:
             self.ser = serial.Serial(self.s485_Cam_No, 9600, timeout=5)
             return self.ser.is_open
         except:
-            return '%s 端口链接失败！' % self.s485_Cam_No
+            return False
 
     # 发送镜头缩放指令
     def cam_zoom_step(self, in_out: int = 1):

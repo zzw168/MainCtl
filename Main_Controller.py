@@ -160,26 +160,11 @@ def obs_open():
         Obs_Thread.start()
 
 
-class SourceThread(QThread):
-    _signal = Signal(object)
+class SourceThread(QObject):
+    source_signal = Signal(object)
 
     def __init__(self):
         super(SourceThread, self).__init__()
-        self.run_flg = False
-        self.running = True
-
-    def stop(self):
-        self.run_flg = False
-        self.running = False  # 修改标志位，线程优雅退出
-        self.quit()  # 退出线程事件循环
-
-    def run(self) -> None:
-        while self.running:
-            time.sleep(0.1)
-            if not self.run_flg:
-                continue
-            self._signal.emit('SourceThread 写表')
-            self.run_flg = False
 
 
 def source_signal_accept(msg):
@@ -290,7 +275,7 @@ def get_source_list(scene_name):  # 取得来源列表
                     obs_data['source_picture'] = int(item['sceneItemId'])
                 elif item['sourceName'] == ui.lineEdit_source_settlement.text():
                     obs_data['source_settlement'] = int(item['sceneItemId'])
-            Source_Thread.run_flg = True
+            Source_Thread.source_signal.emit('写表')
     except:
         flg_start['obs'] = False
 
@@ -1658,7 +1643,7 @@ class PlanBallNumThread(QThread):
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                 Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                 Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-                ui.checkBox_main_music.setChecked(False)
+                main_music_worker.toggle_enable_signal.emit(False)
             except:
                 print("接收运动卡输入 运行出错！")
                 flg_start['card'] = False
@@ -2007,7 +1992,7 @@ class PlanCmdThread(QThread):
                 continue  # 如果选择了自动上珠，必须等到珠上齐才开始游戏
             if flg_start['card'] and action_area[1] < max_lap_count:
                 if not ui.checkBox_test.isChecked():  # 如果是测试模式，不播放主题音乐
-                    ui.checkBox_main_music.setChecked(True)
+                    main_music_worker.toggle_enable_signal.emit(True)
                 Audio_Thread.run_flg = True  # 开启音频播放线程
                 Ai_Thread.run_flg = True  # 开启AI播放线程
                 self._signal.emit(succeed("运动流程：开始！"))
@@ -2183,6 +2168,7 @@ class PlanCmdThread(QThread):
                     sc.GASetExtDoBit(3, 1)  # 打开终点开关
                     sc.GASetExtDoBit(1, 0)  # 关闭闸门
                     sc.GASetExtDoBit(0, 0)  # 关闭弹射
+                    main_music_worker.toggle_enable_signal.emit(False)
                     self._signal.emit(succeed("运动流程：中断！"))
                 if ui.checkBox_test.isChecked():
                     self._signal.emit(succeed("测试流程：完成！"))
@@ -2210,8 +2196,6 @@ def signal_accept(msg):
         elif msg == '进行中':
             tb_result = ui.tableWidget_Results
             tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
-        elif '完成' in msg:
-            ui.checkBox_main_music.setChecked(False)
         else:
             ui.textBrowser.append(str(msg))
             ui.textBrowser_msg.append(str(msg))
@@ -2219,14 +2203,37 @@ def signal_accept(msg):
         print("运行数据处理出错！")
 
 
+"""
+    ui工作线程
+"""
+
+
+class UiWorker(QObject):
+    toggle_enable_signal = Signal(object)
+
+    def __init__(self, z_object):
+        super().__init__()
+        self.z_object = z_object
+        self.toggle_enable_signal.connect(self.toggle_enable)
+
+    def toggle_enable(self, msg):
+        if isinstance(self.z_object, QTableWidget):
+            self.z_object.setEnabled(msg)
+        elif isinstance(self.z_object, QCheckBox):
+            self.z_object.setChecked(msg)
+        elif isinstance(self.z_object, QTextBrowser):
+            self.z_object.append(msg)
+        else:
+            print(f"Unsupported object type: {type(self.z_object)}")
+
+
 def keyboard_release(key):
     global flg_key_run
     if ui.checkBox_key.isChecked() and flg_start['card']:
-        tb_step = ui.tableWidget_Step
         try:
             if key == key.up:
                 print('前')
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[1] = pValue[1] + 30000 * int(five_key[1])
@@ -2238,7 +2245,7 @@ def keyboard_release(key):
 
             if key == key.down:
                 print('后')
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[1] = pValue[1] - 30000 * int(five_key[1])
@@ -2250,7 +2257,7 @@ def keyboard_release(key):
 
             if key == key.left:
                 print('左')
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[0] = pValue[0] - 30000 * int(five_key[0])
@@ -2262,7 +2269,7 @@ def keyboard_release(key):
 
             if key == key.right:
                 print('右')
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[0] = pValue[0] + 30000 * int(five_key[0])
@@ -2274,7 +2281,7 @@ def keyboard_release(key):
 
             if key == key.insert:
                 print('上')
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[2] = pValue[2] - 30000 * int(five_key[2])
@@ -2286,7 +2293,7 @@ def keyboard_release(key):
 
             if key == key.delete:
                 print('下')
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[2] = pValue[2] + 30000 * int(five_key[2])
@@ -2298,7 +2305,7 @@ def keyboard_release(key):
 
             if key == key.home:
                 print('头左')
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[3] = pValue[3] - 30000 * int(five_key[3])
@@ -2308,7 +2315,7 @@ def keyboard_release(key):
 
             if key == key.end:
                 print('头右')
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[3] = pValue[3] + 30000 * int(five_key[3])
@@ -2318,7 +2325,7 @@ def keyboard_release(key):
 
             if key == key.page_up:
                 print('头上')
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[4] = pValue[4] + 30000 * int(five_key[4])
@@ -2328,7 +2335,7 @@ def keyboard_release(key):
 
             if key == key.page_down:
                 print('头下')
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[4] = pValue[4] - 30000 * int(five_key[4])
@@ -2341,10 +2348,10 @@ def keyboard_release(key):
             # print(key)
         try:
             if key.char == '/':
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 s485.cam_zoom_off()
             elif key.char == '*':
-                tb_step.setEnabled(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
                 s485.cam_zoom_off()
         except:
             pass
@@ -2361,13 +2368,12 @@ def keyboard_press(key):
     except:
         pass
     if ui.checkBox_key.isChecked() and flg_start['card']:
-        tb_step = ui.tableWidget_Step
         try:
             Pos_Thread.run_flg = True
             if key == key.up:
                 print('前')
                 if flg_key_run:
-                    tb_step.setEnabled(False)
+                    tb_step_worker.toggle_enable_signal.emit(False)
                     pos = 2000000 * int(five_key[1])
                     if pos <= 0:
                         pos = 0
@@ -2378,7 +2384,7 @@ def keyboard_press(key):
             elif key == key.down:
                 print('后')
                 if flg_key_run:
-                    tb_step.setEnabled(False)
+                    tb_step_worker.toggle_enable_signal.emit(False)
                     pos = -2000000 * int(five_key[1])
                     if pos <= 0:
                         pos = 0
@@ -2388,7 +2394,7 @@ def keyboard_press(key):
             elif key == key.left:
                 print('左')
                 if flg_key_run:
-                    tb_step.setEnabled(False)
+                    tb_step_worker.toggle_enable_signal.emit(False)
                     pos = -2000000 * int(five_key[0])
                     if pos <= 0:
                         pos = 0
@@ -2398,7 +2404,7 @@ def keyboard_press(key):
             elif key == key.right:
                 print('右')
                 if flg_key_run:
-                    tb_step.setEnabled(False)
+                    tb_step_worker.toggle_enable_signal.emit(False)
                     pos = 2000000 * int(five_key[0])
                     if pos <= 0:
                         pos = 0
@@ -2408,7 +2414,7 @@ def keyboard_press(key):
             elif key == key.insert:
                 print('上')
                 if flg_key_run:
-                    tb_step.setEnabled(False)
+                    tb_step_worker.toggle_enable_signal.emit(False)
                     pos = -2000000 * int(five_key[2])
                     if pos <= 0:
                         pos = 0
@@ -2418,7 +2424,7 @@ def keyboard_press(key):
             elif key == key.delete:
                 print('下')
                 if flg_key_run:
-                    tb_step.setEnabled(False)
+                    tb_step_worker.toggle_enable_signal.emit(False)
                     pos = 2000000 * int(five_key[2])
                     if pos <= 0:
                         pos = 0
@@ -2428,28 +2434,28 @@ def keyboard_press(key):
             elif key == key.home:
                 print('头左')
                 if flg_key_run:
-                    tb_step.setEnabled(False)
+                    tb_step_worker.toggle_enable_signal.emit(False)
                     sc.card_move(4, pos=-2000000 * int(five_key[3]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.end:
                 print('头右')
                 if flg_key_run:
-                    tb_step.setEnabled(False)
+                    tb_step_worker.toggle_enable_signal.emit(False)
                     sc.card_move(4, pos=2000000 * int(five_key[3]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_up:
                 print('头下')
                 if flg_key_run:
-                    tb_step.setEnabled(False)
+                    tb_step_worker.toggle_enable_signal.emit(False)
                     sc.card_move(5, pos=2000000 * int(five_key[4]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_down:
                 print('头上')
                 if flg_key_run:
-                    tb_step.setEnabled(False)
+                    tb_step_worker.toggle_enable_signal.emit(False)
                     sc.card_move(5, pos=-2000000 * int(five_key[4]), vel=50)
                     sc.card_update()
                     flg_key_run = False
@@ -2458,10 +2464,10 @@ def keyboard_press(key):
             pass
         try:
             if key.char == '/':
-                tb_step.setEnabled(False)
+                tb_step_worker.toggle_enable_signal.emit(False)
                 s485.cam_zoom_move(5)
             elif key.char == '*':
-                tb_step.setEnabled(False)
+                tb_step_worker.toggle_enable_signal.emit(False)
                 s485.cam_zoom_move(-5)
         except:
             pass
@@ -4047,7 +4053,6 @@ def test_ai_end():
         print(res.text)
         if res.text == 'ok':
             flg_start['ai_end'] = True
-            ui.status_ai_end.setStyleSheet('background:rgb(0,255,0)')
     except:
         start_ai_end_bat()
         flg_start['ai_end'] = False
@@ -4338,7 +4343,6 @@ class ZzwApp(QApplication):
             Axis_Thread.stop()
             Pos_Thread.stop()
             ReStart_Thread.stop()
-            Source_Thread.stop()
             Audio_Thread.stop()
             Ai_Thread.stop()
             TestStatus_Thread.stop()
@@ -4363,7 +4367,6 @@ class ZzwApp(QApplication):
             Axis_Thread.wait()
             Pos_Thread.wait()
             ReStart_Thread.wait()
-            Source_Thread.wait()
             Audio_Thread.wait()
             Ai_Thread.wait()
             TestStatus_Thread.wait()
@@ -4465,6 +4468,9 @@ if __name__ == '__main__':
     flg_start = {'card': False, 's485': False, 'obs': False, 'ai': False, 'ai_end': False, 'server': False}  # 各硬件启动标志
 
     load_plan_yaml()
+
+    tb_step_worker = UiWorker(ui.tableWidget_Step)
+    main_music_worker = UiWorker(ui.checkBox_main_music)
 
     listener = pynput.keyboard.Listener(on_press=keyboard_press, on_release=keyboard_release)
     listener.start()  # 键盘监听线程 1
@@ -4568,9 +4574,8 @@ if __name__ == '__main__':
     Obs_Thread = ObsThread()  # OBS启动线程
     Obs_Thread._signal.connect(obs_signal_accept)
 
-    Source_Thread = SourceThread()  # OBS来源入表线程 13
-    Source_Thread._signal.connect(source_signal_accept)
-    Source_Thread.start()
+    Source_Thread = SourceThread()  # OBS来源入表 13
+    Source_Thread.source_signal.connect(source_signal_accept)
 
     ui.pushButton_ObsConnect.clicked.connect(obs_open)
     ui.comboBox_Scenes.activated.connect(scenes_change)
