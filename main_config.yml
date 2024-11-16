@@ -162,4 +162,5 @@ tcpServer_addr:
 udpServer_addr:
 - 0.0.0.0
 - '19734'
-wakeup_addr: http://192.168.0.110:8080
+wakeup_addr:
+- http://192.168.0.110:8080

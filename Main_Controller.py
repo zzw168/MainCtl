@@ -173,25 +173,24 @@ def source_signal_accept(msg):
 
 
 def source2table():
-    global source_list
     try:
         if scene_now != '':
             ui.comboBox_Scenes.setCurrentText(scene_now)
         tb_sources = ui.tableWidget_Sources
         tb_sources.setRowCount(len(source_list))
-        for i in range(0, len(source_list)):
+        for row in range(0, len(source_list)):
             cb = QCheckBox()
             cb.setStyleSheet('QCheckBox{margin:6px};')
             cb.clicked.connect(source_enable)
-            tb_sources.setCellWidget(i, 0, cb)
-            if source_list[i][0] == True:
-                tb_sources.cellWidget(i, 0).setChecked(True)
-            print(source_list[i][0])
-            for j in range(1, len(source_list[i])):
-                item = QTableWidgetItem(str(source_list[i][j]))
+            tb_sources.setCellWidget(row, 0, cb)
+            if source_list[row][0] == True:
+                tb_sources.cellWidget(row, 0).setChecked(True)
+            print(source_list[row][0])
+            for col in range(1, len(source_list[row])):
+                item = QTableWidgetItem(str(source_list[row][col]))
                 item.setTextAlignment(Qt.AlignCenter)
                 # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                tb_sources.setItem(i, j, item)
+                tb_sources.setItem(row, col, item)
     except:
         print("来源数据进表错误！")
 
@@ -349,6 +348,7 @@ def get_rtsp(rtsp_url):
     cap = cv2.VideoCapture(rtsp_url)
     if cap.isOpened():
         ret, frame = cap.read()
+        cap.release()
         if ret:
             f = '%s/rtsp_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0])
             cv2.imwrite(f, frame)
@@ -385,6 +385,7 @@ def get_rtsp(rtsp_url):
             print("无法读取视频帧")
             return ['', '[1]', 'monitor']
     else:
+        cap.release()
         print(f'无法打开摄像头')
         return ['', '[1]', 'monitor']
 
@@ -559,13 +560,13 @@ def camera_to_num(res):  # 按最新排名排列数组
     camera_response = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     arr_res = []
     for r in res:
-        for i in range(0, len(init_array)):
-            if r == init_array[i][5]:
-                arr_res.append(i + 1)
-    for i in range(0, len(arr_res)):
-        for j in range(0, len(camera_response)):
-            if arr_res[i] == camera_response[j]:
-                camera_response[i], camera_response[j] = camera_response[j], camera_response[i]
+        for arr in range(0, len(init_array)):
+            if r == init_array[arr][5]:
+                arr_res.append(arr + 1)
+    for arr in range(0, len(arr_res)):
+        for cam in range(0, len(camera_response)):
+            if arr_res[arr] == camera_response[cam]:
+                camera_response[arr], camera_response[cam] = camera_response[cam], camera_response[arr]
     return camera_response
 
 
@@ -1011,8 +1012,8 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
         if cap_num in area_Code.keys():
             for area in area_Code[cap_num]:
                 pts = np.array(area['coordinates'], np.int32)
-                Result = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
-                if Result > -1.0 and len(ball) <= 8:
+                res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
+                if res > -1.0 and len(ball) <= 8:
                     ball[6] = area['area_code']
                     ball[7] = area['direction']
                     ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向
@@ -2708,7 +2709,7 @@ def save_main_yaml():
                 main_all['five_axis'] = eval(ui.lineEdit_five_axis.text())
                 main_all['five_key'] = eval(ui.lineEdit_five_key.text())
                 main_all['balls_count'] = ui.lineEdit_balls_count.text()
-                main_all['wakeup_addr'] = ui.lineEdit_wakeup_addr.text()
+                main_all['wakeup_addr'] = eval(ui.lineEdit_wakeup_addr.text())
                 main_all['rtsp_url'] = ui.lineEdit_rtsp_url.text()
                 main_all['recognition_addr'] = ui.lineEdit_recognition_addr.text()
                 main_all['obs_script_addr'] = ui.lineEdit_obs_script_addr.text()
@@ -2786,7 +2787,7 @@ def load_main_yaml():
         ui.lineEdit_five_key.setText(str(main_all['five_key']))
         ui.lineEdit_balls_count.setText(main_all['balls_count'])
         ui.lineEdit_balls_auto.setText(main_all['balls_count'])
-        ui.lineEdit_wakeup_addr.setText(main_all['wakeup_addr'])
+        ui.lineEdit_wakeup_addr.setText(str(main_all['wakeup_addr']))
         ui.lineEdit_rtsp_url.setText(main_all['rtsp_url'])
         ui.lineEdit_recognition_addr.setText(main_all['recognition_addr'])
         ui.lineEdit_obs_script_addr.setText(main_all['obs_script_addr'])
@@ -2997,10 +2998,11 @@ def wakeup_server():
     }
     while True:
         try:
-            r = requests.post(url=wakeup_addr, data=form_data)
-            print(r.text)
-            if r == 'ok':
-                flg_start['ai'] = True
+            for index in range(len(wakeup_addr)):
+                r = requests.post(url=wakeup_addr[index], data=form_data)
+                print(r.text)
+                if r == 'ok':
+                    flg_start['ai'] = True
         except:
             print('图像识别主机通信失败！')
             flg_start['ai'] = False
@@ -3015,10 +3017,11 @@ def stop_server():  # 关闭识别服务器
     }
     try:
         cmd_stop()
-        r = requests.post(url=wakeup_addr, data=form_data)
-        print(r.text)
-        if r == 'ok':
-            flg_start['ai'] = False
+        for index in range(len(wakeup_addr)):
+            r = requests.post(url=wakeup_addr[index], data=form_data)
+            print(r.text)
+            if r == 'ok':
+                flg_start['ai'] = False
     except:
         print('图像识别主机通信失败！')
         flg_start['ai'] = False
@@ -3036,13 +3039,14 @@ def save_images():
     form_data = {
         'saveImgRun': saveImgRun,
         'saveBackground': saveBackground,
-        'saveImgNum': '0,1,2,3,4,5,6,7,8',
+        'saveImgNum': '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15',
         # 'saveImgNum': '1',
         # 'saveImgPath': 'D:/saidao',
     }
     try:
-        r = requests.post(url=wakeup_addr, data=form_data)
-        print(r.text)
+        for index in range(len(wakeup_addr)):
+            r = requests.post(url=wakeup_addr[index], data=form_data)
+            print(r.text)
     except:
         print('图像识别主机通信失败！')
 
@@ -3936,10 +3940,10 @@ class CardStartThread(QThread):
                 Obs_Thread.start()
         if not flg_start['ai']:
             try:
-                res = requests.get(wakeup_addr)
-                # print(res.text)
-                if res.text == 'ok':
-                    flg_start['ai'] = True
+                for index in range(len(wakeup_addr)):
+                    res = requests.get(wakeup_addr[index])
+                    if res.text == 'ok':
+                        flg_start['ai'] = True
             except:
                 flg_start['ai'] = False
 
@@ -4009,10 +4013,10 @@ class TestStatusThread(QThread):
 
             if not flg_start['ai']:  # 识别服务器
                 try:
-                    res = requests.get(wakeup_addr)
-                    # print(res.text)
-                    if res.text == 'ok':
-                        flg_start['ai'] = True
+                    for index in range(len(wakeup_addr)):
+                        res = requests.get(wakeup_addr[index])
+                        if res.text == 'ok':
+                            flg_start['ai'] = True
                 except:
                     flg_start['ai'] = False
 
@@ -4349,6 +4353,7 @@ class ZzwApp(QApplication):
             listener.stop()
             ScreenShot_Thread.stop()
             Shoot_Thread.stop()
+            pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
 
@@ -4626,7 +4631,7 @@ if __name__ == '__main__':
     result_tcpServer_addr = ('0.0.0.0', 8888)  # pingpong 发送网页排名
     httpServer_addr = ('0.0.0.0', 8081)  # 接收网络数据包控制
     udpClient_addr = ("192.168.0.161", 19733)  # 数据发送给其他服务器
-    wakeup_addr = "http://192.168.0.110:8080"  # 唤醒服务器网址
+    wakeup_addr = ["http://192.168.0.110:8080"]  # 唤醒服务器网址
     recognition_addr = "http://127.0.0.1:6066"  # 终点识别主机网址
     obs_script_addr = "http://127.0.0.1:8899"  # OBS 脚本网址
     rtsp_url = 'rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101'  # 主码流

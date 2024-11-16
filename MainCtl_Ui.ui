@@ -6116,7 +6116,7 @@
                    <string/>
                   </property>
                   <property name="text">
-                   <string>http://192.168.0.110:8080</string>
+                   <string>[http://192.168.0.110:8080]</string>
                   </property>
                  </widget>
                 </item>
