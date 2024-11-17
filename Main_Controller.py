@@ -895,7 +895,8 @@ class UdpThread(QThread):
                         print('UDP_recv_data无数据！', res)
                         continue
                     self._signal.emit(data_res)
-                    if str(data_res[0]).isdigit():  # UDP数据包时间间隔
+                    if (str(data_res[0]).isdigit()
+                            and str(data_res[1][6]) in [str(a) for a in range(1, 16)]):  # UDP数据包时间间隔
                         time_interval = int(data_res[0]) - udp_time_old
                         self._signal.emit(time_interval)
                         udp_time_old = int(data_res[0])
@@ -953,16 +954,14 @@ def udp_signal_accept(msg):
             bt_udp_time.setText('识别主机超时！%s 毫秒' % msg)
             if bt_udp_time.styleSheet() != 'background:rgb(255, 0, 0)':
                 bt_udp_time.setStyleSheet('background:rgb(255, 0, 0)')
-                flg_start['ai'] = False
         else:
             if bt_udp_time.styleSheet() != 'background:rgb(0, 255, 0)':
                 bt_udp_time.setStyleSheet('background:rgb(0, 255, 0)')
                 bt_udp_time.setText('图像识别状态正常')
-                flg_start['ai'] = True
         if int(ui.lineEdit_ball_start.text()) < balls_start:  # 更新起点球数
             ui.lineEdit_balls_start.setText(str(balls_start))
             ui.lineEdit_ball_start.setText(str(balls_start))
-        if int(ui.lineEdit_area.text()) != action_area[0]:  # 更新起点球数
+        if int(ui.lineEdit_area.text()) != action_area[0]:  # 更新触发区域
             ui.lineEdit_area.setText(str(action_area[0]))
     else:
         if '错误' in msg:
@@ -2109,8 +2108,10 @@ class PlanCmdThread(QThread):
                                         break
                                     # 判断镜头点位在运行区域内则进入下一个动作循环
                                     if (int(camera_points[abs(int(float(plan_list[plan_index][14][0])))]
-                                            [cb_index + 1][0][0])
-                                            < map_label_big.map_action + 100):
+                                            [cb_index + 1][0][0]) - 100
+                                            < map_label_big.map_action
+                                            <= int(camera_points[abs(int(float(plan_list[plan_index][14][0])))]
+                                                   [cb_index + 1][0][0])):
                                         break
                                     t_over += 1
                                     if plan_list[plan_index][16][0] != '0':
@@ -4312,7 +4313,7 @@ def my_test():
     # # resp = cl_requst.save_source_screenshot('终点2', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
 
 
-class ZzwApp(QApplication):
+class ZApp(QApplication):
     def __init__(self, argv):
         super().__init__(argv)
         self.aboutToQuit.connect(self.onAboutToQuit)
@@ -4445,7 +4446,7 @@ def auto_line():  # 相对上一个动作走直线
 "************************************SPEED_UI*********************************************"
 
 if __name__ == '__main__':
-    app = ZzwApp(sys.argv)
+    app = ZApp(sys.argv)
 
     z_window = ZMainwindow()
     ui = ZUi()
@@ -4589,8 +4590,10 @@ if __name__ == '__main__':
 
     "**************************图像识别算法_开始*****************************"
     # set_run_toggle 发送请求运行数据
-    camera_num = 8  # 摄像头数量
-    area_Code = {1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: []}  # 摄像头代码列表
+    camera_num = 15  # 摄像头数量
+    area_Code = {1: [], 2: [], 3: [], 4: [], 5: [],
+                 6: [], 7: [], 8: [], 9: [], 10: [],
+                 11: [], 12: [], 13: [], 14: [], 15: [], 16: []}  # 摄像头代码列表
     load_area()  # 初始化区域划分
     # print(area_Code)
 
