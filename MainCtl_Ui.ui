@@ -41,7 +41,7 @@
          <enum>Qt::FocusPolicy::NoFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -1867,7 +1867,7 @@
               <widget class="QLineEdit" name="lineEdit_area">
                <property name="maximumSize">
                 <size>
-                 <width>30</width>
+                 <width>50</width>
                  <height>16777215</height>
                 </size>
                </property>

@@ -25,7 +25,7 @@ from PyInstaller.utils.hooks.conda import files
 from PySide6 import QtWidgets
 
 from PySide6.QtCore import Qt, QThread, Signal, Slot, QTimer, QPropertyAnimation, QEvent
-from PySide6.QtGui import QBrush, QColor, QPixmap, QMouseEvent, QPen
+from PySide6.QtGui import QBrush, QColor, QPixmap, QMouseEvent, QPen, QTextCursor
 from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu, QMessageBox, QFileDialog, \
     QAbstractButton, QMdiSubWindow, QMdiArea, QDialog
 
@@ -300,8 +300,9 @@ def get_picture(scence_current):
         flg_start['obs'] = False
         return ['', '[1]', 'obs']
     img = resp.image_data[22:]
-    lottery_term[6] = '%s/obs_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0])
-    str2image_file(img, lottery_term[6])  # 保存图片
+    if os.path.exists(ui.lineEdit_Image_Path.text()):
+        lottery_term[6] = '%s/obs_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0])
+        str2image_file(img, lottery_term[6])  # 保存图片
     form_data = {
         'CameraType': 'obs',
         'img': img,
@@ -311,9 +312,10 @@ def get_picture(scence_current):
         res = requests.post(url=recognition_addr, data=form_data, timeout=5)
         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
         r_img = r_list[0]
-        image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
-        image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-        image_json.close()
+        if os.path.exists(ui.lineEdit_Image_Path.text()):
+            image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
+            image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+            image_json.close()
         flg_start['ai_end'] = True
         return r_list
     except:
@@ -350,8 +352,9 @@ def get_rtsp(rtsp_url):
         ret, frame = cap.read()
         cap.release()
         if ret:
-            f = '%s/rtsp_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0])
-            cv2.imwrite(f, frame)
+            if os.path.exists(ui.lineEdit_Image_Path.text()):
+                f = '%s/rtsp_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0])
+                cv2.imwrite(f, frame)
             success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
                 # 将 JPEG 数据转换为 Base64 字符串
@@ -365,9 +368,10 @@ def get_rtsp(rtsp_url):
                     res = requests.post(url=recognition_addr, data=form_data, timeout=5)
                     r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
                     r_img = r_list[0]
-                    image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
-                    image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-                    image_json.close()
+                    if os.path.exists(ui.lineEdit_Image_Path.text()):
+                        image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
+                        image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+                        image_json.close()
                     flg_start['ai_end'] = True
                     return r_list
                 except:
@@ -812,11 +816,11 @@ class TcpResultThread(QThread):
                                     lottery_term[7] = video_name.output_path  # 视频保存路径
                                     lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
                                     lottery_term[4] = str(z_ranking_res)  # 排名
-                                    local_time = time.localtime(betting_end_time)
-                                    end_time = time.strftime("%Y-%m-%d %H:%M:%S", local_time)
-                                    lottery_term[8] = end_time
+                                    end_time = int(time.time())
+                                    lottery_term[8] = str(end_time)
                                     self._signal.emit('save_video')
-                                    lottery2database()  # 保存数据库
+                                    # lottery2sql()  # 保存数据库
+                                    lottery2yaml()  # 保存数据
                                 self._signal.emit(succeed('第%s期 结束！' % term))
                                 if ui.checkBox_restart.isChecked():
                                     if not ui.radioButton_test_game.isChecked():
@@ -858,6 +862,7 @@ def tcp_signal_accept(msg):
     # print(msg)
     else:
         ui.textBrowser_msg.append(msg)
+        scroll_to_bottom(ui.textBrowser_msg)
 
 
 class UdpThread(QThread):
@@ -961,8 +966,8 @@ def udp_signal_accept(msg):
         if int(ui.lineEdit_ball_start.text()) < balls_start:  # 更新起点球数
             ui.lineEdit_balls_start.setText(str(balls_start))
             ui.lineEdit_ball_start.setText(str(balls_start))
-        if int(ui.lineEdit_area.text()) != action_area[0]:  # 更新触发区域
-            ui.lineEdit_area.setText(str(action_area[0]))
+        # if int(ui.lineEdit_area.text()) != action_area[0]:  # 更新触发区域
+        #     ui.lineEdit_area.setText(str(action_area[0]))
     else:
         if '错误' in msg:
             ui.textBrowser_msg.append(msg)
@@ -1453,12 +1458,14 @@ def time_signal_accept(msg):
     elif msg == 'term':
         ui.lineEdit_term.setText(str(term))
         ui.textBrowser_msg.append(fail('期号重复，3秒后重新获取！'))
+        scroll_to_bottom(ui.textBrowser_msg)
     elif msg == 'auto_shoot':
         ui.lineEdit_ball_end.setText('0')
         ui.checkBox_shoot_0.setChecked(True)
         auto_shoot()  # 自动上珠
     elif msg == 'error':
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
+        scroll_to_bottom(ui.textBrowser_msg)
     elif isinstance(msg, int):
         if int(msg) == 1:
             plan_refresh()
@@ -1663,9 +1670,11 @@ def PlanBallNum_signal_accept(msg):
                 ui.textBrowser_msg.setHtml(new_text)
             else:
                 ui.textBrowser_msg.append(msg)
+                scroll_to_bottom(ui.textBrowser_msg)
     else:
         ui.textBrowser.append(msg)
         ui.textBrowser_msg.append(msg)
+        scroll_to_bottom(ui.textBrowser_msg)
 
 
 '''
@@ -1697,6 +1706,7 @@ class ScreenShotThread(QThread):
             if not self.run_flg:
                 continue
             print('截图结果识别运行！')
+            self._signal.emit(succeed('截图结果识别运行！'))
             t_count = ui.lineEdit_time_send_result.text()
             if t_count.isdigit():
                 t_count = int(t_count)
@@ -1788,6 +1798,8 @@ def ScreenShot_signal_accept(msg):
             ui.lineEdit_Send_Result.setText(ui.lineEdit_Main_Camera.text())
         else:
             ui.textBrowser.append(str(msg))
+            ui.textBrowser_msg.append(str(msg))
+            scroll_to_bottom(ui.textBrowser_msg)
     except:
         print('OBS 操作失败！')
 
@@ -1900,6 +1912,7 @@ class ShootThread(QThread):
 
 def shoot_signal_accept(msg):
     ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 
 '''
@@ -2107,6 +2120,7 @@ class PlanCmdThread(QThread):
                                         self._signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
                                         break
                                     # 判断镜头点位在运行区域内则进入下一个动作循环
+                                    self._signal.emit({'map_action': map_label_big.map_action})
                                     if (int(camera_points[abs(int(float(plan_list[plan_index][14][0])))]
                                             [cb_index + 1][0][0]) - 100
                                             < map_label_big.map_action
@@ -2195,12 +2209,16 @@ def signal_accept(msg):
             if ui.checkBox_follow.isChecked():
                 tb_step = ui.tableWidget_Step
                 tb_step.selectRow(msg)  # 默认停留在触发行
+        elif isinstance(msg, dict):
+            if 'map_action' in msg.keys():
+                ui.lineEdit_area.setText(str(msg['map_action']))
         elif msg == '进行中':
             tb_result = ui.tableWidget_Results
             tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
         else:
             ui.textBrowser.append(str(msg))
             ui.textBrowser_msg.append(str(msg))
+            scroll_to_bottom(ui.textBrowser_msg)
     except:
         print("运行数据处理出错！")
 
@@ -3806,7 +3824,7 @@ class CameraLabel(QLabel):
 "****************************************直播大厅_开始****************************************************"
 
 
-def lottery_init():
+def lottery_sql_init():
     global lottery_term
     try:
         conn = create_connection("127.0.0.1", "root", "root", "lottery")
@@ -3832,7 +3850,43 @@ def lottery_init():
         print(f"Unexpected error: {e}")
 
 
-def lottery2database():  # 保存数据库
+def lottery_yaml_init():
+    file = "./lottery_data.yml"
+    if os.path.exists(file):
+        f = open(file, 'r', encoding='utf-8')
+        lottery_all = yaml.safe_load(f)
+        f.close()
+        current_date = time.strftime("%Y-%m-%d", time.localtime())
+        lottery_list = lottery_all['lottery_list']
+        for row in range(len(lottery_list)):
+            if time.strftime("%Y-%m-%d", time.localtime(int(lottery_list[row][8]))) == current_date:
+                for col in range(len(lottery_list[row])):
+                    lottery_term[col] = lottery_list[row][col]
+                lottery_data2table()
+
+
+def lottery2yaml():
+    file = "./lottery_data.yml"
+    if os.path.exists(file):
+        # try:
+        f = open(file, 'r', encoding='utf-8')
+        lottery_all = yaml.safe_load(f)
+        f.close()
+        lottery_list = lottery_all['lottery_list']
+        current_date = time.time()
+        list_temp = []
+        for index in range(len(lottery_list)):
+            if int(lottery_list[index][8]) > current_date - 604800:
+                list_temp.append(copy.deepcopy(lottery_list[index]))
+        list_temp.append(lottery_term)
+        lottery_all['lottery_date'] = current_date
+        lottery_all['lottery_list'] = copy.deepcopy(list_temp)
+        with open(file, "w", encoding="utf-8") as f:
+            yaml.dump(lottery_all, f, allow_unicode=True)
+        f.close()
+
+
+def lottery2sql():  # 保存数据库
     global lottery_term
     try:
         conn = create_connection("127.0.0.1", "root", "root", "lottery")
@@ -3952,6 +4006,7 @@ class CardStartThread(QThread):
 def CardStart_signal_accept(msg):
     ui.textBrowser.append(msg)
     ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 
 """
@@ -4046,9 +4101,9 @@ def test_status_signal_accept(msg):
 def start_ai_end_bat():
     current_working_dir = os.getcwd()
     subprocess.Popen(
-        ["%s\start_recognition.bat" % current_working_dir],
+        [r"%s\start_recognition.bat" % current_working_dir],
         shell=True)
-    print("%s\start_recognition.bat" % current_working_dir)
+    print(r"%s\start_recognition.bat" % current_working_dir)
 
 
 def test_ai_end():
@@ -4251,14 +4306,7 @@ def query_sql():
 def my_test():
     global term
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    if tcp_result_thread.send_type == 'updata':
-        print('~!!~ok')
-        tcp_result_thread.send_type = ''
-        tcp_result_thread.run_flg = True
-    else:
-        print('~!!~updata')
-        tcp_result_thread.send_type = 'updata'
-        tcp_result_thread.run_flg = True
+    lottery2yaml()
     # s = int(ui.lineEdit_result_send.text())
     # s485.cam_zoom_step(s)
     # time.sleep(5)
@@ -4311,6 +4359,15 @@ def my_test():
     # # resp = cl_requst.get_source_screenshot('终点2', "jpg", 1920, 1080, 100)
     # # resp = cl_requst.save_source_screenshot('终点1', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
     # # resp = cl_requst.save_source_screenshot('终点2', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
+
+
+# 滚动到 textBrowser 末尾
+def scroll_to_bottom(text_browser: QTextBrowser):
+    # 获取 QTextCursor 并移动到文档结尾
+    cursor = text_browser.textCursor()
+    cursor.movePosition(QTextCursor.MoveOperation.End)
+    text_browser.setTextCursor(cursor)
+    text_browser.ensureCursorVisible()
 
 
 class ZApp(QApplication):
@@ -4820,9 +4877,9 @@ if __name__ == '__main__':
     "**************************参数设置_结束*****************************"
     "**************************直播大厅_开始*****************************"
     labels = []
-    lottery_term = ['0'] * 9  # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 图片, 录像, 复盘]
+    lottery_term = ['0'] * 9  # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 图片, 录像, 时间戳]
     # start_lottery_server_bat()  # 模拟开奖王服务器
-    lottery_init()
+    lottery_yaml_init()
 
     term = '8000'  # 期号
     betting_start_time = 0  # 比赛预定开始时间

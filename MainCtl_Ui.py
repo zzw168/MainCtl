@@ -826,7 +826,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_area = QLineEdit(self.frame_13)
         self.lineEdit_area.setObjectName(u"lineEdit_area")
-        self.lineEdit_area.setMaximumSize(QSize(30, 16777215))
+        self.lineEdit_area.setMaximumSize(QSize(50, 16777215))
         self.lineEdit_area.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lineEdit_area.setReadOnly(True)
 
@@ -2958,7 +2958,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(0)
+        self.tabWidget_Ranking.setCurrentIndex(1)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3428,7 +3428,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.lineEdit_wakeup_addr.setToolTip("")
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_wakeup_addr.setText(QCoreApplication.translate("MainWindow", u"http://192.168.0.110:8080", None))
+        self.lineEdit_wakeup_addr.setText(QCoreApplication.translate("MainWindow", u"[http://192.168.0.110:8080]", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_UdpServer_ip.setToolTip("")
 #endif // QT_CONFIG(tooltip)
