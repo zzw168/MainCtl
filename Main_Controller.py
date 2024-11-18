@@ -2071,6 +2071,15 @@ class PlanCmdThread(QThread):
                                     delay_list.append([axis_list[index], float(format(float(speed_item[3]), ".3f"))])
                                 if max_delay_time < float(format(float(speed_item[3]), ".3f")):
                                     max_delay_time = float(format(float(speed_item[3]), ".3f"))
+                            list_equal = {}
+                            for index in range(len(delay_list)):
+                                if not (delay_list[index][1] in list_equal.keys()):
+                                    list_equal[delay_list[index][1]] = delay_list[index][0]
+                                else:
+                                    list_equal[delay_list[index][1]] += delay_list[index][0]
+                            delay_list = []
+                            for key in list_equal.keys():
+                                delay_list.append([list_equal[key], key])
                             if axis_bit != 0:  # 非延迟轴
                                 res = sc.card_update(axis_bit)
                                 if res != 0:
