@@ -9,4 +9,30 @@ ai_points:
   - - - 0
     - - 67
       - -6
-ai_table: []
+- - 1
+  - - - 14
+    - - 272
+      - 197
+  - - 0
+    - - 0
+      - 0
+  - - 0
+    - - 0
+      - 0
+- - 2
+  - - - 20
+    - - 547
+      - 452
+  - - - 0
+    - - 0
+      - 0
+  - - - 0
+    - - 0
+      - 0
+ai_table:
+- - D:/pythonProject/Main_controller/mp3/07_冰原超车声6.wav
+  - '0'
+  - '0'
+- - D:/pythonProject/Main_controller/mp3/07_冰原超车声10.wav
+  - '0'
+  - '0'

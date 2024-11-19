@@ -306,7 +306,7 @@ def get_picture(scence_current):
     form_data = {
         'CameraType': 'obs',
         'img': img,
-        'sort': '1',  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+        'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
     }
     try:
         res = requests.post(url=recognition_addr, data=form_data, timeout=5)
@@ -363,7 +363,7 @@ def get_rtsp(rtsp_url):
                     form_data = {
                         'CameraType': 'monitor',
                         'img': jpg_base64,
-                        'sort': '10',  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+                        'sort': ui.lineEdit_monitor_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
                     }
                     res = requests.post(url=recognition_addr, data=form_data, timeout=5)
                     r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
@@ -1092,14 +1092,14 @@ class ZUi(QMainWindow, Ui_MainWindow):
             corner_button.installEventFilter(self)  # 事件过滤器用于处理重绘
 
         tb_audio = self.tableWidget_Audio
-        tb_audio.horizontalHeader().resizeSection(0, 180)
+        tb_audio.horizontalHeader().resizeSection(0, 100)
         tb_audio.horizontalHeader().resizeSection(1, 50)
         tb_audio.horizontalHeader().resizeSection(2, 50)
         tb_audio.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_audio.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
 
         tb_ai = self.tableWidget_Ai
-        tb_ai.horizontalHeader().resizeSection(0, 180)
+        tb_ai.horizontalHeader().resizeSection(0, 100)
         tb_ai.horizontalHeader().resizeSection(1, 50)
         tb_ai.horizontalHeader().resizeSection(2, 50)
         tb_ai.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
@@ -2134,7 +2134,7 @@ class PlanCmdThread(QThread):
                                             [cb_index + 1][0][0]) - 100
                                             < map_label_big.map_action
                                             <= int(camera_points[abs(int(float(plan_list[plan_index][14][0])))]
-                                                   [cb_index + 1][0][0])):
+                                                   [cb_index + 1][0][0]) + 100):
                                         break
                                     t_over += 1
                                     if plan_list[plan_index][16][0] != '0':
@@ -2753,6 +2753,8 @@ def save_main_yaml():
                 main_all['source_picture'] = ui.lineEdit_source_picture.text()
                 main_all['source_settlement'] = ui.lineEdit_source_settlement.text()
                 main_all['source_end'] = ui.lineEdit_source_end.text()
+                main_all['monitor_sort'] = ui.lineEdit_monitor_sort.text()
+                main_all['sony_sort'] = ui.lineEdit_sony_sort.text()
                 for index in range(1, 4):
                     main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                     main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -2815,6 +2817,8 @@ def load_main_yaml():
         ui.lineEdit_five_key.setText(str(main_all['five_key']))
         ui.lineEdit_balls_count.setText(main_all['balls_count'])
         ui.lineEdit_balls_auto.setText(main_all['balls_count'])
+        ui.lineEdit_monitor_sort.setText(main_all['monitor_sort'])
+        ui.lineEdit_sony_sort.setText(main_all['sony_sort'])
         ui.lineEdit_wakeup_addr.setText(str(main_all['wakeup_addr']))
         ui.lineEdit_rtsp_url.setText(main_all['rtsp_url'])
         ui.lineEdit_recognition_addr.setText(main_all['recognition_addr'])
@@ -3433,14 +3437,22 @@ def load_points_yaml(color):
                 row_count = tb_audio.rowCount()
                 col_count = tb_audio.columnCount()
                 for row in range(row_count):
-                    for col in range(col_count - 1):
-                        audio_item = QTableWidgetItem(str(audio_table[row][col]))
-                        audio_item.setTextAlignment(Qt.AlignCenter)
-                        # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                        tb_audio.setItem(row, col, audio_item)
-                    btn = QPushButton("选择文件")
-                    btn.clicked.connect(lambda _, r=row: open_file_dialog(tb_audio, r))  # 传递行号
-                    tb_audio.setCellWidget(row, col_count - 1, btn)
+                    for col in range(col_count):
+                        if col == col_count - 1:
+                            text = str(audio_table[row][0])
+                            pattern = r"(?<=\/)[^\/]+(?=\.)"
+                            try:
+                                match = re.search(pattern, text).group()
+                            except:
+                                match = '选择文件'
+                            btn = QPushButton(str(match))
+                            btn.clicked.connect(lambda _, r=row: open_file_dialog(tb_audio, r))  # 传递行号
+                            tb_audio.setCellWidget(row, col_count - 1, btn)
+                        else:
+                            audio_item = QTableWidgetItem(str(audio_table[row][col]))
+                            audio_item.setTextAlignment(Qt.AlignCenter)
+                            # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                            tb_audio.setItem(row, col, audio_item)
 
             if color == 'green':
                 ai_points = points_all['ai_points']
@@ -3455,16 +3467,24 @@ def load_points_yaml(color):
                 row_count = tb_ai.rowCount()
                 col_count = tb_ai.columnCount()
                 for row in range(row_count):
-                    for col in range(col_count - 1):
-                        ai_item = QTableWidgetItem(str(ai_table[row][col]))
-                        ai_item.setTextAlignment(Qt.AlignCenter)
-                        # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
-                        tb_ai.setItem(row, col, ai_item)
-                    btn = QPushButton("选择文件")
-                    btn.clicked.connect(lambda _, r=row: open_file_dialog(tb_ai, r))  # 传递行号
-                    tb_ai.setCellWidget(row, col_count - 1, btn)
+                    for col in range(col_count):
+                        if col == col_count - 1:
+                            text = str(ai_table[row][0])
+                            pattern = r"(?<=\/)[^\/]+(?=\.)"
+                            try:
+                                match = re.search(pattern, text).group()
+                            except:
+                                match = '选择文件'
+                            btn = QPushButton(str(match))
+                            btn.clicked.connect(lambda _, r=row: open_file_dialog(tb_ai, r))  # 传递行号
+                            tb_ai.setCellWidget(row, col_count - 1, btn)
+                        else:
+                            ai_item = QTableWidgetItem(str(ai_table[row][col]))
+                            ai_item.setTextAlignment(Qt.AlignCenter)
+                            # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
+                            tb_ai.setItem(row, col, ai_item)
         except:
-            pass
+            print("提取点位错误！")
     else:
         print("文件不存在")
 
@@ -3473,8 +3493,16 @@ def open_file_dialog(tb, r):
     # 打开文件选择对话框
     file_path, _ = QFileDialog.getOpenFileName(tb, "选择文件")
     if file_path:
-        # 更新对应行的文件路径
-        tb.item(r, 0).setText(file_path)
+        try:
+            # 更新对应行的文件路径
+            tb.item(r, 0).setText(file_path)
+            col_count = tb.columnCount()
+            text = str(file_path)
+            pattern = r"(?<=\/)[^\/]+(?=\.)"
+            match = re.search(pattern, text).group()
+            tb.cellWidget(r, col_count - 1).setText(match)
+        except:
+            print('打开声音文件错误！')
 
 
 def add_camera_points():
@@ -3485,15 +3513,15 @@ def add_camera_points():
     if num == 1:
         camera_points.append(
             [DraggableLabel(str(camera_points_count), 'red', map_label_big),
-             [0, [camera_points_count * 20, 0]], [0, [0, 0]], [0, [0, 0]]])
+             [[0], [camera_points_count * 20, 0]], [[0], [0, 0]], [[0], [0, 0]]])
     if num == 2:
         camera_points.append(
             [DraggableLabel(str(camera_points_count), 'red', map_label_big),
-             [0, [0, 0]], [0, [camera_points_count * 20, 0]], [0, [0, 0]]])
+             [[0], [0, 0]], [[0], [camera_points_count * 20, 0]], [[0], [0, 0]]])
     if num == 3:
         camera_points.append(
             [DraggableLabel(str(camera_points_count), 'red', map_label_big),
-             [0, [0, 0]], [0, [0, 0]], [0, [camera_points_count * 20, 0]]])
+             [[0], [0, 0]], [[0], [0, 0]], [[0], [camera_points_count * 20, 0]]])
     camera_points[camera_points_count][0].move(*camera_points[camera_points_count][num][1])  # 设置初始位置
     camera_points[camera_points_count][0].show()
 
@@ -3506,15 +3534,15 @@ def add_audio_points():
     if num == 1:
         audio_points.append(
             [DraggableLabel(str(audio_points_count), 'blue', map_label_big),
-             [0, [audio_points_count * 20, 0]], [0, [0, 0]], [0, [0, 0]]])
+             [[0], [audio_points_count * 20, 0]], [[0], [0, 0]], [[0], [0, 0]]])
     if num == 2:
         audio_points.append(
             [DraggableLabel(str(audio_points_count), 'blue', map_label_big),
-             [0, [0, 0]], [0, [audio_points_count * 20, 0]], [0, [0, 0]]])
+             [[0], [0, 0]], [[0], [audio_points_count * 20, 0]], [[0], [0, 0]]])
     if num == 3:
         audio_points.append(
             [DraggableLabel(str(audio_points_count), 'blue', map_label_big),
-             [0, [0, 0]], [0, [0, 0]], [0, [audio_points_count * 20, 0]]])
+             [[0], [0, 0]], [[0], [0, 0]], [[0], [audio_points_count * 20, 0]]])
     audio_points[audio_points_count][0].move(*audio_points[audio_points_count][num][1])  # 设置初始位置
     audio_points[audio_points_count][0].show()
 
@@ -3541,15 +3569,15 @@ def add_ai_points():
     if num == 1:
         ai_points.append(
             [DraggableLabel(str(ai_points_count), 'green', map_label_big),
-             [0, [ai_points_count * 20, 0]], [0, [0, 0]], [0, [0, 0]]])
+             [[0], [ai_points_count * 20, 0]], [[0], [0, 0]], [[0], [0, 0]]])
     if num == 2:
         ai_points.append(
             [DraggableLabel(str(ai_points_count), 'green', map_label_big),
-             [0, [0, 0]], [0, [ai_points_count * 20, 0]], [0, [0, 0]]])
+             [[0], [0, 0]], [[0], [ai_points_count * 20, 0]], [[0], [0, 0]]])
     if num == 3:
         ai_points.append(
             [DraggableLabel(str(ai_points_count), 'green', map_label_big),
-             [0, [0, 0]], [0, [0, 0]], [0, [ai_points_count * 20, 0]]])
+             [[0], [0, 0]], [[0], [0, 0]], [[0], [ai_points_count * 20, 0]]])
     ai_points[ai_points_count][0].move(*ai_points[ai_points_count][num][1])  # 设置初始位置
     ai_points[ai_points_count][0].show()
 
@@ -4878,6 +4906,8 @@ if __name__ == '__main__':
     ui.lineEdit_music_1.editingFinished.connect(save_main_yaml)
     ui.lineEdit_music_2.editingFinished.connect(save_main_yaml)
     ui.lineEdit_music_3.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_sony_sort.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_monitor_sort.editingFinished.connect(save_main_yaml)
     ui.radioButton_music_background_1.clicked.connect(save_main_yaml)
     ui.radioButton_music_background_2.clicked.connect(save_main_yaml)
     ui.radioButton_music_background_3.clicked.connect(save_main_yaml)

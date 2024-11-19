@@ -2375,6 +2375,45 @@ class Ui_MainWindow(object):
 
         self.gridLayout_62.addWidget(self.label_86, 0, 0, 1, 1)
 
+        self.groupBox_36 = QGroupBox(self.groupBox_35)
+        self.groupBox_36.setObjectName(u"groupBox_36")
+        self.groupBox_36.setMinimumSize(QSize(0, 0))
+        self.groupBox_36.setMaximumSize(QSize(600, 130))
+        self.groupBox_36.setFont(font1)
+        self.gridLayout_63 = QGridLayout(self.groupBox_36)
+        self.gridLayout_63.setObjectName(u"gridLayout_63")
+        self.gridLayout_63.setContentsMargins(-1, 0, -1, 9)
+        self.label_91 = QLabel(self.groupBox_36)
+        self.label_91.setObjectName(u"label_91")
+        self.label_91.setFont(font5)
+
+        self.gridLayout_63.addWidget(self.label_91, 0, 0, 1, 1)
+
+        self.label_90 = QLabel(self.groupBox_36)
+        self.label_90.setObjectName(u"label_90")
+        self.label_90.setFont(font5)
+
+        self.gridLayout_63.addWidget(self.label_90, 0, 2, 1, 1)
+
+        self.lineEdit_sony_sort = QLineEdit(self.groupBox_36)
+        self.lineEdit_sony_sort.setObjectName(u"lineEdit_sony_sort")
+        self.lineEdit_sony_sort.setMinimumSize(QSize(30, 0))
+        self.lineEdit_sony_sort.setFont(font4)
+        self.lineEdit_sony_sort.setReadOnly(False)
+
+        self.gridLayout_63.addWidget(self.lineEdit_sony_sort, 0, 1, 1, 1)
+
+        self.lineEdit_monitor_sort = QLineEdit(self.groupBox_36)
+        self.lineEdit_monitor_sort.setObjectName(u"lineEdit_monitor_sort")
+        self.lineEdit_monitor_sort.setMinimumSize(QSize(30, 0))
+        self.lineEdit_monitor_sort.setFont(font4)
+        self.lineEdit_monitor_sort.setReadOnly(False)
+
+        self.gridLayout_63.addWidget(self.lineEdit_monitor_sort, 0, 3, 1, 1)
+
+
+        self.gridLayout_62.addWidget(self.groupBox_36, 1, 0, 1, 3)
+
 
         self.gridLayout_54.addWidget(self.groupBox_35, 3, 0, 1, 1)
 
@@ -2958,7 +2997,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(1)
+        self.tabWidget_Ranking.setCurrentIndex(0)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3373,6 +3412,17 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_Image_Path.setText(QCoreApplication.translate("MainWindow", u"E:/saidao/image", None))
         self.label_86.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u8def\u5f84\uff1a", None))
+        self.groupBox_36.setTitle(QCoreApplication.translate("MainWindow", u"\u6392\u5e8f\u65b9\u5411", None))
+        self.label_91.setText(QCoreApplication.translate("MainWindow", u"\u7d22\u5c3c\u6444\u50cf\u5934:", None))
+        self.label_90.setText(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u5934\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_sony_sort.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_sony_sort.setText(QCoreApplication.translate("MainWindow", u"1", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_monitor_sort.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_monitor_sort.setText(QCoreApplication.translate("MainWindow", u"11", None))
         self.groupBox_17.setTitle(QCoreApplication.translate("MainWindow", u"\u786c\u4ef6\u7aef\u53e3\u8bbe\u7f6e", None))
         self.label_80.setText(QCoreApplication.translate("MainWindow", u"\u8f68\u9053\u7f16\u53f7\uff1a", None))
         self.label_79.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5361\u4e94\u8f74\u65b9\u5411\uff1a", None))

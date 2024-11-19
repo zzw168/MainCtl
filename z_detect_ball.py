@@ -10,6 +10,7 @@ import cv2
 import numpy as np
 import requests
 from ultralytics import YOLO
+from PIL import ImageFont, ImageDraw, Image
 from urllib3 import request
 
 
@@ -54,20 +55,23 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             for r in results[0].boxes.data:
                 array = [int(r[0].item()), int(r[1].item()), int(r[2].item()), int(r[3].item()),
                          round(r[4].item(), 2), names[int(r[5].item())]]
-                cv2.rectangle(img, (array[0], array[1]), (array[2], array[3]), color=(0, 255, 0), thickness=5)
-                cv2.putText(img, "%s" % (array[5]), (array[0], array[1] - 5), cv2.FONT_HERSHEY_SIMPLEX,
-                            fontScale=1.3,
-                            color=(0, 0, 255), thickness=3)
-                # cv2.putText(img, "%s %s" % (array[5], array[4]), (array[0], array[1] - 5), cv2.FONT_HERSHEY_SIMPLEX,
-                #             fontScale=2,
-                #             color=(0, 0, 255), thickness=5)
+                cv2.rectangle(img, (array[0], array[1]), (array[2], array[3]), color=color_rects[array[5]], thickness=5)
+                # 示例替换代码段
+                font_path = 'simhei.ttf'  # 你的中文字体文件路径，例如黑体
+                font_size = 50  # 字体大小
+                # 使用 Pillow 绘制中文
+                img = draw_chinese_text(img, color_ch[array[5]], (array[0] + 5, array[1] + 5), font_path, font_size,
+                                        color_names[array[5]])
+                # cv2.putText(img, "%s" % (color_ch[array[5]]), (array[0], array[1] - 5), cv2.FONT_HERSHEY_SIMPLEX,
+                #             fontScale=1.3,
+                #             color=color_names[array[5]], thickness=3)
 
                 qiu_array.append(array)
             if post_data['sort'][0] == '0':
                 qiu_array.sort(key=lambda x: (x[0]), reverse=True)
             elif post_data['sort'][0] == '1':
                 qiu_array.sort(key=lambda x: (x[0]), reverse=False)
-            elif post_data['sort'][0] == '10':
+            elif post_data['sort'][0] == '11':
                 qiu_array.sort(key=lambda y: (y[1]), reverse=True)
             else:
                 qiu_array.sort(key=lambda y: (y[1]), reverse=False)
@@ -88,6 +92,19 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(str('ok').encode('utf8'))
 
     print('执行开始')
+
+
+def draw_chinese_text(image, text, position, font_path, font_size, color):
+    # 转换 OpenCV 图像为 PIL 图像
+    img_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    draw = ImageDraw.Draw(img_pil)
+    font = ImageFont.truetype(font_path, font_size)
+
+    # 绘制文字
+    draw.text(position, text, font=font, fill=color)
+
+    # 转回 OpenCV 图像
+    return cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
 
 
 def check_port_in_use(host, port):
@@ -119,6 +136,22 @@ def run_server():
 
 
 if __name__ == '__main__':
-    # qiu_rank()
-    # 线程启动
+    color_names = {'red': (255, 0, 0), 'green': (0, 255, 0), 'blue': (0, 0, 255),
+                   'pink': (255, 0, 255), 'yellow': (255, 255, 0), 'White': (0, 0, 0),
+                   'purple': (128, 0, 128), 'orange': (255, 165, 0), 'black': (248, 248, 255),
+                   'Brown': (139, 69, 19)}
+    color_rects = {'red': (0, 0, 255), 'green': (0, 255, 0), 'blue': (255, 0, 0),
+                   'pink': (255, 0, 255), 'yellow': (0, 255, 255), 'black': (0, 0, 0),
+                   'purple': (128, 0, 128), 'orange': (0, 165, 255), 'White': (255, 248, 248),
+                   'Brown': (19, 69, 139)}
+    color_ch = {'yellow': '黄',
+                'blue': '蓝',
+                'red': '红',
+                'purple': '紫',
+                'orange': '橙',
+                'green': '绿',
+                'Brown': '棕',
+                'black': '黑',
+                'pink': '粉',
+                'White': '白'}
     run_server()
