@@ -775,32 +775,32 @@ class TcpResultThread(QThread):
                         time.sleep(1)
                         try:
                             if self.send_type == 'updata':
-                                self._signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_res))))
+                                self._signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
                                 datalist = {'type': 'updata',
                                             'data': {'qh': str(term), 'rank': []}}
-                                for index in range(len(z_ranking_res)):
+                                for index in range(len(z_ranking_end)):
                                     if is_natural_num(z_ranking_time[index]):
                                         datalist["data"]['rank'].append(
-                                            {"mc": z_ranking_res[index], "time": ('%s"' % z_ranking_time[index])})
+                                            {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
                                     else:
                                         datalist["data"]['rank'].append(
-                                            {"mc": z_ranking_res[index], "time": ('%s' % z_ranking_time[index])})
+                                            {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
                                 print(datalist)
                                 ws.send(json.dumps(datalist))
                                 if not ui.radioButton_test_game.isChecked():  # 非测试模式
                                     result_data = {"raceTrackID": Track_number, "term": str(term),
                                                    "actualResultOpeningTime": betting_end_time,
-                                                   "result": z_ranking_res,
+                                                   "result": z_ranking_end,
                                                    "timings": "[]"}
                                     data_temp = []
-                                    for index in range(len(z_ranking_res)):
+                                    for index in range(len(z_ranking_end)):
                                         if is_natural_num(z_ranking_time[index]):
                                             data_temp.append(
-                                                {"pm": index + 1, "id": z_ranking_res[index],
+                                                {"pm": index + 1, "id": z_ranking_end[index],
                                                  "time": float(z_ranking_time[index])})
                                         else:
                                             data_temp.append(
-                                                {"pm": index + 1, "id": z_ranking_res[index],
+                                                {"pm": index + 1, "id": z_ranking_end[index],
                                                  "time": z_ranking_time[index]})
                                     result_data["timings"] = json.dumps(data_temp)
                                     # print(result_data)
@@ -815,7 +815,7 @@ class TcpResultThread(QThread):
                                     video_name = cl_request.stop_record()  # 关闭录像
                                     lottery_term[7] = video_name.output_path  # 视频保存路径
                                     lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-                                    lottery_term[4] = str(z_ranking_res)  # 排名
+                                    lottery_term[4] = str(z_ranking_end)  # 排名
                                     end_time = int(time.time())
                                     lottery_term[8] = str(end_time)
                                     self._signal.emit('save_video')
@@ -1699,7 +1699,7 @@ class ScreenShotThread(QThread):
         global lottery_term
         global betting_end_time
         global Send_Result
-        global z_ranking_res
+        global z_ranking_end
         global main_Camera, monitor_Camera, fit_Camera
         while self.running:
             time.sleep(1)
@@ -1730,9 +1730,12 @@ class ScreenShotThread(QThread):
             if obs_res[1] != '[1]' and obs_res[1] == monitor_res[1]:
                 print('识别正确:', obs_res[1])
                 if len(main_Camera) == len(z_ranking_res):
-                    z_ranking_res = main_Camera
+                    z_ranking_end = copy.deepcopy(main_Camera)
             else:
+                z_ranking_end = copy.deepcopy(z_ranking_res)
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
+                    if os.path.exists(lottery_term[6]):
+                        os.startfile(lottery_term[6])
                     pass  # 警报声
                     while True:
                         if Send_Result:
@@ -1740,7 +1743,7 @@ class ScreenShotThread(QThread):
                             if send_res != '':
                                 send_list = eval(ui.lineEdit_Send_Result.text())
                                 if len(send_list) == len(z_ranking_res):
-                                    z_ranking_res = send_list
+                                    z_ranking_end = copy.deepcopy(send_list)
                                     break
                             else:
                                 self._signal.emit('send_res')
@@ -1783,7 +1786,7 @@ def ScreenShot_signal_accept(msg):
             img = msg[0]
             pixmap = QPixmap()
             pixmap.loadFromData(img)
-            pixmap = pixmap.scaled(int(400 * 1.6), int(225 * 1.6))
+            pixmap = pixmap.scaled(int(400 * 1.8), int(225 * 1.8))
             if msg[2] == 'obs':
                 ui.label_main_picture.setPixmap(pixmap)
                 ui.lineEdit_Main_Camera.setText(str(main_Camera))
@@ -4748,11 +4751,13 @@ if __name__ == '__main__':
     # 初始化列表
     con_data = []  # 排名数组
     z_ranking_res = []  # 球号排名数组(发送给前端网页排名显示)
+    z_ranking_end = []  # 结果排名数组(发送给前端网页排名显示)
     z_ranking_time = []  # 球号排名数组(发送给前端网页排名显示)
     ranking_time_start = time.time()  # 比赛开始时间
     for i in range(0, len(init_array)):
         con_data.append([])
         z_ranking_res.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
+        z_ranking_end.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
         z_ranking_time.append('TRAP')  # z_ranking_time[1,2,3,4,5,6,7,8,9,10]    初始化网页排名时间
         for j in range(0, 5):
             if j == 0:
