@@ -133,7 +133,7 @@ lineEdit_start: '2'
 map_line: ./img/09_沙漠.json
 map_picture: ./img/09_沙漠.jpg
 map_size: '860'
-monitor_sort: '10'
+monitor_sort: '11'
 music_1:
 - false
 - ./mp3/07_冰原背景音乐1.mp3

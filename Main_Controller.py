@@ -229,7 +229,7 @@ def activate_browser():  # 程序开始，刷新浏览器
             tcp_ranking_thread.run_flg = True  # 打开排名线程
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
             time.sleep(1)
-            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 打开结算页
+            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
         except:
             print("OBS 开关浏览器出错！")
             flg_start['obs'] = False
@@ -518,21 +518,21 @@ def reset_ranking_array():
     balls_start = 0
 
     ranking_array = []  # 排名数组
-    for i in range(0, len(init_array)):
+    for row in range(0, len(init_array)):
         ranking_array.append([])
-        for j in range(0, len(init_array[i])):
-            ranking_array[i].append(init_array[i][j])
+        for col in range(0, len(init_array[row])):
+            ranking_array[row].append(init_array[row][col])
     ball_sort = []  # 位置寄存器
-    for i in range(0, max_area_count + 1):
+    for row in range(0, max_area_count + 1):
         ball_sort.append([])
-        for j in range(0, max_lap_count):
-            ball_sort[i].append([])
-    for i in range(0, len(init_array)):
-        for j in range(0, 5):
-            if j == 0:
-                con_data[i][j] = init_array[i][5]  # con_data 数据表数组
+        for col in range(0, max_lap_count):
+            ball_sort[row].append([])
+    for row in range(0, len(init_array)):
+        for col in range(0, 5):
+            if col == 0:
+                con_data[row][col] = init_array[row][5]  # con_data 数据表数组
             else:
-                con_data[i][j] = 0
+                con_data[row][col] = 0
     action_area = [0, 0, 0]  # 初始化触发区域
     z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
     z_ranking_time = ['TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'OUT', 'OUT']  # 初始化网页排名时间
@@ -1451,7 +1451,7 @@ class ReStartThread(QThread):
             self.run_flg = False
 
 
-def time_signal_accept(msg):
+def restart_signal_accept(msg):
     if isinstance(msg, bool):
         lottery_data2table()
     # print(msg)
@@ -2055,6 +2055,18 @@ class PlanCmdThread(QThread):
                                     # 加载音效
                                     sound_effect = pygame.mixer.Sound(sound_file)
                                     sound_effect.play(loops=sound_times, maxtime=sound_delay)  # 播放音效
+
+                            if (not ui.checkBox_test.isChecked()
+                                    and (len(plan_list) - 6 <= plan_index)
+                                    and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
+                                # 计球器
+                                if len(plan_list) - 2 == plan_index:  # 到达最后两个动作时，触发球计数器启动
+                                    PlanBallNum_Thread.run_flg = True  # 终点计数器线程
+                                    tcp_ranking_thread.sleep_time = 0.1  # 终点前端排名时间发送设置
+                                # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
+                                sc.GASetExtDoBit(3, 1)  # 打开终点开关
+                                sc.GASetExtDoBit(1, 0)  # 关闭闸门
+                                sc.GASetExtDoBit(0, 0)  # 关闭弹射
                             # 轴运动
                             axis_bit = 0  # 非延迟轴统计
                             max_delay_time = 0  # 记录最大延迟时间
@@ -2097,6 +2109,14 @@ class PlanCmdThread(QThread):
                             print("运动板运行出错！")
                             self._signal.emit(fail("运动板通信出错！"))
 
+                        # 圈数统计
+                        if (not ui.checkBox_test.isChecked()
+                                and plan_index == len(plan_list) - 1):  # 每执行完最后一个动作，action_area[1]圈数自动增加一圈
+                            map_label_big.map_action = 0
+                            action_area[2] = 1  # 写入标志 1 为独占写入
+                            action_area[0] = 0
+                            action_area[1] += 1
+                            action_area[2] = 0  # 写入标志 0 为任意写入
                         if self.run_flg:
                             try:
                                 if float(plan_list[plan_index][11][0]) > 0:
@@ -2167,25 +2187,6 @@ class PlanCmdThread(QThread):
                             except:
                                 print("场景数据出错！")
                                 self._signal.emit(fail("场景数据出错！"))
-                            if (not ui.checkBox_test.isChecked()
-                                    and (len(plan_list) - 6 <= plan_index)
-                                    and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
-                                # 计球器
-                                if len(plan_list) - 2 == plan_index:  # 到达最后两个动作时，触发球计数器启动
-                                    PlanBallNum_Thread.run_flg = True  # 终点计数器线程
-                                    tcp_ranking_thread.sleep_time = 0.1  # 终点前端排名时间发送设置
-                                # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
-                                sc.GASetExtDoBit(3, 1)  # 打开终点开关
-                                sc.GASetExtDoBit(1, 0)  # 关闭闸门
-                                sc.GASetExtDoBit(0, 0)  # 关闭弹射
-                            # 圈数统计
-                            if (not ui.checkBox_test.isChecked()
-                                    and plan_index == len(plan_list) - 1):  # 每执行完最后一个动作，action_area[1]圈数自动增加一圈
-                                map_label_big.map_action = 0
-                                action_area[2] = 1  # 写入标志 1 为独占写入
-                                action_area[0] = 0
-                                action_area[1] += 1
-                                action_area[2] = 0  # 写入标志 0 为任意写入
                 # 强制中断情况处理
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断情况下的动作
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
@@ -3214,6 +3215,10 @@ class MapLabel(QLabel):
     def update_positions(self):
         # 更新每个小球的位置
         p_num = 0
+        if len(self.positions) != balls_count:
+            self.positions = []  # 每个球的当前位置索引
+            for num in range(balls_count):
+                self.positions.append([num * self.ball_space, QColor(255, 0, 0), 0])
         for num in range(0, balls_count):
             if ranking_array[num][5] in self.color_names.keys():
                 color = self.color_names[ranking_array[num][5]]
@@ -4608,7 +4613,7 @@ if __name__ == '__main__':
     Pos_Thread.start()
 
     ReStart_Thread = ReStartThread()  # 循环模式 9
-    ReStart_Thread._signal.connect(time_signal_accept)
+    ReStart_Thread._signal.connect(restart_signal_accept)
     ReStart_Thread.start()
 
     Audio_Thread = AudioThread()  # 音频线程 10

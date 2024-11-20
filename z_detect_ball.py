@@ -56,16 +56,21 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 array = [int(r[0].item()), int(r[1].item()), int(r[2].item()), int(r[3].item()),
                          round(r[4].item(), 2), names[int(r[5].item())]]
                 cv2.rectangle(img, (array[0], array[1]), (array[2], array[3]), color=color_rects[array[5]], thickness=5)
-                # 示例替换代码段
-                font_path = 'simhei.ttf'  # 你的中文字体文件路径，例如黑体
-                font_size = 50  # 字体大小
-                # 使用 Pillow 绘制中文
-                img = draw_chinese_text(img, color_ch[array[5]], (array[0] + 5, array[1] + 5), font_path, font_size,
-                                        color_names[array[5]])
                 # cv2.putText(img, "%s" % (color_ch[array[5]]), (array[0], array[1] - 5), cv2.FONT_HERSHEY_SIMPLEX,
                 #             fontScale=1.3,
                 #             color=color_names[array[5]], thickness=3)
 
+                font_path = 'simhei.ttf'  # 你的中文字体文件路径，例如黑体
+                font_size = 50  # 字体大小
+                if post_data['sort'][0] in ['0', '1']:
+                    x = array[0] - 5
+                    y = array[1] - 60
+                else:
+                    x = array[0] - 60
+                    y = array[1] - 5
+                # 使用 Pillow 绘制中文
+                img = draw_chinese_text(img, color_ch[array[5]], (x, y), font_path, font_size,
+                                        color_names[array[5]])
                 qiu_array.append(array)
             if post_data['sort'][0] == '0':
                 qiu_array.sort(key=lambda x: (x[0]), reverse=True)
@@ -137,8 +142,8 @@ def run_server():
 
 if __name__ == '__main__':
     color_names = {'red': (255, 0, 0), 'green': (0, 255, 0), 'blue': (0, 0, 255),
-                   'pink': (255, 0, 255), 'yellow': (255, 255, 0), 'White': (0, 0, 0),
-                   'purple': (128, 0, 128), 'orange': (255, 165, 0), 'black': (248, 248, 255),
+                   'pink': (255, 0, 255), 'yellow': (255, 255, 0), 'black': (0, 0, 0),
+                   'purple': (128, 0, 128), 'orange': (255, 165, 0), 'White': (248, 248, 255),
                    'Brown': (139, 69, 19)}
     color_rects = {'red': (0, 0, 255), 'green': (0, 255, 0), 'blue': (255, 0, 0),
                    'pink': (255, 0, 255), 'yellow': (0, 255, 255), 'black': (0, 0, 0),
