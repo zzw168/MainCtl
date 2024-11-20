@@ -815,7 +815,6 @@ class TcpResultThread(QThread):
                                     video_name = cl_request.stop_record()  # 关闭录像
                                     lottery_term[7] = video_name.output_path  # 视频保存路径
                                     lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-                                    lottery_term[4] = str(z_ranking_end)  # 排名
                                     end_time = int(time.time())
                                     lottery_term[8] = str(end_time)
                                     self._signal.emit('save_video')
@@ -1668,6 +1667,7 @@ def PlanBallNum_signal_accept(msg):
                 text_lines[-1] = msg
                 new_text = "\n".join(text_lines)
                 ui.textBrowser_msg.setHtml(new_text)
+                scroll_to_bottom(ui.textBrowser_msg)
             else:
                 ui.textBrowser_msg.append(msg)
                 scroll_to_bottom(ui.textBrowser_msg)
@@ -1731,6 +1731,7 @@ class ScreenShotThread(QThread):
                 print('识别正确:', obs_res[1])
                 if len(main_Camera) == len(z_ranking_res):
                     z_ranking_end = copy.deepcopy(main_Camera)
+                    lottery_term[4] = str(z_ranking_end)  # 排名
             else:
                 z_ranking_end = copy.deepcopy(z_ranking_res)
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
@@ -1739,17 +1740,21 @@ class ScreenShotThread(QThread):
                     pass  # 警报声
                     while True:
                         if Send_Result:
-                            send_res = ui.lineEdit_Send_Result.text()
-                            if send_res != '':
+                            try:
                                 send_list = eval(ui.lineEdit_Send_Result.text())
                                 if len(send_list) == len(z_ranking_res):
                                     z_ranking_end = copy.deepcopy(send_list)
+                                    Send_Result = False
                                     break
-                            else:
+                                else:
+                                    Send_Result = False
+                                    self._signal.emit(fail('发送数据错误！'))
+                            except:
                                 self._signal.emit('send_res')
                                 Send_Result = False
                         time.sleep(1)
                     Send_Result = False
+                lottery_term[5] = str(z_ranking_end)  # 排名
             if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                 if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
                     ui.radioButton_stop_betting.click()  # 封盘
