@@ -27,7 +27,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QThread, Signal, Slot, QTimer, QPropertyAnimation, QEvent
 from PySide6.QtGui import QBrush, QColor, QPixmap, QMouseEvent, QPen, QTextCursor
 from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu, QMessageBox, QFileDialog, \
-    QAbstractButton, QMdiSubWindow, QMdiArea, QDialog
+    QAbstractButton, QMdiSubWindow, QMdiArea, QDialog, QSplitter
 
 import obsws_python as obs
 import pygame
@@ -320,8 +320,7 @@ def get_picture(scence_current):
         return r_list
     except:
         flg_start['ai_end'] = False
-        img = img.encode('ascii')
-        image_byte = base64.b64decode(img)
+        image_byte = base64.b64decode(img.encode('ascii'))
         print('终点识别服务没有开启！')
         return [image_byte, '[1]', 'obs']
 
@@ -329,7 +328,7 @@ def get_picture(scence_current):
 # obs 脚本 obs_script_time.py 请求
 def obs_script_request():
     res = requests.get(url="%s/start" % obs_script_addr)
-    # res = requests.get(url="http://127.0.0.1:8899/stop")
+    #  res = requests.get(url="http://127.0.0.1:8899/stop")
     # res = requests.get(url="http://127.0.0.1:8899/reset")
     # res = requests.get(url="http://127.0.0.1:8899/period?term=开始")
     print(res)
@@ -379,8 +378,7 @@ def get_rtsp(rtsp_url):
                     flg_start['ai_end'] = False
                     # img = frame2img(frame)
                     # image_byte = qimage_to_bytes(img)
-                    img = jpg_base64.encode('ascii')
-                    image_byte = base64.b64decode(img)
+                    image_byte = base64.b64decode(jpg_base64.encode('ascii'))
                     return [image_byte, '[1]', 'monitor']
             else:
                 print("jpg_base64 转换错误！")
@@ -900,7 +898,7 @@ class UdpThread(QThread):
                         continue
                     self._signal.emit(data_res)
                     if (str(data_res[0]).isdigit()
-                            and str(data_res[1][6]) in [str(a) for a in range(1, 16)]):  # UDP数据包时间间隔
+                            and str(data_res[1][6]) == '1'):  # UDP数据包时间间隔
                         time_interval = int(data_res[0]) - udp_time_old
                         self._signal.emit(time_interval)
                         udp_time_old = int(data_res[0])
@@ -954,7 +952,7 @@ def udp_signal_accept(msg):
     # print(msg)
     if isinstance(msg, int):
         bt_udp_time = ui.pushButton_udp_time
-        if msg > 200:
+        if msg > 300:
             bt_udp_time.setText('识别主机超时！%s 毫秒' % msg)
             if bt_udp_time.styleSheet() != 'background:rgb(255, 0, 0)':
                 bt_udp_time.setStyleSheet('background:rgb(255, 0, 0)')
@@ -1061,6 +1059,19 @@ class ZUi(QMainWindow, Ui_MainWindow):
 
     def setupUi(self, z_window):
         super(ZUi, self).setupUi(z_window)
+
+        # 创建一个 QSplitter
+        splitter = QSplitter(Qt.Horizontal)
+
+        # 将已有的 QGroupBox 添加到 QSplitter 中
+        splitter.addWidget(self.groupBox_main_camera)
+        splitter.addWidget(self.groupBox_monitor_cam)
+        # 可选：设置初始大小比例
+        splitter.setSizes([300, 300])  # 左边 150 像素，右边 250 像素
+        main_layout = QVBoxLayout()
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.addWidget(splitter)
+        self.widget_camera.setLayout(main_layout)
 
         tb_result = self.tableWidget_Results
         tb_result.horizontalHeader().resizeSection(0, 100)
@@ -1415,7 +1426,6 @@ class ReStartThread(QThread):
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
                     countdown = int(betting_start_time) - int(time.time())
-                    print(betting_start_time, countdown)
                     if countdown < 0:  # 时间错误，30秒后开赛
                         betting_start_time = int(time.time())
                         betting_end_time = int(time.time()) + 30
@@ -1737,13 +1747,14 @@ class ScreenShotThread(QThread):
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
                     if os.path.exists(lottery_term[6]):
                         os.startfile(lottery_term[6])
-                    pass  # 警报声
+                    play_alarm()  # 警报声
                     while True:
                         if Send_Result:
                             try:
                                 send_list = eval(ui.lineEdit_Send_Result.text())
                                 if len(send_list) == len(z_ranking_res):
                                     z_ranking_end = copy.deepcopy(send_list)
+                                    self._signal.emit('send_ok')
                                     Send_Result = False
                                     break
                                 else:
@@ -1804,6 +1815,8 @@ def ScreenShot_signal_accept(msg):
                 ui.lineEdit_result_send.setText(str(main_Camera))
         elif msg == 'send_res':
             ui.lineEdit_Send_Result.setText(ui.lineEdit_Main_Camera.text())
+        elif msg == 'send_ok':
+            ui.checkBox_alarm.setChecked(True)
         else:
             ui.textBrowser.append(str(msg))
             ui.textBrowser_msg.append(str(msg))
@@ -2019,8 +2032,12 @@ class PlanCmdThread(QThread):
                 self._signal.emit(succeed("运动流程：开始！"))
                 self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
                 cb_index = ui.comboBox_plan.currentIndex()
+                time_old = int(time.time())
                 for plan_index in range(0, len(plan_list)):
-                    print('第 %s 个动作，识别在第 %s 区 %s 圈！' % (plan_index + 1, action_area[0], action_area[1]))
+                    self._signal.emit(succeed(
+                        '第%s个动作，识别在第%s区%s圈 %s秒！' %
+                        (plan_index + 1, action_area[0], action_area[1], int(time.time()) - time_old)))
+                    time_old = int(time.time())
                     if (not self.run_flg) or (not flg_start['card']):  # 强制停止线程
                         print('动作未开始！')
                         break
@@ -2156,13 +2173,15 @@ class PlanCmdThread(QThread):
                                     if not plan_list[plan_index][14][0].isdigit():
                                         self._signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
                                         break
+                                    if len(camera_points) - 1 < abs(int(float(plan_list[plan_index][14][0]))):
+                                        self._signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
+                                        break
                                     # 判断镜头点位在运行区域内则进入下一个动作循环
                                     self._signal.emit({'map_action': map_label_big.map_action})
-                                    if (int(camera_points[abs(int(float(plan_list[plan_index][14][0])))]
-                                            [cb_index + 1][0][0]) - 100
-                                            < map_label_big.map_action
-                                            <= int(camera_points[abs(int(float(plan_list[plan_index][14][0])))]
-                                                   [cb_index + 1][0][0]) + 100):
+                                    if (len(camera_points) > abs(int(float(plan_list[plan_index][14][0])))
+                                            and (int(camera_points[abs(int(float(plan_list[plan_index][14][0])))]
+                                                     [cb_index + 1][0][0]) - 100
+                                                 < map_label_big.map_action)):
                                         break
                                     t_over += 1
                                     if plan_list[plan_index][16][0] != '0':
@@ -2171,9 +2190,9 @@ class PlanCmdThread(QThread):
                                             print('等待超时！')
                                             break
                                     else:
-                                        if t_over >= 150:
+                                        if t_over >= 200:
                                             self._signal.emit(fail('第 %s 个动作 等待超过15秒！' % str(plan_index + 1)))
-                                            print('等待超过15秒！')
+                                            print('等待超过20秒！')
                                             break
                                     if self.cmd_next:  # 手动进入下一个动作
                                         break
@@ -3194,17 +3213,18 @@ class MapLabel(QLabel):
                             'Brown': QColor(139, 69, 19)}
 
         self.path_points = []
-        with open(map_data[1], 'r', encoding='utf-8') as fcc_file:
-            fcc_data = json.load(fcc_file)
-        if picture_size == 860:
-            map_scale = 1
-        else:
-            map_scale = picture_size / int(map_data[2])  # 缩放比例
-        for p in fcc_data[0]["content"]:
-            self.path_points.append((p['x'] * map_scale, p['y'] * map_scale))
-        self.path_points = divide_path(self.path_points, step_length)
-        if map_scale == 1:
-            map_orbit = self.path_points
+        if os.path.exists(map_data[1]):
+            with open(map_data[1], 'r', encoding='utf-8') as fcc_file:
+                fcc_data = json.load(fcc_file)
+            if picture_size == 860:
+                map_scale = 1
+            else:
+                map_scale = picture_size / int(map_data[2])  # 缩放比例
+            for p in fcc_data[0]["content"]:
+                self.path_points.append((p['x'] * map_scale, p['y'] * map_scale))
+            self.path_points = divide_path(self.path_points, step_length)
+            if map_scale == 1:
+                map_orbit = self.path_points
 
         self.ball_space = ball_space  # 球之间的距离
         self.ball_radius = ball_radius  # 小球半径
@@ -3799,8 +3819,18 @@ def music_ctl():
         pygame.mixer.music.stop()
 
 
-def play_audio():
-    pass
+def play_alarm():  # 报警音
+    if not ui.checkBox_alarm.isChecked():
+        mp3_name = './mp3/alarm.mp3'
+        if os.path.exists(mp3_name):
+            # 加载并播放背景音乐
+            pygame.mixer.music.load(mp3_name)
+            pygame.mixer.music.play(-1)  # 循环播放背景音乐
+
+
+def stop_alarm():
+    if ui.checkBox_alarm.isChecked():
+        pygame.mixer.music.stop()
 
 
 "****************************************卫星图_结束***********************************************"
@@ -3839,7 +3869,7 @@ class CameraLabel(QLabel):
         x_space = 2
 
         # 逐个绘制图片
-        for index in range(8):
+        for index in range(balls_count):
             ball_radius = 23
             rect = QRect(x_offset, 0, ball_radius, ball_radius)
             # 使用高质量的缩放方式
@@ -4350,6 +4380,20 @@ def query_sql():
         print(f"Unexpected error: {e}")
 
 
+def flip_horizontal():  # 主镜头水平翻转
+    if ui.checkBox_Flip_Horizontal.isChecked():
+        s485.cam_flip_horizontal(0)
+    else:
+        s485.cam_flip_horizontal(1)
+
+
+def flip_vertica():  # 主镜头垂直翻转
+    if ui.checkBox_Flip_Vertica.isChecked():
+        s485.cam_flip_vertica(0)
+    else:
+        s485.cam_flip_vertica(1)
+
+
 "****************************************参数设置_结束****************************************************"
 
 
@@ -4848,6 +4892,7 @@ if __name__ == '__main__':
     # 初始化混音器
     pygame.mixer.init()
 
+    ui.checkBox_alarm.checkStateChanged.connect(stop_alarm)
     ui.checkBox_main_music.checkStateChanged.connect(music_ctl)
     ui.radioButton_music_1.clicked.connect(music_ctl)
     ui.radioButton_music_2.clicked.connect(music_ctl)
@@ -4927,6 +4972,9 @@ if __name__ == '__main__':
     ui.radioButton_music_background_2.clicked.connect(save_main_yaml)
     ui.radioButton_music_background_3.clicked.connect(save_main_yaml)
     ui.pushButton_Save_Ball.clicked.connect(save_main_yaml)
+
+    ui.checkBox_Flip_Horizontal.clicked.connect(flip_horizontal)
+    ui.checkBox_Flip_Vertica.clicked.connect(flip_vertica)
 
     "**************************参数设置_结束*****************************"
     "**************************直播大厅_开始*****************************"

@@ -14,6 +14,20 @@ class Serial485:
         self.ser = ''
         self.s485_Cam_No = 'COM1'
         self.s485_Axis_No = 'COM23'
+        self.cam_Visca = {'Flip_Horizontal': ['81 01 04 61 02 FF', '81 01 04 61 03 FF'],  # 水平翻转
+                          'Flip_Vertica': ['81 01 04 66 02 FF', '81 01 04 66 03 FF'],  # 对角翻转
+                          'Shutter': ['81 01 04 0A 00 FF', '81 01 04 0A 02 FF', '81 01 04 0A 03 FF'],  # 快门
+                          'Iris': ['81 01 04 0B 00 FF', '81 01 04 0B 02 FF',
+                                   '81 01 04 0B 03 FF', '81 01 04 4B 00 00 0%s 0%s FF'],  # 光圈
+                          'WDR_Level': ['81 01 04 21 00 FF', '81 01 04 21 02 FF', '81 01 04 21 03 FF'],  # 对比度
+                          'Low_Light': ['81 01 04 22 00 FF', '81 01 04 22 02 FF', '81 01 04 22 03 FF'],  # 低光
+                          'R_Gain': ['81 01 04 03 00 FF', '81 01 04 03 02 FF', '81 01 04 03 03 FF'],  # R 红色增益
+                          'B_Gain': ['81 01 04 04 00 FF', '81 01 04 04 02 FF', '81 01 04 04 03 FF'],  # B 蓝色增益
+                          'Aperture': ['81 01 04 02 00 FF', '81 01 04 02 02 FF', '81 01 04 02 03 FF'],  # 光圈控制
+                          'Exposure_Compensation': ['81 01 04 3E 02 FF', '81 01 04 3E 03 FF',
+                                                    '81 01 04 0E 00 FF',
+                                                    '81 01 04 0E 02 FF', '81 01 04 0E 03 FF'],  # 曝光补偿
+                          }
 
     def cam_open(self):
         try:
@@ -21,6 +35,117 @@ class Serial485:
             return self.ser.is_open
         except:
             return False
+
+    # B 蓝色增益
+    def cam_b_gain(self, opt: int = 0):
+        if self.ser.is_open:
+            hexCmd = self.cam_Visca['B_Gain'][opt]
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
+
+    # R 红色增益
+    def cam_r_gain(self, opt: int = 0):
+        if self.ser.is_open:
+            hexCmd = self.cam_Visca['R_Gain'][opt]
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
+
+    # 曝光补偿
+    def cam_exposure_compensation(self, opt: int = 0):
+        if self.ser.is_open:
+            hexCmd = self.cam_Visca['Exposure_Compensation'][opt]
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+            print("曝光补偿~~~~")
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
+
+    # 低光
+    def cam_low_light(self, opt: int = 0):
+        if self.ser.is_open:
+            hexCmd = self.cam_Visca['Low_Light'][opt]
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
+
+    # 对比度
+    def cam_wdr(self, opt: int = 0):
+        if self.ser.is_open:
+            hexCmd = self.cam_Visca['WDR_Level'][opt]
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
+
+    # 光圈
+    def cam_aperture(self, opt: int = 0):
+        if self.ser.is_open:
+            hexCmd = self.cam_Visca['Aperture'][opt]
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
+
+    # 光圈
+    def cam_iris(self, opt: int = 0):
+        if self.ser.is_open:
+            hexCmd = self.cam_Visca['Iris'][opt]
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
+
+    # 快门
+    def cam_shutter(self, opt: int = 0):
+        if self.ser.is_open:
+            hexCmd = self.cam_Visca['Shutter'][opt]
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
+
+    # 垂直翻转指令
+    def cam_flip_vertica(self, opt: int = 0):
+        if self.ser.is_open:
+            hexCmd = self.cam_Visca['Flip_Vertica'][opt]
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
+
+    # 水平翻转指令
+    def cam_flip_horizontal(self, opt: int = 0):
+        if self.ser.is_open:
+            hexCmd = self.cam_Visca['Flip_Horizontal'][opt]
+            hexCmd = hexCmd.replace(' ', '')  # 去除空格
+            cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
+            self.ser.write(cmd)  # 4. Hex发送
+        else:
+            print('端口未链接！')
+        return self.ser.is_open
 
     # 发送镜头缩放指令
     def cam_zoom_step(self, in_out: int = 1):
