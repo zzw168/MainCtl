@@ -1,0 +1,45 @@
+Pycharm使用PySide6 外部工具配置
+File>>Setting>>Tools>>External
+
+
+1. 添加QtDesigner(界面搭建工具)
+Name：外部工具名称
+
+QtDesigner
+Program：外部工具地址（默认在python安装目录Scripts文件夹）
+
+D:\Github\PythonProjs\venv\Scripts\pyside6-designer.exe
+
+Working directory：设置为项目根目录
+
+$ProjectFileDir$
+
+
+2.添加pyside2-uic（ui文件转py文件工具）
+Name：
+
+PyUIC
+Program：外部工具地址（默认在python安装目录Scripts文件夹）
+
+D:\Github\PythonProjs\venv\Scripts\pyside6-uic.exe
+Arguments：参数配置
+
+$FileName$ -o $FileNameWithoutExtension$_ui.py
+
+Working directory：设置当前文件所在目录
+
+$FileDir$
+3.添加pyside2-rcc（qrc文件转py文件工具）
+Name：
+
+PyRcc
+Program：外部工具地址（默认在python安装目录Scripts文件夹）
+
+D:\Github\PythonProjs\venv\Scripts\pyside6-rcc.exe
+Arguments：参数配置
+
+$FileName$ -o $FileNameWithoutExtension$_rc.py
+
+Working directory：设置当前文件所在目录
+
+$FileDir$
