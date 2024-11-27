@@ -6,19 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
+    <width>560</width>
     <height>280</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>480</width>
+    <width>560</width>
     <height>280</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>480</width>
+    <width>560</width>
     <height>280</height>
    </size>
   </property>
@@ -60,7 +60,7 @@
        <widget class="QTableWidget" name="tableWidget_Set_Speed">
         <property name="minimumSize">
          <size>
-          <width>200</width>
+          <width>280</width>
           <height>150</height>
          </size>
         </property>
@@ -131,6 +131,16 @@
           <string>延时(秒)</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>起速</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>平滑</string>
+         </property>
+        </column>
         <item row="0" column="0">
          <property name="text">
           <string>300</string>
@@ -158,6 +168,22 @@
         <item row="0" column="3">
          <property name="text">
           <string>0</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
+        <item row="0" column="4">
+         <property name="text">
+          <string>1</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
+        <item row="0" column="5">
+         <property name="text">
+          <string>3</string>
          </property>
          <property name="textAlignment">
           <set>AlignCenter</set>
@@ -195,6 +221,22 @@
           <set>AlignCenter</set>
          </property>
         </item>
+        <item row="1" column="4">
+         <property name="text">
+          <string>1</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
+        <item row="1" column="5">
+         <property name="text">
+          <string>3</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
         <item row="2" column="0">
          <property name="text">
           <string>300</string>
@@ -222,6 +264,22 @@
         <item row="2" column="3">
          <property name="text">
           <string>0</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
+        <item row="2" column="4">
+         <property name="text">
+          <string>1</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
+        <item row="2" column="5">
+         <property name="text">
+          <string>3</string>
          </property>
          <property name="textAlignment">
           <set>AlignCenter</set>
@@ -259,6 +317,22 @@
           <set>AlignCenter</set>
          </property>
         </item>
+        <item row="3" column="4">
+         <property name="text">
+          <string>1</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
+        <item row="3" column="5">
+         <property name="text">
+          <string>3</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
         <item row="4" column="0">
          <property name="text">
           <string>300</string>
@@ -286,6 +360,22 @@
         <item row="4" column="3">
          <property name="text">
           <string>0</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
+        <item row="4" column="4">
+         <property name="text">
+          <string>1</string>
+         </property>
+         <property name="textAlignment">
+          <set>AlignCenter</set>
+         </property>
+        </item>
+        <item row="4" column="5">
+         <property name="text">
+          <string>3</string>
          </property>
          <property name="textAlignment">
           <set>AlignCenter</set>

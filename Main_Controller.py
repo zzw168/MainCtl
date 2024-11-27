@@ -535,6 +535,7 @@ def reset_ranking_array():
     z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
     z_ranking_time = ['TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'OUT', 'OUT']  # 初始化网页排名时间
     tcp_ranking_thread.sleep_time = 1  # 重置排名数据包发送时间
+    alarm_worker.toggle_enable_signal.emit(False)
     if flg_start['obs'] and not ui.checkBox_test.isChecked():
         try:
             res = requests.get(url="%s/reset" % obs_script_addr)
@@ -644,6 +645,10 @@ def save_ballsort_yaml():
                                                      ballsort_all['reset_time'])))
         else:
             ui.textBrowser_background_data.setText(fail("错误，只能输入数字！"))
+
+
+def result2edit():
+    ui.lineEdit_Send_Result.setText(ui.lineEdit_result_send.text())
 
 
 def init_ranking_table():
@@ -920,8 +925,8 @@ class UdpThread(QThread):
                         self._signal.emit(fail('array_data:%s < 8数据错误！' % array_data[0]))
                         print('array_data < 8数据错误！', array_data[0])
                         continue
-                    if action_area[0] >= max_area_count - balls_count and action_area[
-                        1] >= max_lap_count - 1:  # 在最后面排名阶段，以区域先后为准
+                    if (action_area[0] >= max_area_count - balls_count
+                            and action_area[1] >= max_lap_count - 1):  # 在最后面排名阶段，以区域先后为准
                         array_data = filter_max_area(array_data)
                     else:
                         array_data = filter_max_value(array_data)  # 在平时球位置追踪，以置信度为准
@@ -2101,7 +2106,8 @@ class PlanCmdThread(QThread):
                                              vel=abs(int(float(speed_item[0]))),
                                              dAcc=float(speed_item[1]),
                                              dDec=float(speed_item[2]),
-                                             dVelStart=0.1, dSmoothTime=0)
+                                             dVelStart=float(speed_item[4]),
+                                             dSmoothTime=int(float(speed_item[5])))
                                 if float(speed_item[3]) == 0:
                                     axis_bit += axis_list[index]
                                 else:
@@ -3208,8 +3214,8 @@ class MapLabel(QLabel):
 
         self.color_names = {'red': QColor(255, 0, 0), 'green': QColor(0, 255, 0), 'blue': QColor(0, 0, 255),
                             'pink': QColor(255, 0, 255), 'yellow': QColor(255, 255, 0), 'black': QColor(0, 0, 0),
-                            'purple': QColor(128, 0, 128), 'orange': QColor(255, 165, 0)
-            , 'White': QColor(248, 248, 255),
+                            'purple': QColor(128, 0, 128), 'orange': QColor(255, 165, 0),
+                            'White': QColor(248, 248, 255),
                             'Brown': QColor(139, 69, 19)}
 
         self.path_points = []
@@ -4294,6 +4300,7 @@ def cancel_betting():
 def send_result():
     global Send_Result
     Send_Result = True
+    ui.checkBox_alarm.setChecked(False)
     # result_list = eval(ui.lineEdit_Send_Result.text())
     # result_data = {"raceTrackID": Track_number, "term": str(term),
     #                "actualResultOpeningTime": betting_end_time,
@@ -4628,6 +4635,7 @@ if __name__ == '__main__':
 
     tb_step_worker = UiWorker(ui.tableWidget_Step)
     main_music_worker = UiWorker(ui.checkBox_main_music)
+    alarm_worker = UiWorker(ui.checkBox_alarm)
 
     listener = pynput.keyboard.Listener(on_press=keyboard_press, on_release=keyboard_release)
     listener.start()  # 键盘监听线程 1
@@ -4699,7 +4707,6 @@ if __name__ == '__main__':
     ui.pushButton_CardNext.clicked.connect(cmd_next)
     ui.pushButton_to_TXT.clicked.connect(json_txt)
     ui.pushButton_Draw.clicked.connect(open_draw)
-    ui.pushButton_test_2.clicked.connect(my_test)
     ui.pushButton_CardCloseAll.clicked.connect(card_close_all)
     ui.pushButton_CardClose.clicked.connect(card_close_all)
 
@@ -4864,6 +4871,7 @@ if __name__ == '__main__':
 
     ui.lineEdit_time_send_result.editingFinished.connect(save_ballsort_yaml)
     ui.lineEdit_time_count_ball.editingFinished.connect(save_ballsort_yaml)
+    ui.lineEdit_result_send.editingFinished.connect(result2edit)
 
     # 初始化球数组，位置寄存器
     reset_ranking_array()  # 重置排名数组
@@ -5005,6 +5013,7 @@ if __name__ == '__main__':
     ui.pushButton_Backup_Camera.clicked.connect(backup2result)
     ui.pushButton_Cancel_Result.clicked.connect(cancel_betting)
     ui.pushButton_Send_Result.clicked.connect(send_result)
+    ui.pushButton_Send_Res.clicked.connect(send_result)
 
     "**************************直播大厅_结束*****************************"
 

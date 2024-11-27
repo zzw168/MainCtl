@@ -1532,39 +1532,6 @@ class Ui_MainWindow(object):
         self.gridLayout_40 = QGridLayout(self.frame_camera)
         self.gridLayout_40.setObjectName(u"gridLayout_40")
         self.gridLayout_40.setContentsMargins(0, 0, 9, 0)
-        self.widget_camera = QWidget(self.frame_camera)
-        self.widget_camera.setObjectName(u"widget_camera")
-        self.groupBox_monitor_cam = QGroupBox(self.widget_camera)
-        self.groupBox_monitor_cam.setObjectName(u"groupBox_monitor_cam")
-        self.groupBox_monitor_cam.setGeometry(QRect(480, 0, 320, 480))
-        self.groupBox_monitor_cam.setMinimumSize(QSize(0, 300))
-        self.groupBox_monitor_cam.setFont(font1)
-        self.groupBox_monitor_cam.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
-        self.gridLayout_33 = QGridLayout(self.groupBox_monitor_cam)
-        self.gridLayout_33.setObjectName(u"gridLayout_33")
-        self.label_monitor_picture = QLabel(self.groupBox_monitor_cam)
-        self.label_monitor_picture.setObjectName(u"label_monitor_picture")
-        self.label_monitor_picture.setMinimumSize(QSize(300, 10))
-
-        self.gridLayout_33.addWidget(self.label_monitor_picture, 0, 0, 1, 1)
-
-        self.groupBox_main_camera = QGroupBox(self.widget_camera)
-        self.groupBox_main_camera.setObjectName(u"groupBox_main_camera")
-        self.groupBox_main_camera.setGeometry(QRect(0, 0, 320, 480))
-        self.groupBox_main_camera.setMinimumSize(QSize(0, 300))
-        self.groupBox_main_camera.setFont(font1)
-        self.groupBox_main_camera.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
-        self.gridLayout_15 = QGridLayout(self.groupBox_main_camera)
-        self.gridLayout_15.setObjectName(u"gridLayout_15")
-        self.label_main_picture = QLabel(self.groupBox_main_camera)
-        self.label_main_picture.setObjectName(u"label_main_picture")
-        self.label_main_picture.setMinimumSize(QSize(300, 10))
-
-        self.gridLayout_15.addWidget(self.label_main_picture, 0, 0, 1, 1)
-
-
-        self.gridLayout_40.addWidget(self.widget_camera, 0, 0, 2, 1)
-
         self.widget = QWidget(self.frame_camera)
         self.widget.setObjectName(u"widget")
         self.widget.setMinimumSize(QSize(320, 0))
@@ -1591,11 +1558,11 @@ class Ui_MainWindow(object):
 
         self.gridLayout_28.addWidget(self.lineEdit_result_send, 3, 1, 1, 1)
 
-        self.pushButton_test_2 = QPushButton(self.groupBox_8)
-        self.pushButton_test_2.setObjectName(u"pushButton_test_2")
-        self.pushButton_test_2.setMinimumSize(QSize(50, 10))
+        self.pushButton_Send_Res = QPushButton(self.groupBox_8)
+        self.pushButton_Send_Res.setObjectName(u"pushButton_Send_Res")
+        self.pushButton_Send_Res.setMinimumSize(QSize(50, 10))
 
-        self.gridLayout_28.addWidget(self.pushButton_test_2, 3, 2, 1, 1)
+        self.gridLayout_28.addWidget(self.pushButton_Send_Res, 3, 2, 1, 1)
 
         self.checkBox_ShowUdp = QCheckBox(self.groupBox_8)
         self.checkBox_ShowUdp.setObjectName(u"checkBox_ShowUdp")
@@ -1674,7 +1641,40 @@ class Ui_MainWindow(object):
         self.gridLayout_65.addWidget(self.groupBox_12, 1, 0, 1, 1)
 
 
-        self.gridLayout_40.addWidget(self.widget, 0, 1, 2, 1)
+        self.gridLayout_40.addWidget(self.widget, 0, 2, 2, 1)
+
+        self.widget_camera = QWidget(self.frame_camera)
+        self.widget_camera.setObjectName(u"widget_camera")
+        self.groupBox_monitor_cam = QGroupBox(self.widget_camera)
+        self.groupBox_monitor_cam.setObjectName(u"groupBox_monitor_cam")
+        self.groupBox_monitor_cam.setGeometry(QRect(480, 0, 320, 480))
+        self.groupBox_monitor_cam.setMinimumSize(QSize(0, 300))
+        self.groupBox_monitor_cam.setFont(font1)
+        self.groupBox_monitor_cam.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+        self.gridLayout_33 = QGridLayout(self.groupBox_monitor_cam)
+        self.gridLayout_33.setObjectName(u"gridLayout_33")
+        self.label_monitor_picture = QLabel(self.groupBox_monitor_cam)
+        self.label_monitor_picture.setObjectName(u"label_monitor_picture")
+        self.label_monitor_picture.setMinimumSize(QSize(300, 10))
+
+        self.gridLayout_33.addWidget(self.label_monitor_picture, 0, 0, 1, 1)
+
+        self.groupBox_main_camera = QGroupBox(self.widget_camera)
+        self.groupBox_main_camera.setObjectName(u"groupBox_main_camera")
+        self.groupBox_main_camera.setGeometry(QRect(0, 0, 320, 480))
+        self.groupBox_main_camera.setMinimumSize(QSize(0, 300))
+        self.groupBox_main_camera.setFont(font1)
+        self.groupBox_main_camera.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
+        self.gridLayout_15 = QGridLayout(self.groupBox_main_camera)
+        self.gridLayout_15.setObjectName(u"gridLayout_15")
+        self.label_main_picture = QLabel(self.groupBox_main_camera)
+        self.label_main_picture.setObjectName(u"label_main_picture")
+        self.label_main_picture.setMinimumSize(QSize(300, 10))
+
+        self.gridLayout_15.addWidget(self.label_main_picture, 0, 0, 1, 1)
+
+
+        self.gridLayout_40.addWidget(self.widget_camera, 0, 1, 1, 1)
 
 
         self.gridLayout_26.addWidget(self.frame_camera, 1, 0, 1, 1)
@@ -3275,16 +3275,12 @@ class Ui_MainWindow(object):
         self.checkBox_show_orbit.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u8f68\u8ff9", None))
         self.checkBox_show_camera.setText(QCoreApplication.translate("MainWindow", u"\u955c\u5934\u70b9\u4f4d", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe", None))
-        self.groupBox_monitor_cam.setTitle(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
-        self.label_monitor_picture.setText("")
-        self.groupBox_main_camera.setTitle(QCoreApplication.translate("MainWindow", u"\u7d22\u5c3c\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
-        self.label_main_picture.setText("")
         self.groupBox_8.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u6570\u636e", None))
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"\u53d1\u9001:", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_result_send.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>\u8bbe\u7f6e\u6700\u5927\u5708\u6570</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.pushButton_test_2.setText(QCoreApplication.translate("MainWindow", u"\u6d4b\u8bd5", None))
+        self.pushButton_Send_Res.setText(QCoreApplication.translate("MainWindow", u"\u53d1\u9001\u7ed3\u679c", None))
         self.checkBox_ShowUdp.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u670d\u52a1\u5668\u6570\u636e", None))
         self.label_87.setText(QCoreApplication.translate("MainWindow", u"\u7d22\u5c3c:", None))
         self.label_88.setText(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7:", None))
@@ -3292,6 +3288,10 @@ class Ui_MainWindow(object):
         self.groupBox_12.setTitle(QCoreApplication.translate("MainWindow", u"\u5730\u56fe\u5212\u533a\u7f16\u8f91\u5236\u4f5c", None))
         self.pushButton_Draw.setText(QCoreApplication.translate("MainWindow", u"\u753b\u56fe\u5de5\u5177", None))
         self.pushButton_to_TXT.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u6362TXT", None))
+        self.groupBox_monitor_cam.setTitle(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
+        self.label_monitor_picture.setText("")
+        self.groupBox_main_camera.setTitle(QCoreApplication.translate("MainWindow", u"\u7d22\u5c3c\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
+        self.label_main_picture.setText("")
         self.groupBox_14.setTitle(QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe", None))
         self.groupBox_7.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u6392\u540d", None))
         ___qtablewidgetitem36 = self.tableWidget_Ranking.horizontalHeaderItem(0)
