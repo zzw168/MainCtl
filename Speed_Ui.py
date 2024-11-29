@@ -17,8 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QCheckBox,
     QDialog, QDialogButtonBox, QFrame, QGridLayout,
-    QHeaderView, QSizePolicy, QTableWidget, QTableWidgetItem,
-    QWidget)
+    QHeaderView, QLabel, QLineEdit, QSizePolicy,
+    QTableWidget, QTableWidgetItem, QWidget)
 
 class Ui_Dialog_Set_Speed(object):
     def setupUi(self, Dialog_Set_Speed):
@@ -30,6 +30,37 @@ class Ui_Dialog_Set_Speed(object):
         self.gridLayout = QGridLayout(Dialog_Set_Speed)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(-1, 0, -1, -1)
+        self.label_3 = QLabel(Dialog_Set_Speed)
+        self.label_3.setObjectName(u"label_3")
+        font = QFont()
+        font.setFamilies([u"Microsoft YaHei"])
+        font.setPointSize(10)
+        font.setBold(True)
+        self.label_3.setFont(font)
+
+        self.gridLayout.addWidget(self.label_3, 1, 2, 1, 1)
+
+        self.lineEdit_time_set = QLineEdit(Dialog_Set_Speed)
+        self.lineEdit_time_set.setObjectName(u"lineEdit_time_set")
+        self.lineEdit_time_set.setMaximumSize(QSize(50, 16777215))
+        self.lineEdit_time_set.setReadOnly(False)
+
+        self.gridLayout.addWidget(self.lineEdit_time_set, 1, 1, 1, 1)
+
+        self.buttonBox = QDialogButtonBox(Dialog_Set_Speed)
+        self.buttonBox.setObjectName(u"buttonBox")
+        self.buttonBox.setMinimumSize(QSize(0, 0))
+        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
+        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Save)
+
+        self.gridLayout.addWidget(self.buttonBox, 1, 3, 1, 1)
+
+        self.label_4 = QLabel(Dialog_Set_Speed)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setFont(font)
+
+        self.gridLayout.addWidget(self.label_4, 1, 0, 1, 1)
+
         self.frame = QFrame(Dialog_Set_Speed)
         self.frame.setObjectName(u"frame")
         self.frame.setMinimumSize(QSize(0, 200))
@@ -39,6 +70,39 @@ class Ui_Dialog_Set_Speed(object):
         self.gridLayout_2 = QGridLayout(self.frame)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout_2.setContentsMargins(-1, 0, -1, 0)
+        self.checkBox_auto_line = QCheckBox(self.frame)
+        self.checkBox_auto_line.setObjectName(u"checkBox_auto_line")
+        self.checkBox_auto_line.setFont(font)
+
+        self.gridLayout_2.addWidget(self.checkBox_auto_line, 0, 0, 1, 1)
+
+        self.label = QLabel(self.frame)
+        self.label.setObjectName(u"label")
+        self.label.setFont(font)
+
+        self.gridLayout_2.addWidget(self.label, 0, 2, 1, 1)
+
+        self.lineEdit_time = QLineEdit(self.frame)
+        self.lineEdit_time.setObjectName(u"lineEdit_time")
+        self.lineEdit_time.setMaximumSize(QSize(50, 16777215))
+        self.lineEdit_time.setReadOnly(True)
+
+        self.gridLayout_2.addWidget(self.lineEdit_time, 0, 3, 1, 1)
+
+        self.frame_2 = QFrame(self.frame)
+        self.frame_2.setObjectName(u"frame_2")
+        self.frame_2.setMinimumSize(QSize(245, 0))
+        self.frame_2.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
+
+        self.gridLayout_2.addWidget(self.frame_2, 0, 1, 1, 1)
+
+        self.label_2 = QLabel(self.frame)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setFont(font)
+
+        self.gridLayout_2.addWidget(self.label_2, 0, 4, 1, 1)
+
         self.tableWidget_Set_Speed = QTableWidget(self.frame)
         if (self.tableWidget_Set_Speed.columnCount() < 6):
             self.tableWidget_Set_Speed.setColumnCount(6)
@@ -159,35 +223,19 @@ class Ui_Dialog_Set_Speed(object):
         self.tableWidget_Set_Speed.setObjectName(u"tableWidget_Set_Speed")
         self.tableWidget_Set_Speed.setMinimumSize(QSize(280, 150))
         self.tableWidget_Set_Speed.setMaximumSize(QSize(16777215, 16777215))
-        font = QFont()
-        font.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
-        font.setPointSize(12)
-        font.setBold(False)
-        self.tableWidget_Set_Speed.setFont(font)
+        font1 = QFont()
+        font1.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
+        font1.setPointSize(12)
+        font1.setBold(False)
+        self.tableWidget_Set_Speed.setFont(font1)
         self.tableWidget_Set_Speed.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.tableWidget_Set_Speed.horizontalHeader().setDefaultSectionSize(80)
         self.tableWidget_Set_Speed.horizontalHeader().setStretchLastSection(True)
 
-        self.gridLayout_2.addWidget(self.tableWidget_Set_Speed, 1, 0, 1, 1)
-
-        self.checkBox_auto_line = QCheckBox(self.frame)
-        self.checkBox_auto_line.setObjectName(u"checkBox_auto_line")
-        font1 = QFont()
-        font1.setPointSize(10)
-        self.checkBox_auto_line.setFont(font1)
-
-        self.gridLayout_2.addWidget(self.checkBox_auto_line, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.tableWidget_Set_Speed, 1, 0, 1, 5)
 
 
-        self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
-
-        self.buttonBox = QDialogButtonBox(Dialog_Set_Speed)
-        self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setMinimumSize(QSize(0, 0))
-        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Save)
-
-        self.gridLayout.addWidget(self.buttonBox, 1, 0, 1, 1)
+        self.gridLayout.addWidget(self.frame, 0, 0, 1, 4)
 
 
         self.retranslateUi(Dialog_Set_Speed)
@@ -199,6 +247,13 @@ class Ui_Dialog_Set_Speed(object):
 
     def retranslateUi(self, Dialog_Set_Speed):
         Dialog_Set_Speed.setWindowTitle(QCoreApplication.translate("Dialog_Set_Speed", u"\u901f\u5ea6\u8bbe\u7f6e", None))
+        self.label_3.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u79d2", None))
+        self.lineEdit_time_set.setText(QCoreApplication.translate("Dialog_Set_Speed", u"0", None))
+        self.label_4.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u8bbe\u7f6e\u5b8c\u6210\u65f6\u95f4\uff1a", None))
+        self.checkBox_auto_line.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u81ea\u52a8\u8c03\u6574\u5bf9\u89d2\u76f4\u7ebf", None))
+        self.label.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u9884\u8ba1\u5b8c\u6210\u65f6\u95f4\uff1a", None))
+        self.lineEdit_time.setText(QCoreApplication.translate("Dialog_Set_Speed", u"0", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u79d2", None))
         ___qtablewidgetitem = self.tableWidget_Set_Speed.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u901f\u5ea6", None));
         ___qtablewidgetitem1 = self.tableWidget_Set_Speed.horizontalHeaderItem(1)
@@ -210,7 +265,7 @@ class Ui_Dialog_Set_Speed(object):
         ___qtablewidgetitem4 = self.tableWidget_Set_Speed.horizontalHeaderItem(4)
         ___qtablewidgetitem4.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u8d77\u901f", None));
         ___qtablewidgetitem5 = self.tableWidget_Set_Speed.horizontalHeaderItem(5)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u5e73\u6ed1", None));
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u5e73\u6ed1(\u6beb\u79d2)", None));
         ___qtablewidgetitem6 = self.tableWidget_Set_Speed.verticalHeaderItem(0)
         ___qtablewidgetitem6.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u8f741", None));
         ___qtablewidgetitem7 = self.tableWidget_Set_Speed.verticalHeaderItem(1)
@@ -286,6 +341,5 @@ class Ui_Dialog_Set_Speed(object):
         ___qtablewidgetitem40.setText(QCoreApplication.translate("Dialog_Set_Speed", u"3", None));
         self.tableWidget_Set_Speed.setSortingEnabled(__sortingEnabled)
 
-        self.checkBox_auto_line.setText(QCoreApplication.translate("Dialog_Set_Speed", u"\u81ea\u52a8\u8c03\u6574\u5bf9\u89d2\u76f4\u7ebf", None))
     # retranslateUi
 

@@ -2434,8 +2434,8 @@ def keyboard_press(key):
         try:
             Pos_Thread.run_flg = True
             if key == key.up:
-                print('前')
                 if flg_key_run:
+                    print('前')
                     tb_step_worker.toggle_enable_signal.emit(False)
                     pos = 2000000 * int(five_key[1])
                     if pos <= 0:
@@ -2443,10 +2443,9 @@ def keyboard_press(key):
                     sc.card_move(2, pos=pos)
                     sc.card_update()
                     flg_key_run = False
-
             elif key == key.down:
-                print('后')
                 if flg_key_run:
+                    print('后')
                     tb_step_worker.toggle_enable_signal.emit(False)
                     pos = -2000000 * int(five_key[1])
                     if pos <= 0:
@@ -2455,8 +2454,8 @@ def keyboard_press(key):
                     sc.card_update()
                     flg_key_run = False
             elif key == key.left:
-                print('左')
                 if flg_key_run:
+                    print('左')
                     tb_step_worker.toggle_enable_signal.emit(False)
                     pos = -2000000 * int(five_key[0])
                     if pos <= 0:
@@ -2465,8 +2464,8 @@ def keyboard_press(key):
                     sc.card_update()
                     flg_key_run = False
             elif key == key.right:
-                print('右')
                 if flg_key_run:
+                    print('右')
                     tb_step_worker.toggle_enable_signal.emit(False)
                     pos = 2000000 * int(five_key[0])
                     if pos <= 0:
@@ -2475,8 +2474,8 @@ def keyboard_press(key):
                     sc.card_update()
                     flg_key_run = False
             elif key == key.insert:
-                print('上')
                 if flg_key_run:
+                    print('上')
                     tb_step_worker.toggle_enable_signal.emit(False)
                     pos = -2000000 * int(five_key[2])
                     if pos <= 0:
@@ -2485,8 +2484,8 @@ def keyboard_press(key):
                     sc.card_update()
                     flg_key_run = False
             elif key == key.delete:
-                print('下')
                 if flg_key_run:
+                    print('下')
                     tb_step_worker.toggle_enable_signal.emit(False)
                     pos = 2000000 * int(five_key[2])
                     if pos <= 0:
@@ -2495,29 +2494,29 @@ def keyboard_press(key):
                     sc.card_update()
                     flg_key_run = False
             elif key == key.home:
-                print('头左')
                 if flg_key_run:
+                    print('头左')
                     tb_step_worker.toggle_enable_signal.emit(False)
                     sc.card_move(4, pos=-2000000 * int(five_key[3]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.end:
-                print('头右')
                 if flg_key_run:
+                    print('头右')
                     tb_step_worker.toggle_enable_signal.emit(False)
                     sc.card_move(4, pos=2000000 * int(five_key[3]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_up:
-                print('头下')
                 if flg_key_run:
+                    print('头下')
                     tb_step_worker.toggle_enable_signal.emit(False)
                     sc.card_move(5, pos=2000000 * int(five_key[4]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_down:
-                print('头上')
                 if flg_key_run:
+                    print('头上')
                     tb_step_worker.toggle_enable_signal.emit(False)
                     sc.card_move(5, pos=-2000000 * int(five_key[4]), vel=50)
                     sc.card_update()
@@ -3049,9 +3048,8 @@ def table_change():
         if col > len(plan_list[row]) - 1:
             if tb_step.item(row, col):
                 tb_step.item(row, col).setText('')
-        elif not is_natural_num(tb_step.item(row, col).text()):
-            if tb_step.item(row, col):
-                tb_step.item(row, col).setText(plan_list[row][col][0])
+        elif tb_step.item(row, col) and not is_natural_num(tb_step.item(row, col).text()):
+            tb_step.item(row, col).setText(plan_list[row][col][0])
     except:
         print("数据表操作出错！")
 
@@ -3837,6 +3835,7 @@ def play_alarm():  # 报警音
 def stop_alarm():
     if ui.checkBox_alarm.isChecked():
         pygame.mixer.music.stop()
+        ui.checkBox_alarm.setChecked(False)
 
 
 "****************************************卫星图_结束***********************************************"
@@ -4585,20 +4584,68 @@ class SpeedUi(QDialog, Ui_Dialog_Set_Speed):
 
 
 def auto_line():  # 相对上一个动作走直线
-    if speed_ui.checkBox_auto_line.isChecked():
-        tb_speed = speed_ui.tableWidget_Set_Speed
-        tb_step = ui.tableWidget_Step
-        row_index = tb_step.currentRow()
-        x_0 = 0
-        y_0 = 0
-        if row_index > 0:
-            x_0 = int(tb_step.item(row_index - 1, 2).text())
-            y_0 = int(tb_step.item(row_index - 1, 3).text())
-        x = abs(int(tb_step.item(row_index, 2).text()) - x_0)
-        y = abs(int(tb_step.item(row_index, 3).text()) - y_0)
-        x_speed = int(tb_speed.item(0, 0).text())
-        y_speed = int(x_speed * (y / x))
+    tb_step = ui.tableWidget_Step
+    row_index = tb_step.currentRow()
+
+    tb_speed = speed_ui.tableWidget_Set_Speed
+    row = tb_speed.currentRow()
+    col = tb_speed.currentColumn()
+    if tb_speed.item(row, col):
+        if (not is_natural_num(tb_speed.item(row, col).text())
+                or '-' in tb_speed.item(row, col).text()):
+            tb_speed.item(row, col).setText(plan_list[row_index][7][row][col])
+
+    x_0 = 0
+    y_0 = 0
+    if row_index > 0:
+        x_0 = int(tb_step.item(row_index - 1, 2).text())
+        y_0 = int(tb_step.item(row_index - 1, 3).text())
+    x_distance = abs(int(tb_step.item(row_index, 2).text()) - x_0)
+    y_distance = abs(int(tb_step.item(row_index, 3).text()) - y_0)
+    x_speed = int(tb_speed.item(0, 0).text())
+    y_speed = int(tb_speed.item(1, 0).text())
+    # 计算直线速度
+    if speed_ui.checkBox_auto_line.isChecked() and x_distance != 0:
+        y_speed = int(x_speed * (y_distance / x_distance))
         tb_speed.item(1, 0).setText(str(y_speed))
+    # 计算动作运行时间
+    time_x = int(x_distance / x_speed) / 1000 + float(tb_speed.item(0, 3).text())
+    time_y = int(y_distance / y_speed) / 1000 + float(tb_speed.item(1, 3).text())
+    if time_x > time_y:
+        speed_ui.lineEdit_time.setText('%.3f' % time_x)
+    else:
+        speed_ui.lineEdit_time.setText('%.3f' % time_y)
+
+
+def auto_time():  # 相对上一个动作按时间设置速度
+    if (not is_natural_num(speed_ui.lineEdit_time_set.text())
+            or '-' in speed_ui.lineEdit_time_set.text()):
+        speed_ui.lineEdit_time_set.setText('0')
+    now_time = abs(float(speed_ui.lineEdit_time.text()))
+    set_time = abs(float(speed_ui.lineEdit_time_set.text()))
+    if now_time > 0 and set_time > 0:
+        tb_speed = speed_ui.tableWidget_Set_Speed
+        x_speed = float(tb_speed.item(0, 0).text())
+        y_speed = float(tb_speed.item(1, 0).text())
+        z_speed = float(tb_speed.item(2, 0).text())
+        rx_speed = float(tb_speed.item(3, 0).text())
+        ry_speed = float(tb_speed.item(4, 0).text())
+        x_delay = float(tb_speed.item(0, 3).text())
+        y_delay = float(tb_speed.item(1, 3).text())
+        z_delay = float(tb_speed.item(2, 3).text())
+        rx_delay = float(tb_speed.item(3, 3).text())
+        ry_delay = float(tb_speed.item(4, 3).text())
+        ratio = set_time / now_time
+        tb_speed.item(0, 0).setText(str(int(x_speed / ratio)))
+        tb_speed.item(1, 0).setText(str(int(y_speed / ratio)))
+        tb_speed.item(2, 0).setText(str(int(z_speed / ratio)))
+        tb_speed.item(3, 0).setText(str(int(rx_speed / ratio)))
+        tb_speed.item(4, 0).setText(str(int(ry_speed / ratio)))
+        tb_speed.item(0, 3).setText('%.3f' % float(x_delay * ratio))
+        tb_speed.item(1, 3).setText('%.3f' % float(y_delay * ratio))
+        tb_speed.item(2, 3).setText('%.3f' % float(z_delay * ratio))
+        tb_speed.item(3, 3).setText('%.3f' % float(rx_delay * ratio))
+        tb_speed.item(4, 3).setText('%.3f' % float(ry_delay * ratio))
 
 
 "************************************SPEED_UI*********************************************"
@@ -4619,6 +4666,7 @@ if __name__ == '__main__':
     speed_ui.buttonBox.rejected.connect(reject_speed)
     speed_ui.checkBox_auto_line.checkStateChanged.connect(auto_line)
     speed_ui.tableWidget_Set_Speed.itemChanged.connect(auto_line)
+    speed_ui.lineEdit_time_set.editingFinished.connect(auto_time)
 
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
