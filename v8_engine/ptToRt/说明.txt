@@ -1,0 +1,6 @@
+yolo mode=export model=best.pt  format=onnx
+
+
+再运行 v8
+
+再运行 calib 生成 引擎文件
