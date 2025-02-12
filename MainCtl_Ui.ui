@@ -41,7 +41,7 @@
          <enum>Qt::FocusPolicy::NoFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -3763,7 +3763,7 @@
                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_33">
-                 <item row="0" column="0">
+                 <item row="1" column="0">
                   <widget class="QLabel" name="label_monitor_picture">
                    <property name="minimumSize">
                     <size>
@@ -3773,6 +3773,13 @@
                    </property>
                    <property name="text">
                     <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QCheckBox" name="checkBox_monitor_cam">
+                   <property name="text">
+                    <string>窗口显示</string>
                    </property>
                   </widget>
                  </item>
@@ -3807,7 +3814,7 @@
                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_15">
-                 <item row="0" column="0">
+                 <item row="1" column="0">
                   <widget class="QLabel" name="label_main_picture">
                    <property name="minimumSize">
                     <size>
@@ -3817,6 +3824,13 @@
                    </property>
                    <property name="text">
                     <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QCheckBox" name="checkBox_main_camera">
+                   <property name="text">
+                    <string>窗口显示</string>
                    </property>
                   </widget>
                  </item>

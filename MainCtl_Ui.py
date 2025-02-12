@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainCtl_Ui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.0
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -1657,7 +1657,12 @@ class Ui_MainWindow(object):
         self.label_monitor_picture.setObjectName(u"label_monitor_picture")
         self.label_monitor_picture.setMinimumSize(QSize(300, 10))
 
-        self.gridLayout_33.addWidget(self.label_monitor_picture, 0, 0, 1, 1)
+        self.gridLayout_33.addWidget(self.label_monitor_picture, 1, 0, 1, 1)
+
+        self.checkBox_monitor_cam = QCheckBox(self.groupBox_monitor_cam)
+        self.checkBox_monitor_cam.setObjectName(u"checkBox_monitor_cam")
+
+        self.gridLayout_33.addWidget(self.checkBox_monitor_cam, 0, 0, 1, 1)
 
         self.groupBox_main_camera = QGroupBox(self.widget_camera)
         self.groupBox_main_camera.setObjectName(u"groupBox_main_camera")
@@ -1671,7 +1676,12 @@ class Ui_MainWindow(object):
         self.label_main_picture.setObjectName(u"label_main_picture")
         self.label_main_picture.setMinimumSize(QSize(300, 10))
 
-        self.gridLayout_15.addWidget(self.label_main_picture, 0, 0, 1, 1)
+        self.gridLayout_15.addWidget(self.label_main_picture, 1, 0, 1, 1)
+
+        self.checkBox_main_camera = QCheckBox(self.groupBox_main_camera)
+        self.checkBox_main_camera.setObjectName(u"checkBox_main_camera")
+
+        self.gridLayout_15.addWidget(self.checkBox_main_camera, 0, 0, 1, 1)
 
 
         self.gridLayout_40.addWidget(self.widget_camera, 0, 1, 1, 1)
@@ -3031,7 +3041,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(0)
+        self.tabWidget_Ranking.setCurrentIndex(3)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3290,8 +3300,10 @@ class Ui_MainWindow(object):
         self.pushButton_to_TXT.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u6362TXT", None))
         self.groupBox_monitor_cam.setTitle(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
         self.label_monitor_picture.setText("")
+        self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u53e3\u663e\u793a", None))
         self.groupBox_main_camera.setTitle(QCoreApplication.translate("MainWindow", u"\u7d22\u5c3c\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
         self.label_main_picture.setText("")
+        self.checkBox_main_camera.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u53e3\u663e\u793a", None))
         self.groupBox_14.setTitle(QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe", None))
         self.groupBox_7.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u6392\u540d", None))
         ___qtablewidgetitem36 = self.tableWidget_Ranking.horizontalHeaderItem(0)

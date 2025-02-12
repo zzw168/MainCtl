@@ -1820,11 +1820,15 @@ def ScreenShot_signal_accept(msg):
             pixmap.loadFromData(img)
             pixmap = pixmap.scaled(int(400 * 1.8), int(225 * 1.8))
             if msg[2] == 'obs':
-                ui.label_main_picture.setPixmap(pixmap)
                 ui.lineEdit_Main_Camera.setText(str(main_Camera))
+                if ui.checkBox_monitor_cam.isChecked():
+                    main_camera_ui.label_picture.setPixmap(pixmap)
+                ui.label_main_picture.setPixmap(pixmap)
             elif msg[2] == 'monitor':
-                ui.label_monitor_picture.setPixmap(pixmap)
                 ui.lineEdit_Backup_Camera.setText(str(monitor_Camera))
+                if ui.checkBox_monitor_cam.isChecked():
+                    monitor_camera_ui.label_picture.setPixmap(pixmap)
+                ui.label_monitor_picture.setPixmap(pixmap)
             for index in range(len(main_Camera)):
                 fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
             if perfect_Camera == fit_Camera:
@@ -4418,6 +4422,7 @@ def my_test():
     global term
     global z_ranking_res
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
+    ScreenShot_Thread.run_flg = True
     # z_ranking_res = [1,4,5,3,2,6,7,8,9,10]
     # tcp_ranking_thread.run_flg = True
     # lottery2yaml()
@@ -4664,12 +4669,38 @@ def auto_time():  # 相对上一个动作按时间设置速度
 
 "************************************Camera_UI*********************************************"
 
+
 class CameraUi(QDialog, Ui_Camera_Dialog):
     def __init__(self):
         super().__init__()
 
     def setupUi(self, z_dialog):
         super(CameraUi, self).setupUi(z_dialog)
+
+
+def main_hide_event(event):
+    ui.checkBox_main_camera.setChecked(False)
+    event.accept()
+
+
+def monitor_hide_event(event):
+    ui.checkBox_monitor_cam.setChecked(False)
+    event.accept()
+
+
+def main_cam_change():
+    if ui.checkBox_main_camera.isChecked():
+        MainCameraDialog.show()
+    else:
+        MainCameraDialog.hide()
+
+
+def monitor_cam_change():
+    if ui.checkBox_monitor_cam.isChecked():
+        MonitorCameraDialog.show()
+    else:
+        MonitorCameraDialog.hide()
+
 
 if __name__ == '__main__':
     app = ZApp(sys.argv)
@@ -4689,10 +4720,21 @@ if __name__ == '__main__':
     speed_ui.tableWidget_Set_Speed.itemChanged.connect(auto_line)
     speed_ui.lineEdit_time_set.editingFinished.connect(auto_time)
 
-    CameraDialog = QDialog(z_window)
-    camera_ui = CameraUi()
-    camera_ui.setupUi(CameraDialog)
-    CameraDialog.show()
+    MainCameraDialog = QDialog(z_window)
+    MainCameraDialog.hideEvent = main_hide_event
+    main_camera_ui = CameraUi()
+    main_camera_ui.setupUi(MainCameraDialog)
+    MainCameraDialog.setWindowTitle('索尼')
+    main_camera_ui.groupBox_main_camera.setTitle('索尼摄像机识别结果')
+    # MainCameraDialog.show()
+
+    MonitorCameraDialog = QDialog(z_window)
+    MonitorCameraDialog.hideEvent = monitor_hide_event
+    monitor_camera_ui = CameraUi()
+    monitor_camera_ui.setupUi(MonitorCameraDialog)
+    MonitorCameraDialog.setWindowTitle('监控')
+    monitor_camera_ui.groupBox_main_camera.setTitle('监控摄像机识别结果')
+    # MonitorCameraDialog.show()
 
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
@@ -5021,6 +5063,9 @@ if __name__ == '__main__':
     fit_camera_label = CameraLabel()
     fit_camera_label.Camera_index = 'fit_Camera'
     fit_camera_layout.addWidget(fit_camera_label)
+
+    ui.checkBox_main_camera.checkStateChanged.connect(main_cam_change)
+    ui.checkBox_monitor_cam.checkStateChanged.connect(monitor_cam_change)
 
     "**************************摄像头结果_结束*****************************"
     "**************************参数设置_开始*****************************"

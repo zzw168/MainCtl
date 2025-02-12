@@ -36,11 +36,11 @@ class Ui_Camera_Dialog(object):
         self.groupBox_main_camera.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.gridLayout_15 = QGridLayout(self.groupBox_main_camera)
         self.gridLayout_15.setObjectName(u"gridLayout_15")
-        self.label_main_picture = QLabel(self.groupBox_main_camera)
-        self.label_main_picture.setObjectName(u"label_main_picture")
-        self.label_main_picture.setMinimumSize(QSize(300, 10))
+        self.label_picture = QLabel(self.groupBox_main_camera)
+        self.label_picture.setObjectName(u"label_picture")
+        self.label_picture.setMinimumSize(QSize(300, 10))
 
-        self.gridLayout_15.addWidget(self.label_main_picture, 0, 0, 1, 1)
+        self.gridLayout_15.addWidget(self.label_picture, 0, 0, 1, 1)
 
 
         self.gridLayout.addWidget(self.groupBox_main_camera, 0, 0, 1, 1)
@@ -54,6 +54,6 @@ class Ui_Camera_Dialog(object):
     def retranslateUi(self, Camera_Dialog):
         Camera_Dialog.setWindowTitle(QCoreApplication.translate("Camera_Dialog", u"\u7d22\u5c3c\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
         self.groupBox_main_camera.setTitle(QCoreApplication.translate("Camera_Dialog", u"\u7d22\u5c3c\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
-        self.label_main_picture.setText("")
+        self.label_picture.setText("")
     # retranslateUi
 
