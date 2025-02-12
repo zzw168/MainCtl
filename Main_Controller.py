@@ -32,6 +32,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QChec
 import obsws_python as obs
 import pygame
 
+from Camera_Ui import Ui_Camera_Dialog
 from Speed_Ui import Ui_Dialog_Set_Speed
 from utils import tool_unit
 from utils.SportCard_unit import *
@@ -707,7 +708,7 @@ class TcpRankingThread(QThread):
         self.running = True
         self.run_flg = False
         self.send_time_flg = False
-        self.sleep_time = 1
+        self.sleep_time = 0.5
         self.send_time_data = [1, time.strftime('%M"%S', time.localtime(time.time()))]
 
     def stop(self):
@@ -717,6 +718,10 @@ class TcpRankingThread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
+        global tcp_ranking_socket
+        tcp_ranking_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        tcp_ranking_socket.bind(tcpServer_addr)
+        tcp_ranking_socket.listen(1)
         while self.running:
             try:
                 con, addr = tcp_ranking_socket.accept()
@@ -767,6 +772,11 @@ class TcpResultThread(QThread):
 
     def run(self) -> None:
         global lottery_term
+        global tcp_result_socket
+
+        tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        tcp_result_socket.bind(result_tcpServer_addr)
+        tcp_result_socket.listen(5)
         while self.running:
             try:
                 con, addr = tcp_result_socket.accept()
@@ -885,6 +895,7 @@ class UdpThread(QThread):
         global con_data
         global balls_start
         udp_time_old = 0
+        udp_socket.bind(udpServer_addr)
         while self.running:
             try:
                 # 3. 等待接收对方发送的数据
@@ -4405,8 +4416,11 @@ def flip_vertica():  # 主镜头垂直翻转
 
 def my_test():
     global term
+    global z_ranking_res
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    lottery2yaml()
+    # z_ranking_res = [1,4,5,3,2,6,7,8,9,10]
+    # tcp_ranking_thread.run_flg = True
+    # lottery2yaml()
     # s = int(ui.lineEdit_result_send.text())
     # s485.cam_zoom_step(s)
     # time.sleep(5)
@@ -4648,7 +4662,14 @@ def auto_time():  # 相对上一个动作按时间设置速度
         tb_speed.item(4, 3).setText('%.3f' % float(ry_delay * ratio))
 
 
-"************************************SPEED_UI*********************************************"
+"************************************Camera_UI*********************************************"
+
+class CameraUi(QDialog, Ui_Camera_Dialog):
+    def __init__(self):
+        super().__init__()
+
+    def setupUi(self, z_dialog):
+        super(CameraUi, self).setupUi(z_dialog)
 
 if __name__ == '__main__':
     app = ZApp(sys.argv)
@@ -4667,6 +4688,11 @@ if __name__ == '__main__':
     speed_ui.checkBox_auto_line.checkStateChanged.connect(auto_line)
     speed_ui.tableWidget_Set_Speed.itemChanged.connect(auto_line)
     speed_ui.lineEdit_time_set.editingFinished.connect(auto_time)
+
+    CameraDialog = QDialog(z_window)
+    camera_ui = CameraUi()
+    camera_ui.setupUi(CameraDialog)
+    CameraDialog.show()
 
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
@@ -4758,7 +4784,8 @@ if __name__ == '__main__':
     ui.pushButton_CardCloseAll.clicked.connect(card_close_all)
     ui.pushButton_CardClose.clicked.connect(card_close_all)
 
-    ui.pushButton_start_game.clicked.connect(cmd_loop)
+    # ui.pushButton_start_game.clicked.connect(cmd_loop)
+    ui.pushButton_start_game.clicked.connect(my_test)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
@@ -4873,7 +4900,7 @@ if __name__ == '__main__':
     # 1. Udp 接收数据 14
     try:
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        udp_socket.bind(udpServer_addr)
+        # udp_socket.bind(udpServer_addr)
         print('Udp_socket Server Started.')
         udp_thread = UdpThread()
         udp_thread._signal.connect(udp_signal_accept)
@@ -4885,18 +4912,18 @@ if __name__ == '__main__':
 
     # pingpong 发送排名 15
     tcp_ranking_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_ranking_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    tcp_ranking_socket.bind(tcpServer_addr)
-    tcp_ranking_socket.listen(1)
+    # tcp_ranking_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    # tcp_ranking_socket.bind(tcpServer_addr)
+    # tcp_ranking_socket.listen(1)
     print('Pingpong Server Started.')
     tcp_ranking_thread = TcpRankingThread()  # 前端网页以pingpong形式发送排名数据
     tcp_ranking_thread._signal.connect(tcp_signal_accept)
     tcp_ranking_thread.start()
 
     tcp_result_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    tcp_result_socket.bind(result_tcpServer_addr)
-    tcp_result_socket.listen(5)
+    # tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    # tcp_result_socket.bind(result_tcpServer_addr)
+    # tcp_result_socket.listen(5)
     tcp_result_thread = TcpResultThread()  # 前端网页以pingpong形式发送结果数据 16
     tcp_result_thread._signal.connect(tcp_signal_accept)
     tcp_result_thread.start()
@@ -4906,9 +4933,9 @@ if __name__ == '__main__':
     wakeup_ser.start()
 
     # 启动 HTTPServer 接收外部命令控制本程序 18
-    httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
-    http_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
-    http_thread.start()
+    # httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
+    # http_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    # http_thread.start()
 
     # 更新数据表线程 19
     Update_Thread = UpdateThread()

@@ -1,7 +1,7 @@
 Image_Path: E:/saidao/image
 Track_number: I
-balls_count: '10'
-cardNo: '12'
+balls_count: '8'
+cardNo: '15'
 color_ch:
   Brown: 棕 ⑦
   White: 白 ⑩
@@ -13,157 +13,156 @@ color_ch:
   purple: 紫 ④
   red: 红 ③
   yellow: 黄 ①
-five_axis: # 1 正方向， -1 反方向
-  - 1
-  - 1
-  - 1
-  - 1
-  - -1
-five_key: # 1 正方向， -1 反方向
-  - -1
-  - 1
-  - 1
-  - 1
-  - -1
+five_axis:
+- 1
+- 1
+- 1
+- 1
+- -1
+five_key:
+- -1
+- 1
+- 1
+- 1
+- -1
 init_array:
-  - - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - yellow
-    - 0
-    - 0
-    - 0
-    - 0
-  - - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - blue
-    - 0
-    - 0
-    - 0
-    - 0
-  - - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - red
-    - 0
-    - 0
-    - 0
-    - 0
-  - - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - purple
-    - 0
-    - 0
-    - 0
-    - 0
-  - - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - orange
-    - 0
-    - 0
-    - 0
-    - 0
-  - - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - green
-    - 0
-    - 0
-    - 0
-    - 0
-  - - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - Brown
-    - 0
-    - 0
-    - 0
-    - 0
-  - - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - black
-    - 0
-    - 0
-    - 0
-    - 0
-  - - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - pink
-    - 0
-    - 0
-    - 0
-    - 0
-  - - 0
-    - 0
-    - 0
-    - 0
-    - 0
-    - White
-    - 0
-    - 0
-    - 0
-    - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - yellow
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - blue
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - red
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - purple
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - orange
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - green
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - Brown
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - black
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - pink
+  - 0
+  - 0
+  - 0
+  - 0
+- - 0
+  - 0
+  - 0
+  - 0
+  - 0
+  - White
+  - 0
+  - 0
+  - 0
+  - 0
 lineEdit_end: '4'
 lineEdit_shake: '3'
 lineEdit_shoot: '1'
 lineEdit_start: '2'
-map_line: ./img/11_石林.json
-map_picture: ./img/11_石林.jpg
+map_line: ./img/13_华山.json
+map_picture: ./img/13_华山.jpg
 map_size: '680'
-monitor_sort: '1' # [0：→, 1：←, 10：↑, 11：↓]
+monitor_sort: '1'
 music_1:
-  - false
-  - ./mp3/07_冰原背景音乐1.mp3
+- false
+- ./mp3/07_冰原背景音乐1.mp3
 music_2:
-  - true
-  - ./mp3/07_冰原背景音乐2.mp3
+- true
+- ./mp3/07_冰原背景音乐2.mp3
 music_3:
-  - false
-  - ./mp3/07_冰原背景音乐3.mp3
+- false
+- ./mp3/07_冰原背景音乐3.mp3
 obs_script_addr: http://127.0.0.1:8899
 pushButton_start_game: true
 recognition_addr: http://127.0.0.1:6066
 result_tcpServer_addr:
-  - 0.0.0.0
-  - '8888'
-rtsp_url: rtsp://admin:123456@192.168.0.31:554/Streaming/Channels/101
-s485_Axis_No: COM28
-s485_Cam_No: COM29
+- 0.0.0.0
+- '8888'
+rtsp_url: rtsp://admin:123456@192.168.0.34:554/Streaming/Channels/101
+s485_Axis_No: COM22
+s485_Cam_No: COM23
 scene_name: 现场
-sony_sort: '1'  # [0：→, 1：←, 10：↑, 11：↓]
+sony_sort: '1'
 source_end: 终点1
 source_picture: 画中画
 source_ranking: 排名时间组件
 source_settlement: 结算页
 tcpServer_addr:
-  - 0.0.0.0
-  - '9999'
+- 0.0.0.0
+- '9999'
 udpServer_addr:
-  - 0.0.0.0
-  - '19734'
+- 0.0.0.0
+- '19734'
 wakeup_addr:
-  - http://192.168.0.121:8080
-  - http://192.168.0.112:8080
+- http://192.168.0.115:8080
