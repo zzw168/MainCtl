@@ -149,9 +149,21 @@ class Serial485:
 
     # 发送镜头缩放指令
     def cam_zoom_step(self, in_out: int = 1):
-        speed = abs(in_out)  # 总共（0-4） 五档调整
+        if in_out < 16:
+            speed = [0, abs(in_out)]  # 总共（0） 16档调整
+        elif 16 <= in_out < 32:
+            speed = [1, abs(in_out) - 16]  # 总共（1） 16档调整
+        elif 32 <= in_out < 48:
+            speed = [2, abs(in_out) - 32]  # 总共（1） 16档调整
+        elif 48 <= in_out < 64:
+            speed = [3, abs(in_out) - 48]  # 总共（1） 16档调整
+        elif 64 <= in_out < 80:
+            speed = [4, abs(in_out) - 64]  # 总共（1） 16档调整
+        else:
+            speed = [0, 0]
         if self.ser.is_open:
-            hexCmd = "81 01 04 47 0%d 00 00 00 FF" % speed
+            hexCmd = "81 01 04 47 0%d 0%s 00 00 FF" % (speed[0], hex(speed[1])[2:])
+            print(hexCmd)
             hexCmd = hexCmd.replace(' ', '')  # 去除空格
             cmd = binascii.a2b_hex(hexCmd)  # 转换为16进制串
             self.ser.write(cmd)  # 4. Hex发送
@@ -186,27 +198,28 @@ class Serial485:
         return self.ser.is_open
 
     # 五轴校正
-    def get_axis_pos(self):
-        nAxisList = [bytes.fromhex('01030B07000277EE'),
-                     bytes.fromhex('02030B07000277DD'),
-                     bytes.fromhex('03030B070002760C'),
-                     bytes.fromhex('04030B07000277BB'),
-                     bytes.fromhex('05030B070002766A')]
+    def get_axis_pos(self, nAxis):
+        """
+                    nAxisList = [bytes.fromhex('01030B07000277EE'),
+                                         bytes.fromhex('02030B07000277DD'),
+                                         bytes.fromhex('03030B070002760C'),
+                                         bytes.fromhex('04030B07000277BB'),
+                                         bytes.fromhex('05030B070002766A')]
+                """
         try:
-            sercol = serial.Serial(port=self.s485_Axis_No, baudrate=57600, stopbits=2, timeout=1)
-            datas = []
-            if sercol.is_open:
+            axis_data = {}
+            ser_axis = serial.Serial(port=self.s485_Axis_No, baudrate=57600, stopbits=2, timeout=1)
+            if ser_axis.is_open:
                 print('端口已经打开')
-                for nAxis in nAxisList:
-                    sercol.write(nAxis)
-                    data = sercol.read(10)
-                    print("读取数据 %s" % data)
-                    if data:
-                        (nAxisNum, highPos) = self.analysisData(data)
-                        if nAxisNum != 0:
-                            datas.append({'nAxisNum': nAxisNum, 'highPos': highPos})
-            sercol.close()
-            return datas
+                ser_axis.write(nAxis)
+                data = ser_axis.read(10)
+                print("读取数据 %s" % data)
+                if data:
+                    (nAxisNum, highPos) = self.analysisData(data)
+                    if nAxisNum != 0:
+                        axis_data = {'nAxisNum': nAxisNum, 'highPos': highPos}
+            ser_axis.close()
+            return axis_data
         except BaseException as e:
             print('轴伺服器复位出错 %s' % e)
             return 0

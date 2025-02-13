@@ -41,7 +41,7 @@
          <enum>Qt::FocusPolicy::NoFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -2001,7 +2001,7 @@
             </column>
             <column>
              <property name="text">
-              <string>镜头(1-5)</string>
+              <string>镜头(1-80)</string>
              </property>
             </column>
             <column>

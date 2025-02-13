@@ -3041,7 +3041,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(3)
+        self.tabWidget_Ranking.setCurrentIndex(1)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3195,7 +3195,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem17 = self.tableWidget_Step.horizontalHeaderItem(9)
         ___qtablewidgetitem17.setText(QCoreApplication.translate("MainWindow", u"\u51cf\u901f", None));
         ___qtablewidgetitem18 = self.tableWidget_Step.horizontalHeaderItem(10)
-        ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"\u955c\u5934(1-5)", None));
+        ___qtablewidgetitem18.setText(QCoreApplication.translate("MainWindow", u"\u955c\u5934(1-80)", None));
         ___qtablewidgetitem19 = self.tableWidget_Step.horizontalHeaderItem(11)
         ___qtablewidgetitem19.setText(QCoreApplication.translate("MainWindow", u"\u5ef6\u65f6", None));
         ___qtablewidgetitem20 = self.tableWidget_Step.horizontalHeaderItem(12)

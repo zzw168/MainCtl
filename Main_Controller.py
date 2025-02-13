@@ -1976,35 +1976,41 @@ class AxisThread(QThread):
 
     def run(self) -> None:
         global flg_start
+        global axis_reset
         while self.running:
             time.sleep(1)
             if not self.run_flg:
                 continue
             print('串口运行')
             try:
-                self._signal.emit(succeed('轴复位开始！'))
-                s485_data = s485.get_axis_pos()
-                # print(s485_data)
-                if len(s485_data) > 0:
-                    for data in s485_data:
-                        # if data['nAxisNum'] in [1, 5]:  # 轴一，轴五，方向反过来，所以要设置负数
-                        data['highPos'] = data['highPos'] * five_axis[data['nAxisNum'] - 1]
-                        # print(data['nAxisNum'], data['highPos'])
-                        res = sc.GASetPrfPos(data['nAxisNum'], data['highPos'])
+                self._signal.emit(succeed('轴复位开始...'))
+                nAxisList = [bytes.fromhex('01030B07000277EE'),
+                             bytes.fromhex('02030B07000277DD'),
+                             bytes.fromhex('03030B070002760C'),
+                             bytes.fromhex('04030B07000277BB'),
+                             bytes.fromhex('05030B070002766A')]
+                for nAxis in nAxisList:
+                    s485_data = s485.get_axis_pos(nAxis)
+                    # print(s485_data)
+                    if s485_data != 0:
+                        s485_data['highPos'] = s485_data['highPos'] * five_axis[s485_data['nAxisNum'] - 1]
+                        res = sc.GASetPrfPos(s485_data['nAxisNum'], s485_data['highPos'])
                         if res == 0:
-                            sc.card_move(int(data['nAxisNum']), 0)
-                    res = sc.card_update()
-                    if res == 0:
-                        flg_start['card'] = True
-                        Pos_Thread.run_flg = True
-                        self._signal.emit(succeed('轴复位完成！'))
+                            self._signal.emit(succeed('%s 轴复位完成！' % s485_data['nAxisNum']))
+                            Pos_Thread.run_flg = True
+
+                            flg_start['card'] = True
+                        flg_start['s485'] = True
                     else:
+                        flg_start['s485'] = False
                         flg_start['card'] = False
-                        self._signal.emit(fail('运动卡链接出错！'))
-                    flg_start['s485'] = True
-                else:
-                    flg_start['s485'] = False
-                    self._signal.emit(fail('复位串口未连接！'))
+                        self._signal.emit(fail('复位串口未连接！'))
+                if axis_reset:
+                    for index in range(1, 6):
+                        sc.card_move(index, 0)
+                    sc.card_update()
+                    axis_reset = False
+                self._signal.emit(succeed('轴复位完成！'))
             except:
                 print("轴复位出错！")
                 flg_start['s485'] = False
@@ -2168,7 +2174,7 @@ class PlanCmdThread(QThread):
                                 if float(plan_list[plan_index][11][0]) > 0:
                                     time.sleep(float(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
                                 # 摄像头缩放
-                                if 0 < int(float(plan_list[plan_index][10][0])) <= 5:  # 摄像头缩放
+                                if 0 < int(float(plan_list[plan_index][10][0])) <= 80:  # 摄像头缩放
                                     PlanCam_Thread.camitem = [int(float(plan_list[plan_index][10][0])),
                                                               float(plan_list[plan_index][11][0])]
                                     PlanCam_Thread.run_flg = True  # 摄像头线程
@@ -2981,6 +2987,8 @@ def card_start():
 
 
 def card_reset():
+    global axis_reset
+    axis_reset = True
     Axis_Thread.run_flg = True
 
 
@@ -4130,7 +4138,6 @@ class TestStatusThread(QThread):
 
     def run(self) -> None:
         global flg_start
-        global axis_reset
         while self.running:
             if not self.run_flg:
                 continue
@@ -4140,11 +4147,10 @@ class TestStatusThread(QThread):
                 print(res)
                 if res == 0:
                     flg_start['card'] = True
-                    if axis_reset and flg_start['card']:  # 轴复位一次
+                    if flg_start['card']:  # 轴复位一次
                         Axis_Thread.run_flg = True
                         res_sql = query_sql()  # 加载网络设置 一次
                         self._signal.emit(res_sql)
-                        axis_reset = False
 
             if not flg_start['ai_end']:  # 测试结果识别服务
                 test_ai_end()
@@ -4422,7 +4428,9 @@ def my_test():
     global term
     global z_ranking_res
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    ScreenShot_Thread.run_flg = True
+    # for i in range(98):
+    #     ui.textBrowser_msg.append('这是第%s行' % i)
+    # ScreenShot_Thread.run_flg = True
     # z_ranking_res = [1,4,5,3,2,6,7,8,9,10]
     # tcp_ranking_thread.run_flg = True
     # lottery2yaml()
@@ -4478,6 +4486,15 @@ def my_test():
     # # resp = cl_requst.get_source_screenshot('终点2', "jpg", 1920, 1080, 100)
     # # resp = cl_requst.save_source_screenshot('终点1', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
     # # resp = cl_requst.save_source_screenshot('终点2', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
+
+
+def clean_browser(textBrowser):
+    # 获取所有行
+    lines = textBrowser.toPlainText().split("\n")
+    if len(lines) > 100:
+        # 只保留最后 max_lines 行
+        textBrowser.clear()
+        textBrowser.setPlainText("\n".join(lines[-100:]))
 
 
 # 滚动到 textBrowser 末尾
@@ -4744,7 +4761,7 @@ if __name__ == '__main__':
     plan_all = {}  # 所有方案资料
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
     flg_key_run = True  # 键盘控制标志
-    axis_reset = True  # 轴复位标志
+    axis_reset = False  # 轴复位标志
     flg_start = {'card': False, 's485': False, 'obs': False, 'ai': False, 'ai_end': False, 'server': False}  # 各硬件启动标志
 
     load_plan_yaml()
@@ -4840,6 +4857,9 @@ if __name__ == '__main__':
 
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
     ui.tableWidget_Step.itemChanged.connect(table_change)
+
+    ui.textBrowser.textChanged.connect(lambda: clean_browser(ui.textBrowser))
+    ui.textBrowser_msg.textChanged.connect(lambda: clean_browser(ui.textBrowser_msg))
 
     """
         OBS 处理
