@@ -1821,7 +1821,7 @@ def ScreenShot_signal_accept(msg):
             pixmap = pixmap.scaled(int(400 * 1.8), int(225 * 1.8))
             if msg[2] == 'obs':
                 ui.lineEdit_Main_Camera.setText(str(main_Camera))
-                if ui.checkBox_monitor_cam.isChecked():
+                if ui.checkBox_main_camera.isChecked():
                     main_camera_ui.label_picture.setPixmap(pixmap)
                 ui.label_main_picture.setPixmap(pixmap)
             elif msg[2] == 'monitor':
@@ -2161,14 +2161,6 @@ class PlanCmdThread(QThread):
                             print("运动板运行出错！")
                             self._signal.emit(fail("运动板通信出错！"))
 
-                        # 圈数统计
-                        if (not ui.checkBox_test.isChecked()
-                                and plan_index == len(plan_list) - 1):  # 每执行完最后一个动作，action_area[1]圈数自动增加一圈
-                            map_label_big.map_action = 0
-                            action_area[2] = 1  # 写入标志 1 为独占写入
-                            action_area[0] = 0
-                            action_area[1] += 1
-                            action_area[2] = 0  # 写入标志 0 为任意写入
                         if self.run_flg:
                             try:
                                 if float(plan_list[plan_index][11][0]) > 0:
@@ -2253,6 +2245,12 @@ class PlanCmdThread(QThread):
                 if ui.checkBox_test.isChecked():
                     self._signal.emit(succeed("测试流程：完成！"))
                     self.run_flg = False  # 测试模式，不自动关闭任何机关
+                else:   # 每次循环增加一圈，初始化动作位置为0，初始化地图位置为0
+                    map_label_big.map_action = 0
+                    action_area[2] = 1  # 写入标志 1 为独占写入
+                    action_area[0] = 0
+                    action_area[1] += 1
+                    action_area[2] = 0  # 写入标志 0 为任意写入
             else:  # 运行出错，或者超出圈数，流程完成时执行
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
                     sc.GASetExtDoBit(3, 1)  # 打开终点开关

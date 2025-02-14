@@ -153,7 +153,7 @@ rtsp_url: rtsp://admin:123456@192.168.0.34:554/Streaming/Channels/101
 s485_Axis_No: COM22
 s485_Cam_No: COM23
 scene_name: 现场
-sony_sort: '1'
+sony_sort: '0'
 source_end: 终点1
 source_picture: 画中画
 source_ranking: 排名时间组件
