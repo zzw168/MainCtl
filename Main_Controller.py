@@ -120,7 +120,7 @@ def on_get_stream_status(data):
 
 
 class ObsThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(ObsThread, self).__init__()
@@ -140,14 +140,14 @@ class ObsThread(QThread):
                 cl_event.callback.register(on_record_state_changed)  # 录制状态
                 cl_event.callback.register(on_stream_state_changed)  # 直播流状态
                 cl_event.callback.register(on_get_stream_status)  # 直播流状态
-                self._signal.emit(succeed('OBS 启动成功！'))
+                self.signal.emit(succeed('OBS 启动成功！'))
                 flg_start['obs'] = True
         except:
-            self._signal.emit(fail('OBS 启动失败！'))
+            self.signal.emit(fail('OBS 启动失败！'))
             flg_start['obs'] = False
 
 
-def obs_signal_accept(msg):
+def obssignal_accept(msg):
     print(msg)
     ui.textBrowser.append(msg)
     ui.textBrowser_msg.append(msg)
@@ -162,13 +162,13 @@ def obs_open():
 
 
 class SourceThread(QObject):
-    source_signal = Signal(object)
+    sourcesignal = Signal(object)
 
     def __init__(self):
         super(SourceThread, self).__init__()
 
 
-def source_signal_accept(msg):
+def sourcesignal_accept(msg):
     print(msg)
     source2table()
 
@@ -275,7 +275,7 @@ def get_source_list(scene_name):  # 取得来源列表
                     obs_data['source_picture'] = int(item['sceneItemId'])
                 elif item['sourceName'] == ui.lineEdit_source_settlement.text():
                     obs_data['source_settlement'] = int(item['sceneItemId'])
-            Source_Thread.source_signal.emit('写表')
+            Source_Thread.sourcesignal.emit('写表')
     except:
         flg_start['obs'] = False
 
@@ -480,11 +480,8 @@ def sort_ranking():
                 ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
     # 4.寄存器保存固定每个区域的最新排位（因为ranking_array 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
     for i in range(0, len(ranking_array)):
-        # print(ranking_array[i], '~~~~~~~~~~~')
         if not (ranking_array[i][5] in ball_sort[ranking_array[i][6]][ranking_array[i][8]]):
             ball_sort[ranking_array[i][6]][ranking_array[i][8]].append(copy.deepcopy(ranking_array[i][5]))  # 添加寄存器球排序
-            # if ranking_array[i][6] == 35 and ranking_array[i][8] == 1:
-            #     print(ball_sort[ranking_array[i][6]][ranking_array[i][8]])
     # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
     for i in range(0, len(ranking_array)):
         for j in range(0, len(ranking_array) - i - 1):
@@ -535,8 +532,8 @@ def reset_ranking_array():
     action_area = [0, 0, 0]  # 初始化触发区域
     z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
     z_ranking_time = ['TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'OUT', 'OUT']  # 初始化网页排名时间
-    tcp_ranking_thread.sleep_time = 1  # 重置排名数据包发送时间
-    alarm_worker.toggle_enable_signal.emit(False)
+    tcp_ranking_thread.sleep_time = 0.5  # 重置排名数据包发送时间
+    alarm_worker.toggle_enablesignal.emit(False)
     if flg_start['obs'] and not ui.checkBox_test.isChecked():
         try:
             res = requests.get(url="%s/reset" % obs_script_addr)
@@ -671,7 +668,7 @@ def init_ranking_table():
 
 
 class UpdateThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(UpdateThread, self).__init__()
@@ -690,18 +687,18 @@ class UpdateThread(QThread):
                 for j in range(0, len(con_data[i])):
                     if con_data[i][0] in color_ch.keys():
                         if j == 0 and tb_ranking.item(i, j).text() != color_ch[con_data[i][j]]:
-                            self._signal.emit([i, j, color_ch[con_data[i][j]]])
+                            self.signal.emit([i, j, color_ch[con_data[i][j]]])
                         elif j != 0 and tb_ranking.item(i, j).text() != con_data[i][j]:
-                            self._signal.emit([i, j, con_data[i][j]])
+                            self.signal.emit([i, j, con_data[i][j]])
 
 
-def ranking_signal_accept(msg):
+def rankingsignal_accept(msg):
     tb_ranking = ui.tableWidget_Ranking
     tb_ranking.item(msg[0], msg[1]).setText(str(msg[2]))
 
 
 class TcpRankingThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(TcpRankingThread, self).__init__()
@@ -727,7 +724,7 @@ class TcpRankingThread(QThread):
                 con, addr = tcp_ranking_socket.accept()
                 print("Accepted. {0}, {1}".format(con, str(addr)))
                 if con:
-                    # self._signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
+                    # self.signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
                     with WebsocketServer(con) as ws:
                         # ws.send('pong')
                         while self.run_flg:
@@ -748,15 +745,15 @@ class TcpRankingThread(QThread):
                                 self.send_time_flg = False
                             except Exception as e:
                                 print("pingpong_rank_1 错误：", e)
-                                # self._signal.emit("pingpong 错误：%s" % e)
+                                # self.signal.emit("pingpong 错误：%s" % e)
                                 break
             except Exception as e:
                 print("pingpong_rank_2 错误：", e)
-                # self._signal.emit("pingpong 错误：%s" % e)
+                # self.signal.emit("pingpong 错误：%s" % e)
 
 
 class TcpResultThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(TcpResultThread, self).__init__()
@@ -788,7 +785,7 @@ class TcpResultThread(QThread):
                         time.sleep(1)
                         try:
                             if self.send_type == 'updata':
-                                self._signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
+                                self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
                                 datalist = {'type': 'updata',
                                             'data': {'qh': str(term), 'rank': []}}
                                 for index in range(len(z_ranking_end)):
@@ -822,7 +819,7 @@ class TcpResultThread(QThread):
                                         post_result(term, betting_end_time, result_data, Track_number)  # 发送最终排名给服务器
                                         post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
                                     except:
-                                        self._signal.emit(fail('post_result 上传结果错误！'))
+                                        self.signal.emit(fail('post_result 上传结果错误！'))
                                         print('上传结果错误！')
 
                                     video_name = cl_request.stop_record()  # 关闭录像
@@ -830,10 +827,10 @@ class TcpResultThread(QThread):
                                     lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
                                     end_time = int(time.time())
                                     lottery_term[8] = str(end_time)
-                                    self._signal.emit('save_video')
+                                    self.signal.emit('save_video')
                                     # lottery2sql()  # 保存数据库
                                     lottery2yaml()  # 保存数据
-                                self._signal.emit(succeed('第%s期 结束！' % term))
+                                self.signal.emit(succeed('第%s期 结束！' % term))
                                 if ui.checkBox_restart.isChecked():
                                     if not ui.radioButton_test_game.isChecked():
                                         self.send_type = ''
@@ -855,14 +852,14 @@ class TcpResultThread(QThread):
 
                         except Exception as e:
                             print("pingpong_result_1 错误：%s" % e)
-                            # self._signal.emit("pingpong 错误：%s" % e)
+                            # self.signal.emit("pingpong 错误：%s" % e)
                             break
             except Exception as e:
                 print("pingpong_result_2 错误：%s" % e)
-                self._signal.emit("pingpong_result_2 错误：%s" % e)
+                self.signal.emit("pingpong_result_2 错误：%s" % e)
 
 
-def tcp_signal_accept(msg):
+def tcpsignal_accept(msg):
     if msg == 'save_video':
         tb_result = ui.tableWidget_Results
         tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（0.已结束）
@@ -878,7 +875,7 @@ def tcp_signal_accept(msg):
 
 
 class UdpThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(UdpThread, self).__init__()
@@ -912,11 +909,11 @@ class UdpThread(QThread):
                     if len(recv_data) < 2:
                         print('UDP_recv_data无数据！', res)
                         continue
-                    self._signal.emit(data_res)
+                    self.signal.emit(data_res)
                     if (str(data_res[0]).isdigit()
                             and str(data_res[1][6]) == '1'):  # UDP数据包时间间隔
                         time_interval = int(data_res[0]) - udp_time_old
-                        self._signal.emit(time_interval)
+                        self.signal.emit(time_interval)
                         udp_time_old = int(data_res[0])
                     array_data = []
                     for i_ in range(1, len(data_res)):  # data_res[0] 是时间戳差值 ms
@@ -925,7 +922,7 @@ class UdpThread(QThread):
                     if len(array_data) < 1:
                         continue
                     if len(array_data[0]) < 7:
-                        self._signal.emit(fail('array_data:%s < 7数据错误！' % array_data[0]))
+                        self.signal.emit(fail('array_data:%s < 7数据错误！' % array_data[0]))
                         print('array_data < 7数据错误！', array_data[0])
                         continue
                     array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
@@ -933,7 +930,7 @@ class UdpThread(QThread):
                     if array_data is None or len(array_data) < 1:
                         continue
                     if len(array_data[0]) < 8:
-                        self._signal.emit(fail('array_data:%s < 8数据错误！' % array_data[0]))
+                        self.signal.emit(fail('array_data:%s < 8数据错误！' % array_data[0]))
                         print('array_data < 8数据错误！', array_data[0])
                         continue
                     if (action_area[0] >= max_area_count - balls_count
@@ -958,12 +955,12 @@ class UdpThread(QThread):
 
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
-                self._signal.emit("UDP数据接收出错:%s" % e)
+                self.signal.emit("UDP数据接收出错:%s" % e)
         # 5. 关闭套接字
         udp_socket.close()
 
 
-def udp_signal_accept(msg):
+def udpsignal_accept(msg):
     global flg_start
     # print(msg)
     if isinstance(msg, int):
@@ -1406,7 +1403,7 @@ class ZUi(QMainWindow, Ui_MainWindow):
 
 
 class ReStartThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(ReStartThread, self).__init__()
@@ -1431,7 +1428,7 @@ class ReStartThread(QThread):
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
                     if term == response['term']:
-                        self._signal.emit('term')
+                        self.signal.emit('term')
                         if not ui.checkBox_continue_term.isChecked():
                             time.sleep(3)
                             continue
@@ -1450,10 +1447,10 @@ class ReStartThread(QThread):
                         countdown = str(countdown)
                     lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
                     if lottery:
-                        self._signal.emit(lottery)
+                        self.signal.emit(lottery)
                 else:  # 封盘模式，退出循环
                     tcp_result_thread.send_type = 'time'
-                    self._signal.emit('error')
+                    self.signal.emit('error')
                     self.run_flg = False
                     continue
             else:
@@ -1462,13 +1459,13 @@ class ReStartThread(QThread):
                 countdown = int(countdown)
             else:
                 countdown = 60
-            self._signal.emit('auto_shoot')
+            self.signal.emit('auto_shoot')
             for t in range(countdown, -1, -1):
                 if not ui.checkBox_restart.isChecked():
                     self.run_flg = False
                     break
                 time.sleep(1)
-                self._signal.emit(t)
+                self.signal.emit(t)
             if ui.checkBox_restart.isChecked():
                 reset_ranking_array()  # 初始化排名，位置变量
                 PlanCmd_Thread.run_flg = True
@@ -1476,7 +1473,7 @@ class ReStartThread(QThread):
             self.run_flg = False
 
 
-def restart_signal_accept(msg):
+def restartsignal_accept(msg):
     if isinstance(msg, bool):
         lottery_data2table()
     # print(msg)
@@ -1507,7 +1504,7 @@ def restart_signal_accept(msg):
 
 
 class PosThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(PosThread, self).__init__()
@@ -1529,14 +1526,14 @@ class PosThread(QThread):
                 try:
                     for i in range(0, 5):
                         (res, pValue[i], pClock) = sc.get_pos(i + 1)
-                    self._signal.emit(pValue)
+                    self.signal.emit(pValue)
 
                 except:
                     pass
             self.run_flg = False
 
 
-def pos_signal_accept(message):
+def possignal_accept(message):
     try:
         if len(message) == 5:
             for i in range(0, len(message)):
@@ -1553,7 +1550,7 @@ def pos_signal_accept(message):
 
 
 class CamThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(CamThread, self).__init__()
@@ -1578,7 +1575,7 @@ class CamThread(QThread):
                     res = s485.cam_zoom_step(self.camitem[0] - 1)
                     if not res:
                         flg_start['s485'] = False
-                        self._signal.emit(fail("s485通信出错！"))
+                        self.signal.emit(fail("s485通信出错！"))
                         self.run_flg = False
                         continue
                     # time.sleep(self.camitem[1])
@@ -1586,7 +1583,7 @@ class CamThread(QThread):
                 except:
                     print("485 运行出错！")
                     flg_start['s485'] = False
-                    self._signal.emit(fail("s485通信出错！"))
+                    self.signal.emit(fail("s485通信出错！"))
             self.run_flg = False
 
 
@@ -1596,7 +1593,7 @@ class CamThread(QThread):
 
 
 class PlanBallNumThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(PlanBallNumThread, self).__init__()
@@ -1635,8 +1632,10 @@ class PlanBallNumThread(QThread):
                                     if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
                                         tcp_ranking_thread.send_time_data = [num, '%s"' % z_ranking_time[num - 1]]
                                         tcp_ranking_thread.send_time_flg = True
-                                self._signal.emit(num)
+                                self.signal.emit(num)
                                 num_old = num
+                            # if num in [3, 5, 8]:
+                            #     ScreenSort_Thread.run_flg = True
                             if num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
                                 break
                             elif num >= balls_count and ui.checkBox_Pass_Recognition_Start.isChecked():
@@ -1644,19 +1643,19 @@ class PlanBallNumThread(QThread):
                             elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
                                 # 超时则跳出循环计球
                                 sc.GASetDiReverseCount()  # 输入次数归0
-                                # self._signal.emit(0)
+                                # self.signal.emit(0)
                                 break
                             else:
                                 time_num = time.time() - time_old
                                 if time_num > 1:
                                     time_old = time.time()
                                     sec_ += 1
-                                    self._signal.emit(
+                                    self.signal.emit(
                                         succeed('计球倒计时：%s' %
                                                 str(int(ui.lineEdit_time_count_ball.text()) - sec_)))
                         else:
                             flg_start['card'] = False
-                            self._signal.emit(fail("运动板x输入通信出错！"))
+                            self.signal.emit(fail("运动板x输入通信出错！"))
                             break
                         time.sleep(0.01)
 
@@ -1668,22 +1667,22 @@ class PlanBallNumThread(QThread):
                 else:
                     print("次数归0 失败！")
                     flg_start['card'] = False
-                    self._signal.emit(fail("运动板x输入通信出错！"))
+                    self.signal.emit(fail("运动板x输入通信出错！"))
 
                 tcp_ranking_thread.sleep_time = 1  # 恢复正常前端排名数据包发送频率
                 tcp_ranking_thread.run_flg = False  # 关闭排名
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                 Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                 Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-                main_music_worker.toggle_enable_signal.emit(False)
+                main_music_worker.toggle_enablesignal.emit(False)
             except:
                 print("接收运动卡输入 运行出错！")
                 flg_start['card'] = False
-                self._signal.emit(fail("运动板x输入通信出错！"))
+                self.signal.emit(fail("运动板x输入通信出错！"))
             self.run_flg = False
 
 
-def PlanBallNum_signal_accept(msg):
+def PlanBallNumsignal_accept(msg):
     if isinstance(msg, int):
         ui.lineEdit_ball_end.setText(str(msg))
     elif '计球倒计时' in msg:
@@ -1703,13 +1702,69 @@ def PlanBallNum_signal_accept(msg):
         scroll_to_bottom(ui.textBrowser_msg)
 
 
+class ScreenSortThread(QThread):
+    """
+    ScreenSortThread(QThread) 实时结果截图线程
+    """
+    signal = Signal(object)
+
+    def __init__(self):
+        super(ScreenSortThread, self).__init__()
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        global ball_sort
+        while self.running:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
+            print('实时截图结果识别运行！')
+            self.signal.emit(succeed('实时截图结果识别运行！'))
+            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
+            if obs_res:
+                obs_list = eval(obs_res[1])
+                if len(obs_list) > 1:
+                    print(obs_list)
+                self.signal.emit(obs_res)
+
+            self.run_flg = False
+
+
+def ScreenSortsignal_accept(msg):
+    try:
+        if isinstance(msg, list):
+            if len(msg) < 2 or msg[0] == '':
+                return
+            img = msg[0]
+            pixmap = QPixmap()
+            pixmap.loadFromData(img)
+            pixmap = pixmap.scaled(int(400 * 1.8), int(225 * 1.8))
+            if msg[2] == 'obs':
+                ui.lineEdit_Main_Camera.setText(str(main_Camera))
+                if ui.checkBox_main_camera.isChecked():
+                    main_camera_ui.label_picture.setPixmap(pixmap)
+                ui.label_main_picture.setPixmap(pixmap)
+        else:
+            ui.textBrowser.append(str(msg))
+            ui.textBrowser_msg.append(str(msg))
+            scroll_to_bottom(ui.textBrowser_msg)
+    except:
+        print('OBS 操作失败！')
+
+
 '''
     ScreenShotThread(QThread) 结果截图线程
 '''
 
 
 class ScreenShotThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(ScreenShotThread, self).__init__()
@@ -1732,7 +1787,7 @@ class ScreenShotThread(QThread):
             if not self.run_flg:
                 continue
             print('截图结果识别运行！')
-            self._signal.emit(succeed('截图结果识别运行！'))
+            self.signal.emit(succeed('截图结果识别运行！'))
             t_count = ui.lineEdit_time_send_result.text()
             if t_count.isdigit():
                 t_count = int(t_count)
@@ -1747,11 +1802,11 @@ class ScreenShotThread(QThread):
             obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 main_Camera = camera_to_num(eval(obs_res[1]))
-                self._signal.emit(obs_res)
+                self.signal.emit(obs_res)
             monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
             if monitor_res:
                 monitor_Camera = camera_to_num(eval(monitor_res[1]))
-                self._signal.emit(monitor_res)
+                self.signal.emit(monitor_res)
 
             if obs_res[1] != '[1]' and obs_res[1] == monitor_res[1]:
                 print('识别正确:', obs_res[1])
@@ -1770,14 +1825,14 @@ class ScreenShotThread(QThread):
                                 send_list = eval(ui.lineEdit_Send_Result.text())
                                 if len(send_list) == len(z_ranking_res):
                                     z_ranking_end = copy.deepcopy(send_list)
-                                    self._signal.emit('send_ok')
+                                    self.signal.emit('send_ok')
                                     Send_Result = False
                                     break
                                 else:
                                     Send_Result = False
-                                    self._signal.emit(fail('发送数据错误！'))
+                                    self.signal.emit(fail('发送数据错误！'))
                             except:
-                                self._signal.emit('send_res')
+                                self.signal.emit('send_res')
                                 Send_Result = False
                         time.sleep(1)
                     Send_Result = False
@@ -1810,7 +1865,7 @@ class ScreenShotThread(QThread):
             self.run_flg = False
 
 
-def ScreenShot_signal_accept(msg):
+def ScreenShotsignal_accept(msg):
     try:
         if isinstance(msg, list):
             if len(msg) < 2 or msg[0] == '':
@@ -1851,7 +1906,7 @@ def ScreenShot_signal_accept(msg):
 
 
 class PlanObsThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(PlanObsThread, self).__init__()
@@ -1876,7 +1931,7 @@ class PlanObsThread(QThread):
                     # print(obs_msg)
                     if obs_msg[0] in ['10', '11']:
                         cl_request.set_current_program_scene(obs_msg[1])
-                        self._signal.emit(succeed("OBS 场景切换完成！"))
+                        self.signal.emit(succeed("OBS 场景切换完成！"))
                     elif obs_msg[0] in ['0', '1']:
                         # print(obs_msg[1])
                         cb_scene = ui.comboBox_Scenes
@@ -1890,17 +1945,17 @@ class PlanObsThread(QThread):
                                 cl_request.set_scene_item_enabled(scene_name, item_id,
                                                                   flg_enable)  # 打开视频来源
                                 break
-                        self._signal.emit(succeed("OBS 来源切换完成！"))
+                        self.signal.emit(succeed("OBS 来源切换完成！"))
                 else:
                     print('没有切换的场景！')
             except:
                 print("OBS 切换中断！")
                 flg_start['obs'] = False
-                self._signal.emit(fail("OBS 场景切换中断！"))
+                self.signal.emit(fail("OBS 场景切换中断！"))
             self.run_flg = False
 
 
-def PlanObs_signal_accept(msg):
+def PlanObssignal_accept(msg):
     ui.textBrowser.append(str(msg))
 
 
@@ -1910,7 +1965,7 @@ def PlanObs_signal_accept(msg):
 
 
 class ShootThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(ShootThread, self).__init__()
@@ -1947,11 +2002,11 @@ class ShootThread(QThread):
                 self.run_flg = False
             except:
                 print("弹射上珠参数出错！")
-                self._signal.emit(fail("弹射上珠参数出错！"))
+                self.signal.emit(fail("弹射上珠参数出错！"))
             self.run_flg = False
 
 
-def shoot_signal_accept(msg):
+def shootsignal_accept(msg):
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
 
@@ -1962,7 +2017,7 @@ def shoot_signal_accept(msg):
 
 
 class AxisThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(AxisThread, self).__init__()
@@ -1983,7 +2038,7 @@ class AxisThread(QThread):
                 continue
             print('串口运行')
             try:
-                self._signal.emit(succeed('轴复位开始...'))
+                self.signal.emit(succeed('轴复位开始...'))
                 nAxisList = [bytes.fromhex('01030B07000277EE'),
                              bytes.fromhex('02030B07000277DD'),
                              bytes.fromhex('03030B070002760C'),
@@ -1996,7 +2051,7 @@ class AxisThread(QThread):
                         s485_data['highPos'] = s485_data['highPos'] * five_axis[s485_data['nAxisNum'] - 1]
                         res = sc.GASetPrfPos(s485_data['nAxisNum'], s485_data['highPos'])
                         if res == 0:
-                            self._signal.emit(succeed('%s 轴复位完成！' % s485_data['nAxisNum']))
+                            self.signal.emit(succeed('%s 轴复位完成！' % s485_data['nAxisNum']))
                             Pos_Thread.run_flg = True
 
                             flg_start['card'] = True
@@ -2004,17 +2059,17 @@ class AxisThread(QThread):
                     else:
                         flg_start['s485'] = False
                         flg_start['card'] = False
-                        self._signal.emit(fail('复位串口未连接！'))
+                        self.signal.emit(fail('复位串口未连接！'))
                 if axis_reset:
                     for index in range(1, 6):
                         sc.card_move(index, 0)
                     sc.card_update()
                     axis_reset = False
-                self._signal.emit(succeed('轴复位完成！'))
+                self.signal.emit(succeed('轴复位完成！'))
             except:
                 print("轴复位出错！")
                 flg_start['s485'] = False
-                self._signal.emit(fail('轴复位出错！'))
+                self.signal.emit(fail('轴复位出错！'))
             self.run_flg = False
 
 
@@ -2024,7 +2079,7 @@ class AxisThread(QThread):
 
 
 class PlanCmdThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(PlanCmdThread, self).__init__()
@@ -2052,15 +2107,15 @@ class PlanCmdThread(QThread):
                 continue  # 如果选择了自动上珠，必须等到珠上齐才开始游戏
             if flg_start['card'] and action_area[1] < max_lap_count:
                 if not ui.checkBox_test.isChecked():  # 如果是测试模式，不播放主题音乐
-                    main_music_worker.toggle_enable_signal.emit(True)
+                    main_music_worker.toggle_enablesignal.emit(True)
                 Audio_Thread.run_flg = True  # 开启音频播放线程
                 Ai_Thread.run_flg = True  # 开启AI播放线程
-                self._signal.emit(succeed("运动流程：开始！"))
+                self.signal.emit(succeed("运动流程：开始！"))
                 self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
                 cb_index = ui.comboBox_plan.currentIndex()
                 time_old = int(time.time())
                 for plan_index in range(0, len(plan_list)):
-                    self._signal.emit(succeed(
+                    self.signal.emit(succeed(
                         '第%s个动作，识别在第%s区%s圈 %s秒！' %
                         (plan_index + 1, action_area[0], action_area[1], int(time.time()) - time_old)))
                     time_old = int(time.time())
@@ -2070,7 +2125,7 @@ class PlanCmdThread(QThread):
                     if (plan_list[plan_index][0] == '1' and  # 是否勾选,且在圈数范围内
                             (action_area[1] < int(float(plan_list[plan_index][1][0])) or  # 运行圈数在设定圈数范围内
                              (int(float(plan_list[plan_index][1][0])) == 0))):  # 或者设定圈数的值为 0 时，可以忽略圈数执行
-                        self._signal.emit(plan_index)  # 控制列表跟踪变色的信号
+                        self.signal.emit(plan_index)  # 控制列表跟踪变色的信号
 
                         try:
                             # print("开启机关")
@@ -2085,7 +2140,7 @@ class PlanCmdThread(QThread):
                                     if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                                         post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
                                         lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
-                                        self._signal.emit('进行中')  # 修改结果列表中的赛事状态
+                                        self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                         if flg_start['obs']:  # 非测试模式:
                                             try:
                                                 cl_request.start_record()  # 开启OBS录像
@@ -2149,7 +2204,7 @@ class PlanCmdThread(QThread):
                                 if res != 0:
                                     print("运动板通信出错！")
                                     flg_start['card'] = False
-                                    self._signal.emit(fail("运动板通信出错！"))
+                                    self.signal.emit(fail("运动板通信出错！"))
                             old_time = 0
                             for t in range(0, int(max_delay_time * 100) + 1):  # 延迟轴
                                 for index in range(len(delay_list)):
@@ -2159,7 +2214,7 @@ class PlanCmdThread(QThread):
                                 time.sleep(0.01)
                         except:
                             print("运动板运行出错！")
-                            self._signal.emit(fail("运动板通信出错！"))
+                            self.signal.emit(fail("运动板通信出错！"))
 
                         if self.run_flg:
                             try:
@@ -2172,7 +2227,7 @@ class PlanCmdThread(QThread):
                                     PlanCam_Thread.run_flg = True  # 摄像头线程
                             except:
                                 print("摄像头数据出错！")
-                                self._signal.emit(fail("摄像头数据出错！"))
+                                self.signal.emit(fail("摄像头数据出错！"))
                         try:
                             if ui.checkBox_test.isChecked():
                                 if float(plan_list[plan_index][16][0]) >= 0:
@@ -2190,13 +2245,13 @@ class PlanCmdThread(QThread):
                                         print('动作等待中！')
                                         break
                                     if not plan_list[plan_index][14][0].isdigit():
-                                        self._signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
+                                        self.signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
                                         break
                                     if len(camera_points) - 1 < abs(int(float(plan_list[plan_index][14][0]))):
-                                        self._signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
+                                        self.signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
                                         break
                                     # 判断镜头点位在运行区域内则进入下一个动作循环
-                                    self._signal.emit({'map_action': map_label_big.map_action})
+                                    self.signal.emit({'map_action': map_label_big.map_action})
                                     if (len(camera_points) > abs(int(float(plan_list[plan_index][14][0])))
                                             and (int(camera_points[abs(int(float(plan_list[plan_index][14][0])))]
                                                      [cb_index + 1][0][0]) - 100
@@ -2205,12 +2260,12 @@ class PlanCmdThread(QThread):
                                     t_over += 1
                                     if plan_list[plan_index][16][0] != '0':
                                         if t_over >= abs(float(plan_list[plan_index][16][0])) * 10:  # 每个动作超时时间
-                                            self._signal.emit(fail('第 %s 个动作 等待超时！' % str(plan_index + 1)))
+                                            self.signal.emit(fail('第 %s 个动作 等待超时！' % str(plan_index + 1)))
                                             print('等待超时！')
                                             break
                                     else:
                                         if t_over >= 200:
-                                            self._signal.emit(fail('第 %s 个动作 等待超过15秒！' % str(plan_index + 1)))
+                                            self.signal.emit(fail('第 %s 个动作 等待超过15秒！' % str(plan_index + 1)))
                                             print('等待超过20秒！')
                                             break
                                     if self.cmd_next:  # 手动进入下一个动作
@@ -2218,9 +2273,9 @@ class PlanCmdThread(QThread):
                                     time.sleep(0.1)
                         except:
                             print("动作等待数据出错！")
-                            self._signal.emit(fail("动作等待数据出错！"))
+                            self.signal.emit(fail("动作等待数据出错！"))
                         if self.cmd_next:  # 快速执行下一个动作
-                            self._signal.emit(succeed("跳过动作 %s！" % (plan_index + 1)))
+                            self.signal.emit(succeed("跳过动作 %s！" % (plan_index + 1)))
                             self.cmd_next = False
                             continue
                         if self.run_flg:
@@ -2232,7 +2287,7 @@ class PlanCmdThread(QThread):
                                     PlanObs_Thread.run_flg = True  # 切换场景线程
                             except:
                                 print("场景数据出错！")
-                                self._signal.emit(fail("场景数据出错！"))
+                                self.signal.emit(fail("场景数据出错！"))
                 # 强制中断情况处理
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断情况下的动作
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
@@ -2240,12 +2295,12 @@ class PlanCmdThread(QThread):
                     sc.GASetExtDoBit(3, 1)  # 打开终点开关
                     sc.GASetExtDoBit(1, 0)  # 关闭闸门
                     sc.GASetExtDoBit(0, 0)  # 关闭弹射
-                    main_music_worker.toggle_enable_signal.emit(False)
-                    self._signal.emit(succeed("运动流程：中断！"))
+                    main_music_worker.toggle_enablesignal.emit(False)
+                    self.signal.emit(succeed("运动流程：中断！"))
                 if ui.checkBox_test.isChecked():
-                    self._signal.emit(succeed("测试流程：完成！"))
+                    self.signal.emit(succeed("测试流程：完成！"))
                     self.run_flg = False  # 测试模式，不自动关闭任何机关
-                else:   # 每次循环增加一圈，初始化动作位置为0，初始化地图位置为0
+                else:  # 每次循环增加一圈，初始化动作位置为0，初始化地图位置为0
                     map_label_big.map_action = 0
                     action_area[2] = 1  # 写入标志 1 为独占写入
                     action_area[0] = 0
@@ -2256,10 +2311,10 @@ class PlanCmdThread(QThread):
                     sc.GASetExtDoBit(3, 1)  # 打开终点开关
                     sc.GASetExtDoBit(1, 0)  # 关闭闸门
                     sc.GASetExtDoBit(0, 0)  # 关闭弹射
-                self._signal.emit(succeed("运动流程：完成！"))
+                self.signal.emit(succeed("运动流程：完成！"))
                 print('动作已完成！')
                 if not flg_start['card']:
-                    self._signal.emit(fail("运动卡未链接！"))
+                    self.signal.emit(fail("运动卡未链接！"))
                 self.run_flg = False
 
 
@@ -2291,12 +2346,12 @@ def signal_accept(msg):
 
 
 class UiWorker(QObject):
-    toggle_enable_signal = Signal(object)
+    toggle_enablesignal = Signal(object)
 
     def __init__(self, z_object):
         super().__init__()
         self.z_object = z_object
-        self.toggle_enable_signal.connect(self.toggle_enable)
+        self.toggle_enablesignal.connect(self.toggle_enable)
 
     def toggle_enable(self, msg):
         if isinstance(self.z_object, QTableWidget):
@@ -2315,7 +2370,7 @@ def keyboard_release(key):
         try:
             if key == key.up:
                 print('前')
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[1] = pValue[1] + 30000 * int(five_key[1])
@@ -2327,7 +2382,7 @@ def keyboard_release(key):
 
             if key == key.down:
                 print('后')
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[1] = pValue[1] - 30000 * int(five_key[1])
@@ -2339,7 +2394,7 @@ def keyboard_release(key):
 
             if key == key.left:
                 print('左')
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[0] = pValue[0] - 30000 * int(five_key[0])
@@ -2351,7 +2406,7 @@ def keyboard_release(key):
 
             if key == key.right:
                 print('右')
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[0] = pValue[0] + 30000 * int(five_key[0])
@@ -2363,7 +2418,7 @@ def keyboard_release(key):
 
             if key == key.insert:
                 print('上')
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[2] = pValue[2] - 30000 * int(five_key[2])
@@ -2375,7 +2430,7 @@ def keyboard_release(key):
 
             if key == key.delete:
                 print('下')
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[2] = pValue[2] + 30000 * int(five_key[2])
@@ -2387,7 +2442,7 @@ def keyboard_release(key):
 
             if key == key.home:
                 print('头左')
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[3] = pValue[3] - 30000 * int(five_key[3])
@@ -2397,7 +2452,7 @@ def keyboard_release(key):
 
             if key == key.end:
                 print('头右')
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[3] = pValue[3] + 30000 * int(five_key[3])
@@ -2407,7 +2462,7 @@ def keyboard_release(key):
 
             if key == key.page_up:
                 print('头上')
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[4] = pValue[4] + 30000 * int(five_key[4])
@@ -2417,7 +2472,7 @@ def keyboard_release(key):
 
             if key == key.page_down:
                 print('头下')
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 flg_key_run = True
                 Pos_Thread.run_flg = False
                 pValue[4] = pValue[4] - 30000 * int(five_key[4])
@@ -2430,10 +2485,10 @@ def keyboard_release(key):
             # print(key)
         try:
             if key.char == '/':
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 s485.cam_zoom_off()
             elif key.char == '*':
-                tb_step_worker.toggle_enable_signal.emit(ui.checkBox_test.isChecked())
+                tb_step_worker.toggle_enablesignal.emit(ui.checkBox_test.isChecked())
                 s485.cam_zoom_off()
         except:
             pass
@@ -2455,7 +2510,7 @@ def keyboard_press(key):
             if key == key.up:
                 if flg_key_run:
                     print('前')
-                    tb_step_worker.toggle_enable_signal.emit(False)
+                    tb_step_worker.toggle_enablesignal.emit(False)
                     pos = 2000000 * int(five_key[1])
                     if pos <= 0:
                         pos = 0
@@ -2465,7 +2520,7 @@ def keyboard_press(key):
             elif key == key.down:
                 if flg_key_run:
                     print('后')
-                    tb_step_worker.toggle_enable_signal.emit(False)
+                    tb_step_worker.toggle_enablesignal.emit(False)
                     pos = -2000000 * int(five_key[1])
                     if pos <= 0:
                         pos = 0
@@ -2475,7 +2530,7 @@ def keyboard_press(key):
             elif key == key.left:
                 if flg_key_run:
                     print('左')
-                    tb_step_worker.toggle_enable_signal.emit(False)
+                    tb_step_worker.toggle_enablesignal.emit(False)
                     pos = -2000000 * int(five_key[0])
                     if pos <= 0:
                         pos = 0
@@ -2485,7 +2540,7 @@ def keyboard_press(key):
             elif key == key.right:
                 if flg_key_run:
                     print('右')
-                    tb_step_worker.toggle_enable_signal.emit(False)
+                    tb_step_worker.toggle_enablesignal.emit(False)
                     pos = 2000000 * int(five_key[0])
                     if pos <= 0:
                         pos = 0
@@ -2495,7 +2550,7 @@ def keyboard_press(key):
             elif key == key.insert:
                 if flg_key_run:
                     print('上')
-                    tb_step_worker.toggle_enable_signal.emit(False)
+                    tb_step_worker.toggle_enablesignal.emit(False)
                     pos = -2000000 * int(five_key[2])
                     if pos <= 0:
                         pos = 0
@@ -2505,7 +2560,7 @@ def keyboard_press(key):
             elif key == key.delete:
                 if flg_key_run:
                     print('下')
-                    tb_step_worker.toggle_enable_signal.emit(False)
+                    tb_step_worker.toggle_enablesignal.emit(False)
                     pos = 2000000 * int(five_key[2])
                     if pos <= 0:
                         pos = 0
@@ -2515,28 +2570,28 @@ def keyboard_press(key):
             elif key == key.home:
                 if flg_key_run:
                     print('头左')
-                    tb_step_worker.toggle_enable_signal.emit(False)
+                    tb_step_worker.toggle_enablesignal.emit(False)
                     sc.card_move(4, pos=-2000000 * int(five_key[3]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.end:
                 if flg_key_run:
                     print('头右')
-                    tb_step_worker.toggle_enable_signal.emit(False)
+                    tb_step_worker.toggle_enablesignal.emit(False)
                     sc.card_move(4, pos=2000000 * int(five_key[3]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_up:
                 if flg_key_run:
                     print('头下')
-                    tb_step_worker.toggle_enable_signal.emit(False)
+                    tb_step_worker.toggle_enablesignal.emit(False)
                     sc.card_move(5, pos=2000000 * int(five_key[4]), vel=50)
                     sc.card_update()
                     flg_key_run = False
             elif key == key.page_down:
                 if flg_key_run:
                     print('头上')
-                    tb_step_worker.toggle_enable_signal.emit(False)
+                    tb_step_worker.toggle_enablesignal.emit(False)
                     sc.card_move(5, pos=-2000000 * int(five_key[4]), vel=50)
                     sc.card_update()
                     flg_key_run = False
@@ -2545,10 +2600,10 @@ def keyboard_press(key):
             pass
         try:
             if key.char == '/':
-                tb_step_worker.toggle_enable_signal.emit(False)
+                tb_step_worker.toggle_enablesignal.emit(False)
                 s485.cam_zoom_move(5)
             elif key.char == '*':
-                tb_step_worker.toggle_enable_signal.emit(False)
+                tb_step_worker.toggle_enablesignal.emit(False)
                 s485.cam_zoom_move(-5)
         except:
             pass
@@ -3738,7 +3793,7 @@ def show_points(color):
 
 
 class AudioThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(AudioThread, self).__init__()
@@ -3777,7 +3832,7 @@ class AudioThread(QThread):
                     break
 
 
-def audio_signal_accept(msg):
+def audiosignal_accept(msg):
     try:
         print(msg)
     except:
@@ -3785,7 +3840,7 @@ def audio_signal_accept(msg):
 
 
 class AiThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(AiThread, self).__init__()
@@ -3824,7 +3879,7 @@ class AiThread(QThread):
                     break
 
 
-def ai_signal_accept(msg):
+def aisignal_accept(msg):
     try:
         print(msg)
     except:
@@ -4064,7 +4119,7 @@ def lottery_data2table():  # 赛事入表
 
 
 class CardStartThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(CardStartThread, self).__init__()
@@ -4083,19 +4138,19 @@ class CardStartThread(QThread):
             res = sc.card_open(int(cardnum))
             print(res)
             if res == 0:
-                self._signal.emit(succeed('启动板卡：%s' % card_res[res]))
+                self.signal.emit(succeed('启动板卡：%s' % card_res[res]))
             else:
-                self._signal.emit(fail('板卡链接失败：%s' % card_res[res]))
+                self.signal.emit(fail('板卡链接失败：%s' % card_res[res]))
         else:
-            self._signal.emit(fail('运动卡已链接~！'))
+            self.signal.emit(fail('运动卡已链接~！'))
 
         if not flg_start['s485']:
             flg_start['s485'] = s485.cam_open()
             if flg_start['s485']:
                 Axis_Thread.run_flg = True  # 轴复位
-            self._signal.emit(succeed('串口链接：%s' % flg_start['s485']))
+            self.signal.emit(succeed('串口链接：%s' % flg_start['s485']))
         else:
-            self._signal.emit(fail('串口链接：%s' % flg_start['s485']))
+            self.signal.emit(fail('串口链接：%s' % flg_start['s485']))
         if not flg_start['obs']:
             if not Obs_Thread.isRunning():
                 Obs_Thread.start()
@@ -4109,7 +4164,7 @@ class CardStartThread(QThread):
                 flg_start['ai'] = False
 
 
-def CardStart_signal_accept(msg):
+def CardStartsignal_accept(msg):
     ui.textBrowser.append(msg)
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
@@ -4121,7 +4176,7 @@ def CardStart_signal_accept(msg):
 
 
 class TestStatusThread(QThread):
-    _signal = Signal(object)
+    signal = Signal(object)
 
     def __init__(self):
         super(TestStatusThread, self).__init__()
@@ -4148,7 +4203,7 @@ class TestStatusThread(QThread):
                     if flg_start['card']:  # 轴复位一次
                         Axis_Thread.run_flg = True
                         res_sql = query_sql()  # 加载网络设置 一次
-                        self._signal.emit(res_sql)
+                        self.signal.emit(res_sql)
 
             if not flg_start['ai_end']:  # 测试结果识别服务
                 test_ai_end()
@@ -4180,10 +4235,10 @@ class TestStatusThread(QThread):
                 except:
                     flg_start['ai'] = False
 
-            self._signal.emit('标志')
+            self.signal.emit('标志')
 
 
-def test_status_signal_accept(msg):
+def test_statussignal_accept(msg):
     if isinstance(msg, dict):
         tb_msg = ui.textBrowser_total_msg
         for k in msg:
@@ -4544,6 +4599,7 @@ class ZApp(QApplication):
             TestStatus_Thread.stop()
             listener.stop()
             ScreenShot_Thread.stop()
+            ScreenSort_Thread.stop()
             Shoot_Thread.stop()
             pygame.quit()
         except Exception as e:
@@ -4569,6 +4625,7 @@ class ZApp(QApplication):
             TestStatus_Thread.wait()
             listener.join()
             ScreenShot_Thread.wait()
+            ScreenSort_Thread.wait()
             Shoot_Thread.wait()
         except Exception as e:
             print(f"Error waiting threads: {e}")
@@ -4772,54 +4829,58 @@ if __name__ == '__main__':
     listener.start()  # 键盘监听线程 1
 
     PlanCmd_Thread = PlanCmdThread()  # 总运行方案 2
-    PlanCmd_Thread._signal.connect(signal_accept)
+    PlanCmd_Thread.signal.connect(signal_accept)
     PlanCmd_Thread.start()
 
     PlanObs_Thread = PlanObsThread()  # OBS场景切换方案 3
-    PlanObs_Thread._signal.connect(PlanObs_signal_accept)
+    PlanObs_Thread.signal.connect(PlanObssignal_accept)
     PlanObs_Thread.start()
 
     Shoot_Thread = ShootThread()  # 自动上球 3
-    Shoot_Thread._signal.connect(shoot_signal_accept)
+    Shoot_Thread.signal.connect(shootsignal_accept)
     Shoot_Thread.start()
 
     PlanCam_Thread = CamThread()  # 摄像头运行方案 4
-    PlanCam_Thread._signal.connect(signal_accept)
+    PlanCam_Thread.signal.connect(signal_accept)
     PlanCam_Thread.start()
 
     PlanBallNum_Thread = PlanBallNumThread()  # 统计过终点的球数 5
-    PlanBallNum_Thread._signal.connect(PlanBallNum_signal_accept)
+    PlanBallNum_Thread.signal.connect(PlanBallNumsignal_accept)
     PlanBallNum_Thread.start()
 
     ScreenShot_Thread = ScreenShotThread()  # 终点截图识别线程 6
-    ScreenShot_Thread._signal.connect(ScreenShot_signal_accept)
+    ScreenShot_Thread.signal.connect(ScreenShotsignal_accept)
     ScreenShot_Thread.start()
 
+    ScreenSort_Thread = ScreenSortThread()  # 终点截图识别线程 6
+    ScreenSort_Thread.signal.connect(ScreenSortsignal_accept)
+    ScreenSort_Thread.start()
+
     Axis_Thread = AxisThread()  # 轴复位 7
-    Axis_Thread._signal.connect(signal_accept)
+    Axis_Thread.signal.connect(signal_accept)
     Axis_Thread.start()
 
     Pos_Thread = PosThread()  # 实时监控各轴位置 8
-    Pos_Thread._signal.connect(pos_signal_accept)
+    Pos_Thread.signal.connect(possignal_accept)
     Pos_Thread.start()
 
     ReStart_Thread = ReStartThread()  # 循环模式 9
-    ReStart_Thread._signal.connect(restart_signal_accept)
+    ReStart_Thread.signal.connect(restartsignal_accept)
     ReStart_Thread.start()
 
     Audio_Thread = AudioThread()  # 音频线程 10
-    Audio_Thread._signal.connect(audio_signal_accept)
+    Audio_Thread.signal.connect(audiosignal_accept)
     Audio_Thread.start()
 
     Ai_Thread = AiThread()  # Ai语言线程 11
-    Ai_Thread._signal.connect(ai_signal_accept)
+    Ai_Thread.signal.connect(aisignal_accept)
     Ai_Thread.start()
 
     CardStart_Thread = CardStartThread()  # 运动卡开启线程 12
-    CardStart_Thread._signal.connect(CardStart_signal_accept)
+    CardStart_Thread.signal.connect(CardStartsignal_accept)
 
     TestStatus_Thread = TestStatusThread()  # 测试线程 13
-    TestStatus_Thread._signal.connect(test_status_signal_accept)
+    TestStatus_Thread.signal.connect(test_statussignal_accept)
     TestStatus_Thread.start()
 
     ui.pushButton_fsave.clicked.connect(save_plan_yaml)
@@ -4871,10 +4932,10 @@ if __name__ == '__main__':
     cl_event = ''  # 监听
 
     Obs_Thread = ObsThread()  # OBS启动线程
-    Obs_Thread._signal.connect(obs_signal_accept)
+    Obs_Thread.signal.connect(obssignal_accept)
 
     Source_Thread = SourceThread()  # OBS来源入表 13
-    Source_Thread.source_signal.connect(source_signal_accept)
+    Source_Thread.sourcesignal.connect(sourcesignal_accept)
 
     ui.pushButton_ObsConnect.clicked.connect(obs_open)
     ui.comboBox_Scenes.activated.connect(scenes_change)
@@ -4960,10 +5021,8 @@ if __name__ == '__main__':
     # 1. Udp 接收数据 14
     try:
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # udp_socket.bind(udpServer_addr)
-        print('Udp_socket Server Started.')
         udp_thread = UdpThread()
-        udp_thread._signal.connect(udp_signal_accept)
+        udp_thread.signal.connect(udpsignal_accept)
         udp_thread.start()
     except:
         # 使用infomation信息框
@@ -4972,20 +5031,13 @@ if __name__ == '__main__':
 
     # pingpong 发送排名 15
     tcp_ranking_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # tcp_ranking_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    # tcp_ranking_socket.bind(tcpServer_addr)
-    # tcp_ranking_socket.listen(1)
-    print('Pingpong Server Started.')
     tcp_ranking_thread = TcpRankingThread()  # 前端网页以pingpong形式发送排名数据
-    tcp_ranking_thread._signal.connect(tcp_signal_accept)
+    tcp_ranking_thread.signal.connect(tcpsignal_accept)
     tcp_ranking_thread.start()
 
     tcp_result_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    # tcp_result_socket.bind(result_tcpServer_addr)
-    # tcp_result_socket.listen(5)
     tcp_result_thread = TcpResultThread()  # 前端网页以pingpong形式发送结果数据 16
-    tcp_result_thread._signal.connect(tcp_signal_accept)
+    tcp_result_thread.signal.connect(tcpsignal_accept)
     tcp_result_thread.start()
 
     # 唤醒图像识别主机线程 17
@@ -4993,13 +5045,13 @@ if __name__ == '__main__':
     wakeup_ser.start()
 
     # 启动 HTTPServer 接收外部命令控制本程序 18
-    # httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
-    # http_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
-    # http_thread.start()
+    httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
+    http_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+    http_thread.start()
 
     # 更新数据表线程 19
     Update_Thread = UpdateThread()
-    Update_Thread._signal.connect(ranking_signal_accept)
+    Update_Thread.signal.connect(rankingsignal_accept)
     Update_Thread.start()
 
     ui.pushButton_save_Ranking.clicked.connect(save_ballsort_yaml)
