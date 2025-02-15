@@ -931,6 +931,92 @@ class Ui_MainWindow(object):
         self.frame_10.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_34 = QGridLayout(self.frame_10)
         self.gridLayout_34.setObjectName(u"gridLayout_34")
+        self.groupBox_4 = QGroupBox(self.frame_10)
+        self.groupBox_4.setObjectName(u"groupBox_4")
+        self.groupBox_4.setMaximumSize(QSize(16777215, 248))
+        self.groupBox_4.setFont(font1)
+        self.gridLayout_14 = QGridLayout(self.groupBox_4)
+        self.gridLayout_14.setObjectName(u"gridLayout_14")
+        self.gridLayout_14.setContentsMargins(-1, 0, -1, 6)
+        self.label_6 = QLabel(self.groupBox_4)
+        self.label_6.setObjectName(u"label_6")
+        self.label_6.setMaximumSize(QSize(30, 16777215))
+
+        self.gridLayout_14.addWidget(self.label_6, 1, 0, 1, 1)
+
+        self.tableWidget_Sources = QTableWidget(self.groupBox_4)
+        if (self.tableWidget_Sources.columnCount() < 3):
+            self.tableWidget_Sources.setColumnCount(3)
+        __qtablewidgetitem28 = QTableWidgetItem()
+        self.tableWidget_Sources.setHorizontalHeaderItem(0, __qtablewidgetitem28)
+        __qtablewidgetitem29 = QTableWidgetItem()
+        self.tableWidget_Sources.setHorizontalHeaderItem(1, __qtablewidgetitem29)
+        __qtablewidgetitem30 = QTableWidgetItem()
+        self.tableWidget_Sources.setHorizontalHeaderItem(2, __qtablewidgetitem30)
+        self.tableWidget_Sources.setObjectName(u"tableWidget_Sources")
+        self.tableWidget_Sources.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
+        self.tableWidget_Sources.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.tableWidget_Sources.horizontalHeader().setDefaultSectionSize(80)
+        self.tableWidget_Sources.horizontalHeader().setStretchLastSection(True)
+
+        self.gridLayout_14.addWidget(self.tableWidget_Sources, 2, 0, 1, 2)
+
+        self.comboBox_Scenes = QComboBox(self.groupBox_4)
+        self.comboBox_Scenes.setObjectName(u"comboBox_Scenes")
+
+        self.gridLayout_14.addWidget(self.comboBox_Scenes, 1, 1, 1, 1)
+
+        self.frame_22 = QFrame(self.groupBox_4)
+        self.frame_22.setObjectName(u"frame_22")
+        self.frame_22.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_22.setFrameShadow(QFrame.Shadow.Raised)
+        self.gridLayout_6 = QGridLayout(self.frame_22)
+        self.gridLayout_6.setObjectName(u"gridLayout_6")
+        self.gridLayout_6.setContentsMargins(-1, 0, -1, 0)
+        self.pushButton_ObsConnect = QPushButton(self.frame_22)
+        self.pushButton_ObsConnect.setObjectName(u"pushButton_ObsConnect")
+        self.pushButton_ObsConnect.setMinimumSize(QSize(0, 30))
+        self.pushButton_ObsConnect.setFont(font1)
+        self.pushButton_ObsConnect.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.gridLayout_6.addWidget(self.pushButton_ObsConnect, 0, 0, 1, 1)
+
+        self.pushButton_Obs_delete = QPushButton(self.frame_22)
+        self.pushButton_Obs_delete.setObjectName(u"pushButton_Obs_delete")
+        self.pushButton_Obs_delete.setMinimumSize(QSize(0, 30))
+        self.pushButton_Obs_delete.setFont(font1)
+        self.pushButton_Obs_delete.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.gridLayout_6.addWidget(self.pushButton_Obs_delete, 0, 1, 1, 1)
+
+        self.pushButton_Obs2Table = QPushButton(self.frame_22)
+        self.pushButton_Obs2Table.setObjectName(u"pushButton_Obs2Table")
+        self.pushButton_Obs2Table.setMinimumSize(QSize(0, 30))
+        self.pushButton_Obs2Table.setFont(font1)
+        self.pushButton_Obs2Table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.gridLayout_6.addWidget(self.pushButton_Obs2Table, 1, 0, 1, 1)
+
+        self.pushButton_Source2Table = QPushButton(self.frame_22)
+        self.pushButton_Source2Table.setObjectName(u"pushButton_Source2Table")
+        self.pushButton_Source2Table.setMinimumSize(QSize(0, 30))
+        self.pushButton_Source2Table.setFont(font1)
+        self.pushButton_Source2Table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.gridLayout_6.addWidget(self.pushButton_Source2Table, 1, 1, 1, 1)
+
+
+        self.gridLayout_14.addWidget(self.frame_22, 0, 0, 1, 2)
+
+
+        self.gridLayout_34.addWidget(self.groupBox_4, 1, 0, 1, 1)
+
+        self.textBrowser = QTextBrowser(self.frame_10)
+        self.textBrowser.setObjectName(u"textBrowser")
+        self.textBrowser.setReadOnly(False)
+
+        self.gridLayout_34.addWidget(self.textBrowser, 2, 0, 1, 1)
+
         self.groupBox_6 = QGroupBox(self.frame_10)
         self.groupBox_6.setObjectName(u"groupBox_6")
         self.groupBox_6.setFont(font1)
@@ -1187,119 +1273,6 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout_34.addWidget(self.groupBox_6, 0, 0, 1, 1)
-
-        self.groupBox_4 = QGroupBox(self.frame_10)
-        self.groupBox_4.setObjectName(u"groupBox_4")
-        self.groupBox_4.setMaximumSize(QSize(16777215, 248))
-        self.groupBox_4.setFont(font1)
-        self.gridLayout_14 = QGridLayout(self.groupBox_4)
-        self.gridLayout_14.setObjectName(u"gridLayout_14")
-        self.gridLayout_14.setContentsMargins(-1, 0, -1, 6)
-        self.label_6 = QLabel(self.groupBox_4)
-        self.label_6.setObjectName(u"label_6")
-        self.label_6.setMaximumSize(QSize(30, 16777215))
-
-        self.gridLayout_14.addWidget(self.label_6, 1, 0, 1, 1)
-
-        self.tableWidget_Sources = QTableWidget(self.groupBox_4)
-        if (self.tableWidget_Sources.columnCount() < 3):
-            self.tableWidget_Sources.setColumnCount(3)
-        __qtablewidgetitem28 = QTableWidgetItem()
-        self.tableWidget_Sources.setHorizontalHeaderItem(0, __qtablewidgetitem28)
-        __qtablewidgetitem29 = QTableWidgetItem()
-        self.tableWidget_Sources.setHorizontalHeaderItem(1, __qtablewidgetitem29)
-        __qtablewidgetitem30 = QTableWidgetItem()
-        self.tableWidget_Sources.setHorizontalHeaderItem(2, __qtablewidgetitem30)
-        self.tableWidget_Sources.setObjectName(u"tableWidget_Sources")
-        self.tableWidget_Sources.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
-        self.tableWidget_Sources.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
-        self.tableWidget_Sources.horizontalHeader().setDefaultSectionSize(80)
-        self.tableWidget_Sources.horizontalHeader().setStretchLastSection(True)
-
-        self.gridLayout_14.addWidget(self.tableWidget_Sources, 2, 0, 1, 2)
-
-        self.comboBox_Scenes = QComboBox(self.groupBox_4)
-        self.comboBox_Scenes.setObjectName(u"comboBox_Scenes")
-
-        self.gridLayout_14.addWidget(self.comboBox_Scenes, 1, 1, 1, 1)
-
-        self.frame_22 = QFrame(self.groupBox_4)
-        self.frame_22.setObjectName(u"frame_22")
-        self.frame_22.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_22.setFrameShadow(QFrame.Shadow.Raised)
-        self.gridLayout_6 = QGridLayout(self.frame_22)
-        self.gridLayout_6.setObjectName(u"gridLayout_6")
-        self.gridLayout_6.setContentsMargins(-1, 0, -1, 0)
-        self.pushButton_ObsConnect = QPushButton(self.frame_22)
-        self.pushButton_ObsConnect.setObjectName(u"pushButton_ObsConnect")
-        self.pushButton_ObsConnect.setMinimumSize(QSize(0, 30))
-        self.pushButton_ObsConnect.setFont(font1)
-        self.pushButton_ObsConnect.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-
-        self.gridLayout_6.addWidget(self.pushButton_ObsConnect, 0, 0, 1, 1)
-
-        self.pushButton_Obs_delete = QPushButton(self.frame_22)
-        self.pushButton_Obs_delete.setObjectName(u"pushButton_Obs_delete")
-        self.pushButton_Obs_delete.setMinimumSize(QSize(0, 30))
-        self.pushButton_Obs_delete.setFont(font1)
-        self.pushButton_Obs_delete.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-
-        self.gridLayout_6.addWidget(self.pushButton_Obs_delete, 0, 1, 1, 1)
-
-        self.pushButton_Obs2Table = QPushButton(self.frame_22)
-        self.pushButton_Obs2Table.setObjectName(u"pushButton_Obs2Table")
-        self.pushButton_Obs2Table.setMinimumSize(QSize(0, 30))
-        self.pushButton_Obs2Table.setFont(font1)
-        self.pushButton_Obs2Table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-
-        self.gridLayout_6.addWidget(self.pushButton_Obs2Table, 1, 0, 1, 1)
-
-        self.pushButton_Source2Table = QPushButton(self.frame_22)
-        self.pushButton_Source2Table.setObjectName(u"pushButton_Source2Table")
-        self.pushButton_Source2Table.setMinimumSize(QSize(0, 30))
-        self.pushButton_Source2Table.setFont(font1)
-        self.pushButton_Source2Table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-
-        self.gridLayout_6.addWidget(self.pushButton_Source2Table, 1, 1, 1, 1)
-
-
-        self.gridLayout_14.addWidget(self.frame_22, 0, 0, 1, 2)
-
-
-        self.gridLayout_34.addWidget(self.groupBox_4, 1, 0, 1, 1)
-
-        self.textBrowser = QTextBrowser(self.frame_10)
-        self.textBrowser.setObjectName(u"textBrowser")
-        self.textBrowser.setReadOnly(False)
-
-        self.gridLayout_34.addWidget(self.textBrowser, 2, 0, 1, 1)
-
-        self.groupBox_10 = QGroupBox(self.frame_10)
-        self.groupBox_10.setObjectName(u"groupBox_10")
-        self.groupBox_10.setMinimumSize(QSize(0, 50))
-        self.groupBox_10.setMaximumSize(QSize(300, 50))
-        self.groupBox_10.setFont(font1)
-        self.gridLayout_18 = QGridLayout(self.groupBox_10)
-        self.gridLayout_18.setObjectName(u"gridLayout_18")
-        self.radioButton_noball = QRadioButton(self.groupBox_10)
-        self.radioButton_noball.setObjectName(u"radioButton_noball")
-
-        self.gridLayout_18.addWidget(self.radioButton_noball, 0, 0, 1, 1)
-
-        self.radioButton_ball = QRadioButton(self.groupBox_10)
-        self.radioButton_ball.setObjectName(u"radioButton_ball")
-        self.radioButton_ball.setChecked(True)
-
-        self.gridLayout_18.addWidget(self.radioButton_ball, 0, 1, 1, 1)
-
-        self.checkBox_saveImgs = QCheckBox(self.groupBox_10)
-        self.checkBox_saveImgs.setObjectName(u"checkBox_saveImgs")
-        self.checkBox_saveImgs.setFont(font1)
-
-        self.gridLayout_18.addWidget(self.checkBox_saveImgs, 0, 2, 1, 1)
-
-
-        self.gridLayout_34.addWidget(self.groupBox_10, 3, 0, 1, 1)
 
 
         self.gridLayout_20.addWidget(self.frame_10, 0, 1, 3, 1)
@@ -1616,29 +1589,6 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout_65.addWidget(self.groupBox_8, 0, 0, 1, 1)
-
-        self.groupBox_12 = QGroupBox(self.widget)
-        self.groupBox_12.setObjectName(u"groupBox_12")
-        self.groupBox_12.setMinimumSize(QSize(50, 50))
-        self.groupBox_12.setMaximumSize(QSize(16777215, 16777215))
-        self.groupBox_12.setFont(font1)
-        self.gridLayout_31 = QGridLayout(self.groupBox_12)
-        self.gridLayout_31.setObjectName(u"gridLayout_31")
-        self.gridLayout_31.setContentsMargins(-1, 0, -1, -1)
-        self.pushButton_Draw = QPushButton(self.groupBox_12)
-        self.pushButton_Draw.setObjectName(u"pushButton_Draw")
-        self.pushButton_Draw.setMinimumSize(QSize(0, 25))
-
-        self.gridLayout_31.addWidget(self.pushButton_Draw, 0, 0, 1, 1)
-
-        self.pushButton_to_TXT = QPushButton(self.groupBox_12)
-        self.pushButton_to_TXT.setObjectName(u"pushButton_to_TXT")
-        self.pushButton_to_TXT.setMinimumSize(QSize(0, 25))
-
-        self.gridLayout_31.addWidget(self.pushButton_to_TXT, 0, 1, 1, 1)
-
-
-        self.gridLayout_65.addWidget(self.groupBox_12, 1, 0, 1, 1)
 
 
         self.gridLayout_40.addWidget(self.widget, 0, 2, 2, 1)
@@ -2998,14 +2948,8 @@ class Ui_MainWindow(object):
         self.groupBox_27 = QGroupBox(self.tab_4)
         self.groupBox_27.setObjectName(u"groupBox_27")
         self.groupBox_27.setFont(font1)
-        self.gridLayout_60 = QGridLayout(self.groupBox_27)
-        self.gridLayout_60.setObjectName(u"gridLayout_60")
-        self.gridLayout_60.setContentsMargins(-1, 0, -1, 0)
-        self.textBrowser_3 = QTextBrowser(self.groupBox_27)
-        self.textBrowser_3.setObjectName(u"textBrowser_3")
-
-        self.gridLayout_60.addWidget(self.textBrowser_3, 1, 0, 1, 1)
-
+        self.gridLayout_66 = QGridLayout(self.groupBox_27)
+        self.gridLayout_66.setObjectName(u"gridLayout_66")
         self.frame_5 = QFrame(self.groupBox_27)
         self.frame_5.setObjectName(u"frame_5")
         self.frame_5.setMinimumSize(QSize(0, 30))
@@ -3025,7 +2969,85 @@ class Ui_MainWindow(object):
         self.gridLayout_64.addWidget(self.checkBox_Flip_Vertica, 0, 1, 1, 1)
 
 
-        self.gridLayout_60.addWidget(self.frame_5, 0, 0, 1, 1)
+        self.gridLayout_66.addWidget(self.frame_5, 0, 0, 1, 1)
+
+        self.groupBox_10 = QGroupBox(self.groupBox_27)
+        self.groupBox_10.setObjectName(u"groupBox_10")
+        self.groupBox_10.setMinimumSize(QSize(0, 50))
+        self.groupBox_10.setMaximumSize(QSize(300, 50))
+        self.groupBox_10.setFont(font1)
+        self.gridLayout_18 = QGridLayout(self.groupBox_10)
+        self.gridLayout_18.setObjectName(u"gridLayout_18")
+        self.radioButton_noball = QRadioButton(self.groupBox_10)
+        self.radioButton_noball.setObjectName(u"radioButton_noball")
+
+        self.gridLayout_18.addWidget(self.radioButton_noball, 0, 0, 1, 1)
+
+        self.radioButton_ball = QRadioButton(self.groupBox_10)
+        self.radioButton_ball.setObjectName(u"radioButton_ball")
+        self.radioButton_ball.setChecked(True)
+
+        self.gridLayout_18.addWidget(self.radioButton_ball, 0, 1, 1, 1)
+
+        self.checkBox_saveImgs = QCheckBox(self.groupBox_10)
+        self.checkBox_saveImgs.setObjectName(u"checkBox_saveImgs")
+        self.checkBox_saveImgs.setFont(font1)
+
+        self.gridLayout_18.addWidget(self.checkBox_saveImgs, 0, 2, 1, 1)
+
+
+        self.gridLayout_66.addWidget(self.groupBox_10, 1, 0, 1, 1)
+
+        self.groupBox_20 = QGroupBox(self.groupBox_27)
+        self.groupBox_20.setObjectName(u"groupBox_20")
+        self.groupBox_20.setMinimumSize(QSize(50, 50))
+        self.groupBox_20.setMaximumSize(QSize(16777215, 16777215))
+        self.groupBox_20.setFont(font1)
+        self.gridLayout_60 = QGridLayout(self.groupBox_20)
+        self.gridLayout_60.setObjectName(u"gridLayout_60")
+        self.gridLayout_60.setContentsMargins(-1, 0, -1, -1)
+        self.checkBox_saveImgs_main = QCheckBox(self.groupBox_20)
+        self.checkBox_saveImgs_main.setObjectName(u"checkBox_saveImgs_main")
+        self.checkBox_saveImgs_main.setFont(font1)
+
+        self.gridLayout_60.addWidget(self.checkBox_saveImgs_main, 0, 0, 1, 1)
+
+        self.checkBox_saveImgs_monitor = QCheckBox(self.groupBox_20)
+        self.checkBox_saveImgs_monitor.setObjectName(u"checkBox_saveImgs_monitor")
+        self.checkBox_saveImgs_monitor.setFont(font1)
+
+        self.gridLayout_60.addWidget(self.checkBox_saveImgs_monitor, 0, 1, 1, 1)
+
+
+        self.gridLayout_66.addWidget(self.groupBox_20, 2, 0, 1, 1)
+
+        self.groupBox_12 = QGroupBox(self.groupBox_27)
+        self.groupBox_12.setObjectName(u"groupBox_12")
+        self.groupBox_12.setMinimumSize(QSize(50, 50))
+        self.groupBox_12.setMaximumSize(QSize(16777215, 16777215))
+        self.groupBox_12.setFont(font1)
+        self.gridLayout_31 = QGridLayout(self.groupBox_12)
+        self.gridLayout_31.setObjectName(u"gridLayout_31")
+        self.gridLayout_31.setContentsMargins(-1, 0, -1, -1)
+        self.pushButton_Draw = QPushButton(self.groupBox_12)
+        self.pushButton_Draw.setObjectName(u"pushButton_Draw")
+        self.pushButton_Draw.setMinimumSize(QSize(0, 25))
+
+        self.gridLayout_31.addWidget(self.pushButton_Draw, 0, 0, 1, 1)
+
+        self.pushButton_to_TXT = QPushButton(self.groupBox_12)
+        self.pushButton_to_TXT.setObjectName(u"pushButton_to_TXT")
+        self.pushButton_to_TXT.setMinimumSize(QSize(0, 25))
+
+        self.gridLayout_31.addWidget(self.pushButton_to_TXT, 0, 1, 1, 1)
+
+
+        self.gridLayout_66.addWidget(self.groupBox_12, 3, 0, 1, 1)
+
+        self.textBrowser_3 = QTextBrowser(self.groupBox_27)
+        self.textBrowser_3.setObjectName(u"textBrowser_3")
+
+        self.gridLayout_66.addWidget(self.textBrowser_3, 4, 0, 1, 1)
 
 
         self.gridLayout_36.addWidget(self.groupBox_27, 0, 2, 2, 1)
@@ -3041,7 +3063,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(1)
+        self.tabWidget_Ranking.setCurrentIndex(4)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3055,6 +3077,10 @@ class Ui_MainWindow(object):
         self.pushButton_update_12.setDefault(True)
         self.pushButton_fsave.setDefault(True)
         self.pushButton_rename.setDefault(True)
+        self.pushButton_ObsConnect.setDefault(True)
+        self.pushButton_Obs_delete.setDefault(True)
+        self.pushButton_Obs2Table.setDefault(True)
+        self.pushButton_Source2Table.setDefault(True)
         self.pushButton_ToTable.setDefault(True)
         self.pushButton_CardStart.setDefault(True)
         self.pushButton_CardReset.setDefault(True)
@@ -3062,10 +3088,6 @@ class Ui_MainWindow(object):
         self.pushButton_CardCloseAll.setDefault(True)
         self.pushButton_CardRun.setDefault(True)
         self.pushButton_CardStop.setDefault(True)
-        self.pushButton_ObsConnect.setDefault(True)
-        self.pushButton_Obs_delete.setDefault(True)
-        self.pushButton_Obs2Table.setDefault(True)
-        self.pushButton_Source2Table.setDefault(True)
         self.pushButton_CardRun_2.setDefault(True)
         self.pushButton_CardStop_2.setDefault(True)
         self.pushButton_CardClose.setDefault(True)
@@ -3210,6 +3232,16 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem24.setText(QCoreApplication.translate("MainWindow", u"\u8d85\u65f6", None));
         ___qtablewidgetitem25 = self.tableWidget_Step.horizontalHeaderItem(17)
         ___qtablewidgetitem25.setText(QCoreApplication.translate("MainWindow", u"OBS\u753b\u9762", None));
+        self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"OBS\u7ba1\u7406", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"\u89c6\u56fe\uff1a", None))
+        ___qtablewidgetitem26 = self.tableWidget_Sources.horizontalHeaderItem(1)
+        ___qtablewidgetitem26.setText(QCoreApplication.translate("MainWindow", u"\u6765\u6e90", None));
+        ___qtablewidgetitem27 = self.tableWidget_Sources.horizontalHeaderItem(2)
+        ___qtablewidgetitem27.setText(QCoreApplication.translate("MainWindow", u"id", None));
+        self.pushButton_ObsConnect.setText(QCoreApplication.translate("MainWindow", u"\u94fe\u63a5OBS", None))
+        self.pushButton_Obs_delete.setText(QCoreApplication.translate("MainWindow", u"\u79fb\u51fa\u8868", None))
+        self.pushButton_Obs2Table.setText(QCoreApplication.translate("MainWindow", u"\u89c6\u56fe\u5165\u8868", None))
+        self.pushButton_Source2Table.setText(QCoreApplication.translate("MainWindow", u"\u6765\u6e90\u5165\u8868", None))
         self.groupBox_6.setTitle(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5361", None))
         self.label_20.setText(QCoreApplication.translate("MainWindow", u"\u8f741\uff1a", None))
         self.label_21.setText(QCoreApplication.translate("MainWindow", u"\u8f742\uff1a", None))
@@ -3232,20 +3264,6 @@ class Ui_MainWindow(object):
         self.pushButton_CardCloseAll.setText(QCoreApplication.translate("MainWindow", u"\u5173\u5168\u90e8", None))
         self.pushButton_CardRun.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5f00\u542f", None))
         self.pushButton_CardStop.setText(QCoreApplication.translate("MainWindow", u"\u505c\u6b62", None))
-        self.groupBox_4.setTitle(QCoreApplication.translate("MainWindow", u"OBS\u7ba1\u7406", None))
-        self.label_6.setText(QCoreApplication.translate("MainWindow", u"\u89c6\u56fe\uff1a", None))
-        ___qtablewidgetitem26 = self.tableWidget_Sources.horizontalHeaderItem(1)
-        ___qtablewidgetitem26.setText(QCoreApplication.translate("MainWindow", u"\u6765\u6e90", None));
-        ___qtablewidgetitem27 = self.tableWidget_Sources.horizontalHeaderItem(2)
-        ___qtablewidgetitem27.setText(QCoreApplication.translate("MainWindow", u"id", None));
-        self.pushButton_ObsConnect.setText(QCoreApplication.translate("MainWindow", u"\u94fe\u63a5OBS", None))
-        self.pushButton_Obs_delete.setText(QCoreApplication.translate("MainWindow", u"\u79fb\u51fa\u8868", None))
-        self.pushButton_Obs2Table.setText(QCoreApplication.translate("MainWindow", u"\u89c6\u56fe\u5165\u8868", None))
-        self.pushButton_Source2Table.setText(QCoreApplication.translate("MainWindow", u"\u6765\u6e90\u5165\u8868", None))
-        self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u4e3b\u673a\u5f55\u56fe\u64cd\u4f5c", None))
-        self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
-        self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
-        self.checkBox_saveImgs.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb\u5f55\u5c4f", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_1), QCoreApplication.translate("MainWindow", u"\u8def\u5f84\u8bbe\u7f6e", None))
         self.groupBox_21.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u955c\u5934\u70b9\u4f4d\u8bbe\u7f6e", None))
         self.pushButton_del_camera.setText(QCoreApplication.translate("MainWindow", u"\u51cf\u5c11\u70b9\u4f4d", None))
@@ -3295,9 +3313,6 @@ class Ui_MainWindow(object):
         self.label_87.setText(QCoreApplication.translate("MainWindow", u"\u7d22\u5c3c:", None))
         self.label_88.setText(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7:", None))
         self.label_89.setText(QCoreApplication.translate("MainWindow", u"\u6838\u5bf9:", None))
-        self.groupBox_12.setTitle(QCoreApplication.translate("MainWindow", u"\u5730\u56fe\u5212\u533a\u7f16\u8f91\u5236\u4f5c", None))
-        self.pushButton_Draw.setText(QCoreApplication.translate("MainWindow", u"\u753b\u56fe\u5de5\u5177", None))
-        self.pushButton_to_TXT.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u6362TXT", None))
         self.groupBox_monitor_cam.setTitle(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
         self.label_monitor_picture.setText("")
         self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u53e3\u663e\u793a", None))
@@ -3659,6 +3674,18 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Ch_10.setText(QCoreApplication.translate("MainWindow", u"\u767d", None))
         self.pushButton_Save_Ball.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u5f39\u73e0", None))
         self.groupBox_27.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u673a\u63a7\u5236", None))
+        self.checkBox_Flip_Horizontal.setText(QCoreApplication.translate("MainWindow", u"\u6c34\u5e73\u7ffb\u8f6c", None))
+        self.checkBox_Flip_Vertica.setText(QCoreApplication.translate("MainWindow", u"\u5bf9\u89d2\u7ffb\u8f6c", None))
+        self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u4e3b\u673a\u5f55\u56fe\u64cd\u4f5c", None))
+        self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
+        self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
+        self.checkBox_saveImgs.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb\u5f55\u5c4f", None))
+        self.groupBox_20.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u5934\u5f55\u56fe\u64cd\u4f5c", None))
+        self.checkBox_saveImgs_main.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u5934", None))
+        self.checkBox_saveImgs_monitor.setText(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u5934", None))
+        self.groupBox_12.setTitle(QCoreApplication.translate("MainWindow", u"\u5730\u56fe\u5212\u533a\u7f16\u8f91\u5236\u4f5c", None))
+        self.pushButton_Draw.setText(QCoreApplication.translate("MainWindow", u"\u753b\u56fe\u5de5\u5177", None))
+        self.pushButton_to_TXT.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u6362TXT", None))
         self.textBrowser_3.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
@@ -3706,8 +3733,6 @@ class Ui_MainWindow(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-inde"
                         "nt:0; text-indent:0px;\"><br /></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
-        self.checkBox_Flip_Horizontal.setText(QCoreApplication.translate("MainWindow", u"\u6c34\u5e73\u7ffb\u8f6c", None))
-        self.checkBox_Flip_Vertica.setText(QCoreApplication.translate("MainWindow", u"\u5bf9\u89d2\u7ffb\u8f6c", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_4), QCoreApplication.translate("MainWindow", u"\u53c2\u6570\u8bbe\u7f6e", None))
     # retranslateUi
 

@@ -326,6 +326,21 @@ def get_picture(scence_current):
         return [image_byte, '[1]', 'obs']
 
 
+def obs_save_image(save_path='d:/img/'):
+    if os.path.exists(save_path):
+        while ui.checkBox_saveImgs_main.isChecked():
+            resp = cl_request.save_source_screenshot('终点1', "jpg", '%s%s.jpg' % (save_path, time.time()), 1920,
+                                                     1080, 100)
+            time.sleep(2)
+
+def obs_save_thread():
+    global obs_save_t
+    if not obs_save_t.is_alive():
+        obs_save_t = threading.Thread(target=obs_save_image, daemon=True)
+        obs_save_t.start()
+
+
+
 # obs 脚本 obs_script_time.py 请求
 def obs_script_request():
     res = requests.get(url="%s/start" % obs_script_addr)
@@ -1690,7 +1705,7 @@ class PlanBallNumThread(QThread):
                 tcp_ranking_thread.sleep_time = 0.5  # 恢复正常前端排名数据包发送频率
                 if screen_sort:
                     ScreenShot_Thread.run_flg = True  # 终点截图识别线程
-                ObsEnd_Thread.ball_flg = True # 结算页标志2
+                ObsEnd_Thread.ball_flg = True  # 结算页标志2
                 Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                 Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
                 main_music_worker.toggle_enablesignal.emit(False)
@@ -1863,7 +1878,7 @@ class ScreenShotThread(QThread):
                     ui.radioButton_stop_betting.click()  # 封盘
                     ui.checkBox_black_screen.click()
 
-            ObsEnd_Thread.screen_flg = True # 结算页标志1
+            ObsEnd_Thread.screen_flg = True  # 结算页标志1
 
             self.run_flg = False
 
@@ -4539,9 +4554,9 @@ def my_test():
     # lab_p = ui.label_main_picture
     # lab_p.setPixmap(pixmap)
 
-    # # resp = cl_requst.get_source_screenshot('终点2', "jpg", 1920, 1080, 100)
-    # # resp = cl_requst.save_source_screenshot('终点1', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
-    # # resp = cl_requst.save_source_screenshot('终点2', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
+    # resp = cl_requst.get_source_screenshot('终点2', "jpg", 1920, 1080, 100)
+    # resp = cl_requst.save_source_screenshot('终点1', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
+    # resp = cl_requst.save_source_screenshot('终点2', "jpg", 'd:/img/%s.jpg' % (time.time()), 1920, 1080, 100)
 
 
 def clean_browser(textBrowser):
@@ -4602,7 +4617,7 @@ class ZApp(QApplication):
             TestStatus_Thread.stop()
             listener.stop()
             ScreenShot_Thread.stop()
-            ScreenSort_Thread.stop()
+            ObsEnd_Thread.stop()
             Shoot_Thread.stop()
             pygame.quit()
         except Exception as e:
@@ -4628,7 +4643,7 @@ class ZApp(QApplication):
             TestStatus_Thread.wait()
             listener.join()
             ScreenShot_Thread.wait()
-            ScreenSort_Thread.wait()
+            ObsEnd_Thread.wait()
             Shoot_Thread.wait()
         except Exception as e:
             print(f"Error waiting threads: {e}")
@@ -4942,6 +4957,10 @@ if __name__ == '__main__':
 
     ui.pushButton_ObsConnect.clicked.connect(obs_open)
     ui.comboBox_Scenes.activated.connect(scenes_change)
+
+    obs_save_t = threading.Thread(target=obs_save_image, daemon=True)
+    obs_save_t.start()
+    ui.checkBox_saveImgs_main.checkStateChanged.connect(obs_save_thread)
 
     "**************************OBS*****************************"
 
