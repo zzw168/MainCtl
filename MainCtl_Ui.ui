@@ -3485,45 +3485,6 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="1">
-                    <widget class="QLineEdit" name="lineEdit_result_send">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大圈数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="2">
-                    <widget class="QPushButton" name="pushButton_Send_Res">
-                     <property name="minimumSize">
-                      <size>
-                       <width>50</width>
-                       <height>10</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>发送结果</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0" colspan="2">
-                    <widget class="QCheckBox" name="checkBox_ShowUdp">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>显示服务器数据</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="5" column="0" colspan="3">
                     <widget class="QTextBrowser" name="textBrowser_background_data">
                      <property name="minimumSize">
@@ -3554,6 +3515,19 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_88">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>监控:</string>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="1" column="1" colspan="2">
                     <widget class="QWidget" name="widget_camera_monitor" native="true">
                      <property name="minimumSize">
@@ -3574,6 +3548,32 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="3" column="1">
+                    <widget class="QLineEdit" name="lineEdit_result_send">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大圈数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="0" colspan="2">
+                    <widget class="QCheckBox" name="checkBox_ShowUdp">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>显示服务器数据</string>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="0" column="0">
                     <widget class="QLabel" name="label_87">
                      <property name="minimumSize">
@@ -3587,19 +3587,6 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_88">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>监控:</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="2" column="0">
                     <widget class="QLabel" name="label_89">
                      <property name="minimumSize">
@@ -3610,6 +3597,22 @@
                      </property>
                      <property name="text">
                       <string>核对:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="2">
+                    <widget class="QPushButton" name="pushButton_Send_Res">
+                     <property name="minimumSize">
+                      <size>
+                       <width>50</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background:rgb(0,255,0)</string>
+                     </property>
+                     <property name="text">
+                      <string>发送结果</string>
                      </property>
                     </widget>
                    </item>
@@ -4073,14 +4076,8 @@
                   <property name="title">
                    <string>终点设置</string>
                   </property>
-                  <layout class="QGridLayout" name="gridLayout_48">
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>6</number>
-                   </property>
-                   <item row="0" column="0">
+                  <layout class="QGridLayout" name="gridLayout_67">
+                   <item row="0" column="0" colspan="2">
                     <widget class="QGroupBox" name="groupBox_25">
                      <property name="minimumSize">
                       <size>
@@ -4218,6 +4215,26 @@
                       </size>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_47">
+                      <item row="2" column="0">
+                       <widget class="QLabel" name="label_41">
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>10</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>统计球时间：</string>
+                        </property>
+                       </widget>
+                      </item>
                       <item row="2" column="1">
                        <widget class="QLineEdit" name="lineEdit_time_count_ball">
                         <property name="minimumSize">
@@ -4254,46 +4271,6 @@
                         </property>
                         <property name="text">
                          <string>发送结果时间：</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="0">
-                       <widget class="QLabel" name="label_41">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>统计球时间：</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="2">
-                       <widget class="QLabel" name="label_29">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>秒</string>
                         </property>
                        </widget>
                       </item>
@@ -4336,8 +4313,8 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="3">
-                       <widget class="QPushButton" name="pushButton_CardRun_2">
+                      <item row="0" column="2">
+                       <widget class="QLabel" name="label_29">
                         <property name="minimumSize">
                          <size>
                           <width>0</width>
@@ -4351,18 +4328,27 @@
                           <bold>true</bold>
                          </font>
                         </property>
-                        <property name="focusPolicy">
-                         <enum>Qt::FocusPolicy::NoFocus</enum>
-                        </property>
                         <property name="text">
-                         <string>开始</string>
-                        </property>
-                        <property name="default">
-                         <bool>true</bool>
+                         <string>秒</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="3">
+                     </layout>
+                    </widget>
+                   </item>
+                   <item row="1" column="1" rowspan="2">
+                    <widget class="QGroupBox" name="groupBox_37">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                     <property name="title">
+                      <string>控制</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_48">
+                      <item row="1" column="1">
                        <widget class="QPushButton" name="pushButton_CardStop_2">
                         <property name="minimumSize">
                          <size>
@@ -4380,8 +4366,98 @@
                         <property name="focusPolicy">
                          <enum>Qt::FocusPolicy::NoFocus</enum>
                         </property>
+                        <property name="styleSheet">
+                         <string notr="true">background:rgb(248,0,0)</string>
+                        </property>
                         <property name="text">
                          <string>停止</string>
+                        </property>
+                        <property name="default">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1">
+                       <widget class="QPushButton" name="pushButton_CardClose">
+                        <property name="minimumSize">
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::FocusPolicy::NoFocus</enum>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">background:rgb(255,240,0)</string>
+                        </property>
+                        <property name="text">
+                         <string>关闭机关</string>
+                        </property>
+                        <property name="default">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QPushButton" name="pushButton_CardRun_2">
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>10</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::FocusPolicy::NoFocus</enum>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">background:rgb(0,240,0)</string>
+                        </property>
+                        <property name="text">
+                         <string>开始</string>
+                        </property>
+                        <property name="default">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="1">
+                       <widget class="QPushButton" name="pushButton_Cardreset">
+                        <property name="minimumSize">
+                         <size>
+                          <width>80</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="focusPolicy">
+                         <enum>Qt::FocusPolicy::NoFocus</enum>
+                        </property>
+                        <property name="styleSheet">
+                         <string notr="true">background:rgb(0,255,220)</string>
+                        </property>
+                        <property name="text">
+                         <string>复位</string>
                         </property>
                         <property name="default">
                          <bool>true</bool>
@@ -4400,90 +4476,6 @@
                       </size>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_43">
-                      <item row="1" column="3">
-                       <widget class="QFrame" name="frame_32">
-                        <property name="minimumSize">
-                         <size>
-                          <width>20</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="frameShape">
-                         <enum>QFrame::Shape::StyledPanel</enum>
-                        </property>
-                        <property name="frameShadow">
-                         <enum>QFrame::Shadow::Raised</enum>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="3">
-                       <widget class="QFrame" name="frame_31">
-                        <property name="minimumSize">
-                         <size>
-                          <width>20</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="frameShape">
-                         <enum>QFrame::Shape::StyledPanel</enum>
-                        </property>
-                        <property name="frameShadow">
-                         <enum>QFrame::Shadow::Raised</enum>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="4">
-                       <widget class="QPushButton" name="pushButton_CardClose">
-                        <property name="minimumSize">
-                         <size>
-                          <width>80</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="focusPolicy">
-                         <enum>Qt::FocusPolicy::NoFocus</enum>
-                        </property>
-                        <property name="text">
-                         <string>关闭机关</string>
-                        </property>
-                        <property name="default">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="4">
-                       <widget class="QPushButton" name="pushButton_Cardreset">
-                        <property name="minimumSize">
-                         <size>
-                          <width>80</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="focusPolicy">
-                         <enum>Qt::FocusPolicy::NoFocus</enum>
-                        </property>
-                        <property name="text">
-                         <string>复位</string>
-                        </property>
-                        <property name="default">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="0" column="2">
                        <widget class="QLineEdit" name="lineEdit_ball_start">
                         <property name="minimumSize">
@@ -4548,6 +4540,32 @@
                         </property>
                        </widget>
                       </item>
+                      <item row="1" column="1">
+                       <widget class="QLabel" name="label_7">
+                        <property name="minimumSize">
+                         <size>
+                          <width>0</width>
+                          <height>10</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>150</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>过终点球数：</string>
+                        </property>
+                       </widget>
+                      </item>
                       <item row="0" column="1">
                        <widget class="QLabel" name="label_8">
                         <property name="minimumSize">
@@ -4574,29 +4592,35 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="1">
-                       <widget class="QLabel" name="label_7">
+                      <item row="1" column="3">
+                       <widget class="QFrame" name="frame_32">
                         <property name="minimumSize">
                          <size>
-                          <width>0</width>
+                          <width>20</width>
                           <height>10</height>
                          </size>
                         </property>
-                        <property name="maximumSize">
+                        <property name="frameShape">
+                         <enum>QFrame::Shape::StyledPanel</enum>
+                        </property>
+                        <property name="frameShadow">
+                         <enum>QFrame::Shadow::Raised</enum>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="3">
+                       <widget class="QFrame" name="frame_31">
+                        <property name="minimumSize">
                          <size>
-                          <width>150</width>
-                          <height>16777215</height>
+                          <width>20</width>
+                          <height>10</height>
                          </size>
                         </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
+                        <property name="frameShape">
+                         <enum>QFrame::Shape::StyledPanel</enum>
                         </property>
-                        <property name="text">
-                         <string>过终点球数：</string>
+                        <property name="frameShadow">
+                         <enum>QFrame::Shadow::Raised</enum>
                         </property>
                        </widget>
                       </item>
