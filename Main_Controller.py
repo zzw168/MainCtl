@@ -310,7 +310,7 @@ def get_picture(scence_current):
         'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
     }
     try:
-        res = requests.post(url=recognition_addr, data=form_data, timeout=5)
+        res = requests.post(url=recognition_addr, data=form_data, timeout=8)
         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
         r_img = r_list[0]
         if os.path.exists(ui.lineEdit_Image_Path.text()):
@@ -549,7 +549,7 @@ def color_to_num(res):  # 按最新排名排列数组
     arr_res = []
     for r in res:
         for i in range(0, len(init_array)):
-            if r[0] == init_array[i][5]:
+            if r[5] == init_array[i][5]:
                 arr_res.append(i + 1)
     for i in range(0, len(arr_res)):
         for j in range(0, len(z_ranking_res)):
@@ -966,7 +966,7 @@ class UdpThread(QThread):
                         con_data.append(
                             [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
                              con_item['y1']])
-                    color_to_num(con_data)
+                    color_to_num(ranking_array)
 
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
@@ -1630,6 +1630,7 @@ class PlanBallNumThread(QThread):
             print('正在接收运动卡输入信息！')
             try:
                 res = sc.GASetDiReverseCount()  # 输入次数归0
+                tcp_ranking_thread.sleep_time = 0.1  # 终点前端排名时间发送设置
                 time_now = time.time()
                 time_old = time.time()
                 sec_ = 0
@@ -1650,8 +1651,8 @@ class PlanBallNumThread(QThread):
                                         tcp_ranking_thread.send_time_flg = True
                                 self.signal.emit(num)
                                 num_old = num
-                            if num > 3 and screen_sort:
-                                ScreenSort_Thread.run_flg = True
+                            if num > balls_count - 2 and screen_sort:
+                                ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                                 screen_sort = False
                             if num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
                                 break
@@ -1686,9 +1687,10 @@ class PlanBallNumThread(QThread):
                     flg_start['card'] = False
                     self.signal.emit(fail("运动板x输入通信出错！"))
 
-                tcp_ranking_thread.sleep_time = 1  # 恢复正常前端排名数据包发送频率
-                tcp_ranking_thread.run_flg = False  # 关闭排名
-                ScreenShot_Thread.run_flg = True  # 终点截图识别线程
+                tcp_ranking_thread.sleep_time = 0.5  # 恢复正常前端排名数据包发送频率
+                if screen_sort:
+                    ScreenShot_Thread.run_flg = True  # 终点截图识别线程
+                ObsEnd_Thread.ball_flg = True # 结算页标志2
                 Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                 Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
                 main_music_worker.toggle_enablesignal.emit(False)
@@ -1719,66 +1721,54 @@ def PlanBallNumsignal_accept(msg):
         scroll_to_bottom(ui.textBrowser_msg)
 
 
-class ScreenSortThread(QThread):
+class ObsEndThread(QThread):
     """
-    ScreenSortThread(QThread) 实时结果截图线程
+    ObsEndThread(QThread) 实时结果截图线程
     """
     signal = Signal(object)
 
     def __init__(self):
-        super(ScreenSortThread, self).__init__()
-        self.run_flg = False
+        super(ObsEndThread, self).__init__()
+        self.screen_flg = False
+        self.ball_flg = False
         self.running = True
 
     def stop(self):
-        self.run_flg = False
+        self.screen_flg = False
+        self.ball_flg = False
         self.running = False  # 修改标志位，线程优雅退出
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
-        global ball_sort
         while self.running:
-            time.sleep(0.1)
-            if not self.run_flg:
+            time.sleep(1)
+            if not (self.screen_flg and self.ball_flg):
                 continue
-            print('实时截图结果识别运行！')
-            self.signal.emit(succeed('实时截图结果识别运行！'))
-            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
-            if obs_res:
-                obs_list = eval(obs_res[1])
-                if len(obs_list) > 2:
-                    print(obs_list)
-                    for i in range(0, len(obs_list)):  # 冒泡排序
-                        for j in range(0, len(ranking_array)):
-                            if ranking_array[j][5] == obs_list[i]:
-                                ranking_array[j][6] = max_area_count
-                                ranking_array[j][8] = max_lap_count - 1
-                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                self.signal.emit(obs_res)
-
-            self.run_flg = False
-
-
-def ScreenSortsignal_accept(msg):
-    try:
-        if isinstance(msg, list):
-            if len(msg) < 2 or msg[0] == '':
+            print('结算页面运行！')
+            if not flg_start['obs']:
                 return
-            img = msg[0]
-            pixmap = QPixmap()
-            pixmap.loadFromData(img)
-            pixmap = pixmap.scaled(int(400 * 1.8), int(225 * 1.8))
-            if msg[2] == 'obs':
-                ui.lineEdit_Main_Camera.setText(str(main_Camera))
-                if ui.checkBox_main_camera.isChecked():
-                    main_camera_ui.label_picture.setPixmap(pixmap)
-                ui.label_main_picture.setPixmap(pixmap)
-        else:
-            ui.textBrowser.append(str(msg))
-            ui.textBrowser_msg.append(str(msg))
-            scroll_to_bottom(ui.textBrowser_msg)
-    except:
-        print('OBS 操作失败！')
+            try:
+                requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
+                tcp_result_thread.send_type = 'updata'
+                tcp_result_thread.run_flg = True
+                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
+                                                  True)  # 打开视频来源
+                time.sleep(0.1)
+                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
+                                                  False)  # 打开视频来源
+                time.sleep(0.1)
+                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
+                                                  False)  # 打开视频来源
+            except:
+                print('OBS 切换操作失败！')
+                flg_start['obs'] = False
+
+            self.screen_flg = False
+            self.ball_flg = False
+
+
+def ObsEndsignal_accept(msg):
+    print(msg)
 
 
 '''
@@ -1800,6 +1790,8 @@ class ScreenShotThread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
+        global ball_sort
+        global ranking_array
         global lottery_term
         global betting_end_time
         global Send_Result
@@ -1811,20 +1803,23 @@ class ScreenShotThread(QThread):
                 continue
             print('截图结果识别运行！')
             self.signal.emit(succeed('截图结果识别运行！'))
-            t_count = ui.lineEdit_time_send_result.text()
-            if t_count.isdigit():
-                t_count = int(t_count)
-            else:
-                t_count = 5
-            for t in range(t_count, 0, -1):
-                # 开始倒数截图识别
-                if int(ui.lineEdit_ball_end.text()) >= balls_start:  # 当全部球到达终点，则跳出倒数
-                    break
-                print('结果倒数：', t)
-                time.sleep(1)
+
             obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
-                main_Camera = camera_to_num(eval(obs_res[1]))
+                obs_list = eval(obs_res[1])
+                main_Camera = camera_to_num(obs_list)
+                if len(obs_list) > 2:
+                    print(obs_list)
+                    for i in range(0, len(obs_list)):
+                        for j in range(0, len(ranking_array)):
+                            if ranking_array[j][5] == obs_list[i]:
+                                ranking_array[j][6] = max_area_count
+                                ranking_array[j][8] = max_lap_count - 1
+                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                        ball_sort[max_area_count][max_lap_count - 1].append('')
+                        ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
+                    color_to_num(ranking_array)
+                    print(ranking_array)
                 self.signal.emit(obs_res)
             monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
             if monitor_res:
@@ -1845,7 +1840,7 @@ class ScreenShotThread(QThread):
                     while True:
                         if Send_Result:
                             try:
-                                send_list = eval(ui.lineEdit_Send_Result.text())
+                                send_list = list(eval(ui.lineEdit_Send_Result.text()))
                                 if len(send_list) == len(z_ranking_res):
                                     z_ranking_end = copy.deepcopy(send_list)
                                     self.signal.emit('send_ok')
@@ -1867,23 +1862,8 @@ class ScreenShotThread(QThread):
                     ui.checkBox_restart.setChecked(False)
                     ui.radioButton_stop_betting.click()  # 封盘
                     ui.checkBox_black_screen.click()
-            if not flg_start['obs']:
-                return
-            try:
-                requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
-                tcp_result_thread.send_type = 'updata'
-                tcp_result_thread.run_flg = True
-                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
-                                                  True)  # 打开视频来源
-                time.sleep(0.1)
-                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
-                                                  False)  # 打开视频来源
-                time.sleep(0.1)
-                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
-                                                  False)  # 打开视频来源
-            except:
-                print('OBS 切换操作失败！')
-                flg_start['obs'] = False
+
+            ObsEnd_Thread.screen_flg = True # 结算页标志1
 
             self.run_flg = False
 
@@ -2191,7 +2171,7 @@ class PlanCmdThread(QThread):
                                 # 计球器
                                 if len(plan_list) - 2 == plan_index:  # 到达最后两个动作时，触发球计数器启动
                                     PlanBallNum_Thread.run_flg = True  # 终点计数器线程
-                                    tcp_ranking_thread.sleep_time = 0.1  # 终点前端排名时间发送设置
+
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
                                 sc.GASetExtDoBit(3, 1)  # 打开终点开关
                                 sc.GASetExtDoBit(1, 0)  # 关闭闸门
@@ -4875,9 +4855,9 @@ if __name__ == '__main__':
     ScreenShot_Thread.signal.connect(ScreenShotsignal_accept)
     ScreenShot_Thread.start()
 
-    ScreenSort_Thread = ScreenSortThread()  # 终点截图识别线程 6
-    ScreenSort_Thread.signal.connect(ScreenSortsignal_accept)
-    ScreenSort_Thread.start()
+    ObsEnd_Thread = ObsEndThread()  # 终点截图识别线程 6
+    ObsEnd_Thread.signal.connect(ObsEndsignal_accept)
+    ObsEnd_Thread.start()
 
     Axis_Thread = AxisThread()  # 轴复位 7
     Axis_Thread.signal.connect(signal_accept)
