@@ -333,12 +333,12 @@ def obs_save_image(save_path='d:/img/'):
                                                      1080, 100)
             time.sleep(2)
 
+
 def obs_save_thread():
     global obs_save_t
     if not obs_save_t.is_alive():
         obs_save_t = threading.Thread(target=obs_save_image, daemon=True)
         obs_save_t.start()
-
 
 
 # obs 脚本 obs_script_time.py 请求

@@ -263,6 +263,7 @@ class Ui_MainWindow(object):
         self.checkBox_Pass_Recognition_Start.setObjectName(u"checkBox_Pass_Recognition_Start")
         self.checkBox_Pass_Recognition_Start.setMaximumSize(QSize(150, 16777215))
         self.checkBox_Pass_Recognition_Start.setFont(font1)
+        self.checkBox_Pass_Recognition_Start.setChecked(True)
 
         self.gridLayout_16.addWidget(self.checkBox_Pass_Recognition_Start, 0, 0, 1, 3)
 
@@ -3063,7 +3064,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(4)
+        self.tabWidget_Ranking.setCurrentIndex(0)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
