@@ -6539,7 +6539,7 @@
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_3">
                      <property name="minimumSize">
                       <size>
-                       <width>350</width>
+                       <width>280</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -6732,7 +6732,7 @@
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_2">
                      <property name="minimumSize">
                       <size>
-                       <width>350</width>
+                       <width>280</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -6963,7 +6963,7 @@
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_1">
                      <property name="minimumSize">
                       <size>
-                       <width>350</width>
+                       <width>280</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -7162,7 +7162,7 @@
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_4">
                      <property name="minimumSize">
                       <size>
-                       <width>350</width>
+                       <width>280</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -7185,7 +7185,7 @@
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_5">
                      <property name="minimumSize">
                       <size>
-                       <width>350</width>
+                       <width>280</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -7208,7 +7208,7 @@
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_6">
                      <property name="minimumSize">
                       <size>
-                       <width>350</width>
+                       <width>280</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -7231,7 +7231,7 @@
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_7">
                      <property name="minimumSize">
                       <size>
-                       <width>350</width>
+                       <width>280</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -7254,7 +7254,7 @@
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_8">
                      <property name="minimumSize">
                       <size>
-                       <width>350</width>
+                       <width>280</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -7277,7 +7277,7 @@
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_9">
                      <property name="minimumSize">
                       <size>
-                       <width>350</width>
+                       <width>280</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -7300,7 +7300,7 @@
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_10">
                      <property name="minimumSize">
                       <size>
-                       <width>350</width>
+                       <width>280</width>
                        <height>0</height>
                       </size>
                      </property>
@@ -7337,6 +7337,12 @@
           </item>
           <item row="0" column="2" rowspan="2">
            <widget class="QGroupBox" name="groupBox_27">
+            <property name="minimumSize">
+             <size>
+              <width>280</width>
+              <height>0</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <family>微软雅黑</family>
@@ -7345,47 +7351,9 @@
              </font>
             </property>
             <property name="title">
-             <string>摄像机控制</string>
+             <string>辅助控制</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_66">
-             <item row="0" column="0">
-              <widget class="QFrame" name="frame_5">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="frameShape">
-                <enum>QFrame::Shape::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Shadow::Raised</enum>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_64">
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="checkBox_Flip_Horizontal">
-                  <property name="text">
-                   <string>水平翻转</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QCheckBox" name="checkBox_Flip_Vertica">
-                  <property name="text">
-                   <string>对角翻转</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
              <item row="1" column="0">
               <widget class="QGroupBox" name="groupBox_10">
                <property name="minimumSize">
@@ -7411,6 +7379,9 @@
                 <string>识别主机录图操作</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_18">
+                <property name="topMargin">
+                 <number>3</number>
+                </property>
                 <item row="0" column="0">
                  <widget class="QRadioButton" name="radioButton_noball">
                   <property name="text">
@@ -7471,7 +7442,7 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_60">
                 <property name="topMargin">
-                 <number>0</number>
+                 <number>3</number>
                 </property>
                 <item row="0" column="0">
                  <widget class="QCheckBox" name="checkBox_saveImgs_main">
@@ -7603,6 +7574,41 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="groupBox_5">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="title">
+                <string>摄像机控制</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_64">
+                <property name="topMargin">
+                 <number>3</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>9</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="checkBox_Flip_Horizontal">
+                  <property name="text">
+                   <string>水平翻转</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QCheckBox" name="checkBox_Flip_Vertica">
+                  <property name="text">
+                   <string>对角翻转</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </item>
             </layout>

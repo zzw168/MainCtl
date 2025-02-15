@@ -2681,7 +2681,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_Color_Ch_3 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_3.setObjectName(u"lineEdit_Color_Ch_3")
-        self.lineEdit_Color_Ch_3.setMinimumSize(QSize(350, 0))
+        self.lineEdit_Color_Ch_3.setMinimumSize(QSize(280, 0))
         self.lineEdit_Color_Ch_3.setFont(font4)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_3, 3, 7, 1, 2)
@@ -2742,7 +2742,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_Color_Ch_2 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_2.setObjectName(u"lineEdit_Color_Ch_2")
-        self.lineEdit_Color_Ch_2.setMinimumSize(QSize(350, 0))
+        self.lineEdit_Color_Ch_2.setMinimumSize(QSize(280, 0))
         self.lineEdit_Color_Ch_2.setFont(font4)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_2, 2, 7, 1, 2)
@@ -2824,7 +2824,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_Color_Ch_1 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_1.setObjectName(u"lineEdit_Color_Ch_1")
-        self.lineEdit_Color_Ch_1.setMinimumSize(QSize(350, 0))
+        self.lineEdit_Color_Ch_1.setMinimumSize(QSize(280, 0))
         self.lineEdit_Color_Ch_1.setFont(font4)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_1, 0, 7, 1, 2)
@@ -2897,49 +2897,49 @@ class Ui_MainWindow(object):
 
         self.lineEdit_Color_Ch_4 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_4.setObjectName(u"lineEdit_Color_Ch_4")
-        self.lineEdit_Color_Ch_4.setMinimumSize(QSize(350, 0))
+        self.lineEdit_Color_Ch_4.setMinimumSize(QSize(280, 0))
         self.lineEdit_Color_Ch_4.setFont(font4)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_4, 4, 7, 1, 2)
 
         self.lineEdit_Color_Ch_5 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_5.setObjectName(u"lineEdit_Color_Ch_5")
-        self.lineEdit_Color_Ch_5.setMinimumSize(QSize(350, 0))
+        self.lineEdit_Color_Ch_5.setMinimumSize(QSize(280, 0))
         self.lineEdit_Color_Ch_5.setFont(font4)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_5, 5, 7, 1, 2)
 
         self.lineEdit_Color_Ch_6 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_6.setObjectName(u"lineEdit_Color_Ch_6")
-        self.lineEdit_Color_Ch_6.setMinimumSize(QSize(350, 0))
+        self.lineEdit_Color_Ch_6.setMinimumSize(QSize(280, 0))
         self.lineEdit_Color_Ch_6.setFont(font4)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_6, 6, 7, 1, 2)
 
         self.lineEdit_Color_Ch_7 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_7.setObjectName(u"lineEdit_Color_Ch_7")
-        self.lineEdit_Color_Ch_7.setMinimumSize(QSize(350, 0))
+        self.lineEdit_Color_Ch_7.setMinimumSize(QSize(280, 0))
         self.lineEdit_Color_Ch_7.setFont(font4)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_7, 7, 7, 1, 2)
 
         self.lineEdit_Color_Ch_8 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_8.setObjectName(u"lineEdit_Color_Ch_8")
-        self.lineEdit_Color_Ch_8.setMinimumSize(QSize(350, 0))
+        self.lineEdit_Color_Ch_8.setMinimumSize(QSize(280, 0))
         self.lineEdit_Color_Ch_8.setFont(font4)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_8, 8, 7, 1, 2)
 
         self.lineEdit_Color_Ch_9 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_9.setObjectName(u"lineEdit_Color_Ch_9")
-        self.lineEdit_Color_Ch_9.setMinimumSize(QSize(350, 0))
+        self.lineEdit_Color_Ch_9.setMinimumSize(QSize(280, 0))
         self.lineEdit_Color_Ch_9.setFont(font4)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_9, 9, 7, 1, 2)
 
         self.lineEdit_Color_Ch_10 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_10.setObjectName(u"lineEdit_Color_Ch_10")
-        self.lineEdit_Color_Ch_10.setMinimumSize(QSize(350, 0))
+        self.lineEdit_Color_Ch_10.setMinimumSize(QSize(280, 0))
         self.lineEdit_Color_Ch_10.setFont(font4)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_10, 10, 7, 1, 2)
@@ -2960,30 +2960,10 @@ class Ui_MainWindow(object):
 
         self.groupBox_27 = QGroupBox(self.tab_4)
         self.groupBox_27.setObjectName(u"groupBox_27")
+        self.groupBox_27.setMinimumSize(QSize(280, 0))
         self.groupBox_27.setFont(font1)
         self.gridLayout_66 = QGridLayout(self.groupBox_27)
         self.gridLayout_66.setObjectName(u"gridLayout_66")
-        self.frame_5 = QFrame(self.groupBox_27)
-        self.frame_5.setObjectName(u"frame_5")
-        self.frame_5.setMinimumSize(QSize(0, 30))
-        self.frame_5.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
-        self.gridLayout_64 = QGridLayout(self.frame_5)
-        self.gridLayout_64.setObjectName(u"gridLayout_64")
-        self.gridLayout_64.setContentsMargins(-1, 0, -1, 0)
-        self.checkBox_Flip_Horizontal = QCheckBox(self.frame_5)
-        self.checkBox_Flip_Horizontal.setObjectName(u"checkBox_Flip_Horizontal")
-
-        self.gridLayout_64.addWidget(self.checkBox_Flip_Horizontal, 0, 0, 1, 1)
-
-        self.checkBox_Flip_Vertica = QCheckBox(self.frame_5)
-        self.checkBox_Flip_Vertica.setObjectName(u"checkBox_Flip_Vertica")
-
-        self.gridLayout_64.addWidget(self.checkBox_Flip_Vertica, 0, 1, 1, 1)
-
-
-        self.gridLayout_66.addWidget(self.frame_5, 0, 0, 1, 1)
-
         self.groupBox_10 = QGroupBox(self.groupBox_27)
         self.groupBox_10.setObjectName(u"groupBox_10")
         self.groupBox_10.setMinimumSize(QSize(0, 50))
@@ -2991,6 +2971,7 @@ class Ui_MainWindow(object):
         self.groupBox_10.setFont(font1)
         self.gridLayout_18 = QGridLayout(self.groupBox_10)
         self.gridLayout_18.setObjectName(u"gridLayout_18")
+        self.gridLayout_18.setContentsMargins(-1, 3, -1, -1)
         self.radioButton_noball = QRadioButton(self.groupBox_10)
         self.radioButton_noball.setObjectName(u"radioButton_noball")
 
@@ -3018,7 +2999,7 @@ class Ui_MainWindow(object):
         self.groupBox_20.setFont(font1)
         self.gridLayout_60 = QGridLayout(self.groupBox_20)
         self.gridLayout_60.setObjectName(u"gridLayout_60")
-        self.gridLayout_60.setContentsMargins(-1, 0, -1, -1)
+        self.gridLayout_60.setContentsMargins(-1, 3, -1, -1)
         self.checkBox_saveImgs_main = QCheckBox(self.groupBox_20)
         self.checkBox_saveImgs_main.setObjectName(u"checkBox_saveImgs_main")
         self.checkBox_saveImgs_main.setFont(font1)
@@ -3061,6 +3042,25 @@ class Ui_MainWindow(object):
         self.textBrowser_3.setObjectName(u"textBrowser_3")
 
         self.gridLayout_66.addWidget(self.textBrowser_3, 4, 0, 1, 1)
+
+        self.groupBox_5 = QGroupBox(self.groupBox_27)
+        self.groupBox_5.setObjectName(u"groupBox_5")
+        self.groupBox_5.setMinimumSize(QSize(0, 30))
+        self.gridLayout_64 = QGridLayout(self.groupBox_5)
+        self.gridLayout_64.setObjectName(u"gridLayout_64")
+        self.gridLayout_64.setContentsMargins(-1, 3, -1, 9)
+        self.checkBox_Flip_Horizontal = QCheckBox(self.groupBox_5)
+        self.checkBox_Flip_Horizontal.setObjectName(u"checkBox_Flip_Horizontal")
+
+        self.gridLayout_64.addWidget(self.checkBox_Flip_Horizontal, 0, 0, 1, 1)
+
+        self.checkBox_Flip_Vertica = QCheckBox(self.groupBox_5)
+        self.checkBox_Flip_Vertica.setObjectName(u"checkBox_Flip_Vertica")
+
+        self.gridLayout_64.addWidget(self.checkBox_Flip_Vertica, 0, 1, 1, 1)
+
+
+        self.gridLayout_66.addWidget(self.groupBox_5, 0, 0, 1, 1)
 
 
         self.gridLayout_36.addWidget(self.groupBox_27, 0, 2, 2, 1)
@@ -3687,9 +3687,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_Color_Ch_10.setText(QCoreApplication.translate("MainWindow", u"\u767d", None))
         self.pushButton_Save_Ball.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u5f39\u73e0", None))
-        self.groupBox_27.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u673a\u63a7\u5236", None))
-        self.checkBox_Flip_Horizontal.setText(QCoreApplication.translate("MainWindow", u"\u6c34\u5e73\u7ffb\u8f6c", None))
-        self.checkBox_Flip_Vertica.setText(QCoreApplication.translate("MainWindow", u"\u5bf9\u89d2\u7ffb\u8f6c", None))
+        self.groupBox_27.setTitle(QCoreApplication.translate("MainWindow", u"\u8f85\u52a9\u63a7\u5236", None))
         self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u4e3b\u673a\u5f55\u56fe\u64cd\u4f5c", None))
         self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
         self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
@@ -3747,6 +3745,9 @@ class Ui_MainWindow(object):
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-inde"
                         "nt:0; text-indent:0px;\"><br /></p>\n"
 "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
+        self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u673a\u63a7\u5236", None))
+        self.checkBox_Flip_Horizontal.setText(QCoreApplication.translate("MainWindow", u"\u6c34\u5e73\u7ffb\u8f6c", None))
+        self.checkBox_Flip_Vertica.setText(QCoreApplication.translate("MainWindow", u"\u5bf9\u89d2\u7ffb\u8f6c", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_4), QCoreApplication.translate("MainWindow", u"\u53c2\u6570\u8bbe\u7f6e", None))
     # retranslateUi
 
