@@ -3369,7 +3369,7 @@ class Ui_MainWindow(object):
         self.label_40.setText(QCoreApplication.translate("MainWindow", u"\u79d2", None))
         self.lineEdit_time_send_result.setText(QCoreApplication.translate("MainWindow", u"15", None))
         self.label_29.setText(QCoreApplication.translate("MainWindow", u"\u79d2", None))
-        self.groupBox_37.setTitle(QCoreApplication.translate("MainWindow", u"\u63a7\u5236", None))
+        self.groupBox_37.setTitle("")
         self.pushButton_CardStop_2.setText(QCoreApplication.translate("MainWindow", u"\u505c\u6b62", None))
         self.pushButton_CardClose.setText(QCoreApplication.translate("MainWindow", u"\u5173\u95ed\u673a\u5173", None))
         self.pushButton_CardRun_2.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb", None))

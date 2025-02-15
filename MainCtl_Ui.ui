@@ -4345,7 +4345,7 @@
                       </size>
                      </property>
                      <property name="title">
-                      <string>控制</string>
+                      <string/>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_48">
                       <item row="1" column="1">
