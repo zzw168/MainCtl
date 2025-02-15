@@ -650,6 +650,21 @@ def result2edit():
 
 
 def init_ranking_table():
+    global z_ranking_res
+    global z_ranking_end
+    global z_ranking_time
+    global con_data
+    for i in range(0, len(init_array)):
+        con_data.append([])
+        z_ranking_res.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
+        z_ranking_end.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
+        z_ranking_time.append('TRAP')  # z_ranking_time[1,2,3,4,5,6,7,8,9,10]    初始化网页排名时间
+        for j in range(0, 5):
+            if j == 0:
+                con_data[i].append(init_array[i][5])  # con_data[[yellow,0,0,0,0]]
+            else:
+                con_data[i].append(0)
+
     tb_ranking = ui.tableWidget_Ranking
     tb_ranking.setRowCount(10)
     tb_ranking.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
@@ -1619,6 +1634,7 @@ class PlanBallNumThread(QThread):
                 time_old = time.time()
                 sec_ = 0
                 num_old = 0
+                screen_sort = True
                 if res == 0:
                     while True:
                         res, value = sc.GAGetDiReverseCount()
@@ -1634,8 +1650,9 @@ class PlanBallNumThread(QThread):
                                         tcp_ranking_thread.send_time_flg = True
                                 self.signal.emit(num)
                                 num_old = num
-                            # if num in [3, 5, 8]:
-                            #     ScreenSort_Thread.run_flg = True
+                            if num > 3 and screen_sort:
+                                ScreenSort_Thread.run_flg = True
+                                screen_sort = False
                             if num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
                                 break
                             elif num >= balls_count and ui.checkBox_Pass_Recognition_Start.isChecked():
@@ -1729,8 +1746,14 @@ class ScreenSortThread(QThread):
             obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])
-                if len(obs_list) > 1:
+                if len(obs_list) > 2:
                     print(obs_list)
+                    for i in range(0, len(obs_list)):  # 冒泡排序
+                        for j in range(0, len(ranking_array)):
+                            if ranking_array[j][5] == obs_list[i]:
+                                ranking_array[j][6] = max_area_count
+                                ranking_array[j][8] = max_lap_count - 1
+                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
                 self.signal.emit(obs_res)
 
             self.run_flg = False
@@ -5006,16 +5029,7 @@ if __name__ == '__main__':
     z_ranking_end = []  # 结果排名数组(发送给前端网页排名显示)
     z_ranking_time = []  # 球号排名数组(发送给前端网页排名显示)
     ranking_time_start = time.time()  # 比赛开始时间
-    for i in range(0, len(init_array)):
-        con_data.append([])
-        z_ranking_res.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
-        z_ranking_end.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
-        z_ranking_time.append('TRAP')  # z_ranking_time[1,2,3,4,5,6,7,8,9,10]    初始化网页排名时间
-        for j in range(0, 5):
-            if j == 0:
-                con_data[i].append(init_array[i][5])  # con_data[[yellow,0,0,0,0]]
-            else:
-                con_data[i].append(0)
+
     init_ranking_table()  # 初始化排名数据表
 
     # 1. Udp 接收数据 14
