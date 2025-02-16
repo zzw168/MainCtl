@@ -1082,7 +1082,7 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
         return
     for ball in ball_array:
         # print(ball)
-        if ball[4] < 0.35:  # 置信度小于 0.45 的数据不处理
+        if ball[4] < 0.05:  # 置信度小于 0.45 的数据不处理
             continue
         if len(ball) == 7:
             ball.append(0)
