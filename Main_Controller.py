@@ -326,10 +326,12 @@ def get_picture(scence_current):
         return [image_byte, '[1]', 'obs']
 
 
-def obs_save_image(save_path='d:/img/'):
+def obs_save_image():
+    save_path = '%s/obs/' % ui.lineEdit_Image_Path.text()
     if os.path.exists(save_path):
         while ui.checkBox_saveImgs_main.isChecked():
-            resp = cl_request.save_source_screenshot('终点1', "jpg", '%s%s.jpg' % (save_path, time.time()), 1920,
+            resp = cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
+                                                     '%s%s.jpg' % (save_path, time.time()), 1920,
                                                      1080, 100)
             time.sleep(2)
 
@@ -406,6 +408,40 @@ def get_rtsp(rtsp_url):
         cap.release()
         print(f'无法打开摄像头')
         return ['', '[1]', 'monitor']
+
+
+def rtsp_save_image():
+    save_path = '%s/rtsp/' % ui.lineEdit_Image_Path.text()
+    if os.path.exists(save_path):
+        try:
+            ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
+            requests.get(ip_address)
+        except:
+            print("网络摄像头不能打开！")
+            return
+        while ui.checkBox_saveImgs_monitor.isChecked():
+            cap = cv2.VideoCapture(rtsp_url)
+            if cap.isOpened():
+                ret, frame = cap.read()
+                cap.release()
+                if ret:
+                    if os.path.exists(ui.lineEdit_Image_Path.text()):
+                        f = '%s%s.jpg' % (save_path, time.time())
+                        cv2.imwrite(f, frame)
+                else:
+                    print("无法读取视频帧")
+                    return
+            else:
+                cap.release()
+                print(f'无法打开摄像头')
+                return
+
+
+def rtsp_save_thread():
+    global rtsp_save_t
+    if not rtsp_save_t.is_alive():
+        rtsp_save_t = threading.Thread(target=rtsp_save_image, daemon=True)
+        rtsp_save_t.start()
 
 
 "************************************图像识别_开始****************************************"
@@ -4961,6 +4997,10 @@ if __name__ == '__main__':
     obs_save_t = threading.Thread(target=obs_save_image, daemon=True)
     obs_save_t.start()
     ui.checkBox_saveImgs_main.checkStateChanged.connect(obs_save_thread)
+
+    rtsp_save_t = threading.Thread(target=rtsp_save_image, daemon=True)
+    rtsp_save_t.start()
+    ui.checkBox_saveImgs_monitor.checkStateChanged.connect(rtsp_save_thread)
 
     "**************************OBS*****************************"
 
