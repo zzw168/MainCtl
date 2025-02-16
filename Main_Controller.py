@@ -991,6 +991,9 @@ class UdpThread(QThread):
                         self.signal.emit(fail('array_data:%s < 7数据错误！' % array_data[0]))
                         print('array_data < 7数据错误！', array_data[0])
                         continue
+                    array_data = filter_max_value(array_data)  # 在平时球位置追踪，以置信度为准
+                    if array_data is None or len(array_data) < 1:
+                        continue
                     array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~1', array_data)
                     if array_data is None or len(array_data) < 1:
@@ -999,11 +1002,11 @@ class UdpThread(QThread):
                         self.signal.emit(fail('array_data:%s < 8数据错误！' % array_data[0]))
                         print('array_data < 8数据错误！', array_data[0])
                         continue
-                    if (action_area[0] >= max_area_count - balls_count
-                            and action_area[1] >= max_lap_count - 1):  # 在最后面排名阶段，以区域先后为准
-                        array_data = filter_max_value(array_data)
-                    else:
-                        array_data = filter_max_value(array_data)  # 在平时球位置追踪，以置信度为准
+                    # if (action_area[0] >= max_area_count - balls_count
+                    #         and action_area[1] >= max_lap_count - 1):  # 在最后面排名阶段，以区域先后为准
+                    #     array_data = filter_max_value(array_data)
+                    # else:
+                    #     array_data = filter_max_value(array_data)  # 在平时球位置追踪，以置信度为准
                     if array_data is None or len(array_data) < 1:
                         continue
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
