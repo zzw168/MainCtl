@@ -995,18 +995,12 @@ class UdpThread(QThread):
                     if array_data is None or len(array_data) < 1:
                         continue
                     array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
-                    # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~1', array_data)
                     if array_data is None or len(array_data) < 1:
                         continue
                     if len(array_data[0]) < 8:
                         self.signal.emit(fail('array_data:%s < 8数据错误！' % array_data[0]))
                         print('array_data < 8数据错误！', array_data[0])
                         continue
-                    # if (action_area[0] >= max_area_count - balls_count
-                    #         and action_area[1] >= max_lap_count - 1):  # 在最后面排名阶段，以区域先后为准
-                    #     array_data = filter_max_value(array_data)
-                    # else:
-                    #     array_data = filter_max_value(array_data)  # 在平时球位置追踪，以置信度为准
                     if array_data is None or len(array_data) < 1:
                         continue
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
@@ -1911,6 +1905,7 @@ class ScreenShotThread(QThread):
                     lottery_term[4] = str(z_ranking_end)  # 排名
             else:
                 z_ranking_end = copy.deepcopy(z_ranking_res)
+                ui.lineEdit_Send_Result.setText('')
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
                     if os.path.exists(lottery_term[6]):
                         os.startfile(lottery_term[6])
@@ -4836,6 +4831,18 @@ def main_hide_event(event):
     event.accept()
 
 
+def main_doubleclick_event(event):
+    if event.button() == Qt.LeftButton:
+        ui.lineEdit_result_send.setText(str(main_Camera))
+        ui.lineEdit_Send_Result.setText(str(main_Camera))
+
+
+def monitor_doubleclick_event(event):
+    if event.button() == Qt.LeftButton:
+        ui.lineEdit_result_send.setText(str(monitor_Camera))
+        ui.lineEdit_Send_Result.setText(str(monitor_Camera))
+
+
 def monitor_hide_event(event):
     ui.checkBox_monitor_cam.setChecked(False)
     event.accept()
@@ -4875,18 +4882,23 @@ if __name__ == '__main__':
 
     MainCameraDialog = QDialog(z_window)
     MainCameraDialog.hideEvent = main_hide_event
+    MainCameraDialog.setWindowTitle('索尼')
     main_camera_ui = CameraUi()
     main_camera_ui.setupUi(MainCameraDialog)
-    MainCameraDialog.setWindowTitle('索尼')
     main_camera_ui.groupBox_main_camera.setTitle('索尼摄像机识别结果')
+    main_camera_ui.label_picture.mouseDoubleClickEvent = main_doubleclick_event
+    ui.label_main_picture.mouseDoubleClickEvent = main_doubleclick_event
+
     # MainCameraDialog.show()
 
     MonitorCameraDialog = QDialog(z_window)
     MonitorCameraDialog.hideEvent = monitor_hide_event
+    MonitorCameraDialog.setWindowTitle('监控')
     monitor_camera_ui = CameraUi()
     monitor_camera_ui.setupUi(MonitorCameraDialog)
-    MonitorCameraDialog.setWindowTitle('监控')
     monitor_camera_ui.groupBox_main_camera.setTitle('监控摄像机识别结果')
+    monitor_camera_ui.label_picture.mouseDoubleClickEvent = monitor_doubleclick_event
+    ui.label_monitor_picture.mouseDoubleClickEvent = monitor_doubleclick_event
     # MonitorCameraDialog.show()
 
     sc = SportCard()  # 运动卡
