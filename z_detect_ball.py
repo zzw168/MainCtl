@@ -64,6 +64,19 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             for r in results[0].boxes.data:
                 array = [int(r[0].item()), int(r[1].item()), int(r[2].item()), int(r[3].item()),
                          round(r[4].item(), 2), names[int(r[5].item())]]
+                qiu_array.append(array)
+
+            if post_data['sort'][0] == '0':
+                qiu_array.sort(key=lambda x: (x[0]), reverse=True)
+            elif post_data['sort'][0] == '1':
+                qiu_array.sort(key=lambda x: (x[0]), reverse=False)
+            elif post_data['sort'][0] == '11':
+                qiu_array.sort(key=lambda y: (y[1]), reverse=True)
+            else:
+                qiu_array.sort(key=lambda y: (y[1]), reverse=False)
+            qiu_array = filter_max_value(qiu_array)
+
+            for array in qiu_array:
                 cv2.rectangle(img, (array[0], array[1]), (array[2], array[3]), color=color_rects[array[5]], thickness=5)
 
                 # 计算边界框的中心点
@@ -98,22 +111,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     cv2.putText(img, "%s" % (color_ch[array[5]]), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX,
                                 fontScale=1.3,
                                 color=(248, 248, 255), thickness=3)
-                # font_path = 'simhei.ttf'  # 你的中文字体文件路径，例如黑体
-                # font_size = 50  # 字体大小
-                # # 使用 Pillow 绘制中文
-                #
-                # img = draw_chinese_text(img, color_ch[array[5]], (x, y), font_path, font_size,
-                #                         color_names[array[5]])
-                qiu_array.append(array)
-            if post_data['sort'][0] == '0':
-                qiu_array.sort(key=lambda x: (x[0]), reverse=True)
-            elif post_data['sort'][0] == '1':
-                qiu_array.sort(key=lambda x: (x[0]), reverse=False)
-            elif post_data['sort'][0] == '11':
-                qiu_array.sort(key=lambda y: (y[1]), reverse=True)
-            else:
-                qiu_array.sort(key=lambda y: (y[1]), reverse=False)
-            qiu_array = filter_max_value(qiu_array)
+
             qiu_rank = []
             for i in range(len(qiu_array)):
                 if qiu_array[i][5] not in qiu_rank:
