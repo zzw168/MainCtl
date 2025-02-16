@@ -382,7 +382,7 @@ def get_rtsp(rtsp_url):
                         'img': jpg_base64,
                         'sort': ui.lineEdit_monitor_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
                     }
-                    res = requests.post(url=recognition_addr, data=form_data, timeout=5)
+                    res = requests.post(url=recognition_addr, data=form_data, timeout=8)
                     r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
                     r_img = r_list[0]
                     if os.path.exists(ui.lineEdit_Image_Path.text()):
@@ -1681,7 +1681,7 @@ class PlanBallNumThread(QThread):
             print('正在接收运动卡输入信息！')
             try:
                 res = sc.GASetDiReverseCount()  # 输入次数归0
-                tcp_ranking_thread.sleep_time = 0.05  # 终点前端排名时间发送设置
+                tcp_ranking_thread.sleep_time = 0.02  # 终点前端排名时间发送设置
                 time_now = time.time()
                 time_old = time.time()
                 sec_ = 0
@@ -1872,9 +1872,23 @@ class ScreenShotThread(QThread):
                     color_to_num(ranking_array)
                     print(ranking_array)
                 self.signal.emit(obs_res)
+
             monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
             if monitor_res:
-                monitor_Camera = camera_to_num(eval(monitor_res[1]))
+                rtsp_list = eval(monitor_res[1])
+                monitor_Camera = camera_to_num(rtsp_list)
+                # if len(rtsp_list) > 2:
+                #     print(rtsp_list)
+                #     for i in range(0, len(rtsp_list)):
+                #         for j in range(0, len(ranking_array)):
+                #             if ranking_array[j][5] == rtsp_list[i]:
+                #                 ranking_array[j][6] = max_area_count
+                #                 ranking_array[j][8] = max_lap_count - 1
+                #                 ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                #         ball_sort[max_area_count][max_lap_count - 1].append('')
+                #         ball_sort[max_area_count][max_lap_count - 1][i] = rtsp_list[i]
+                #     color_to_num(ranking_array)
+                #     print(ranking_array)
                 self.signal.emit(monitor_res)
 
             if obs_res[1] != '[1]' and obs_res[1] == monitor_res[1]:

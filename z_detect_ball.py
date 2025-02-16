@@ -17,8 +17,8 @@ from urllib3 import request
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self.models = {
-            'obs': YOLO('./best0.pt'),
-            'monitor': YOLO('./best9.pt')
+            'obs': YOLO('./best_obs.pt'),
+            'monitor': YOLO('./best_rtsp.pt')
         }
         super().__init__(*args, **kwargs)
 
@@ -50,7 +50,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
             results = model.predict(
                 source=img,
-                conf=0.65,
+                conf=0.1,
                 save=False,
                 save_txt=False,
                 save_conf=False,
