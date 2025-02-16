@@ -1782,11 +1782,13 @@ class ObsEndThread(QThread):
         super(ObsEndThread, self).__init__()
         self.screen_flg = False
         self.ball_flg = False
+        self.run_flg = True
         self.running = True
 
     def stop(self):
         self.screen_flg = False
         self.ball_flg = False
+        self.run_flg = False
         self.running = False  # 修改标志位，线程优雅退出
         self.quit()  # 退出线程事件循环
 
@@ -1796,8 +1798,15 @@ class ObsEndThread(QThread):
             if not (self.screen_flg and self.ball_flg):
                 continue
             print('结算页面运行！')
-            if not flg_start['obs']:
-                return
+            num = 0
+            num_end = ui.lineEdit_time_send_result.text()
+            if num_end.isdigit():
+                num_end = int(num_end)
+                while self.run_flg:
+                    if num_end < num:
+                        break
+                    num += 1
+                    time.sleep(1)
             try:
                 requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
                 tcp_result_thread.send_type = 'updata'

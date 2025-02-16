@@ -50,7 +50,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
             results = model.predict(
                 source=img,
-                conf=0.1,
+                conf=0.25,
                 save=False,
                 save_txt=False,
                 save_conf=False,
