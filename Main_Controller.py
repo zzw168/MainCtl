@@ -302,7 +302,7 @@ def get_picture(scence_current):
         return ['', '[1]', 'obs']
     img = resp.image_data[22:]
     if os.path.exists(ui.lineEdit_Image_Path.text()):
-        lottery_term[6] = '%s/obs_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0])
+        lottery_term[6] = '%s/obs_%s_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
         str2image_file(img, lottery_term[6])  # 保存图片
     form_data = {
         'CameraType': 'obs',
@@ -370,7 +370,7 @@ def get_rtsp(rtsp_url):
         cap.release()
         if ret:
             if os.path.exists(ui.lineEdit_Image_Path.text()):
-                f = '%s/rtsp_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0])
+                f = '%s/rtsp_%s_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
                 cv2.imwrite(f, frame)
             success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
@@ -1525,7 +1525,8 @@ class ReStartThread(QThread):
                 countdown = int(countdown)
             else:
                 countdown = 60
-            self.signal.emit('auto_shoot')
+            if ui.checkBox_shoot_0.isChecked():
+                self.signal.emit('auto_shoot')
             for t in range(countdown, -1, -1):
                 if not ui.checkBox_restart.isChecked():
                     self.run_flg = False
@@ -1900,8 +1901,8 @@ class ScreenShotThread(QThread):
                 #     print(ranking_array)
                 self.signal.emit(monitor_res)
 
-            if obs_res[1] != '[1]' and obs_res[1] == monitor_res[1]:
-                print('识别正确:', obs_res[1])
+            if obs_res[1] != '[1]' and main_Camera == monitor_Camera:
+                print('识别正确:', main_Camera)
                 if len(main_Camera) == len(z_ranking_res):
                     z_ranking_end = copy.deepcopy(main_Camera)
                     lottery_term[4] = str(z_ranking_end)  # 排名
