@@ -1,4 +1,5 @@
 import base64
+import copy
 import json
 import os
 import sys
@@ -50,7 +51,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
             results = model.predict(
                 source=img,
-                conf=0.25,
+                conf=0.05,
                 save=False,
                 save_txt=False,
                 save_conf=False,
@@ -112,6 +113,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 qiu_array.sort(key=lambda y: (y[1]), reverse=True)
             else:
                 qiu_array.sort(key=lambda y: (y[1]), reverse=False)
+            qiu_array = filter_max_value(qiu_array)
             qiu_rank = []
             for i in range(len(qiu_array)):
                 if qiu_array[i][5] not in qiu_rank:
@@ -126,6 +128,19 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(str('ok').encode('utf8'))
 
     print('执行开始')
+
+
+def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球，则取置信度最高的球为准
+    max_values = {}
+    for sublist in lists:
+        value, key = sublist[4], sublist[5]
+        if key not in max_values or max_values[key] < value:
+            max_values[key] = copy.deepcopy(value)
+    filtered_list = []
+    for sublist in lists:
+        if sublist[4] == max_values[sublist[5]]:  # 选取置信度最大的球添加到修正后的队列
+            filtered_list.append(copy.deepcopy(sublist))
+    return filtered_list
 
 
 def draw_chinese_text(image, text, position, font_path, font_size, color):
