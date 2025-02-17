@@ -1877,7 +1877,7 @@ class ScreenShotThread(QThread):
                         ball_sort[max_area_count][max_lap_count - 1].append('')
                         ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
                     color_to_num(ranking_array)
-                    # print(ranking_array)
+                    print(ranking_array)
                 self.signal.emit(obs_res)
 
             monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
@@ -3478,7 +3478,7 @@ class MapLabel(QLabel):
 
         if ui.checkBox_show_orbit.isChecked():  # 绘制路径
             for index in range(len(self.path_points)):
-                part = len(self.path_points) / (max_area_count - balls_count + 1)
+                part = len(self.path_points) / (max_area_count - balls_count)
                 if index % int(part) == 0:
                     painter.setBrush(QBrush(QColor(255, 0, 0), Qt.SolidPattern))
                     font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
