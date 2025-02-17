@@ -1970,7 +1970,7 @@ def ScreenShotsignal_accept(msg):
             else:
                 getattr(ui, 'lineEdit_result_%s' % index).setText('')
     elif msg == 'send_res':
-        ui.lineEdit_Send_Result.setText(ui.lineEdit_Main_Camera.text())
+        ui.lineEdit_Send_Result.setText('')
     elif msg == 'send_ok':
         ui.checkBox_alarm.setChecked(True)
     else:
