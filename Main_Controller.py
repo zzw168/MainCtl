@@ -1909,9 +1909,15 @@ class ScreenShotThread(QThread):
                     while True:
                         if Send_Result:
                             try:
-                                send_list = list(eval(ui.lineEdit_Send_Result.text()))
-                                if len(send_list) == len(z_ranking_res):
+                                send_list = []
+                                for i in range(10):
+                                    send_list.append(int(getattr(ui, 'lineEdit_result_%s' % i).text('')))
+                                if len(send_list) == len(z_ranking_end):
                                     z_ranking_end = copy.deepcopy(send_list)
+                                    for i in range(0, len(send_list)):
+                                        for j in range(0, len(z_ranking_end)):
+                                            if send_list[i] == z_ranking_end[j]:
+                                                z_ranking_end[i], z_ranking_end[j] = z_ranking_end[j], z_ranking_end[i]
                                     self.signal.emit('send_ok')
                                     Send_Result = False
                                     break
@@ -4067,13 +4073,21 @@ class CustomLineEdit(QLineEdit):
                 if target_line_edit:
                     target_line_edit.setFocus()
                     target_line_edit.selectAll()
-        else:
+        elif event.text().isdigit() or event.key() in (Qt.Key_Backspace, Qt.Key_Delete):
             super().keyPressEvent(event)
+        else:
+            print("仅允许输入数字！")
+
+    def textChangedEvent(self):
+        print(f"当前输入内容: {self.text()}")
+        if not self.text().isdigit():
+            self.setText('')
 
 
 def set_result_class():
     for i in range(10):
         getattr(ui, 'lineEdit_result_%s' % i, None).__class__ = CustomLineEdit
+
 
 def set_result(msg):
     print(msg)
@@ -4475,16 +4489,6 @@ def send_result():
     global Send_Result
     Send_Result = True
     ui.checkBox_alarm.setChecked(False)
-    # result_list = eval(ui.lineEdit_Send_Result.text())
-    # result_data = {"raceTrackID": Track_number, "term": str(term),
-    #                "actualResultOpeningTime": betting_end_time,
-    #                "result": result_list,
-    #                "timings": []}
-    # for index in range(len(result_list)):
-    #     result_data["timings"].append(
-    #         {"pm": index + 1, "id": result_list[index], "time": float(z_ranking_time[index])})
-    # post_end(term, betting_end_time, 0, Track_number)  # 发送游戏结束信号给服务器， 0: 不正常
-    # post_result(term, betting_end_time, result_data, Track_number)  # 发送最终排名给服务器
 
 
 def start_betting():
