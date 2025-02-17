@@ -1901,12 +1901,12 @@ class ScreenShotThread(QThread):
                     lottery_term[4] = str(z_ranking_end)  # 排名
             else:
                 z_ranking_end = copy.deepcopy(z_ranking_res)
-                Send_Result_End = False
                 ui.lineEdit_Send_Result.setText('')
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
                     if os.path.exists(lottery_term[6]):
                         os.startfile(lottery_term[6])
                     play_alarm()  # 警报声
+                    Send_Result_End = False
                     while True:
                         if Send_Result_End:
                             try:
