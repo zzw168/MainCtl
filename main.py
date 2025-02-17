@@ -1680,7 +1680,7 @@ class ScreenShotThread(QThread):
     def run(self) -> None:
         global lottery_term
         global betting_end_time
-        global Send_Result
+        global Send_Result_End
         global z_ranking_res
         global main_Camera, monitor_Camera, fit_Camera
         while self.running:
@@ -4669,7 +4669,7 @@ if __name__ == '__main__':
     betting_start_time = 0  # 比赛预定开始时间
     betting_end_time = 0  # 比赛预定结束时间
     stream_url = ''  # 流链接
-    Send_Result = False  # 发送结果标志位
+    Send_Result_End = False  # 发送结果标志位
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘

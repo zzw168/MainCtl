@@ -1848,7 +1848,7 @@ class ScreenShotThread(QThread):
         global ranking_array
         global lottery_term
         global betting_end_time
-        global Send_Result
+        global Send_Result_End
         global z_ranking_end
         global main_Camera, monitor_Camera, fit_Camera
         while self.running:
@@ -1901,13 +1901,14 @@ class ScreenShotThread(QThread):
                     lottery_term[4] = str(z_ranking_end)  # 排名
             else:
                 z_ranking_end = copy.deepcopy(z_ranking_res)
+                Send_Result_End = False
                 ui.lineEdit_Send_Result.setText('')
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
                     if os.path.exists(lottery_term[6]):
                         os.startfile(lottery_term[6])
                     play_alarm()  # 警报声
                     while True:
-                        if Send_Result:
+                        if Send_Result_End:
                             try:
                                 send_list = []
                                 for i in range(10):
@@ -1919,16 +1920,16 @@ class ScreenShotThread(QThread):
                                             if send_list[i] == z_ranking_end[j]:
                                                 z_ranking_end[i], z_ranking_end[j] = z_ranking_end[j], z_ranking_end[i]
                                     self.signal.emit('send_ok')
-                                    Send_Result = False
+                                    Send_Result_End = False
                                     break
                                 else:
-                                    Send_Result = False
+                                    Send_Result_End = False
                                     self.signal.emit(fail('发送数据错误！'))
                             except:
                                 self.signal.emit('send_res')
-                                Send_Result = False
+                                Send_Result_End = False
                         time.sleep(1)
-                    Send_Result = False
+                    Send_Result_End = False
                 lottery_term[5] = str(z_ranking_end)  # 排名
             if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                 if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
@@ -4486,8 +4487,8 @@ def cancel_betting():
 
 
 def send_result():
-    global Send_Result
-    Send_Result = True
+    global Send_Result_End
+    Send_Result_End = True
     ui.checkBox_alarm.setChecked(False)
 
 
@@ -5307,7 +5308,7 @@ if __name__ == '__main__':
     betting_start_time = 0  # 比赛预定开始时间
     betting_end_time = 0  # 比赛预定结束时间
     stream_url = ''  # 流链接
-    Send_Result = False  # 发送结果标志位
+    Send_Result_End = False  # 发送结果标志位
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
