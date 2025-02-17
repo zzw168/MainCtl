@@ -1553,7 +1553,7 @@ class Ui_MainWindow(object):
         self.gridLayout_68.setContentsMargins(0, -1, 18, -1)
         self.lineEdit_result_7 = QLineEdit(self.frame_5)
         self.lineEdit_result_7.setObjectName(u"lineEdit_result_7")
-        self.lineEdit_result_7.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_7.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_7.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_7.setFont(font6)
         self.lineEdit_result_7.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -1562,7 +1562,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_result_5 = QLineEdit(self.frame_5)
         self.lineEdit_result_5.setObjectName(u"lineEdit_result_5")
-        self.lineEdit_result_5.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_5.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_5.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_5.setFont(font6)
         self.lineEdit_result_5.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -1571,7 +1571,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_result_3 = QLineEdit(self.frame_5)
         self.lineEdit_result_3.setObjectName(u"lineEdit_result_3")
-        self.lineEdit_result_3.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_3.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_3.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_3.setFont(font6)
         self.lineEdit_result_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -1580,7 +1580,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_result_1 = QLineEdit(self.frame_5)
         self.lineEdit_result_1.setObjectName(u"lineEdit_result_1")
-        self.lineEdit_result_1.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_1.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_1.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_1.setFont(font6)
         self.lineEdit_result_1.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -1589,7 +1589,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_result_8 = QLineEdit(self.frame_5)
         self.lineEdit_result_8.setObjectName(u"lineEdit_result_8")
-        self.lineEdit_result_8.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_8.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_8.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_8.setFont(font6)
         self.lineEdit_result_8.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -1598,7 +1598,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_result_6 = QLineEdit(self.frame_5)
         self.lineEdit_result_6.setObjectName(u"lineEdit_result_6")
-        self.lineEdit_result_6.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_6.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_6.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_6.setFont(font6)
         self.lineEdit_result_6.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -1607,7 +1607,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_result_9 = QLineEdit(self.frame_5)
         self.lineEdit_result_9.setObjectName(u"lineEdit_result_9")
-        self.lineEdit_result_9.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_9.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_9.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_9.setFont(font6)
         self.lineEdit_result_9.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -1616,7 +1616,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_result_2 = QLineEdit(self.frame_5)
         self.lineEdit_result_2.setObjectName(u"lineEdit_result_2")
-        self.lineEdit_result_2.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_2.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_2.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_2.setFont(font6)
         self.lineEdit_result_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -1625,7 +1625,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_result_4 = QLineEdit(self.frame_5)
         self.lineEdit_result_4.setObjectName(u"lineEdit_result_4")
-        self.lineEdit_result_4.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_4.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_4.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_4.setFont(font6)
         self.lineEdit_result_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -1634,7 +1634,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_result_0 = QLineEdit(self.frame_5)
         self.lineEdit_result_0.setObjectName(u"lineEdit_result_0")
-        self.lineEdit_result_0.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_0.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_0.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_0.setFont(font6)
         self.lineEdit_result_0.setAlignment(Qt.AlignmentFlag.AlignCenter)

@@ -4047,10 +4047,10 @@ class CameraLabel(QLabel):
         if event.button() == Qt.LeftButton:
             print("QLabel 被左键点击")
             if self.Camera_index == 'main_Camera':
-                ui.lineEdit_result_send.setText(str(main_Camera))
+                set_result(main_Camera)
                 ui.lineEdit_Send_Result.setText(str(main_Camera))
             elif self.Camera_index == 'monitor_Camera':
-                ui.lineEdit_result_send.setText(str(monitor_Camera))
+                set_result(monitor_Camera)
                 ui.lineEdit_Send_Result.setText(str(monitor_Camera))
         elif event.button() == Qt.RightButton:
             print("QLabel 被右键点击")
@@ -4074,6 +4074,11 @@ class CustomLineEdit(QLineEdit):
 def set_result_class():
     for i in range(10):
         getattr(ui, 'lineEdit_result_%s' % i, None).__class__ = CustomLineEdit
+
+def set_result(msg):
+    print(msg)
+    for index, item in enumerate(msg):
+        getattr(ui, 'lineEdit_result_%s' % index, None).setText(str(item))
 
 
 "****************************************摄像头识别结果_结束***********************************************"
@@ -4853,13 +4858,13 @@ def main_hide_event(event):
 
 def main_doubleclick_event(event):
     if event.button() == Qt.LeftButton:
-        ui.lineEdit_result_send.setText(str(main_Camera))
+        set_result(main_Camera)
         ui.lineEdit_Send_Result.setText(str(main_Camera))
 
 
 def monitor_doubleclick_event(event):
     if event.button() == Qt.LeftButton:
-        ui.lineEdit_result_send.setText(str(monitor_Camera))
+        set_result(main_Camera)
         ui.lineEdit_Send_Result.setText(str(monitor_Camera))
 
 

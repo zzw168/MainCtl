@@ -3540,7 +3540,7 @@
                        <widget class="QLineEdit" name="lineEdit_result_7">
                         <property name="minimumSize">
                          <size>
-                          <width>23</width>
+                          <width>24</width>
                           <height>10</height>
                          </size>
                         </property>
@@ -3569,7 +3569,7 @@
                        <widget class="QLineEdit" name="lineEdit_result_5">
                         <property name="minimumSize">
                          <size>
-                          <width>23</width>
+                          <width>24</width>
                           <height>10</height>
                          </size>
                         </property>
@@ -3598,7 +3598,7 @@
                        <widget class="QLineEdit" name="lineEdit_result_3">
                         <property name="minimumSize">
                          <size>
-                          <width>23</width>
+                          <width>24</width>
                           <height>10</height>
                          </size>
                         </property>
@@ -3627,7 +3627,7 @@
                        <widget class="QLineEdit" name="lineEdit_result_1">
                         <property name="minimumSize">
                          <size>
-                          <width>23</width>
+                          <width>24</width>
                           <height>10</height>
                          </size>
                         </property>
@@ -3656,7 +3656,7 @@
                        <widget class="QLineEdit" name="lineEdit_result_8">
                         <property name="minimumSize">
                          <size>
-                          <width>23</width>
+                          <width>24</width>
                           <height>10</height>
                          </size>
                         </property>
@@ -3685,7 +3685,7 @@
                        <widget class="QLineEdit" name="lineEdit_result_6">
                         <property name="minimumSize">
                          <size>
-                          <width>23</width>
+                          <width>24</width>
                           <height>10</height>
                          </size>
                         </property>
@@ -3714,7 +3714,7 @@
                        <widget class="QLineEdit" name="lineEdit_result_9">
                         <property name="minimumSize">
                          <size>
-                          <width>23</width>
+                          <width>24</width>
                           <height>10</height>
                          </size>
                         </property>
@@ -3743,7 +3743,7 @@
                        <widget class="QLineEdit" name="lineEdit_result_2">
                         <property name="minimumSize">
                          <size>
-                          <width>23</width>
+                          <width>24</width>
                           <height>10</height>
                          </size>
                         </property>
@@ -3772,7 +3772,7 @@
                        <widget class="QLineEdit" name="lineEdit_result_4">
                         <property name="minimumSize">
                          <size>
-                          <width>23</width>
+                          <width>24</width>
                           <height>10</height>
                          </size>
                         </property>
@@ -3801,7 +3801,7 @@
                        <widget class="QLineEdit" name="lineEdit_result_0">
                         <property name="minimumSize">
                          <size>
-                          <width>23</width>
+                          <width>24</width>
                           <height>10</height>
                          </size>
                         </property>
