@@ -1526,55 +1526,11 @@ class Ui_MainWindow(object):
 
         self.gridLayout_28.addWidget(self.label_16, 3, 0, 1, 1)
 
-        self.textBrowser_background_data = QTextBrowser(self.groupBox_8)
-        self.textBrowser_background_data.setObjectName(u"textBrowser_background_data")
-        self.textBrowser_background_data.setMinimumSize(QSize(0, 10))
-        self.textBrowser_background_data.setFont(font4)
-        self.textBrowser_background_data.setReadOnly(False)
-
-        self.gridLayout_28.addWidget(self.textBrowser_background_data, 5, 0, 1, 3)
-
-        self.widget_camera_sony = QWidget(self.groupBox_8)
-        self.widget_camera_sony.setObjectName(u"widget_camera_sony")
-        self.widget_camera_sony.setMinimumSize(QSize(230, 38))
-
-        self.gridLayout_28.addWidget(self.widget_camera_sony, 0, 1, 1, 2)
-
-        self.label_88 = QLabel(self.groupBox_8)
-        self.label_88.setObjectName(u"label_88")
-        self.label_88.setMinimumSize(QSize(0, 30))
-
-        self.gridLayout_28.addWidget(self.label_88, 1, 0, 1, 1)
-
-        self.widget_camera_monitor = QWidget(self.groupBox_8)
-        self.widget_camera_monitor.setObjectName(u"widget_camera_monitor")
-        self.widget_camera_monitor.setMinimumSize(QSize(230, 38))
-
-        self.gridLayout_28.addWidget(self.widget_camera_monitor, 1, 1, 1, 2)
-
         self.widget_camera_fit = QWidget(self.groupBox_8)
         self.widget_camera_fit.setObjectName(u"widget_camera_fit")
         self.widget_camera_fit.setMinimumSize(QSize(230, 38))
 
         self.gridLayout_28.addWidget(self.widget_camera_fit, 2, 1, 1, 2)
-
-        self.lineEdit_result_send = QLineEdit(self.groupBox_8)
-        self.lineEdit_result_send.setObjectName(u"lineEdit_result_send")
-        self.lineEdit_result_send.setMinimumSize(QSize(0, 30))
-
-        self.gridLayout_28.addWidget(self.lineEdit_result_send, 3, 1, 1, 1)
-
-        self.checkBox_ShowUdp = QCheckBox(self.groupBox_8)
-        self.checkBox_ShowUdp.setObjectName(u"checkBox_ShowUdp")
-        self.checkBox_ShowUdp.setMinimumSize(QSize(0, 30))
-
-        self.gridLayout_28.addWidget(self.checkBox_ShowUdp, 4, 0, 1, 2)
-
-        self.label_87 = QLabel(self.groupBox_8)
-        self.label_87.setObjectName(u"label_87")
-        self.label_87.setMinimumSize(QSize(0, 30))
-
-        self.gridLayout_28.addWidget(self.label_87, 0, 0, 1, 1)
 
         self.label_89 = QLabel(self.groupBox_8)
         self.label_89.setObjectName(u"label_89")
@@ -1582,12 +1538,156 @@ class Ui_MainWindow(object):
 
         self.gridLayout_28.addWidget(self.label_89, 2, 0, 1, 1)
 
+        self.frame_5 = QFrame(self.groupBox_8)
+        self.frame_5.setObjectName(u"frame_5")
+        self.frame_5.setMinimumSize(QSize(230, 42))
+        font6 = QFont()
+        font6.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
+        font6.setPointSize(16)
+        font6.setBold(True)
+        self.frame_5.setFont(font6)
+        self.frame_5.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
+        self.gridLayout_68 = QGridLayout(self.frame_5)
+        self.gridLayout_68.setObjectName(u"gridLayout_68")
+        self.gridLayout_68.setContentsMargins(0, -1, 18, -1)
+        self.lineEdit_result_7 = QLineEdit(self.frame_5)
+        self.lineEdit_result_7.setObjectName(u"lineEdit_result_7")
+        self.lineEdit_result_7.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_7.setMaximumSize(QSize(26, 16777215))
+        self.lineEdit_result_7.setFont(font6)
+        self.lineEdit_result_7.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_68.addWidget(self.lineEdit_result_7, 0, 7, 1, 1)
+
+        self.lineEdit_result_5 = QLineEdit(self.frame_5)
+        self.lineEdit_result_5.setObjectName(u"lineEdit_result_5")
+        self.lineEdit_result_5.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_5.setMaximumSize(QSize(26, 16777215))
+        self.lineEdit_result_5.setFont(font6)
+        self.lineEdit_result_5.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_68.addWidget(self.lineEdit_result_5, 0, 5, 1, 1)
+
+        self.lineEdit_result_3 = QLineEdit(self.frame_5)
+        self.lineEdit_result_3.setObjectName(u"lineEdit_result_3")
+        self.lineEdit_result_3.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_3.setMaximumSize(QSize(26, 16777215))
+        self.lineEdit_result_3.setFont(font6)
+        self.lineEdit_result_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_68.addWidget(self.lineEdit_result_3, 0, 3, 1, 1)
+
+        self.lineEdit_result_1 = QLineEdit(self.frame_5)
+        self.lineEdit_result_1.setObjectName(u"lineEdit_result_1")
+        self.lineEdit_result_1.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_1.setMaximumSize(QSize(26, 16777215))
+        self.lineEdit_result_1.setFont(font6)
+        self.lineEdit_result_1.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_68.addWidget(self.lineEdit_result_1, 0, 1, 1, 1)
+
+        self.lineEdit_result_8 = QLineEdit(self.frame_5)
+        self.lineEdit_result_8.setObjectName(u"lineEdit_result_8")
+        self.lineEdit_result_8.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_8.setMaximumSize(QSize(26, 16777215))
+        self.lineEdit_result_8.setFont(font6)
+        self.lineEdit_result_8.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_68.addWidget(self.lineEdit_result_8, 0, 8, 1, 1)
+
+        self.lineEdit_result_6 = QLineEdit(self.frame_5)
+        self.lineEdit_result_6.setObjectName(u"lineEdit_result_6")
+        self.lineEdit_result_6.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_6.setMaximumSize(QSize(26, 16777215))
+        self.lineEdit_result_6.setFont(font6)
+        self.lineEdit_result_6.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_68.addWidget(self.lineEdit_result_6, 0, 6, 1, 1)
+
+        self.lineEdit_result_9 = QLineEdit(self.frame_5)
+        self.lineEdit_result_9.setObjectName(u"lineEdit_result_9")
+        self.lineEdit_result_9.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_9.setMaximumSize(QSize(26, 16777215))
+        self.lineEdit_result_9.setFont(font6)
+        self.lineEdit_result_9.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_68.addWidget(self.lineEdit_result_9, 0, 9, 1, 1)
+
+        self.lineEdit_result_2 = QLineEdit(self.frame_5)
+        self.lineEdit_result_2.setObjectName(u"lineEdit_result_2")
+        self.lineEdit_result_2.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_2.setMaximumSize(QSize(26, 16777215))
+        self.lineEdit_result_2.setFont(font6)
+        self.lineEdit_result_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_68.addWidget(self.lineEdit_result_2, 0, 2, 1, 1)
+
+        self.lineEdit_result_4 = QLineEdit(self.frame_5)
+        self.lineEdit_result_4.setObjectName(u"lineEdit_result_4")
+        self.lineEdit_result_4.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_4.setMaximumSize(QSize(26, 16777215))
+        self.lineEdit_result_4.setFont(font6)
+        self.lineEdit_result_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_68.addWidget(self.lineEdit_result_4, 0, 4, 1, 1)
+
+        self.lineEdit_result_0 = QLineEdit(self.frame_5)
+        self.lineEdit_result_0.setObjectName(u"lineEdit_result_0")
+        self.lineEdit_result_0.setMinimumSize(QSize(23, 10))
+        self.lineEdit_result_0.setMaximumSize(QSize(26, 16777215))
+        self.lineEdit_result_0.setFont(font6)
+        self.lineEdit_result_0.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_68.addWidget(self.lineEdit_result_0, 0, 0, 1, 1)
+
+
+        self.gridLayout_28.addWidget(self.frame_5, 3, 1, 1, 2)
+
+        self.widget_camera_sony = QWidget(self.groupBox_8)
+        self.widget_camera_sony.setObjectName(u"widget_camera_sony")
+        self.widget_camera_sony.setMinimumSize(QSize(230, 38))
+
+        self.gridLayout_28.addWidget(self.widget_camera_sony, 0, 1, 1, 2)
+
+        self.label_87 = QLabel(self.groupBox_8)
+        self.label_87.setObjectName(u"label_87")
+        self.label_87.setMinimumSize(QSize(0, 30))
+
+        self.gridLayout_28.addWidget(self.label_87, 0, 0, 1, 1)
+
+        self.widget_camera_monitor = QWidget(self.groupBox_8)
+        self.widget_camera_monitor.setObjectName(u"widget_camera_monitor")
+        self.widget_camera_monitor.setMinimumSize(QSize(230, 38))
+
+        self.gridLayout_28.addWidget(self.widget_camera_monitor, 1, 1, 1, 2)
+
+        self.textBrowser_background_data = QTextBrowser(self.groupBox_8)
+        self.textBrowser_background_data.setObjectName(u"textBrowser_background_data")
+        self.textBrowser_background_data.setMinimumSize(QSize(0, 10))
+        self.textBrowser_background_data.setFont(font4)
+        self.textBrowser_background_data.setReadOnly(False)
+
+        self.gridLayout_28.addWidget(self.textBrowser_background_data, 6, 0, 1, 3)
+
+        self.label_88 = QLabel(self.groupBox_8)
+        self.label_88.setObjectName(u"label_88")
+        self.label_88.setMinimumSize(QSize(0, 30))
+
+        self.gridLayout_28.addWidget(self.label_88, 1, 0, 1, 1)
+
+        self.checkBox_ShowUdp = QCheckBox(self.groupBox_8)
+        self.checkBox_ShowUdp.setObjectName(u"checkBox_ShowUdp")
+        self.checkBox_ShowUdp.setMinimumSize(QSize(0, 30))
+
+        self.gridLayout_28.addWidget(self.checkBox_ShowUdp, 5, 0, 1, 2)
+
         self.pushButton_Send_Res = QPushButton(self.groupBox_8)
         self.pushButton_Send_Res.setObjectName(u"pushButton_Send_Res")
         self.pushButton_Send_Res.setMinimumSize(QSize(50, 30))
         self.pushButton_Send_Res.setStyleSheet(u"background:rgb(0,255,0)")
 
-        self.gridLayout_28.addWidget(self.pushButton_Send_Res, 3, 2, 1, 1)
+        self.gridLayout_28.addWidget(self.pushButton_Send_Res, 4, 0, 1, 3)
 
 
         self.gridLayout_65.addWidget(self.groupBox_8, 0, 0, 1, 1)
@@ -3076,7 +3176,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(0)
+        self.tabWidget_Ranking.setCurrentIndex(3)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3318,13 +3418,20 @@ class Ui_MainWindow(object):
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_2), QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe", None))
         self.groupBox_8.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u6570\u636e", None))
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"\u53d1\u9001:", None))
-        self.label_88.setText(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7:", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_result_send.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>\u8bbe\u7f6e\u6700\u5927\u5708\u6570</p></body></html>", None))
-#endif // QT_CONFIG(tooltip)
-        self.checkBox_ShowUdp.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u670d\u52a1\u5668\u6570\u636e", None))
-        self.label_87.setText(QCoreApplication.translate("MainWindow", u"\u7d22\u5c3c:", None))
         self.label_89.setText(QCoreApplication.translate("MainWindow", u"\u6838\u5bf9:", None))
+        self.lineEdit_result_7.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_result_5.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_result_3.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_result_1.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_result_8.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_result_6.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_result_9.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_result_2.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_result_4.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.lineEdit_result_0.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.label_87.setText(QCoreApplication.translate("MainWindow", u"\u7d22\u5c3c:", None))
+        self.label_88.setText(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7:", None))
+        self.checkBox_ShowUdp.setText(QCoreApplication.translate("MainWindow", u"\u663e\u793a\u670d\u52a1\u5668\u6570\u636e", None))
         self.pushButton_Send_Res.setText(QCoreApplication.translate("MainWindow", u"\u53d1\u9001\u7ed3\u679c", None))
         self.groupBox_monitor_cam.setTitle(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
         self.label_monitor_picture.setText("")

@@ -696,10 +696,6 @@ def save_ballsort_yaml():
             ui.textBrowser_background_data.setText(fail("错误，只能输入数字！"))
 
 
-def result2edit():
-    ui.lineEdit_Send_Result.setText(ui.lineEdit_result_send.text())
-
-
 def init_ranking_table():
     global z_ranking_res
     global z_ranking_end
@@ -1942,38 +1938,42 @@ class ScreenShotThread(QThread):
 
 
 def ScreenShotsignal_accept(msg):
-    try:
-        if isinstance(msg, list):
-            if len(msg) < 2 or msg[0] == '':
-                return
-            img = msg[0]
-            pixmap = QPixmap()
-            pixmap.loadFromData(img)
-            pixmap = pixmap.scaled(int(400 * 1.8), int(225 * 1.8))
-            if msg[2] == 'obs':
-                ui.lineEdit_Main_Camera.setText(str(main_Camera))
-                if ui.checkBox_main_camera.isChecked():
-                    main_camera_ui.label_picture.setPixmap(pixmap)
-                ui.label_main_picture.setPixmap(pixmap)
-            elif msg[2] == 'monitor':
-                ui.lineEdit_Backup_Camera.setText(str(monitor_Camera))
-                if ui.checkBox_monitor_cam.isChecked():
-                    monitor_camera_ui.label_picture.setPixmap(pixmap)
-                ui.label_monitor_picture.setPixmap(pixmap)
-            for index in range(len(main_Camera)):
-                fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
-            if perfect_Camera == fit_Camera:
-                ui.lineEdit_result_send.setText(str(main_Camera))
-        elif msg == 'send_res':
-            ui.lineEdit_Send_Result.setText(ui.lineEdit_Main_Camera.text())
-        elif msg == 'send_ok':
-            ui.checkBox_alarm.setChecked(True)
-        else:
-            ui.textBrowser.append(str(msg))
-            ui.textBrowser_msg.append(str(msg))
-            scroll_to_bottom(ui.textBrowser_msg)
-    except:
-        print('OBS 操作失败！')
+    # try:
+    if isinstance(msg, list):
+        if len(msg) < 2 or msg[0] == '':
+            return
+        img = msg[0]
+        pixmap = QPixmap()
+        pixmap.loadFromData(img)
+        pixmap = pixmap.scaled(int(400 * 1.8), int(225 * 1.8))
+        if msg[2] == 'obs':
+            ui.lineEdit_Main_Camera.setText(str(main_Camera))
+            if ui.checkBox_main_camera.isChecked():
+                main_camera_ui.label_picture.setPixmap(pixmap)
+            ui.label_main_picture.setPixmap(pixmap)
+        elif msg[2] == 'monitor':
+            ui.lineEdit_Backup_Camera.setText(str(monitor_Camera))
+            if ui.checkBox_monitor_cam.isChecked():
+                monitor_camera_ui.label_picture.setPixmap(pixmap)
+            ui.label_monitor_picture.setPixmap(pixmap)
+        for index in range(len(main_Camera)):
+            fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
+            if fit_Camera[index]:
+                getattr(ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
+            else:
+                getattr(ui, 'lineEdit_result_%s' % index).setText('')
+    elif msg == 'send_res':
+        ui.lineEdit_Send_Result.setText(ui.lineEdit_Main_Camera.text())
+    elif msg == 'send_ok':
+        ui.checkBox_alarm.setChecked(True)
+    else:
+        ui.textBrowser.append(str(msg))
+        ui.textBrowser_msg.append(str(msg))
+        scroll_to_bottom(ui.textBrowser_msg)
+
+
+# except:
+#     print('OBS 操作失败！')
 
 
 '''
@@ -4056,6 +4056,26 @@ class CameraLabel(QLabel):
             print("QLabel 被右键点击")
 
 
+class CustomLineEdit(QLineEdit):
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Space:
+            name = self.objectName()[0:-1]
+            i = int(self.objectName()[-1:]) + 1
+            print(name, i)
+            if i < 10:
+                target_line_edit = getattr(ui, '%s%s' % (name, i), None)
+                if target_line_edit:
+                    target_line_edit.setFocus()
+                    target_line_edit.selectAll()
+        else:
+            super().keyPressEvent(event)
+
+
+def set_result_class():
+    for i in range(10):
+        getattr(ui, 'lineEdit_result_%s' % i, None).__class__ = CustomLineEdit
+
+
 "****************************************摄像头识别结果_结束***********************************************"
 
 "****************************************直播大厅_开始****************************************************"
@@ -5150,7 +5170,6 @@ if __name__ == '__main__':
 
     ui.lineEdit_time_send_result.editingFinished.connect(save_ballsort_yaml)
     ui.lineEdit_time_count_ball.editingFinished.connect(save_ballsort_yaml)
-    ui.lineEdit_result_send.editingFinished.connect(result2edit)
 
     # 初始化球数组，位置寄存器
     reset_ranking_array()  # 重置排名数组
@@ -5228,6 +5247,8 @@ if __name__ == '__main__':
 
     ui.checkBox_main_camera.checkStateChanged.connect(main_cam_change)
     ui.checkBox_monitor_cam.checkStateChanged.connect(monitor_cam_change)
+
+    set_result_class()
 
     "**************************摄像头结果_结束*****************************"
     "**************************参数设置_开始*****************************"
