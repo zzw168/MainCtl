@@ -684,7 +684,11 @@ class Ui_MainWindow(object):
 
         self.lineEdit_Send_Result = QLineEdit(self.widget_9)
         self.lineEdit_Send_Result.setObjectName(u"lineEdit_Send_Result")
-        self.lineEdit_Send_Result.setFont(font1)
+        font4 = QFont()
+        font4.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
+        font4.setPointSize(16)
+        font4.setBold(True)
+        self.lineEdit_Send_Result.setFont(font4)
 
         self.gridLayout_5.addWidget(self.lineEdit_Send_Result, 3, 0, 1, 2)
 
@@ -1039,11 +1043,11 @@ class Ui_MainWindow(object):
 
         self.lineEdit_axis0 = QLineEdit(self.frame_17)
         self.lineEdit_axis0.setObjectName(u"lineEdit_axis0")
-        font4 = QFont()
-        font4.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
-        font4.setPointSize(10)
-        font4.setBold(False)
-        self.lineEdit_axis0.setFont(font4)
+        font5 = QFont()
+        font5.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
+        font5.setPointSize(10)
+        font5.setBold(False)
+        self.lineEdit_axis0.setFont(font5)
         self.lineEdit_axis0.setStyleSheet(u"background:rgb(240,240,240)")
         self.lineEdit_axis0.setEchoMode(QLineEdit.EchoMode.Normal)
         self.lineEdit_axis0.setReadOnly(True)
@@ -1058,7 +1062,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_axis1 = QLineEdit(self.frame_17)
         self.lineEdit_axis1.setObjectName(u"lineEdit_axis1")
-        self.lineEdit_axis1.setFont(font4)
+        self.lineEdit_axis1.setFont(font5)
         self.lineEdit_axis1.setStyleSheet(u"background:rgb(240,240,240)")
         self.lineEdit_axis1.setEchoMode(QLineEdit.EchoMode.Normal)
         self.lineEdit_axis1.setReadOnly(True)
@@ -1073,7 +1077,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_axis2 = QLineEdit(self.frame_17)
         self.lineEdit_axis2.setObjectName(u"lineEdit_axis2")
-        self.lineEdit_axis2.setFont(font4)
+        self.lineEdit_axis2.setFont(font5)
         self.lineEdit_axis2.setStyleSheet(u"background:rgb(240,240,240)")
         self.lineEdit_axis2.setEchoMode(QLineEdit.EchoMode.Normal)
         self.lineEdit_axis2.setReadOnly(True)
@@ -1088,7 +1092,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_axis3 = QLineEdit(self.frame_17)
         self.lineEdit_axis3.setObjectName(u"lineEdit_axis3")
-        self.lineEdit_axis3.setFont(font4)
+        self.lineEdit_axis3.setFont(font5)
         self.lineEdit_axis3.setStyleSheet(u"background:rgb(240,240,240)")
         self.lineEdit_axis3.setEchoMode(QLineEdit.EchoMode.Normal)
         self.lineEdit_axis3.setReadOnly(True)
@@ -1103,7 +1107,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_axis4 = QLineEdit(self.frame_17)
         self.lineEdit_axis4.setObjectName(u"lineEdit_axis4")
-        self.lineEdit_axis4.setFont(font4)
+        self.lineEdit_axis4.setFont(font5)
         self.lineEdit_axis4.setStyleSheet(u"background:rgb(240,240,240)")
         self.lineEdit_axis4.setEchoMode(QLineEdit.EchoMode.Normal)
         self.lineEdit_axis4.setReadOnly(True)
@@ -1363,11 +1367,11 @@ class Ui_MainWindow(object):
         self.tableWidget_Audio.setObjectName(u"tableWidget_Audio")
         self.tableWidget_Audio.setMinimumSize(QSize(0, 0))
         self.tableWidget_Audio.setMaximumSize(QSize(500, 16777215))
-        font5 = QFont()
-        font5.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
-        font5.setPointSize(12)
-        font5.setBold(False)
-        self.tableWidget_Audio.setFont(font5)
+        font6 = QFont()
+        font6.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
+        font6.setPointSize(12)
+        font6.setBold(False)
+        self.tableWidget_Audio.setFont(font6)
         self.tableWidget_Audio.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.tableWidget_Audio.horizontalHeader().setDefaultSectionSize(80)
         self.tableWidget_Audio.horizontalHeader().setStretchLastSection(True)
@@ -1443,7 +1447,7 @@ class Ui_MainWindow(object):
         self.tableWidget_Ai.setObjectName(u"tableWidget_Ai")
         self.tableWidget_Ai.setMinimumSize(QSize(0, 0))
         self.tableWidget_Ai.setMaximumSize(QSize(500, 380))
-        self.tableWidget_Ai.setFont(font5)
+        self.tableWidget_Ai.setFont(font6)
         self.tableWidget_Ai.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.tableWidget_Ai.horizontalHeader().setDefaultSectionSize(80)
         self.tableWidget_Ai.horizontalHeader().setStretchLastSection(True)
@@ -1541,11 +1545,7 @@ class Ui_MainWindow(object):
         self.frame_5 = QFrame(self.groupBox_8)
         self.frame_5.setObjectName(u"frame_5")
         self.frame_5.setMinimumSize(QSize(230, 42))
-        font6 = QFont()
-        font6.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
-        font6.setPointSize(16)
-        font6.setBold(True)
-        self.frame_5.setFont(font6)
+        self.frame_5.setFont(font4)
         self.frame_5.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_68 = QGridLayout(self.frame_5)
@@ -1555,7 +1555,7 @@ class Ui_MainWindow(object):
         self.lineEdit_result_7.setObjectName(u"lineEdit_result_7")
         self.lineEdit_result_7.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_7.setMaximumSize(QSize(26, 16777215))
-        self.lineEdit_result_7.setFont(font6)
+        self.lineEdit_result_7.setFont(font4)
         self.lineEdit_result_7.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_68.addWidget(self.lineEdit_result_7, 0, 7, 1, 1)
@@ -1564,7 +1564,7 @@ class Ui_MainWindow(object):
         self.lineEdit_result_5.setObjectName(u"lineEdit_result_5")
         self.lineEdit_result_5.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_5.setMaximumSize(QSize(26, 16777215))
-        self.lineEdit_result_5.setFont(font6)
+        self.lineEdit_result_5.setFont(font4)
         self.lineEdit_result_5.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_68.addWidget(self.lineEdit_result_5, 0, 5, 1, 1)
@@ -1573,7 +1573,7 @@ class Ui_MainWindow(object):
         self.lineEdit_result_3.setObjectName(u"lineEdit_result_3")
         self.lineEdit_result_3.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_3.setMaximumSize(QSize(26, 16777215))
-        self.lineEdit_result_3.setFont(font6)
+        self.lineEdit_result_3.setFont(font4)
         self.lineEdit_result_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_68.addWidget(self.lineEdit_result_3, 0, 3, 1, 1)
@@ -1582,7 +1582,7 @@ class Ui_MainWindow(object):
         self.lineEdit_result_1.setObjectName(u"lineEdit_result_1")
         self.lineEdit_result_1.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_1.setMaximumSize(QSize(26, 16777215))
-        self.lineEdit_result_1.setFont(font6)
+        self.lineEdit_result_1.setFont(font4)
         self.lineEdit_result_1.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_68.addWidget(self.lineEdit_result_1, 0, 1, 1, 1)
@@ -1591,7 +1591,7 @@ class Ui_MainWindow(object):
         self.lineEdit_result_8.setObjectName(u"lineEdit_result_8")
         self.lineEdit_result_8.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_8.setMaximumSize(QSize(26, 16777215))
-        self.lineEdit_result_8.setFont(font6)
+        self.lineEdit_result_8.setFont(font4)
         self.lineEdit_result_8.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_68.addWidget(self.lineEdit_result_8, 0, 8, 1, 1)
@@ -1600,7 +1600,7 @@ class Ui_MainWindow(object):
         self.lineEdit_result_6.setObjectName(u"lineEdit_result_6")
         self.lineEdit_result_6.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_6.setMaximumSize(QSize(26, 16777215))
-        self.lineEdit_result_6.setFont(font6)
+        self.lineEdit_result_6.setFont(font4)
         self.lineEdit_result_6.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_68.addWidget(self.lineEdit_result_6, 0, 6, 1, 1)
@@ -1609,7 +1609,7 @@ class Ui_MainWindow(object):
         self.lineEdit_result_9.setObjectName(u"lineEdit_result_9")
         self.lineEdit_result_9.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_9.setMaximumSize(QSize(26, 16777215))
-        self.lineEdit_result_9.setFont(font6)
+        self.lineEdit_result_9.setFont(font4)
         self.lineEdit_result_9.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_68.addWidget(self.lineEdit_result_9, 0, 9, 1, 1)
@@ -1618,7 +1618,7 @@ class Ui_MainWindow(object):
         self.lineEdit_result_2.setObjectName(u"lineEdit_result_2")
         self.lineEdit_result_2.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_2.setMaximumSize(QSize(26, 16777215))
-        self.lineEdit_result_2.setFont(font6)
+        self.lineEdit_result_2.setFont(font4)
         self.lineEdit_result_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_68.addWidget(self.lineEdit_result_2, 0, 2, 1, 1)
@@ -1627,7 +1627,7 @@ class Ui_MainWindow(object):
         self.lineEdit_result_4.setObjectName(u"lineEdit_result_4")
         self.lineEdit_result_4.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_4.setMaximumSize(QSize(26, 16777215))
-        self.lineEdit_result_4.setFont(font6)
+        self.lineEdit_result_4.setFont(font4)
         self.lineEdit_result_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_68.addWidget(self.lineEdit_result_4, 0, 4, 1, 1)
@@ -1636,7 +1636,7 @@ class Ui_MainWindow(object):
         self.lineEdit_result_0.setObjectName(u"lineEdit_result_0")
         self.lineEdit_result_0.setMinimumSize(QSize(24, 10))
         self.lineEdit_result_0.setMaximumSize(QSize(26, 16777215))
-        self.lineEdit_result_0.setFont(font6)
+        self.lineEdit_result_0.setFont(font4)
         self.lineEdit_result_0.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_68.addWidget(self.lineEdit_result_0, 0, 0, 1, 1)
@@ -1665,7 +1665,7 @@ class Ui_MainWindow(object):
         self.textBrowser_background_data = QTextBrowser(self.groupBox_8)
         self.textBrowser_background_data.setObjectName(u"textBrowser_background_data")
         self.textBrowser_background_data.setMinimumSize(QSize(0, 10))
-        self.textBrowser_background_data.setFont(font4)
+        self.textBrowser_background_data.setFont(font5)
         self.textBrowser_background_data.setReadOnly(False)
 
         self.gridLayout_28.addWidget(self.textBrowser_background_data, 6, 0, 1, 3)
@@ -1788,7 +1788,7 @@ class Ui_MainWindow(object):
         self.tableWidget_Ranking.setObjectName(u"tableWidget_Ranking")
         self.tableWidget_Ranking.setMinimumSize(QSize(330, 10))
         self.tableWidget_Ranking.setMaximumSize(QSize(500, 16777215))
-        self.tableWidget_Ranking.setFont(font5)
+        self.tableWidget_Ranking.setFont(font6)
         self.tableWidget_Ranking.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.tableWidget_Ranking.horizontalHeader().setDefaultSectionSize(80)
         self.tableWidget_Ranking.horizontalHeader().setStretchLastSection(True)
@@ -2108,7 +2108,7 @@ class Ui_MainWindow(object):
         self.lineEdit_shoot = QLineEdit(self.groupBox_32)
         self.lineEdit_shoot.setObjectName(u"lineEdit_shoot")
         self.lineEdit_shoot.setMinimumSize(QSize(0, 0))
-        self.lineEdit_shoot.setFont(font4)
+        self.lineEdit_shoot.setFont(font5)
         self.lineEdit_shoot.setReadOnly(True)
 
         self.gridLayout_58.addWidget(self.lineEdit_shoot, 0, 1, 1, 1)
@@ -2116,7 +2116,7 @@ class Ui_MainWindow(object):
         self.lineEdit_map_picture_3 = QLineEdit(self.groupBox_32)
         self.lineEdit_map_picture_3.setObjectName(u"lineEdit_map_picture_3")
         self.lineEdit_map_picture_3.setMinimumSize(QSize(0, 0))
-        self.lineEdit_map_picture_3.setFont(font4)
+        self.lineEdit_map_picture_3.setFont(font5)
         self.lineEdit_map_picture_3.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_picture_3, 1, 3, 1, 1)
@@ -2124,96 +2124,96 @@ class Ui_MainWindow(object):
         self.lineEdit_start_count = QLineEdit(self.groupBox_32)
         self.lineEdit_start_count.setObjectName(u"lineEdit_start_count")
         self.lineEdit_start_count.setMinimumSize(QSize(0, 0))
-        self.lineEdit_start_count.setFont(font4)
+        self.lineEdit_start_count.setFont(font5)
         self.lineEdit_start_count.setReadOnly(True)
 
         self.gridLayout_58.addWidget(self.lineEdit_start_count, 0, 3, 1, 1)
 
         self.label_71 = QLabel(self.groupBox_32)
         self.label_71.setObjectName(u"label_71")
-        self.label_71.setFont(font5)
+        self.label_71.setFont(font6)
 
         self.gridLayout_58.addWidget(self.label_71, 1, 0, 1, 1)
 
         self.lineEdit_start = QLineEdit(self.groupBox_32)
         self.lineEdit_start.setObjectName(u"lineEdit_start")
         self.lineEdit_start.setMinimumSize(QSize(0, 0))
-        self.lineEdit_start.setFont(font4)
+        self.lineEdit_start.setFont(font5)
         self.lineEdit_start.setReadOnly(True)
 
         self.gridLayout_58.addWidget(self.lineEdit_start, 1, 1, 1, 1)
 
         self.label_66 = QLabel(self.groupBox_32)
         self.label_66.setObjectName(u"label_66")
-        self.label_66.setFont(font5)
+        self.label_66.setFont(font6)
 
         self.gridLayout_58.addWidget(self.label_66, 0, 0, 1, 1)
 
         self.lineEdit_end = QLineEdit(self.groupBox_32)
         self.lineEdit_end.setObjectName(u"lineEdit_end")
         self.lineEdit_end.setMinimumSize(QSize(0, 0))
-        self.lineEdit_end.setFont(font4)
+        self.lineEdit_end.setFont(font5)
         self.lineEdit_end.setReadOnly(True)
 
         self.gridLayout_58.addWidget(self.lineEdit_end, 3, 1, 1, 1)
 
         self.label_74 = QLabel(self.groupBox_32)
         self.label_74.setObjectName(u"label_74")
-        self.label_74.setFont(font5)
+        self.label_74.setFont(font6)
 
         self.gridLayout_58.addWidget(self.label_74, 3, 2, 1, 1)
 
         self.lineEdit_map_picture_4 = QLineEdit(self.groupBox_32)
         self.lineEdit_map_picture_4.setObjectName(u"lineEdit_map_picture_4")
         self.lineEdit_map_picture_4.setMinimumSize(QSize(0, 0))
-        self.lineEdit_map_picture_4.setFont(font4)
+        self.lineEdit_map_picture_4.setFont(font5)
         self.lineEdit_map_picture_4.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_picture_4, 3, 3, 1, 1)
 
         self.label_72 = QLabel(self.groupBox_32)
         self.label_72.setObjectName(u"label_72")
-        self.label_72.setFont(font5)
+        self.label_72.setFont(font6)
 
         self.gridLayout_58.addWidget(self.label_72, 2, 0, 1, 1)
 
         self.lineEdit_shake = QLineEdit(self.groupBox_32)
         self.lineEdit_shake.setObjectName(u"lineEdit_shake")
         self.lineEdit_shake.setMinimumSize(QSize(0, 0))
-        self.lineEdit_shake.setFont(font4)
+        self.lineEdit_shake.setFont(font5)
         self.lineEdit_shake.setReadOnly(True)
 
         self.gridLayout_58.addWidget(self.lineEdit_shake, 2, 1, 1, 1)
 
         self.label_75 = QLabel(self.groupBox_32)
         self.label_75.setObjectName(u"label_75")
-        self.label_75.setFont(font5)
+        self.label_75.setFont(font6)
 
         self.gridLayout_58.addWidget(self.label_75, 0, 2, 1, 1)
 
         self.label_73 = QLabel(self.groupBox_32)
         self.label_73.setObjectName(u"label_73")
-        self.label_73.setFont(font5)
+        self.label_73.setFont(font6)
 
         self.gridLayout_58.addWidget(self.label_73, 3, 0, 1, 1)
 
         self.label_76 = QLabel(self.groupBox_32)
         self.label_76.setObjectName(u"label_76")
-        self.label_76.setFont(font5)
+        self.label_76.setFont(font6)
 
         self.gridLayout_58.addWidget(self.label_76, 1, 2, 1, 1)
 
         self.lineEdit_map_picture_5 = QLineEdit(self.groupBox_32)
         self.lineEdit_map_picture_5.setObjectName(u"lineEdit_map_picture_5")
         self.lineEdit_map_picture_5.setMinimumSize(QSize(0, 0))
-        self.lineEdit_map_picture_5.setFont(font4)
+        self.lineEdit_map_picture_5.setFont(font5)
         self.lineEdit_map_picture_5.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_map_picture_5, 2, 3, 1, 1)
 
         self.label_77 = QLabel(self.groupBox_32)
         self.label_77.setObjectName(u"label_77")
-        self.label_77.setFont(font5)
+        self.label_77.setFont(font6)
 
         self.gridLayout_58.addWidget(self.label_77, 2, 2, 1, 1)
 
@@ -2230,14 +2230,14 @@ class Ui_MainWindow(object):
         self.lineEdit_music_3 = QLineEdit(self.groupBox_26)
         self.lineEdit_music_3.setObjectName(u"lineEdit_music_3")
         self.lineEdit_music_3.setMinimumSize(QSize(300, 0))
-        self.lineEdit_music_3.setFont(font4)
+        self.lineEdit_music_3.setFont(font5)
         self.lineEdit_music_3.setReadOnly(False)
 
         self.gridLayout_53.addWidget(self.lineEdit_music_3, 4, 1, 1, 2)
 
         self.radioButton_music_background_2 = QRadioButton(self.groupBox_26)
         self.radioButton_music_background_2.setObjectName(u"radioButton_music_background_2")
-        self.radioButton_music_background_2.setFont(font5)
+        self.radioButton_music_background_2.setFont(font6)
         self.radioButton_music_background_2.setChecked(True)
 
         self.gridLayout_53.addWidget(self.radioButton_music_background_2, 3, 0, 1, 1)
@@ -2245,28 +2245,28 @@ class Ui_MainWindow(object):
         self.lineEdit_music_2 = QLineEdit(self.groupBox_26)
         self.lineEdit_music_2.setObjectName(u"lineEdit_music_2")
         self.lineEdit_music_2.setMinimumSize(QSize(300, 0))
-        self.lineEdit_music_2.setFont(font4)
+        self.lineEdit_music_2.setFont(font5)
         self.lineEdit_music_2.setReadOnly(False)
 
         self.gridLayout_53.addWidget(self.lineEdit_music_2, 3, 1, 1, 2)
 
         self.radioButton_music_background_1 = QRadioButton(self.groupBox_26)
         self.radioButton_music_background_1.setObjectName(u"radioButton_music_background_1")
-        self.radioButton_music_background_1.setFont(font5)
+        self.radioButton_music_background_1.setFont(font6)
 
         self.gridLayout_53.addWidget(self.radioButton_music_background_1, 2, 0, 1, 1)
 
         self.lineEdit_music_1 = QLineEdit(self.groupBox_26)
         self.lineEdit_music_1.setObjectName(u"lineEdit_music_1")
         self.lineEdit_music_1.setMinimumSize(QSize(300, 0))
-        self.lineEdit_music_1.setFont(font4)
+        self.lineEdit_music_1.setFont(font5)
         self.lineEdit_music_1.setReadOnly(False)
 
         self.gridLayout_53.addWidget(self.lineEdit_music_1, 2, 1, 1, 2)
 
         self.radioButton_music_background_3 = QRadioButton(self.groupBox_26)
         self.radioButton_music_background_3.setObjectName(u"radioButton_music_background_3")
-        self.radioButton_music_background_3.setFont(font5)
+        self.radioButton_music_background_3.setFont(font6)
 
         self.gridLayout_53.addWidget(self.radioButton_music_background_3, 4, 0, 1, 1)
 
@@ -2283,14 +2283,14 @@ class Ui_MainWindow(object):
         self.lineEdit_scene_name = QLineEdit(self.groupBox_30)
         self.lineEdit_scene_name.setObjectName(u"lineEdit_scene_name")
         self.lineEdit_scene_name.setMinimumSize(QSize(300, 0))
-        self.lineEdit_scene_name.setFont(font4)
+        self.lineEdit_scene_name.setFont(font5)
         self.lineEdit_scene_name.setReadOnly(False)
 
         self.gridLayout_56.addWidget(self.lineEdit_scene_name, 1, 1, 1, 1)
 
         self.label_65 = QLabel(self.groupBox_30)
         self.label_65.setObjectName(u"label_65")
-        self.label_65.setFont(font5)
+        self.label_65.setFont(font6)
 
         self.gridLayout_56.addWidget(self.label_65, 1, 0, 1, 1)
 
@@ -2303,14 +2303,14 @@ class Ui_MainWindow(object):
         self.gridLayout_57.setObjectName(u"gridLayout_57")
         self.label_69 = QLabel(self.groupBox_31)
         self.label_69.setObjectName(u"label_69")
-        self.label_69.setFont(font5)
+        self.label_69.setFont(font6)
 
         self.gridLayout_57.addWidget(self.label_69, 2, 0, 1, 1)
 
         self.lineEdit_source_end = QLineEdit(self.groupBox_31)
         self.lineEdit_source_end.setObjectName(u"lineEdit_source_end")
         self.lineEdit_source_end.setMinimumSize(QSize(300, 0))
-        self.lineEdit_source_end.setFont(font4)
+        self.lineEdit_source_end.setFont(font5)
         self.lineEdit_source_end.setReadOnly(False)
 
         self.gridLayout_57.addWidget(self.lineEdit_source_end, 4, 1, 1, 1)
@@ -2318,7 +2318,7 @@ class Ui_MainWindow(object):
         self.lineEdit_source_picture = QLineEdit(self.groupBox_31)
         self.lineEdit_source_picture.setObjectName(u"lineEdit_source_picture")
         self.lineEdit_source_picture.setMinimumSize(QSize(300, 0))
-        self.lineEdit_source_picture.setFont(font4)
+        self.lineEdit_source_picture.setFont(font5)
         self.lineEdit_source_picture.setReadOnly(False)
 
         self.gridLayout_57.addWidget(self.lineEdit_source_picture, 1, 1, 1, 1)
@@ -2326,34 +2326,34 @@ class Ui_MainWindow(object):
         self.lineEdit_source_settlement = QLineEdit(self.groupBox_31)
         self.lineEdit_source_settlement.setObjectName(u"lineEdit_source_settlement")
         self.lineEdit_source_settlement.setMinimumSize(QSize(300, 0))
-        self.lineEdit_source_settlement.setFont(font4)
+        self.lineEdit_source_settlement.setFont(font5)
         self.lineEdit_source_settlement.setReadOnly(False)
 
         self.gridLayout_57.addWidget(self.lineEdit_source_settlement, 2, 1, 1, 1)
 
         self.label_67 = QLabel(self.groupBox_31)
         self.label_67.setObjectName(u"label_67")
-        self.label_67.setFont(font5)
+        self.label_67.setFont(font6)
 
         self.gridLayout_57.addWidget(self.label_67, 0, 0, 1, 1)
 
         self.lineEdit_source_ranking = QLineEdit(self.groupBox_31)
         self.lineEdit_source_ranking.setObjectName(u"lineEdit_source_ranking")
         self.lineEdit_source_ranking.setMinimumSize(QSize(300, 0))
-        self.lineEdit_source_ranking.setFont(font4)
+        self.lineEdit_source_ranking.setFont(font5)
         self.lineEdit_source_ranking.setReadOnly(False)
 
         self.gridLayout_57.addWidget(self.lineEdit_source_ranking, 0, 1, 1, 1)
 
         self.label_68 = QLabel(self.groupBox_31)
         self.label_68.setObjectName(u"label_68")
-        self.label_68.setFont(font5)
+        self.label_68.setFont(font6)
 
         self.gridLayout_57.addWidget(self.label_68, 1, 0, 1, 1)
 
         self.label_70 = QLabel(self.groupBox_31)
         self.label_70.setObjectName(u"label_70")
-        self.label_70.setFont(font5)
+        self.label_70.setFont(font6)
 
         self.gridLayout_57.addWidget(self.label_70, 4, 0, 1, 1)
 
@@ -2370,7 +2370,7 @@ class Ui_MainWindow(object):
         self.gridLayout_59.setObjectName(u"gridLayout_59")
         self.textBrowser_total_msg = QTextBrowser(self.groupBox_28)
         self.textBrowser_total_msg.setObjectName(u"textBrowser_total_msg")
-        self.textBrowser_total_msg.setFont(font5)
+        self.textBrowser_total_msg.setFont(font6)
         self.textBrowser_total_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.textBrowser_total_msg.setReadOnly(False)
 
@@ -2396,33 +2396,33 @@ class Ui_MainWindow(object):
         self.lineEdit_map_picture = QLineEdit(self.groupBox_29)
         self.lineEdit_map_picture.setObjectName(u"lineEdit_map_picture")
         self.lineEdit_map_picture.setMinimumSize(QSize(200, 0))
-        self.lineEdit_map_picture.setFont(font4)
+        self.lineEdit_map_picture.setFont(font5)
         self.lineEdit_map_picture.setReadOnly(False)
 
         self.gridLayout_55.addWidget(self.lineEdit_map_picture, 0, 1, 1, 1)
 
         self.label_47 = QLabel(self.groupBox_29)
         self.label_47.setObjectName(u"label_47")
-        self.label_47.setFont(font5)
+        self.label_47.setFont(font6)
 
         self.gridLayout_55.addWidget(self.label_47, 0, 0, 1, 1)
 
         self.label_48 = QLabel(self.groupBox_29)
         self.label_48.setObjectName(u"label_48")
-        self.label_48.setFont(font5)
+        self.label_48.setFont(font6)
 
         self.gridLayout_55.addWidget(self.label_48, 1, 0, 1, 1)
 
         self.label_83 = QLabel(self.groupBox_29)
         self.label_83.setObjectName(u"label_83")
-        self.label_83.setFont(font5)
+        self.label_83.setFont(font6)
 
         self.gridLayout_55.addWidget(self.label_83, 0, 2, 1, 1)
 
         self.lineEdit_map_size = QLineEdit(self.groupBox_29)
         self.lineEdit_map_size.setObjectName(u"lineEdit_map_size")
         self.lineEdit_map_size.setMinimumSize(QSize(30, 0))
-        self.lineEdit_map_size.setFont(font4)
+        self.lineEdit_map_size.setFont(font5)
         self.lineEdit_map_size.setReadOnly(False)
 
         self.gridLayout_55.addWidget(self.lineEdit_map_size, 0, 3, 1, 1)
@@ -2430,7 +2430,7 @@ class Ui_MainWindow(object):
         self.lineEdit_map_line = QLineEdit(self.groupBox_29)
         self.lineEdit_map_line.setObjectName(u"lineEdit_map_line")
         self.lineEdit_map_line.setMinimumSize(QSize(300, 0))
-        self.lineEdit_map_line.setFont(font4)
+        self.lineEdit_map_line.setFont(font5)
         self.lineEdit_map_line.setReadOnly(False)
 
         self.gridLayout_55.addWidget(self.lineEdit_map_line, 1, 1, 1, 3)
@@ -2449,14 +2449,14 @@ class Ui_MainWindow(object):
         self.lineEdit_Image_Path = QLineEdit(self.groupBox_35)
         self.lineEdit_Image_Path.setObjectName(u"lineEdit_Image_Path")
         self.lineEdit_Image_Path.setMinimumSize(QSize(300, 0))
-        self.lineEdit_Image_Path.setFont(font4)
+        self.lineEdit_Image_Path.setFont(font5)
         self.lineEdit_Image_Path.setReadOnly(False)
 
         self.gridLayout_62.addWidget(self.lineEdit_Image_Path, 0, 1, 1, 2)
 
         self.label_86 = QLabel(self.groupBox_35)
         self.label_86.setObjectName(u"label_86")
-        self.label_86.setFont(font5)
+        self.label_86.setFont(font6)
 
         self.gridLayout_62.addWidget(self.label_86, 0, 0, 1, 1)
 
@@ -2470,20 +2470,20 @@ class Ui_MainWindow(object):
         self.gridLayout_63.setContentsMargins(-1, 0, -1, 9)
         self.label_91 = QLabel(self.groupBox_36)
         self.label_91.setObjectName(u"label_91")
-        self.label_91.setFont(font5)
+        self.label_91.setFont(font6)
 
         self.gridLayout_63.addWidget(self.label_91, 0, 0, 1, 1)
 
         self.label_90 = QLabel(self.groupBox_36)
         self.label_90.setObjectName(u"label_90")
-        self.label_90.setFont(font5)
+        self.label_90.setFont(font6)
 
         self.gridLayout_63.addWidget(self.label_90, 0, 2, 1, 1)
 
         self.lineEdit_sony_sort = QLineEdit(self.groupBox_36)
         self.lineEdit_sony_sort.setObjectName(u"lineEdit_sony_sort")
         self.lineEdit_sony_sort.setMinimumSize(QSize(30, 0))
-        self.lineEdit_sony_sort.setFont(font4)
+        self.lineEdit_sony_sort.setFont(font5)
         self.lineEdit_sony_sort.setReadOnly(False)
 
         self.gridLayout_63.addWidget(self.lineEdit_sony_sort, 0, 1, 1, 1)
@@ -2491,7 +2491,7 @@ class Ui_MainWindow(object):
         self.lineEdit_monitor_sort = QLineEdit(self.groupBox_36)
         self.lineEdit_monitor_sort.setObjectName(u"lineEdit_monitor_sort")
         self.lineEdit_monitor_sort.setMinimumSize(QSize(30, 0))
-        self.lineEdit_monitor_sort.setFont(font4)
+        self.lineEdit_monitor_sort.setFont(font5)
         self.lineEdit_monitor_sort.setReadOnly(False)
 
         self.gridLayout_63.addWidget(self.lineEdit_monitor_sort, 0, 3, 1, 1)
@@ -2522,76 +2522,76 @@ class Ui_MainWindow(object):
         self.gridLayout_35.setObjectName(u"gridLayout_35")
         self.label_80 = QLabel(self.groupBox_17)
         self.label_80.setObjectName(u"label_80")
-        self.label_80.setFont(font5)
+        self.label_80.setFont(font6)
 
         self.gridLayout_35.addWidget(self.label_80, 0, 3, 1, 1)
 
         self.label_79 = QLabel(self.groupBox_17)
         self.label_79.setObjectName(u"label_79")
-        self.label_79.setFont(font5)
+        self.label_79.setFont(font6)
 
         self.gridLayout_35.addWidget(self.label_79, 5, 0, 1, 1)
 
         self.label_38 = QLabel(self.groupBox_17)
         self.label_38.setObjectName(u"label_38")
-        self.label_38.setFont(font5)
+        self.label_38.setFont(font6)
 
         self.gridLayout_35.addWidget(self.label_38, 2, 0, 1, 2)
 
         self.label_36 = QLabel(self.groupBox_17)
         self.label_36.setObjectName(u"label_36")
-        self.label_36.setFont(font5)
+        self.label_36.setFont(font6)
 
         self.gridLayout_35.addWidget(self.label_36, 1, 0, 1, 2)
 
         self.lineEdit_cardNo = QLineEdit(self.groupBox_17)
         self.lineEdit_cardNo.setObjectName(u"lineEdit_cardNo")
-        self.lineEdit_cardNo.setFont(font4)
+        self.lineEdit_cardNo.setFont(font5)
         self.lineEdit_cardNo.setReadOnly(False)
 
         self.gridLayout_35.addWidget(self.lineEdit_cardNo, 0, 2, 1, 1)
 
         self.lineEdit_s485_Axis_No = QLineEdit(self.groupBox_17)
         self.lineEdit_s485_Axis_No.setObjectName(u"lineEdit_s485_Axis_No")
-        self.lineEdit_s485_Axis_No.setFont(font4)
+        self.lineEdit_s485_Axis_No.setFont(font5)
         self.lineEdit_s485_Axis_No.setReadOnly(False)
 
         self.gridLayout_35.addWidget(self.lineEdit_s485_Axis_No, 1, 2, 1, 3)
 
         self.lineEdit_Track_number = QLineEdit(self.groupBox_17)
         self.lineEdit_Track_number.setObjectName(u"lineEdit_Track_number")
-        self.lineEdit_Track_number.setFont(font4)
+        self.lineEdit_Track_number.setFont(font5)
         self.lineEdit_Track_number.setReadOnly(False)
 
         self.gridLayout_35.addWidget(self.lineEdit_Track_number, 0, 4, 1, 1)
 
         self.label_33 = QLabel(self.groupBox_17)
         self.label_33.setObjectName(u"label_33")
-        self.label_33.setFont(font5)
+        self.label_33.setFont(font6)
 
         self.gridLayout_35.addWidget(self.label_33, 0, 0, 1, 2)
 
         self.lineEdit_s485_Cam_No = QLineEdit(self.groupBox_17)
         self.lineEdit_s485_Cam_No.setObjectName(u"lineEdit_s485_Cam_No")
-        self.lineEdit_s485_Cam_No.setFont(font4)
+        self.lineEdit_s485_Cam_No.setFont(font5)
 
         self.gridLayout_35.addWidget(self.lineEdit_s485_Cam_No, 2, 2, 1, 3)
 
         self.lineEdit_five_axis = QLineEdit(self.groupBox_17)
         self.lineEdit_five_axis.setObjectName(u"lineEdit_five_axis")
-        self.lineEdit_five_axis.setFont(font4)
+        self.lineEdit_five_axis.setFont(font5)
 
         self.gridLayout_35.addWidget(self.lineEdit_five_axis, 5, 2, 1, 1)
 
         self.label_81 = QLabel(self.groupBox_17)
         self.label_81.setObjectName(u"label_81")
-        self.label_81.setFont(font5)
+        self.label_81.setFont(font6)
 
         self.gridLayout_35.addWidget(self.label_81, 5, 3, 1, 1)
 
         self.lineEdit_five_key = QLineEdit(self.groupBox_17)
         self.lineEdit_five_key.setObjectName(u"lineEdit_five_key")
-        self.lineEdit_five_key.setFont(font4)
+        self.lineEdit_five_key.setFont(font5)
 
         self.gridLayout_35.addWidget(self.lineEdit_five_key, 5, 4, 1, 1)
 
@@ -2607,124 +2607,124 @@ class Ui_MainWindow(object):
         self.gridLayout_32.setObjectName(u"gridLayout_32")
         self.label_82 = QLabel(self.groupBox_13)
         self.label_82.setObjectName(u"label_82")
-        self.label_82.setFont(font5)
+        self.label_82.setFont(font6)
 
         self.gridLayout_32.addWidget(self.label_82, 2, 0, 1, 1)
 
         self.label_30 = QLabel(self.groupBox_13)
         self.label_30.setObjectName(u"label_30")
-        self.label_30.setFont(font5)
+        self.label_30.setFont(font6)
 
         self.gridLayout_32.addWidget(self.label_30, 1, 3, 1, 1)
 
         self.lineEdit_rtsp_url = QLineEdit(self.groupBox_13)
         self.lineEdit_rtsp_url.setObjectName(u"lineEdit_rtsp_url")
-        self.lineEdit_rtsp_url.setFont(font4)
+        self.lineEdit_rtsp_url.setFont(font5)
 
         self.gridLayout_32.addWidget(self.lineEdit_rtsp_url, 6, 1, 1, 4)
 
         self.label_19 = QLabel(self.groupBox_13)
         self.label_19.setObjectName(u"label_19")
-        self.label_19.setFont(font5)
+        self.label_19.setFont(font6)
 
         self.gridLayout_32.addWidget(self.label_19, 0, 3, 1, 1)
 
         self.lineEdit_TcpServer_ip = QLineEdit(self.groupBox_13)
         self.lineEdit_TcpServer_ip.setObjectName(u"lineEdit_TcpServer_ip")
-        self.lineEdit_TcpServer_ip.setFont(font4)
+        self.lineEdit_TcpServer_ip.setFont(font5)
         self.lineEdit_TcpServer_ip.setReadOnly(True)
 
         self.gridLayout_32.addWidget(self.lineEdit_TcpServer_ip, 1, 2, 1, 1)
 
         self.lineEdit_result_tcpServer_ip = QLineEdit(self.groupBox_13)
         self.lineEdit_result_tcpServer_ip.setObjectName(u"lineEdit_result_tcpServer_ip")
-        self.lineEdit_result_tcpServer_ip.setFont(font4)
+        self.lineEdit_result_tcpServer_ip.setFont(font5)
         self.lineEdit_result_tcpServer_ip.setReadOnly(True)
 
         self.gridLayout_32.addWidget(self.lineEdit_result_tcpServer_ip, 2, 2, 1, 1)
 
         self.lineEdit_obs_script_addr = QLineEdit(self.groupBox_13)
         self.lineEdit_obs_script_addr.setObjectName(u"lineEdit_obs_script_addr")
-        self.lineEdit_obs_script_addr.setFont(font4)
+        self.lineEdit_obs_script_addr.setFont(font5)
 
         self.gridLayout_32.addWidget(self.lineEdit_obs_script_addr, 8, 1, 1, 4)
 
         self.label_34 = QLabel(self.groupBox_13)
         self.label_34.setObjectName(u"label_34")
-        self.label_34.setFont(font5)
+        self.label_34.setFont(font6)
 
         self.gridLayout_32.addWidget(self.label_34, 5, 0, 1, 2)
 
         self.lineEdit_wakeup_addr = QLineEdit(self.groupBox_13)
         self.lineEdit_wakeup_addr.setObjectName(u"lineEdit_wakeup_addr")
-        self.lineEdit_wakeup_addr.setFont(font4)
+        self.lineEdit_wakeup_addr.setFont(font5)
 
         self.gridLayout_32.addWidget(self.lineEdit_wakeup_addr, 5, 2, 1, 3)
 
         self.lineEdit_UdpServer_ip = QLineEdit(self.groupBox_13)
         self.lineEdit_UdpServer_ip.setObjectName(u"lineEdit_UdpServer_ip")
-        self.lineEdit_UdpServer_ip.setFont(font4)
+        self.lineEdit_UdpServer_ip.setFont(font5)
         self.lineEdit_UdpServer_ip.setReadOnly(True)
 
         self.gridLayout_32.addWidget(self.lineEdit_UdpServer_ip, 0, 2, 1, 1)
 
         self.lineEdit_TcpServer_Port = QLineEdit(self.groupBox_13)
         self.lineEdit_TcpServer_Port.setObjectName(u"lineEdit_TcpServer_Port")
-        self.lineEdit_TcpServer_Port.setFont(font4)
+        self.lineEdit_TcpServer_Port.setFont(font5)
 
         self.gridLayout_32.addWidget(self.lineEdit_TcpServer_Port, 1, 4, 1, 1)
 
         self.label_46 = QLabel(self.groupBox_13)
         self.label_46.setObjectName(u"label_46")
-        self.label_46.setFont(font5)
+        self.label_46.setFont(font6)
 
         self.gridLayout_32.addWidget(self.label_46, 8, 0, 1, 1)
 
         self.lineEdit_UdpServer_Port = QLineEdit(self.groupBox_13)
         self.lineEdit_UdpServer_Port.setObjectName(u"lineEdit_UdpServer_Port")
-        self.lineEdit_UdpServer_Port.setFont(font4)
+        self.lineEdit_UdpServer_Port.setFont(font5)
 
         self.gridLayout_32.addWidget(self.lineEdit_UdpServer_Port, 0, 4, 1, 1)
 
         self.lineEdit_recognition_addr = QLineEdit(self.groupBox_13)
         self.lineEdit_recognition_addr.setObjectName(u"lineEdit_recognition_addr")
-        self.lineEdit_recognition_addr.setFont(font4)
+        self.lineEdit_recognition_addr.setFont(font5)
 
         self.gridLayout_32.addWidget(self.lineEdit_recognition_addr, 7, 1, 1, 4)
 
         self.label_32 = QLabel(self.groupBox_13)
         self.label_32.setObjectName(u"label_32")
-        self.label_32.setFont(font5)
+        self.label_32.setFont(font6)
 
         self.gridLayout_32.addWidget(self.label_32, 6, 0, 1, 1)
 
         self.label_45 = QLabel(self.groupBox_13)
         self.label_45.setObjectName(u"label_45")
-        self.label_45.setFont(font5)
+        self.label_45.setFont(font6)
 
         self.gridLayout_32.addWidget(self.label_45, 7, 0, 1, 1)
 
         self.lineEdit_result_tcpServer_port = QLineEdit(self.groupBox_13)
         self.lineEdit_result_tcpServer_port.setObjectName(u"lineEdit_result_tcpServer_port")
-        self.lineEdit_result_tcpServer_port.setFont(font4)
+        self.lineEdit_result_tcpServer_port.setFont(font5)
 
         self.gridLayout_32.addWidget(self.lineEdit_result_tcpServer_port, 2, 4, 1, 1)
 
         self.label_31 = QLabel(self.groupBox_13)
         self.label_31.setObjectName(u"label_31")
-        self.label_31.setFont(font5)
+        self.label_31.setFont(font6)
 
         self.gridLayout_32.addWidget(self.label_31, 1, 0, 1, 2)
 
         self.label_17 = QLabel(self.groupBox_13)
         self.label_17.setObjectName(u"label_17")
-        self.label_17.setFont(font5)
+        self.label_17.setFont(font6)
 
         self.gridLayout_32.addWidget(self.label_17, 0, 0, 1, 2)
 
         self.label_92 = QLabel(self.groupBox_13)
         self.label_92.setObjectName(u"label_92")
-        self.label_92.setFont(font5)
+        self.label_92.setFont(font6)
 
         self.gridLayout_32.addWidget(self.label_92, 2, 3, 1, 1)
 
@@ -2739,14 +2739,14 @@ class Ui_MainWindow(object):
         self.lineEdit_balls_count = QLineEdit(self.groupBox_16)
         self.lineEdit_balls_count.setObjectName(u"lineEdit_balls_count")
         self.lineEdit_balls_count.setMaximumSize(QSize(50, 16777215))
-        self.lineEdit_balls_count.setFont(font4)
+        self.lineEdit_balls_count.setFont(font5)
         self.lineEdit_balls_count.setReadOnly(False)
 
         self.gridLayout_38.addWidget(self.lineEdit_balls_count, 0, 1, 1, 1)
 
         self.label_35 = QLabel(self.groupBox_16)
         self.label_35.setObjectName(u"label_35")
-        self.label_35.setFont(font5)
+        self.label_35.setFont(font6)
 
         self.gridLayout_38.addWidget(self.label_35, 0, 0, 1, 1)
 
@@ -2766,7 +2766,7 @@ class Ui_MainWindow(object):
         self.gridLayout_52.setObjectName(u"gridLayout_52")
         self.label_62 = QLabel(self.groupBox_15)
         self.label_62.setObjectName(u"label_62")
-        self.label_62.setFont(font5)
+        self.label_62.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_62, 9, 5, 1, 1)
 
@@ -2774,7 +2774,7 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Eng_5.setObjectName(u"lineEdit_Color_Eng_5")
         self.lineEdit_Color_Eng_5.setMinimumSize(QSize(100, 0))
         self.lineEdit_Color_Eng_5.setMaximumSize(QSize(80, 16777215))
-        self.lineEdit_Color_Eng_5.setFont(font4)
+        self.lineEdit_Color_Eng_5.setFont(font5)
         self.lineEdit_Color_Eng_5.setReadOnly(False)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Eng_5, 5, 2, 1, 1)
@@ -2782,7 +2782,7 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Ch_3 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_3.setObjectName(u"lineEdit_Color_Ch_3")
         self.lineEdit_Color_Ch_3.setMinimumSize(QSize(280, 0))
-        self.lineEdit_Color_Ch_3.setFont(font4)
+        self.lineEdit_Color_Ch_3.setFont(font5)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_3, 3, 7, 1, 2)
 
@@ -2790,14 +2790,14 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Eng_4.setObjectName(u"lineEdit_Color_Eng_4")
         self.lineEdit_Color_Eng_4.setMinimumSize(QSize(100, 0))
         self.lineEdit_Color_Eng_4.setMaximumSize(QSize(80, 16777215))
-        self.lineEdit_Color_Eng_4.setFont(font4)
+        self.lineEdit_Color_Eng_4.setFont(font5)
         self.lineEdit_Color_Eng_4.setReadOnly(False)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Eng_4, 4, 2, 1, 2)
 
         self.label_63 = QLabel(self.groupBox_15)
         self.label_63.setObjectName(u"label_63")
-        self.label_63.setFont(font5)
+        self.label_63.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_63, 9, 0, 1, 1)
 
@@ -2805,20 +2805,20 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Eng_3.setObjectName(u"lineEdit_Color_Eng_3")
         self.lineEdit_Color_Eng_3.setMinimumSize(QSize(100, 0))
         self.lineEdit_Color_Eng_3.setMaximumSize(QSize(80, 16777215))
-        self.lineEdit_Color_Eng_3.setFont(font4)
+        self.lineEdit_Color_Eng_3.setFont(font5)
         self.lineEdit_Color_Eng_3.setReadOnly(False)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Eng_3, 3, 2, 1, 1)
 
         self.label_64 = QLabel(self.groupBox_15)
         self.label_64.setObjectName(u"label_64")
-        self.label_64.setFont(font5)
+        self.label_64.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_64, 10, 5, 1, 1)
 
         self.label_59 = QLabel(self.groupBox_15)
         self.label_59.setObjectName(u"label_59")
-        self.label_59.setFont(font5)
+        self.label_59.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_59, 6, 0, 1, 1)
 
@@ -2826,7 +2826,7 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Eng_10.setObjectName(u"lineEdit_Color_Eng_10")
         self.lineEdit_Color_Eng_10.setMinimumSize(QSize(100, 0))
         self.lineEdit_Color_Eng_10.setMaximumSize(QSize(80, 16777215))
-        self.lineEdit_Color_Eng_10.setFont(font4)
+        self.lineEdit_Color_Eng_10.setFont(font5)
         self.lineEdit_Color_Eng_10.setReadOnly(False)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Eng_10, 10, 2, 1, 1)
@@ -2835,7 +2835,7 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Eng_8.setObjectName(u"lineEdit_Color_Eng_8")
         self.lineEdit_Color_Eng_8.setMinimumSize(QSize(100, 0))
         self.lineEdit_Color_Eng_8.setMaximumSize(QSize(80, 16777215))
-        self.lineEdit_Color_Eng_8.setFont(font4)
+        self.lineEdit_Color_Eng_8.setFont(font5)
         self.lineEdit_Color_Eng_8.setReadOnly(False)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Eng_8, 8, 2, 1, 1)
@@ -2843,37 +2843,37 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Ch_2 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_2.setObjectName(u"lineEdit_Color_Ch_2")
         self.lineEdit_Color_Ch_2.setMinimumSize(QSize(280, 0))
-        self.lineEdit_Color_Ch_2.setFont(font4)
+        self.lineEdit_Color_Ch_2.setFont(font5)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_2, 2, 7, 1, 2)
 
         self.label_56 = QLabel(self.groupBox_15)
         self.label_56.setObjectName(u"label_56")
-        self.label_56.setFont(font5)
+        self.label_56.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_56, 8, 0, 1, 2)
 
         self.label_39 = QLabel(self.groupBox_15)
         self.label_39.setObjectName(u"label_39")
-        self.label_39.setFont(font5)
+        self.label_39.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_39, 3, 5, 1, 1)
 
         self.label_37 = QLabel(self.groupBox_15)
         self.label_37.setObjectName(u"label_37")
-        self.label_37.setFont(font5)
+        self.label_37.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_37, 3, 0, 1, 1)
 
         self.label_55 = QLabel(self.groupBox_15)
         self.label_55.setObjectName(u"label_55")
-        self.label_55.setFont(font5)
+        self.label_55.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_55, 8, 5, 1, 1)
 
         self.label_50 = QLabel(self.groupBox_15)
         self.label_50.setObjectName(u"label_50")
-        self.label_50.setFont(font5)
+        self.label_50.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_50, 0, 0, 1, 1)
 
@@ -2881,14 +2881,14 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Eng_1.setObjectName(u"lineEdit_Color_Eng_1")
         self.lineEdit_Color_Eng_1.setMinimumSize(QSize(100, 0))
         self.lineEdit_Color_Eng_1.setMaximumSize(QSize(80, 16777215))
-        self.lineEdit_Color_Eng_1.setFont(font4)
+        self.lineEdit_Color_Eng_1.setFont(font5)
         self.lineEdit_Color_Eng_1.setReadOnly(False)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Eng_1, 0, 2, 1, 2)
 
         self.label_44 = QLabel(self.groupBox_15)
         self.label_44.setObjectName(u"label_44")
-        self.label_44.setFont(font5)
+        self.label_44.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_44, 4, 0, 1, 1)
 
@@ -2896,14 +2896,14 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Eng_2.setObjectName(u"lineEdit_Color_Eng_2")
         self.lineEdit_Color_Eng_2.setMinimumSize(QSize(100, 0))
         self.lineEdit_Color_Eng_2.setMaximumSize(QSize(80, 16777215))
-        self.lineEdit_Color_Eng_2.setFont(font4)
+        self.lineEdit_Color_Eng_2.setFont(font5)
         self.lineEdit_Color_Eng_2.setReadOnly(False)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Eng_2, 2, 2, 1, 1)
 
         self.label_57 = QLabel(self.groupBox_15)
         self.label_57.setObjectName(u"label_57")
-        self.label_57.setFont(font5)
+        self.label_57.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_57, 6, 5, 1, 1)
 
@@ -2911,39 +2911,39 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Eng_7.setObjectName(u"lineEdit_Color_Eng_7")
         self.lineEdit_Color_Eng_7.setMinimumSize(QSize(100, 0))
         self.lineEdit_Color_Eng_7.setMaximumSize(QSize(80, 16777215))
-        self.lineEdit_Color_Eng_7.setFont(font4)
+        self.lineEdit_Color_Eng_7.setFont(font5)
         self.lineEdit_Color_Eng_7.setReadOnly(False)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Eng_7, 7, 2, 1, 1)
 
         self.label_52 = QLabel(self.groupBox_15)
         self.label_52.setObjectName(u"label_52")
-        self.label_52.setFont(font5)
+        self.label_52.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_52, 2, 0, 1, 1)
 
         self.lineEdit_Color_Ch_1 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_1.setObjectName(u"lineEdit_Color_Ch_1")
         self.lineEdit_Color_Ch_1.setMinimumSize(QSize(280, 0))
-        self.lineEdit_Color_Ch_1.setFont(font4)
+        self.lineEdit_Color_Ch_1.setFont(font5)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_1, 0, 7, 1, 2)
 
         self.label_61 = QLabel(self.groupBox_15)
         self.label_61.setObjectName(u"label_61")
-        self.label_61.setFont(font5)
+        self.label_61.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_61, 10, 0, 1, 1)
 
         self.label_54 = QLabel(self.groupBox_15)
         self.label_54.setObjectName(u"label_54")
-        self.label_54.setFont(font5)
+        self.label_54.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_54, 7, 0, 1, 2)
 
         self.label_53 = QLabel(self.groupBox_15)
         self.label_53.setObjectName(u"label_53")
-        self.label_53.setFont(font5)
+        self.label_53.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_53, 7, 5, 1, 1)
 
@@ -2951,14 +2951,14 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Eng_6.setObjectName(u"lineEdit_Color_Eng_6")
         self.lineEdit_Color_Eng_6.setMinimumSize(QSize(100, 0))
         self.lineEdit_Color_Eng_6.setMaximumSize(QSize(80, 16777215))
-        self.lineEdit_Color_Eng_6.setFont(font4)
+        self.lineEdit_Color_Eng_6.setFont(font5)
         self.lineEdit_Color_Eng_6.setReadOnly(False)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Eng_6, 6, 2, 1, 1)
 
         self.label_51 = QLabel(self.groupBox_15)
         self.label_51.setObjectName(u"label_51")
-        self.label_51.setFont(font5)
+        self.label_51.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_51, 2, 5, 1, 1)
 
@@ -2966,81 +2966,81 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Eng_9.setObjectName(u"lineEdit_Color_Eng_9")
         self.lineEdit_Color_Eng_9.setMinimumSize(QSize(100, 0))
         self.lineEdit_Color_Eng_9.setMaximumSize(QSize(80, 16777215))
-        self.lineEdit_Color_Eng_9.setFont(font4)
+        self.lineEdit_Color_Eng_9.setFont(font5)
         self.lineEdit_Color_Eng_9.setReadOnly(False)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Eng_9, 9, 2, 1, 1)
 
         self.label_49 = QLabel(self.groupBox_15)
         self.label_49.setObjectName(u"label_49")
-        self.label_49.setFont(font5)
+        self.label_49.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_49, 0, 5, 1, 1)
 
         self.label_60 = QLabel(self.groupBox_15)
         self.label_60.setObjectName(u"label_60")
-        self.label_60.setFont(font5)
+        self.label_60.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_60, 5, 0, 1, 2)
 
         self.label_58 = QLabel(self.groupBox_15)
         self.label_58.setObjectName(u"label_58")
-        self.label_58.setFont(font5)
+        self.label_58.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_58, 5, 5, 1, 1)
 
         self.label_43 = QLabel(self.groupBox_15)
         self.label_43.setObjectName(u"label_43")
-        self.label_43.setFont(font5)
+        self.label_43.setFont(font6)
 
         self.gridLayout_52.addWidget(self.label_43, 4, 5, 1, 2)
 
         self.lineEdit_Color_Ch_4 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_4.setObjectName(u"lineEdit_Color_Ch_4")
         self.lineEdit_Color_Ch_4.setMinimumSize(QSize(280, 0))
-        self.lineEdit_Color_Ch_4.setFont(font4)
+        self.lineEdit_Color_Ch_4.setFont(font5)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_4, 4, 7, 1, 2)
 
         self.lineEdit_Color_Ch_5 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_5.setObjectName(u"lineEdit_Color_Ch_5")
         self.lineEdit_Color_Ch_5.setMinimumSize(QSize(280, 0))
-        self.lineEdit_Color_Ch_5.setFont(font4)
+        self.lineEdit_Color_Ch_5.setFont(font5)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_5, 5, 7, 1, 2)
 
         self.lineEdit_Color_Ch_6 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_6.setObjectName(u"lineEdit_Color_Ch_6")
         self.lineEdit_Color_Ch_6.setMinimumSize(QSize(280, 0))
-        self.lineEdit_Color_Ch_6.setFont(font4)
+        self.lineEdit_Color_Ch_6.setFont(font5)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_6, 6, 7, 1, 2)
 
         self.lineEdit_Color_Ch_7 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_7.setObjectName(u"lineEdit_Color_Ch_7")
         self.lineEdit_Color_Ch_7.setMinimumSize(QSize(280, 0))
-        self.lineEdit_Color_Ch_7.setFont(font4)
+        self.lineEdit_Color_Ch_7.setFont(font5)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_7, 7, 7, 1, 2)
 
         self.lineEdit_Color_Ch_8 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_8.setObjectName(u"lineEdit_Color_Ch_8")
         self.lineEdit_Color_Ch_8.setMinimumSize(QSize(280, 0))
-        self.lineEdit_Color_Ch_8.setFont(font4)
+        self.lineEdit_Color_Ch_8.setFont(font5)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_8, 8, 7, 1, 2)
 
         self.lineEdit_Color_Ch_9 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_9.setObjectName(u"lineEdit_Color_Ch_9")
         self.lineEdit_Color_Ch_9.setMinimumSize(QSize(280, 0))
-        self.lineEdit_Color_Ch_9.setFont(font4)
+        self.lineEdit_Color_Ch_9.setFont(font5)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_9, 9, 7, 1, 2)
 
         self.lineEdit_Color_Ch_10 = QLineEdit(self.groupBox_15)
         self.lineEdit_Color_Ch_10.setObjectName(u"lineEdit_Color_Ch_10")
         self.lineEdit_Color_Ch_10.setMinimumSize(QSize(280, 0))
-        self.lineEdit_Color_Ch_10.setFont(font4)
+        self.lineEdit_Color_Ch_10.setFont(font5)
 
         self.gridLayout_52.addWidget(self.lineEdit_Color_Ch_10, 10, 7, 1, 2)
 
@@ -3176,7 +3176,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(3)
+        self.tabWidget_Ranking.setCurrentIndex(0)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)

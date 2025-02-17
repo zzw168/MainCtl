@@ -4055,10 +4055,22 @@ class CameraLabel(QLabel):
             print("QLabel 被左键点击")
             if self.Camera_index == 'main_Camera':
                 set_result(main_Camera)
-                ui.lineEdit_Send_Result.setText(str(main_Camera))
+                res = ''
+                for index, item in enumerate(main_Camera):
+                    if index == 0:
+                        res = item
+                    else:
+                        res = '%s_%s' % (res, item)
+                ui.lineEdit_Send_Result.setText(res)
             elif self.Camera_index == 'monitor_Camera':
                 set_result(monitor_Camera)
-                ui.lineEdit_Send_Result.setText(str(monitor_Camera))
+                res = ''
+                for index, item in enumerate(monitor_Camera):
+                    if index == 0:
+                        res = item
+                    else:
+                        res = '%s_%s' % (res, item)
+                ui.lineEdit_Send_Result.setText(res)
         elif event.button() == Qt.RightButton:
             print("QLabel 被右键点击")
 
@@ -4472,13 +4484,33 @@ def organ_number():  # 号码开关
 
 def main2result():
     if ui.lineEdit_Main_Camera.text() != '':
-        ui.lineEdit_Send_Result.setText(ui.lineEdit_Main_Camera.text())
+        res = ''
+        for index, item in enumerate(eval(ui.lineEdit_Main_Camera.text())):
+            if index == 0:
+                res = item
+            else:
+                res = '%s_%s' % (res, item)
+        ui.lineEdit_Send_Result.setText(res)
 
 
 def backup2result():
     if ui.lineEdit_Backup_Camera.text() != '':
-        ui.lineEdit_Send_Result.setText(ui.lineEdit_Backup_Camera.text())
+        res = ''
+        for index, item in enumerate(eval(ui.lineEdit_Backup_Camera.text())):
+            if index == 0:
+                res = item
+            else:
+                res = '%s_%s' % (res, item)
+        ui.lineEdit_Send_Result.setText(res)
 
+def res2end():
+    global Send_Result_End
+    s = ui.lineEdit_Send_Result.text().split('_')
+    if len(s) == 10:
+        for index, item in enumerate(s):
+            getattr(ui, 'lineEdit_result_%s' % index).setText(item)
+        Send_Result_End = True
+        ui.checkBox_alarm.setChecked(False)
 
 def cancel_betting():
     res = post_marble_results(term, 'Invalid Term', Track_number)
@@ -4864,13 +4896,25 @@ def main_hide_event(event):
 def main_doubleclick_event(event):
     if event.button() == Qt.LeftButton:
         set_result(main_Camera)
-        ui.lineEdit_Send_Result.setText(str(main_Camera))
+        res = ''
+        for index, item in enumerate(main_Camera):
+            if index == 0:
+                res = item
+            else:
+                res = '%s_%s' % (res, item)
+        ui.lineEdit_Send_Result.setText(res)
 
 
 def monitor_doubleclick_event(event):
     if event.button() == Qt.LeftButton:
-        set_result(main_Camera)
-        ui.lineEdit_Send_Result.setText(str(monitor_Camera))
+        set_result(monitor_Camera)
+        res = ''
+        for index, item in enumerate(monitor_Camera):
+            if index == 0:
+                res = item
+            else:
+                res = '%s_%s' % (res, item)
+        ui.lineEdit_Send_Result.setText(res)
 
 
 def monitor_hide_event(event):
@@ -5325,7 +5369,7 @@ if __name__ == '__main__':
     ui.pushButton_Main_Camera.clicked.connect(main2result)
     ui.pushButton_Backup_Camera.clicked.connect(backup2result)
     ui.pushButton_Cancel_Result.clicked.connect(cancel_betting)
-    ui.pushButton_Send_Result.clicked.connect(send_result)
+    ui.pushButton_Send_Result.clicked.connect(res2end)
     ui.pushButton_Send_Res.clicked.connect(send_result)
 
     "**************************直播大厅_结束*****************************"
