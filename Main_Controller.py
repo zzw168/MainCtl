@@ -1917,7 +1917,7 @@ class ScreenShotThread(QThread):
                         if Send_Result_End:
                             try:
                                 send_list = []
-                                for i in range(10):
+                                for i in range(len(z_ranking_res)):
                                     if getattr(ui, 'lineEdit_result_%s' % i).text().isdigit():
                                         send_list.append(int(getattr(ui, 'lineEdit_result_%s' % i).text()))
                                 if len(send_list) == len(z_ranking_end):
