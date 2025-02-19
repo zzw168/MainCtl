@@ -4936,6 +4936,10 @@ def monitor_cam_change():
         MonitorCameraDialog.hide()
 
 
+"************************************Camera_UI*********************************************"
+
+
+
 if __name__ == '__main__':
     app = ZApp(sys.argv)
 
@@ -4963,8 +4967,6 @@ if __name__ == '__main__':
     main_camera_ui.label_picture.mouseDoubleClickEvent = main_doubleclick_event
     ui.label_main_picture.mouseDoubleClickEvent = main_doubleclick_event
 
-    # MainCameraDialog.show()
-
     MonitorCameraDialog = QDialog(z_window)
     MonitorCameraDialog.hideEvent = monitor_hide_event
     MonitorCameraDialog.setWindowTitle('监控')
@@ -4973,7 +4975,6 @@ if __name__ == '__main__':
     monitor_camera_ui.groupBox_main_camera.setTitle('监控摄像机识别结果')
     monitor_camera_ui.label_picture.mouseDoubleClickEvent = monitor_doubleclick_event
     ui.label_monitor_picture.mouseDoubleClickEvent = monitor_doubleclick_event
-    # MonitorCameraDialog.show()
 
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
