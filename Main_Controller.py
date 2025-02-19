@@ -3434,7 +3434,8 @@ class MapLabel(QLabel):
                     else:
                         index = len(ranking_array) * self.ball_space - p_num * self.ball_space
                 elif (ranking_array[num][6] >= max_area_count - balls_count + 1
-                      and ranking_array[num][8] >= max_lap_count - 1):  # 最后一圈处理
+                      and ranking_array[num][8] >= max_lap_count - 1  # 最后一圈处理
+                      and self.positions[p_num][0] > len(self.path_points) - p_num * self.ball_space - 10):
                     if p_num == 0:
                         index = len(self.path_points) - 1
                     else:
