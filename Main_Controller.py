@@ -935,6 +935,8 @@ def tcpsignal_accept(msg):
     else:
         ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser_msg)
+        ui.textBrowser_background_data.append(msg)
+        scroll_to_bottom(ui.textBrowser_background_data)
 
 
 class UdpThread(QThread):
@@ -1025,7 +1027,7 @@ def udpsignal_accept(msg):
     # print(msg)
     if isinstance(msg, int):
         bt_udp_time = ui.pushButton_udp_time
-        if msg > 300:
+        if msg > 1200:
             bt_udp_time.setText('识别主机超时！%s 毫秒' % msg)
             if bt_udp_time.styleSheet() != 'background:rgb(255, 0, 0)':
                 bt_udp_time.setStyleSheet('background:rgb(255, 0, 0)')
@@ -1764,6 +1766,7 @@ def PlanBallNumsignal_accept(msg):
     else:
         ui.textBrowser.append(msg)
         ui.textBrowser_msg.append(msg)
+        scroll_to_bottom(ui.textBrowser)
         scroll_to_bottom(ui.textBrowser_msg)
 
 
@@ -1985,6 +1988,7 @@ def ScreenShotsignal_accept(msg):
     else:
         ui.textBrowser.append(str(msg))
         ui.textBrowser_msg.append(str(msg))
+        scroll_to_bottom(ui.textBrowser)
         scroll_to_bottom(ui.textBrowser_msg)
 
 
@@ -2427,6 +2431,7 @@ def signal_accept(msg):
         else:
             ui.textBrowser.append(str(msg))
             ui.textBrowser_msg.append(str(msg))
+            scroll_to_bottom(ui.textBrowser)
             scroll_to_bottom(ui.textBrowser_msg)
     except:
         print("运行数据处理出错！")
@@ -3145,6 +3150,7 @@ def card_close_all():
         time.sleep(0.1)
     ui.textBrowser.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
+    ui.textBrowser_background_data.append(succeed('已经关闭所有机关！'))
 
 
 # 实时轴位置入表
@@ -4312,6 +4318,7 @@ class CardStartThread(QThread):
 def CardStartsignal_accept(msg):
     ui.textBrowser.append(msg)
     ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser)
     scroll_to_bottom(ui.textBrowser_msg)
 
 
@@ -4715,7 +4722,7 @@ def clean_browser(textBrowser):
     if len(lines) > 100:
         # 只保留最后 max_lines 行
         textBrowser.clear()
-        textBrowser.setPlainText("\n".join(lines[-100:]))
+        textBrowser.setPlainText("\n".join(lines[-50:]))
 
 
 # 滚动到 textBrowser 末尾
@@ -5116,6 +5123,7 @@ if __name__ == '__main__':
 
     ui.textBrowser.textChanged.connect(lambda: clean_browser(ui.textBrowser))
     ui.textBrowser_msg.textChanged.connect(lambda: clean_browser(ui.textBrowser_msg))
+    ui.textBrowser_background_data.textChanged.connect(lambda: clean_browser(ui.textBrowser_background_data))
 
     """
         OBS 处理
