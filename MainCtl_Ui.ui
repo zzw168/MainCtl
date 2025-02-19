@@ -1470,90 +1470,18 @@
                 </size>
                </property>
                <layout class="QGridLayout" name="gridLayout_5">
-                <item row="0" column="0" colspan="2">
-                 <widget class="QLabel" name="label_3">
+                <item row="4" column="0" colspan="2">
+                 <widget class="QLineEdit" name="lineEdit_Send_Result">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
-                    <pointsize>20</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true">color:rgb(255, 0, 0)</string>
-                  </property>
-                  <property name="text">
-                   <string>赛果确认 识别状态</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_4">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>主摄像机：  </string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="1">
-                 <widget class="QLineEdit" name="lineEdit_Main_Camera">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>16</pointsize>
                     <bold>true</bold>
                    </font>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="2">
-                 <widget class="QPushButton" name="pushButton_Main_Camera">
-                  <property name="text">
-                   <string>选</string>
-                  </property>
-                  <property name="autoDefault">
-                   <bool>false</bool>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_5">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>后备摄像机：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QLineEdit" name="lineEdit_Backup_Camera">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2">
+                <item row="3" column="2">
                  <widget class="QPushButton" name="pushButton_Backup_Camera">
                   <property name="text">
                    <string>选</string>
@@ -1569,32 +1497,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0" colspan="2">
-                 <widget class="QLineEdit" name="lineEdit_Send_Result">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>16</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
-                 <widget class="QCheckBox" name="checkBox_Auto_Send">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>自动</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0" colspan="3">
+                <item row="5" column="0" colspan="3">
                  <widget class="QFrame" name="frame_9">
                   <property name="frameShape">
                    <enum>QFrame::Shape::StyledPanel</enum>
@@ -1670,6 +1573,120 @@
                     </widget>
                    </item>
                   </layout>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="QPushButton" name="pushButton_Main_Camera">
+                  <property name="text">
+                   <string>选</string>
+                  </property>
+                  <property name="autoDefault">
+                   <bool>false</bool>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_5">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>后备摄像机：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="lineEdit_Backup_Camera">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="lineEdit_Main_Camera">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0" colspan="2">
+                 <widget class="QLabel" name="label_3">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>20</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">color:rgb(255, 0, 0)</string>
+                  </property>
+                  <property name="text">
+                   <string>赛果确认 识别状态</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="2">
+                 <widget class="QCheckBox" name="checkBox_Auto_Send">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>自动</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_4">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>主摄像机：  </string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" colspan="2">
+                 <widget class="QCheckBox" name="checkBox_result_show">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>弹窗显示</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -3472,8 +3489,8 @@
                    <string>识别数据</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_28">
-                   <item row="3" column="0">
-                    <widget class="QLabel" name="label_16">
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_89">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -3481,7 +3498,27 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>发送:</string>
+                      <string>核对:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1" colspan="2">
+                    <widget class="QWidget" name="widget_camera_monitor" native="true">
+                     <property name="minimumSize">
+                      <size>
+                       <width>230</width>
+                       <height>38</height>
+                      </size>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1" colspan="2">
+                    <widget class="QWidget" name="widget_camera_sony" native="true">
+                     <property name="minimumSize">
+                      <size>
+                       <width>230</width>
+                       <height>38</height>
+                      </size>
                      </property>
                     </widget>
                    </item>
@@ -3495,8 +3532,24 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_89">
+                   <item row="4" column="0" colspan="3">
+                    <widget class="QPushButton" name="pushButton_Send_Res">
+                     <property name="minimumSize">
+                      <size>
+                       <width>50</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background:rgb(0,255,0)</string>
+                     </property>
+                     <property name="text">
+                      <string>发送结果</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_87">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -3504,7 +3557,46 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>核对:</string>
+                      <string>索尼:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0" colspan="2">
+                    <widget class="QCheckBox" name="checkBox_ShowUdp">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>显示服务器数据</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_88">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>监控:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QLabel" name="label_16">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>发送:</string>
                      </property>
                     </widget>
                    </item>
@@ -3829,39 +3921,6 @@
                      </layout>
                     </widget>
                    </item>
-                   <item row="0" column="1" colspan="2">
-                    <widget class="QWidget" name="widget_camera_sony" native="true">
-                     <property name="minimumSize">
-                      <size>
-                       <width>230</width>
-                       <height>38</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_87">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>索尼:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1" colspan="2">
-                    <widget class="QWidget" name="widget_camera_monitor" native="true">
-                     <property name="minimumSize">
-                      <size>
-                       <width>230</width>
-                       <height>38</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="6" column="0" colspan="3">
                     <widget class="QTextBrowser" name="textBrowser_background_data">
                      <property name="minimumSize">
@@ -3879,48 +3938,6 @@
                      </property>
                      <property name="readOnly">
                       <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_88">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>监控:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="0" colspan="2">
-                    <widget class="QCheckBox" name="checkBox_ShowUdp">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>显示服务器数据</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0" colspan="3">
-                    <widget class="QPushButton" name="pushButton_Send_Res">
-                     <property name="minimumSize">
-                      <size>
-                       <width>50</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">background:rgb(0,255,0)</string>
-                     </property>
-                     <property name="text">
-                      <string>发送结果</string>
                      </property>
                     </widget>
                    </item>

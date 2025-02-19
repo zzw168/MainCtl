@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'Result_Dlg.ui'
+## Form generated from reading UI file 'ResultDlg_Ui.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.8.2
 ##
@@ -19,16 +19,16 @@ from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QGridLayout,
     QGroupBox, QLabel, QLineEdit, QPushButton,
     QSizePolicy, QWidget)
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        if not Dialog.objectName():
-            Dialog.setObjectName(u"Dialog")
-        Dialog.resize(346, 286)
-        Dialog.setMinimumSize(QSize(346, 286))
-        Dialog.setMaximumSize(QSize(346, 286))
-        self.gridLayout = QGridLayout(Dialog)
+class Ui_Dialog_Result(object):
+    def setupUi(self, Dialog_Result):
+        if not Dialog_Result.objectName():
+            Dialog_Result.setObjectName(u"Dialog_Result")
+        Dialog_Result.resize(346, 286)
+        Dialog_Result.setMinimumSize(QSize(346, 286))
+        Dialog_Result.setMaximumSize(QSize(346, 286))
+        self.gridLayout = QGridLayout(Dialog_Result)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.groupBox_8 = QGroupBox(Dialog)
+        self.groupBox_8 = QGroupBox(Dialog_Result)
         self.groupBox_8.setObjectName(u"groupBox_8")
         self.groupBox_8.setMinimumSize(QSize(300, 10))
         self.groupBox_8.setMaximumSize(QSize(320, 16777215))
@@ -198,28 +198,28 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.groupBox_8, 0, 0, 1, 1)
 
 
-        self.retranslateUi(Dialog)
+        self.retranslateUi(Dialog_Result)
 
-        QMetaObject.connectSlotsByName(Dialog)
+        QMetaObject.connectSlotsByName(Dialog_Result)
     # setupUi
 
-    def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"\u7ed3\u679c\u786e\u8ba4", None))
-        self.groupBox_8.setTitle(QCoreApplication.translate("Dialog", u"\u8bc6\u522b\u6570\u636e", None))
-        self.label_87.setText(QCoreApplication.translate("Dialog", u"\u7d22\u5c3c:", None))
-        self.lineEdit_result_7.setText(QCoreApplication.translate("Dialog", u"0", None))
-        self.lineEdit_result_5.setText(QCoreApplication.translate("Dialog", u"0", None))
-        self.lineEdit_result_3.setText(QCoreApplication.translate("Dialog", u"0", None))
-        self.lineEdit_result_1.setText(QCoreApplication.translate("Dialog", u"0", None))
-        self.lineEdit_result_8.setText(QCoreApplication.translate("Dialog", u"0", None))
-        self.lineEdit_result_6.setText(QCoreApplication.translate("Dialog", u"0", None))
-        self.lineEdit_result_9.setText(QCoreApplication.translate("Dialog", u"0", None))
-        self.lineEdit_result_2.setText(QCoreApplication.translate("Dialog", u"0", None))
-        self.lineEdit_result_4.setText(QCoreApplication.translate("Dialog", u"0", None))
-        self.lineEdit_result_0.setText(QCoreApplication.translate("Dialog", u"0", None))
-        self.label_89.setText(QCoreApplication.translate("Dialog", u"\u6838\u5bf9:", None))
-        self.label_16.setText(QCoreApplication.translate("Dialog", u"\u53d1\u9001:", None))
-        self.pushButton_Send_Res.setText(QCoreApplication.translate("Dialog", u"\u53d1\u9001\u7ed3\u679c", None))
-        self.label_88.setText(QCoreApplication.translate("Dialog", u"\u76d1\u63a7:", None))
+    def retranslateUi(self, Dialog_Result):
+        Dialog_Result.setWindowTitle(QCoreApplication.translate("Dialog_Result", u"\u7ed3\u679c\u786e\u8ba4", None))
+        self.groupBox_8.setTitle(QCoreApplication.translate("Dialog_Result", u"\u8bc6\u522b\u6570\u636e", None))
+        self.label_87.setText(QCoreApplication.translate("Dialog_Result", u"\u7d22\u5c3c:", None))
+        self.lineEdit_result_7.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.lineEdit_result_5.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.lineEdit_result_3.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.lineEdit_result_1.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.lineEdit_result_8.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.lineEdit_result_6.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.lineEdit_result_9.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.lineEdit_result_2.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.lineEdit_result_4.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.lineEdit_result_0.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.label_89.setText(QCoreApplication.translate("Dialog_Result", u"\u6838\u5bf9:", None))
+        self.label_16.setText(QCoreApplication.translate("Dialog_Result", u"\u53d1\u9001:", None))
+        self.pushButton_Send_Res.setText(QCoreApplication.translate("Dialog_Result", u"\u53d1\u9001\u7ed3\u679c", None))
+        self.label_88.setText(QCoreApplication.translate("Dialog_Result", u"\u76d1\u63a7:", None))
     # retranslateUi
 

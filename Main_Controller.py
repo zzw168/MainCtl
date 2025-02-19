@@ -33,6 +33,7 @@ import obsws_python as obs
 import pygame
 
 from Camera_Ui import Ui_Camera_Dialog
+from ResultDlg_Ui import Ui_Dialog_Result
 from Speed_Ui import Ui_Dialog_Set_Speed
 from utils import tool_unit
 from utils.SportCard_unit import *
@@ -4078,28 +4079,32 @@ class CameraLabel(QLabel):
 class CustomLineEdit(QLineEdit):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Space:
-            name = self.objectName()[0:-1]
-            i = int(self.objectName()[-1:]) + 1
-            print(name, i)
-            if i < 10:
-                target_line_edit = getattr(ui, '%s%s' % (name, i), None)
-                if target_line_edit:
-                    target_line_edit.setFocus()
-                    target_line_edit.selectAll()
+            print(self.text(), event.key())
+            if self.text().isdigit() and int(self.text()) > 10:
+                self.setText('')
+            else:
+                name = self.objectName()[0:-1]
+                for index in range(10):
+                    if (getattr(ui, '%s%s' % (name, index), None).objectName() != self.objectName() and
+                            getattr(ui, '%s%s' % (name, index), None).text() == self.text()):
+                        getattr(ui, '%s%s' % (name, index), None).setText('')
+                i = int(self.objectName()[-1:]) + 1
+                print(name, i)
+                if i < 10:
+                    target_line_edit = getattr(ui, '%s%s' % (name, i), None)
+                    if target_line_edit:
+                        target_line_edit.setFocus()
+                        target_line_edit.selectAll()
         elif event.text().isdigit() or event.key() in (Qt.Key_Backspace, Qt.Key_Delete):
             super().keyPressEvent(event)
         else:
             print("仅允许输入数字！")
 
-    def textChangedEvent(self):
-        print(f"当前输入内容: {self.text()}")
-        if not self.text().isdigit():
-            self.setText('')
-
 
 def set_result_class():
     for i in range(10):
         getattr(ui, 'lineEdit_result_%s' % i, None).__class__ = CustomLineEdit
+        getattr(result_ui, 'lineEdit_result_%s' % i, None).__class__ = CustomLineEdit
 
 
 def set_result(msg):
@@ -4503,6 +4508,7 @@ def backup2result():
                 res = '%s_%s' % (res, item)
         ui.lineEdit_Send_Result.setText(res)
 
+
 def res2end():
     global Send_Result_End
     s = ui.lineEdit_Send_Result.text().split('_')
@@ -4511,6 +4517,7 @@ def res2end():
             getattr(ui, 'lineEdit_result_%s' % index).setText(item)
         Send_Result_End = True
         ui.checkBox_alarm.setChecked(False)
+
 
 def cancel_betting():
     res = post_marble_results(term, 'Invalid Term', Track_number)
@@ -4936,8 +4943,15 @@ def monitor_cam_change():
         MonitorCameraDialog.hide()
 
 
-"************************************Camera_UI*********************************************"
+"************************************ResultDlg_Ui*********************************************"
 
+
+class ResultUi(QDialog, Ui_Dialog_Result):
+    def __init__(self):
+        super().__init__()
+
+    def setupUi(self, z_dialog):
+        super(ResultUi, self).setupUi(z_dialog)
 
 
 if __name__ == '__main__':
@@ -4951,6 +4965,10 @@ if __name__ == '__main__':
     SpeedDialog = QDialog(z_window)
     speed_ui = SpeedUi()
     speed_ui.setupUi(SpeedDialog)
+
+    ResultDialog = QDialog(z_window)
+    result_ui = ResultUi()
+    result_ui.setupUi(ResultDialog)
 
     speed_ui.buttonBox.accepted.connect(accept_speed)
     speed_ui.buttonBox.rejected.connect(reject_speed)
