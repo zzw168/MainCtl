@@ -1898,7 +1898,7 @@ class ScreenShotThread(QThread):
                 #     print(ranking_array)
                 self.signal.emit(monitor_res)
 
-            if obs_res[1] != '[1]' and main_Camera != monitor_Camera:
+            if obs_res[1] != '[1]' and main_Camera == monitor_Camera:
                 print('识别正确:', main_Camera)
                 if len(main_Camera) == len(z_ranking_res):
                     z_ranking_end = copy.deepcopy(main_Camera)
