@@ -628,7 +628,7 @@
                    <string>跳过二次排名</string>
                   </property>
                   <property name="checked">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>

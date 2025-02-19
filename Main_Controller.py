@@ -1895,25 +1895,28 @@ class ScreenShotThread(QThread):
                 #     print(ranking_array)
                 self.signal.emit(monitor_res)
 
-            if obs_res[1] != '[1]' and main_Camera == monitor_Camera:
+            if obs_res[1] != '[1]' and main_Camera != monitor_Camera:
                 print('识别正确:', main_Camera)
                 if len(main_Camera) == len(z_ranking_res):
                     z_ranking_end = copy.deepcopy(main_Camera)
                     lottery_term[4] = str(z_ranking_end)  # 排名
             else:
                 z_ranking_end = copy.deepcopy(z_ranking_res)
-                ui.lineEdit_Send_Result.setText('')
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
-                    if os.path.exists(lottery_term[6]):
-                        os.startfile(lottery_term[6])
+                    ui.lineEdit_Send_Result.setText('')
+                    # if os.path.exists(lottery_term[6]):
+                    #     os.startfile(lottery_term[6])
                     play_alarm()  # 警报声
                     Send_Result_End = False
                     while True:
+                        if ui.checkBox_result_show.isChecked():
+                            self.signal.emit('显示结果对话框')
                         if Send_Result_End:
                             try:
                                 send_list = []
                                 for i in range(10):
-                                    send_list.append(int(getattr(ui, 'lineEdit_result_%s' % i).text('')))
+                                    if getattr(ui, 'lineEdit_result_%s' % i).text().isdigit():
+                                        send_list.append(int(getattr(ui, 'lineEdit_result_%s' % i).text()))
                                 if len(send_list) == len(z_ranking_end):
                                     z_ranking_end = copy.deepcopy(send_list)
                                     for i in range(0, len(send_list)):
@@ -1968,11 +1971,16 @@ def ScreenShotsignal_accept(msg):
             fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
             if fit_Camera[index]:
                 getattr(ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
+                getattr(result_ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
             else:
                 getattr(ui, 'lineEdit_result_%s' % index).setText('')
+                getattr(result_ui, 'lineEdit_result_%s' % index).setText('')
+    elif msg == '显示结果对话框':
+        ResultDialog.show()
     elif msg == 'send_res':
         ui.lineEdit_Send_Result.setText('')
     elif msg == 'send_ok':
+        ResultDialog.hide()
         ui.checkBox_alarm.setChecked(True)
     else:
         ui.textBrowser.append(str(msg))
@@ -4056,22 +4064,8 @@ class CameraLabel(QLabel):
             print("QLabel 被左键点击")
             if self.Camera_index == 'main_Camera':
                 set_result(main_Camera)
-                res = ''
-                for index, item in enumerate(main_Camera):
-                    if index == 0:
-                        res = item
-                    else:
-                        res = '%s_%s' % (res, item)
-                ui.lineEdit_Send_Result.setText(res)
             elif self.Camera_index == 'monitor_Camera':
                 set_result(monitor_Camera)
-                res = ''
-                for index, item in enumerate(monitor_Camera):
-                    if index == 0:
-                        res = item
-                    else:
-                        res = '%s_%s' % (res, item)
-                ui.lineEdit_Send_Result.setText(res)
         elif event.button() == Qt.RightButton:
             print("QLabel 被右键点击")
 
@@ -4085,12 +4079,22 @@ class CustomLineEdit(QLineEdit):
             else:
                 name = self.objectName()[0:-1]
                 for index in range(10):
+                    if (getattr(result_ui, '%s%s' % (name, index), None).objectName() != self.objectName() and
+                            getattr(result_ui, '%s%s' % (name, index), None).text() == self.text()):
+                        getattr(result_ui, '%s%s' % (name, index), None).setText('')
+                getattr(result_ui, '%s' % self.objectName(), None).setText(self.text())
+                for index in range(10):
                     if (getattr(ui, '%s%s' % (name, index), None).objectName() != self.objectName() and
                             getattr(ui, '%s%s' % (name, index), None).text() == self.text()):
                         getattr(ui, '%s%s' % (name, index), None).setText('')
+                getattr(ui, '%s' % self.objectName(), None).setText(self.text())
                 i = int(self.objectName()[-1:]) + 1
                 print(name, i)
                 if i < 10:
+                    target_line_edit = getattr(result_ui, '%s%s' % (name, i), None)
+                    if target_line_edit:
+                        target_line_edit.setFocus()
+                        target_line_edit.selectAll()
                     target_line_edit = getattr(ui, '%s%s' % (name, i), None)
                     if target_line_edit:
                         target_line_edit.setFocus()
@@ -4111,6 +4115,14 @@ def set_result(msg):
     print(msg)
     for index, item in enumerate(msg):
         getattr(ui, 'lineEdit_result_%s' % index, None).setText(str(item))
+        getattr(result_ui, 'lineEdit_result_%s' % index, None).setText(str(item))
+    res = ''
+    for index, item in enumerate(msg):
+        if index == 0:
+            res = item
+        else:
+            res = '%s_%s' % (res, item)
+    ui.lineEdit_Send_Result.setText(res)
 
 
 "****************************************摄像头识别结果_结束***********************************************"
@@ -4519,16 +4531,25 @@ def res2end():
         ui.checkBox_alarm.setChecked(False)
 
 
-def cancel_betting():
-    res = post_marble_results(term, 'Invalid Term', Track_number)
-    if 'Invalid Term' in res:
-        lottery_term[5] = '取消比赛'
+def result2end():
+    global Send_Result_End
+    for index in range(10):
+        item = getattr(result_ui, 'lineEdit_result_%s' % index).text()
+        getattr(ui, 'lineEdit_result_%s' % index).setText(item)
+    Send_Result_End = True
+    ui.checkBox_alarm.setChecked(False)
 
 
 def send_result():
     global Send_Result_End
     Send_Result_End = True
     ui.checkBox_alarm.setChecked(False)
+
+
+def cancel_betting():
+    res = post_marble_results(term, 'Invalid Term', Track_number)
+    if 'Invalid Term' in res:
+        lottery_term[5] = '取消比赛'
 
 
 def start_betting():
@@ -4626,6 +4647,8 @@ def my_test():
     global term
     global z_ranking_res
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
+    if ui.checkBox_result_show.isChecked():
+        ResultDialog.show()
     # for i in range(98):
     #     ui.textBrowser_msg.append('这是第%s行' % i)
     # ScreenShot_Thread.run_flg = True
@@ -4903,25 +4926,11 @@ def main_hide_event(event):
 def main_doubleclick_event(event):
     if event.button() == Qt.LeftButton:
         set_result(main_Camera)
-        res = ''
-        for index, item in enumerate(main_Camera):
-            if index == 0:
-                res = item
-            else:
-                res = '%s_%s' % (res, item)
-        ui.lineEdit_Send_Result.setText(res)
 
 
 def monitor_doubleclick_event(event):
     if event.button() == Qt.LeftButton:
         set_result(monitor_Camera)
-        res = ''
-        for index, item in enumerate(monitor_Camera):
-            if index == 0:
-                res = item
-            else:
-                res = '%s_%s' % (res, item)
-        ui.lineEdit_Send_Result.setText(res)
 
 
 def monitor_hide_event(event):
@@ -4969,6 +4978,8 @@ if __name__ == '__main__':
     ResultDialog = QDialog(z_window)
     result_ui = ResultUi()
     result_ui.setupUi(ResultDialog)
+    result_ui.pushButton_Send_Res.clicked.connect(result2end)
+    # ResultDialog.show()
 
     speed_ui.buttonBox.accepted.connect(accept_speed)
     speed_ui.buttonBox.rejected.connect(reject_speed)
@@ -5312,11 +5323,29 @@ if __name__ == '__main__':
     monitor_camera_label.Camera_index = 'monitor_Camera'
     monitor_camera_layout.addWidget(monitor_camera_label)
 
+    result_main_camera_layout = QVBoxLayout(result_ui.widget_camera_sony)
+    result_main_camera_layout.setContentsMargins(0, 9, 0, 0)
+    result_main_camera_label = CameraLabel()
+    result_main_camera_label.Camera_index = 'main_Camera'
+    result_main_camera_layout.addWidget(result_main_camera_label)
+
+    result_monitor_camera_layout = QVBoxLayout(result_ui.widget_camera_monitor)
+    result_monitor_camera_layout.setContentsMargins(0, 9, 0, 0)
+    result_monitor_camera_label = CameraLabel()
+    result_monitor_camera_label.Camera_index = 'monitor_Camera'
+    result_monitor_camera_layout.addWidget(result_monitor_camera_label)
+
     fit_camera_layout = QVBoxLayout(ui.widget_camera_fit)
     fit_camera_layout.setContentsMargins(0, 5, 0, 5)
     fit_camera_label = CameraLabel()
     fit_camera_label.Camera_index = 'fit_Camera'
     fit_camera_layout.addWidget(fit_camera_label)
+
+    result_fit_camera_layout = QVBoxLayout(result_ui.widget_camera_fit)
+    result_fit_camera_layout.setContentsMargins(0, 5, 0, 5)
+    result_fit_camera_label = CameraLabel()
+    result_fit_camera_label.Camera_index = 'fit_Camera'
+    result_fit_camera_layout.addWidget(result_fit_camera_label)
 
     ui.checkBox_main_camera.checkStateChanged.connect(main_cam_change)
     ui.checkBox_monitor_cam.checkStateChanged.connect(monitor_cam_change)
