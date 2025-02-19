@@ -113,6 +113,15 @@
              <bold>true</bold>
             </font>
            </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;空格键_下一个&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>0</number>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -141,6 +150,15 @@
              <pointsize>16</pointsize>
              <bold>true</bold>
             </font>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;空格键_下一个&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>0</number>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <property name="text">
             <string>0</string>
@@ -171,6 +189,15 @@
              <bold>true</bold>
             </font>
            </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;空格键_下一个&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>0</number>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -199,6 +226,15 @@
              <pointsize>16</pointsize>
              <bold>true</bold>
             </font>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;空格键_下一个&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>0</number>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <property name="text">
             <string>0</string>
@@ -229,6 +265,15 @@
              <bold>true</bold>
             </font>
            </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;空格键_下一个&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>0</number>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -257,6 +302,15 @@
              <pointsize>16</pointsize>
              <bold>true</bold>
             </font>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;空格键_下一个&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>0</number>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <property name="text">
             <string>0</string>
@@ -287,6 +341,15 @@
              <bold>true</bold>
             </font>
            </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;空格键_下一个&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>0</number>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -315,6 +378,15 @@
              <pointsize>16</pointsize>
              <bold>true</bold>
             </font>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;空格键_下一个&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>0</number>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <property name="text">
             <string>0</string>
@@ -345,6 +417,15 @@
              <bold>true</bold>
             </font>
            </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;空格键_下一个&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>0</number>
+           </property>
+           <property name="statusTip">
+            <string/>
+           </property>
            <property name="text">
             <string>0</string>
            </property>
@@ -373,6 +454,15 @@
              <pointsize>16</pointsize>
              <bold>true</bold>
             </font>
+           </property>
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;空格键_下一个&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="toolTipDuration">
+            <number>0</number>
+           </property>
+           <property name="statusTip">
+            <string/>
            </property>
            <property name="text">
             <string>0</string>
