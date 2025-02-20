@@ -4081,7 +4081,7 @@ class CustomLineEdit(QLineEdit):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Space:
             print(self.text(), event.key())
-            if self.text().isdigit() and int(self.text()) > 10:
+            if self.text().isdigit() and (int(self.text()) > 10 or int(self.text()) <= 0):
                 self.setText('')
             else:
                 name = self.objectName()[0:-1]
