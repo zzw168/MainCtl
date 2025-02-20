@@ -2397,7 +2397,7 @@ class PlanCmdThread(QThread):
                     self.signal.emit(succeed("测试流程：完成！"))
                     self.run_flg = False  # 测试模式，不自动关闭任何机关
                 else:  # 每次循环增加一圈，初始化动作位置为0，初始化地图位置为0
-                    map_label_big.map_action = 0
+                    # map_label_big.map_action = 0
                     action_area[2] = 1  # 写入标志 1 为独占写入
                     action_area[0] = 0
                     action_area[1] += 1
@@ -3422,7 +3422,7 @@ class MapLabel(QLabel):
         # 更新每个小球的位置
         p_num = 0
         if len(self.positions) != balls_count:
-            self.positions = []  # 每个球的当前位置索引
+            self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码]
             for num in range(balls_count):
                 self.positions.append([num * self.ball_space, QColor(255, 0, 0), 0])
         for num in range(0, balls_count):
@@ -3486,8 +3486,8 @@ class MapLabel(QLabel):
                 # if index >= len(self.path_points):
                 #     self.positions[p_num][0] = 0  # 回到起点循环运动
                 p_num += 1
-        if self.positions[0][0] - self.map_action < 300:
-            self.map_action = self.positions[0][0]  # 赋值实时位置
+        # if self.positions[0][0] - self.map_action < 300:  # 圈数重置后，重新位置更新范围限制300个点位以内
+        self.map_action = self.positions[0][0]  # 赋值实时位置
         # 触发重绘
         self.update()
 
@@ -4069,10 +4069,10 @@ class CameraLabel(QLabel):
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             print("QLabel 被左键点击")
-            if self.Camera_index == 'main_Camera':
-                set_result(main_Camera)
-            elif self.Camera_index == 'monitor_Camera':
-                set_result(monitor_Camera)
+            # if self.Camera_index == 'main_Camera':
+            #     set_result(main_Camera)
+            # elif self.Camera_index == 'monitor_Camera':
+            #     set_result(monitor_Camera)
         elif event.button() == Qt.RightButton:
             print("QLabel 被右键点击")
 
