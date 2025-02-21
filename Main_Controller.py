@@ -303,8 +303,8 @@ def get_picture(scence_current):
         return ['', '[1]', 'obs']
     img = resp.image_data[22:]
     if os.path.exists(ui.lineEdit_Image_Path.text()):
-        lottery_term[6] = '%s/obs_%s_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
-        str2image_file(img, lottery_term[6])  # 保存图片
+        img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
+        str2image_file(img, img_file)  # 保存图片
     form_data = {
         'CameraType': 'obs',
         'img': img,
@@ -371,8 +371,8 @@ def get_rtsp(rtsp_url):
         cap.release()
         if ret:
             if os.path.exists(ui.lineEdit_Image_Path.text()):
-                f = '%s/rtsp_%s_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
-                cv2.imwrite(f, frame)
+                lottery_term[6] = '%s/rtsp_%s_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
+                cv2.imwrite(lottery_term[6], frame)
             success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
                 # 将 JPEG 数据转换为 Base64 字符串
