@@ -1868,18 +1868,18 @@ class ScreenShotThread(QThread):
             if obs_res:
                 obs_list = eval(obs_res[1])
                 main_Camera = camera_to_num(obs_list)
-                # if len(obs_list) > 2:
-                #     # print(obs_list)
-                #     for i in range(0, len(obs_list)):
-                #         for j in range(0, len(ranking_array)):
-                #             if ranking_array[j][5] == obs_list[i]:
-                #                 ranking_array[j][6] = max_area_count
-                #                 ranking_array[j][8] = max_lap_count - 1
-                #                 ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                #         ball_sort[max_area_count][max_lap_count - 1].append('')
-                #         ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
-                #     color_to_num(ranking_array)
-                #     print(ranking_array)
+                if len(obs_list) > 2:
+                    # print(obs_list)
+                    for i in range(0, len(obs_list)):
+                        for j in range(0, len(ranking_array)):
+                            if ranking_array[j][5] == obs_list[i]:
+                                ranking_array[j][6] = max_area_count
+                                ranking_array[j][8] = max_lap_count - 1
+                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                        ball_sort[max_area_count][max_lap_count - 1].append('')
+                        ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
+                    color_to_num(ranking_array)
+                    print(ranking_array)
                 self.signal.emit(obs_res)
 
             monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
