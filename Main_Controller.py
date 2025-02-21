@@ -1887,18 +1887,18 @@ class ScreenShotThread(QThread):
             if monitor_res:
                 rtsp_list = eval(monitor_res[1])
                 monitor_Camera = camera_to_num(rtsp_list)
-                # if len(rtsp_list) > 2:
-                #     print(rtsp_list)
-                #     for i in range(0, len(rtsp_list)):
-                #         for j in range(0, len(ranking_array)):
-                #             if ranking_array[j][5] == rtsp_list[i]:
-                #                 ranking_array[j][6] = max_area_count
-                #                 ranking_array[j][8] = max_lap_count - 1
-                #                 ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                #         ball_sort[max_area_count][max_lap_count - 1].append('')
-                #         ball_sort[max_area_count][max_lap_count - 1][i] = rtsp_list[i]
-                #     color_to_num(ranking_array)
-                #     print(ranking_array)
+                if len(rtsp_list) > 2 and ui.checkBox_monitor_camera_set.isChecked():
+                    print(rtsp_list)
+                    for i in range(0, len(rtsp_list)):
+                        for j in range(0, len(ranking_array)):
+                            if ranking_array[j][5] == rtsp_list[i]:
+                                ranking_array[j][6] = max_area_count
+                                ranking_array[j][8] = max_lap_count - 1
+                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                        ball_sort[max_area_count][max_lap_count - 1].append('')
+                        ball_sort[max_area_count][max_lap_count - 1][i] = rtsp_list[i]
+                    color_to_num(ranking_array)
+                    print(ranking_array)
                 self.signal.emit(monitor_res)
 
             if obs_res[1] != '[1]' and main_Camera == monitor_Camera:

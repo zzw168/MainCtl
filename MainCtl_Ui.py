@@ -1706,41 +1706,53 @@ class Ui_MainWindow(object):
         self.widget_camera.setObjectName(u"widget_camera")
         self.groupBox_monitor_cam = QGroupBox(self.widget_camera)
         self.groupBox_monitor_cam.setObjectName(u"groupBox_monitor_cam")
-        self.groupBox_monitor_cam.setGeometry(QRect(480, 0, 320, 480))
+        self.groupBox_monitor_cam.setGeometry(QRect(480, 0, 320, 300))
         self.groupBox_monitor_cam.setMinimumSize(QSize(0, 300))
         self.groupBox_monitor_cam.setFont(font1)
         self.groupBox_monitor_cam.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.gridLayout_33 = QGridLayout(self.groupBox_monitor_cam)
         self.gridLayout_33.setObjectName(u"gridLayout_33")
+        self.checkBox_monitor_cam = QCheckBox(self.groupBox_monitor_cam)
+        self.checkBox_monitor_cam.setObjectName(u"checkBox_monitor_cam")
+        self.checkBox_monitor_cam.setMaximumSize(QSize(100, 16777215))
+
+        self.gridLayout_33.addWidget(self.checkBox_monitor_cam, 0, 0, 1, 1)
+
+        self.checkBox_monitor_camera_set = QCheckBox(self.groupBox_monitor_cam)
+        self.checkBox_monitor_camera_set.setObjectName(u"checkBox_monitor_camera_set")
+
+        self.gridLayout_33.addWidget(self.checkBox_monitor_camera_set, 0, 1, 1, 1)
+
         self.label_monitor_picture = QLabel(self.groupBox_monitor_cam)
         self.label_monitor_picture.setObjectName(u"label_monitor_picture")
         self.label_monitor_picture.setMinimumSize(QSize(300, 10))
 
-        self.gridLayout_33.addWidget(self.label_monitor_picture, 1, 0, 1, 1)
-
-        self.checkBox_monitor_cam = QCheckBox(self.groupBox_monitor_cam)
-        self.checkBox_monitor_cam.setObjectName(u"checkBox_monitor_cam")
-
-        self.gridLayout_33.addWidget(self.checkBox_monitor_cam, 0, 0, 1, 1)
+        self.gridLayout_33.addWidget(self.label_monitor_picture, 1, 0, 1, 2)
 
         self.groupBox_main_camera = QGroupBox(self.widget_camera)
         self.groupBox_main_camera.setObjectName(u"groupBox_main_camera")
-        self.groupBox_main_camera.setGeometry(QRect(0, 0, 320, 480))
+        self.groupBox_main_camera.setGeometry(QRect(-10, 0, 320, 300))
         self.groupBox_main_camera.setMinimumSize(QSize(0, 300))
         self.groupBox_main_camera.setFont(font1)
         self.groupBox_main_camera.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.gridLayout_15 = QGridLayout(self.groupBox_main_camera)
         self.gridLayout_15.setObjectName(u"gridLayout_15")
+        self.checkBox_main_camera = QCheckBox(self.groupBox_main_camera)
+        self.checkBox_main_camera.setObjectName(u"checkBox_main_camera")
+        self.checkBox_main_camera.setMaximumSize(QSize(100, 16777215))
+
+        self.gridLayout_15.addWidget(self.checkBox_main_camera, 0, 0, 1, 1)
+
+        self.checkBox_main_camera_set = QCheckBox(self.groupBox_main_camera)
+        self.checkBox_main_camera_set.setObjectName(u"checkBox_main_camera_set")
+
+        self.gridLayout_15.addWidget(self.checkBox_main_camera_set, 0, 1, 1, 1)
+
         self.label_main_picture = QLabel(self.groupBox_main_camera)
         self.label_main_picture.setObjectName(u"label_main_picture")
         self.label_main_picture.setMinimumSize(QSize(300, 10))
 
-        self.gridLayout_15.addWidget(self.label_main_picture, 1, 0, 1, 1)
-
-        self.checkBox_main_camera = QCheckBox(self.groupBox_main_camera)
-        self.checkBox_main_camera.setObjectName(u"checkBox_main_camera")
-
-        self.gridLayout_15.addWidget(self.checkBox_main_camera, 0, 0, 1, 1)
+        self.gridLayout_15.addWidget(self.label_main_picture, 1, 0, 1, 2)
 
 
         self.gridLayout_40.addWidget(self.widget_camera, 0, 1, 1, 1)
@@ -1801,11 +1813,6 @@ class Ui_MainWindow(object):
         self.tableWidget_Ranking.horizontalHeader().setStretchLastSection(True)
 
         self.gridLayout_4.addWidget(self.tableWidget_Ranking, 0, 0, 1, 1)
-
-        self.checkBox_main_camera_set = QCheckBox(self.groupBox_7)
-        self.checkBox_main_camera_set.setObjectName(u"checkBox_main_camera_set")
-
-        self.gridLayout_4.addWidget(self.checkBox_main_camera_set, 1, 0, 1, 1)
 
 
         self.gridLayout_27.addWidget(self.groupBox_7, 0, 1, 1, 1)
@@ -3477,11 +3484,13 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_result_0.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.groupBox_monitor_cam.setTitle(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
-        self.label_monitor_picture.setText("")
         self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u53e3\u663e\u793a", None))
+        self.checkBox_monitor_camera_set.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5339\u914d\u76d1\u63a7\u955c\u5934\u8d5b\u679c", None))
+        self.label_monitor_picture.setText("")
         self.groupBox_main_camera.setTitle(QCoreApplication.translate("MainWindow", u"\u7d22\u5c3c\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
-        self.label_main_picture.setText("")
         self.checkBox_main_camera.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u53e3\u663e\u793a", None))
+        self.checkBox_main_camera_set.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5339\u914d\u7ec8\u70b9\u955c\u5934\u8d5b\u679c", None))
+        self.label_main_picture.setText("")
         self.groupBox_14.setTitle(QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe", None))
         self.groupBox_7.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u6392\u540d", None))
         ___qtablewidgetitem36 = self.tableWidget_Ranking.horizontalHeaderItem(0)
@@ -3494,7 +3503,6 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem39.setText(QCoreApplication.translate("MainWindow", u"x", None));
         ___qtablewidgetitem40 = self.tableWidget_Ranking.horizontalHeaderItem(4)
         ___qtablewidgetitem40.setText(QCoreApplication.translate("MainWindow", u"y", None));
-        self.checkBox_main_camera_set.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5339\u914d\u7ec8\u70b9\u955c\u5934\u8d5b\u679c", None))
         self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u53c2\u6570\u8bbe\u7f6e", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"\u5faa\u73af\u65f6\u95f4:", None))
         self.pushButton_save_Ranking.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58", None))
