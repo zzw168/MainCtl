@@ -880,7 +880,7 @@ class TcpResultThread(QThread):
                                     result_data["timings"] = json.dumps(data_temp)
                                     # print(result_data)
                                     try:
-                                        post_end(term, betting_end_time, 1, Track_number)  # 发送游戏结束信号给服务器
+                                        post_end(term, betting_end_time, term_status, Track_number)  # 发送游戏结束信号给服务器
                                         post_result(term, betting_end_time, result_data, Track_number)  # 发送最终排名给服务器
                                         post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
                                     except:
@@ -1856,6 +1856,7 @@ class ScreenShotThread(QThread):
         global betting_end_time
         global Send_Result_End
         global z_ranking_end
+        global term_status
         global main_Camera, monitor_Camera, fit_Camera
         while self.running:
             time.sleep(1)
@@ -1903,9 +1904,11 @@ class ScreenShotThread(QThread):
             if obs_res[1] != '[1]' and main_Camera == monitor_Camera:
                 print('识别正确:', main_Camera)
                 if len(main_Camera) == len(z_ranking_res):
+                    term_status = 1
                     z_ranking_end = copy.deepcopy(main_Camera)
                     lottery_term[4] = str(z_ranking_end)  # 排名
             else:
+                term_status = 0
                 z_ranking_end = copy.deepcopy(z_ranking_res)
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
                     ui.lineEdit_Send_Result.setText('')
@@ -5212,6 +5215,7 @@ if __name__ == '__main__':
     five_axis = [1, 1, 1, 1, 1]
     five_key = [1, 1, 1, 1, 1]
     Track_number = "J"  # 轨道直播编号
+    term_status = 1
 
     load_main_yaml()
     load_ballsort_yaml()
