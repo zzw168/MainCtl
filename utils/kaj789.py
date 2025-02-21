@@ -142,7 +142,7 @@ def get_stream(Track_number='I'):
 
 def post_status(status=True, Track_number='I'):  # 发送开盘封盘状态，开盘了才能正常进行操作
     POST_status_url = '/status/%s' % Track_number
-    POST_status_data = {"status": status}  # true: 正常, false: 不正常
+    POST_status_data = {"status": status}  # true: 开盘, false: 封盘
     response = requests.post('%s%s' % (url, POST_status_url), headers=headers, json=POST_status_data)
     print(response.text)
     return response.text

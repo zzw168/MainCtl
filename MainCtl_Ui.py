@@ -1802,6 +1802,11 @@ class Ui_MainWindow(object):
 
         self.gridLayout_4.addWidget(self.tableWidget_Ranking, 0, 0, 1, 1)
 
+        self.checkBox_main_camera_set = QCheckBox(self.groupBox_7)
+        self.checkBox_main_camera_set.setObjectName(u"checkBox_main_camera_set")
+
+        self.gridLayout_4.addWidget(self.checkBox_main_camera_set, 1, 0, 1, 1)
+
 
         self.gridLayout_27.addWidget(self.groupBox_7, 0, 1, 1, 1)
 
@@ -3183,7 +3188,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(0)
+        self.tabWidget_Ranking.setCurrentIndex(3)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3489,6 +3494,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem39.setText(QCoreApplication.translate("MainWindow", u"x", None));
         ___qtablewidgetitem40 = self.tableWidget_Ranking.horizontalHeaderItem(4)
         ___qtablewidgetitem40.setText(QCoreApplication.translate("MainWindow", u"y", None));
+        self.checkBox_main_camera_set.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5339\u914d\u7ec8\u70b9\u955c\u5934\u8d5b\u679c", None))
         self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u53c2\u6570\u8bbe\u7f6e", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"\u5faa\u73af\u65f6\u95f4:", None))
         self.pushButton_save_Ranking.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58", None))

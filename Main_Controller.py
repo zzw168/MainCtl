@@ -1869,7 +1869,7 @@ class ScreenShotThread(QThread):
             if obs_res:
                 obs_list = eval(obs_res[1])
                 main_Camera = camera_to_num(obs_list)
-                if len(obs_list) > 2:
+                if len(obs_list) > 2 and ui.checkBox_main_camera_set.isChecked():
                     # print(obs_list)
                     for i in range(0, len(obs_list)):
                         for j in range(0, len(ranking_array)):
