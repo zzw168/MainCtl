@@ -5109,8 +5109,8 @@ if __name__ == '__main__':
     ui.pushButton_CardCloseAll.clicked.connect(card_close_all)
     ui.pushButton_CardClose.clicked.connect(card_close_all)
 
-    # ui.pushButton_start_game.clicked.connect(cmd_loop)
-    ui.pushButton_start_game.clicked.connect(my_test)
+    ui.pushButton_start_game.clicked.connect(cmd_loop)
+    # ui.pushButton_start_game.clicked.connect(my_test)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
