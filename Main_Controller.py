@@ -488,7 +488,7 @@ def deal_rank(integration_qiu_array):
                             (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                                     # or ranking_array[0][6] - ranking_array[r_index][6] > 5
                             ))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
-                        or (q_item[6] < 8 and ranking_array[r_index][6] >= max_area_count - balls_count - 6)):  # 跨圈情况
+                        or (q_item[6] < 5 and ranking_array[r_index][6] >= max_area_count - balls_count - 6)):  # 跨圈情况
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_array[r_index][9] = 1
@@ -532,6 +532,8 @@ def sort_ranking():
                 ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
     # 4.寄存器保存固定每个区域的最新排位（因为ranking_array 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
     for i in range(0, len(ranking_array)):
+        if len(ball_sort) - 1 < ranking_array[i][6]:
+            continue
         if not (ranking_array[i][5] in ball_sort[ranking_array[i][6]][ranking_array[i][8]]):
             ball_sort[ranking_array[i][6]][ranking_array[i][8]].append(copy.deepcopy(ranking_array[i][5]))  # 添加寄存器球排序
     # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
@@ -1866,18 +1868,18 @@ class ScreenShotThread(QThread):
             if obs_res:
                 obs_list = eval(obs_res[1])
                 main_Camera = camera_to_num(obs_list)
-                if len(obs_list) > 2:
-                    # print(obs_list)
-                    for i in range(0, len(obs_list)):
-                        for j in range(0, len(ranking_array)):
-                            if ranking_array[j][5] == obs_list[i]:
-                                ranking_array[j][6] = max_area_count
-                                ranking_array[j][8] = max_lap_count - 1
-                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                        ball_sort[max_area_count][max_lap_count - 1].append('')
-                        ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
-                    color_to_num(ranking_array)
-                    print(ranking_array)
+                # if len(obs_list) > 2:
+                #     # print(obs_list)
+                #     for i in range(0, len(obs_list)):
+                #         for j in range(0, len(ranking_array)):
+                #             if ranking_array[j][5] == obs_list[i]:
+                #                 ranking_array[j][6] = max_area_count
+                #                 ranking_array[j][8] = max_lap_count - 1
+                #                 ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                #         ball_sort[max_area_count][max_lap_count - 1].append('')
+                #         ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
+                #     color_to_num(ranking_array)
+                #     print(ranking_array)
                 self.signal.emit(obs_res)
 
             monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
@@ -2903,15 +2905,15 @@ def plan_refresh():  # 刷新方案列表
     for index in range(len(camera_points)):  # 卫星图刷新
         num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
         camera_points[index][0].move(*camera_points[index][num][1])  # 设置初始位置
-        camera_points[index][0].show()
+        # camera_points[index][0].show()
     for index in range(len(audio_points)):  # 卫星图刷新
         num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
         audio_points[index][0].move(*audio_points[index][num][1])  # 设置初始位置
-        audio_points[index][0].show()
+        # audio_points[index][0].show()
     for index in range(len(ai_points)):  # 卫星图刷新
         num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
         ai_points[index][0].move(*ai_points[index][num][1])  # 设置初始位置
-        ai_points[index][0].show()
+        # ai_points[index][0].show()
 
 
 def save_main_yaml():
