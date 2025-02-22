@@ -5352,7 +5352,6 @@ if __name__ == '__main__':
     }
 
     positions_live_thread = PositionsLiveThread()  # 发送实时位置到服务器线程
-    positions_live_thread.signal.connect(tcpsignal_accept)
     positions_live_thread.start()
 
     map_label_big = MapLabel()
