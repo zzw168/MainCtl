@@ -234,7 +234,7 @@ def update_gmt_text():
 
 # 修改文本来源的函数
 def update_period_text(new_text):
-    source_name = "period"  # 这里是你创建的来源名称
+    source_name = "term"  # 这里是你创建的来源名称
 
     # 获取该来源
     source = obs.obs_get_source_by_name(source_name)

@@ -1501,6 +1501,7 @@ class ReStartThread(QThread):
                         else:
                             ui.checkBox_continue_term.setChecked(False)
                     term = response['term']
+                    requests.get(url="%s/period?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本计时
                     tcp_result_thread.send_type = 'time'
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
@@ -3330,6 +3331,9 @@ class PositionsLiveThread(QThread):
             """连接成功后，持续发送数据"""
             data = {"message": "Hello, server!"}
             while True:  # 监测是否需要退出
+                if not self.run_flg:
+                    z_ws.close()
+                    break
                 try:
                     if data != positions_live and ui.radioButton_start_betting.isChecked():
                         data = positions_live
@@ -3338,18 +3342,28 @@ class PositionsLiveThread(QThread):
                     time.sleep(0.05)  # 每 2 秒发送一次
                 except Exception as e:
                     print(f"发送数据时出错: {e}")
+                    self.signal.emit(fail(f"发送数据时出错: {e}"))
                     break  # 退出循环，触发 on_close
 
         while self.running:
             try:
                 ws = websocket.WebSocketApp(WS_URL)
+                print("实时数据服务:链接成功！")
+                self.signal.emit(succeed("实时数据服务:链接成功！"))
                 ws.on_open = on_open
-                ws.run_forever()  # 运行 WebSocket 连接
+                if self.run_flg:
+                    ws.run_forever()  # 运行 WebSocket 连接
+                else:
+                    ws.close()
             except Exception as e:
                 print(f"WebSocket 连接失败: {e}")
+                self.signal.emit(fail(f"WebSocket 连接失败: {e}"))
+            time.sleep(0.01)
 
-            print("连接断开，5 秒后重试...")
-            time.sleep(5)
+
+def livesignal_accept(msg):
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 
 class DraggableLabel(QLabel):
@@ -4236,9 +4250,10 @@ def lottery_yaml_init():
         lottery_all = yaml.safe_load(f)
         f.close()
         current_date = time.strftime("%Y-%m-%d", time.localtime())
+        yesterday_time = time.strftime("%Y-%m-%d", time.localtime(time.time() - 86400))
         lottery_list = lottery_all['lottery_list']
         for row in range(len(lottery_list)):
-            if time.strftime("%Y-%m-%d", time.localtime(int(lottery_list[row][8]))) == current_date:
+            if time.strftime("%Y-%m-%d", time.localtime(int(lottery_list[row][8]))) in [current_date, yesterday_time]:
                 for col in range(len(lottery_list[row])):
                     lottery_term[col] = lottery_list[row][col]
                 lottery_data2table()
@@ -4843,6 +4858,7 @@ class ZApp(QApplication):
             ScreenShot_Thread.stop()
             ObsEnd_Thread.stop()
             Shoot_Thread.stop()
+            positions_live_thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -4869,6 +4885,7 @@ class ZApp(QApplication):
             ScreenShot_Thread.wait()
             ObsEnd_Thread.wait()
             Shoot_Thread.wait()
+            positions_live_thread.wait()
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -5358,6 +5375,7 @@ if __name__ == '__main__':
     }
 
     positions_live_thread = PositionsLiveThread()  # 发送实时位置到服务器线程
+    positions_live_thread.signal.connect(livesignal_accept)
     positions_live_thread.start()
 
     map_label_big = MapLabel()
