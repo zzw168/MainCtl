@@ -303,9 +303,9 @@ def get_picture(scence_current):
         flg_start['obs'] = False
         return ['', '[1]', 'obs']
     img = resp.image_data[22:]
-    if os.path.exists(ui.lineEdit_Image_Path.text()):
-        img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
-        str2image_file(img, img_file)  # 保存图片
+    # if os.path.exists(ui.lineEdit_Image_Path.text()):
+    #     img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
+    #     str2image_file(img, img_file)  # 保存图片
     form_data = {
         'CameraType': 'obs',
         'img': img,
@@ -314,11 +314,11 @@ def get_picture(scence_current):
     try:
         res = requests.post(url=recognition_addr, data=form_data, timeout=8)
         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
-        r_img = r_list[0]
-        if os.path.exists(ui.lineEdit_Image_Path.text()):
-            image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
-            image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-            image_json.close()
+        # r_img = r_list[0]
+        # if os.path.exists(ui.lineEdit_Image_Path.text()):
+        #     image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
+        #     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+        #     image_json.close()
         flg_start['ai_end'] = True
         return r_list
     except:
@@ -371,10 +371,10 @@ def get_rtsp(rtsp_url):
         ret, frame = cap.read()
         cap.release()
         if ret:
-            if os.path.exists(ui.lineEdit_Image_Path.text()):
-                lottery_term[6] = '%s/rtsp_%s_%s.jpg' % (
-                    ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
-                cv2.imwrite(lottery_term[6], frame)
+            # if os.path.exists(ui.lineEdit_Image_Path.text()):
+            #     lottery_term[6] = '%s/rtsp_%s_%s.jpg' % (
+            #         ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
+            #     cv2.imwrite(lottery_term[6], frame)
             success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
                 # 将 JPEG 数据转换为 Base64 字符串
@@ -387,11 +387,11 @@ def get_rtsp(rtsp_url):
                     }
                     res = requests.post(url=recognition_addr, data=form_data, timeout=8)
                     r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
-                    r_img = r_list[0]
-                    if os.path.exists(ui.lineEdit_Image_Path.text()):
-                        image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
-                        image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-                        image_json.close()
+                    # r_img = r_list[0]
+                    # if os.path.exists(ui.lineEdit_Image_Path.text()):
+                    #     image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
+                    #     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+                    #     image_json.close()
                     flg_start['ai_end'] = True
                     return r_list
                 except:
@@ -884,7 +884,8 @@ class TcpResultThread(QThread):
                                     try:
                                         post_end(term, betting_end_time, term_status, Track_number)  # 发送游戏结束信号给服务器
                                         post_result(term, betting_end_time, result_data, Track_number)  # 发送最终排名给服务器
-                                        post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
+                                        if os.path.exists(lottery_term[6]):
+                                            post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
                                     except:
                                         self.signal.emit(fail('post_result 上传结果错误！'))
                                         print('上传结果错误！')
@@ -1676,6 +1677,7 @@ class PlanBallNumThread(QThread):
     def run(self) -> None:
         global flg_start
         global z_ranking_time
+        global term_status
         while self.running:
             time.sleep(0.1)
             if (not self.run_flg) or (not flg_start['card']):
@@ -1688,6 +1690,7 @@ class PlanBallNumThread(QThread):
                 time_old = time.time()
                 sec_ = 0
                 num_old = 0
+                term_status = 1
                 screen_sort = True
                 if res == 0:
                     while True:
@@ -1714,6 +1717,7 @@ class PlanBallNumThread(QThread):
                             elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
                                 # 超时则跳出循环计球
                                 sc.GASetDiReverseCount()  # 输入次数归0
+                                term_status = 0
                                 # self.signal.emit(0)
                                 break
                             else:
@@ -1735,6 +1739,12 @@ class PlanBallNumThread(QThread):
                             tcp_ranking_thread.send_time_data = [index + 1, '%s' % z_ranking_time[index]]
                             tcp_ranking_thread.send_time_flg = True
                         time.sleep(0.5)
+                    save_path = '%s' % ui.lineEdit_Image_Path.text()
+                    if os.path.exists(save_path):
+                        lottery_term[6] = '%s/%s.jpg' % (save_path, term)
+                        resp = cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
+                                                                 lottery_term[6], 1920,
+                                                                 1080, 100)
                 else:
                     print("次数归0 失败！")
                     flg_start['card'] = False
@@ -1742,6 +1752,7 @@ class PlanBallNumThread(QThread):
 
                 tcp_ranking_thread.sleep_time = 0.5  # 恢复正常前端排名数据包发送频率
                 if screen_sort:
+                    term_status = 0
                     ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                 ObsEnd_Thread.ball_flg = True  # 结算页标志2
                 Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
@@ -1921,8 +1932,6 @@ class ScreenShotThread(QThread):
                 z_ranking_end = copy.deepcopy(z_ranking_res)
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
                     ui.lineEdit_Send_Result.setText('')
-                    # if os.path.exists(lottery_term[6]):
-                    #     os.startfile(lottery_term[6])
                     play_alarm()  # 警报声
                     Send_Result_End = False
                     while True:
@@ -5293,7 +5302,7 @@ if __name__ == '__main__':
     five_axis = [1, 1, 1, 1, 1]
     five_key = [1, 1, 1, 1, 1]
     Track_number = "J"  # 轨道直播编号
-    term_status = 1
+    term_status = 1  # 赛事状态（丢球）
 
     load_main_yaml()
     load_ballsort_yaml()
