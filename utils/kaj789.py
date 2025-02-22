@@ -6,7 +6,24 @@ import requests
 url = 'https://marble-api.kaj789.com'
 # WebSocket 服务器
 WS_URL = "wss://ws.kaj789.com/live?token=L8yUwg1wljco3j57u59XdkGKalrK0NtTMX1ok8fSCSYBVj5Vdu"
-
+"""
+wss://ws.kaj789.com/live?token=L8yUwg1wljco3j57u59XdkGKalrK0NtTMX1ok8fSCSYBVj5Vdu
+{
+    "raceTrackID": "D",
+    "term": "5712844",
+    "result": [
+        { "pm": 1, "id": 8, "x": 104, "y": 645, "b": 15 },
+        { "pm": 2, "id": 3, "x": 101, "y": 355, "b": 13 },
+        { "pm": 3, "id": 5, "x": 77, "y": 642, "b": 12 },
+        { "pm": 4, "id": 8, "x": 54, "y": 745, "b": 10 },
+        { "pm": 5, "id": 7, "x": 31, "y": 891, "b": 10 },
+        { "pm": 6, "id": 6, "x": 128, "y": 735, "b": 10 },
+        { "pm": 7, "id": 2, "x": 191, "y": 444, "b": 10 },
+        { "pm": 8, "id": 1, "x": 124, "y": 605, "b": 9 },
+        { "pm": 9, "id": 9, "x": 78, "y": 695, "b": 8 },
+        { "pm": 10, "id": 10, "x": 79, "y": 635, "b": 7 }
+    ]
+ }"""
 # 定义请求头
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',

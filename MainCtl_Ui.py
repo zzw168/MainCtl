@@ -1718,11 +1718,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_33.addWidget(self.checkBox_monitor_cam, 0, 0, 1, 1)
 
-        self.checkBox_monitor_camera_set = QCheckBox(self.groupBox_monitor_cam)
-        self.checkBox_monitor_camera_set.setObjectName(u"checkBox_monitor_camera_set")
-
-        self.gridLayout_33.addWidget(self.checkBox_monitor_camera_set, 0, 1, 1, 1)
-
         self.label_monitor_picture = QLabel(self.groupBox_monitor_cam)
         self.label_monitor_picture.setObjectName(u"label_monitor_picture")
         self.label_monitor_picture.setMinimumSize(QSize(300, 10))
@@ -3485,7 +3480,6 @@ class Ui_MainWindow(object):
         self.lineEdit_result_0.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.groupBox_monitor_cam.setTitle(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
         self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u53e3\u663e\u793a", None))
-        self.checkBox_monitor_camera_set.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5339\u914d\u76d1\u63a7\u955c\u5934\u8d5b\u679c", None))
         self.label_monitor_picture.setText("")
         self.groupBox_main_camera.setTitle(QCoreApplication.translate("MainWindow", u"\u7d22\u5c3c\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
         self.checkBox_main_camera.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u53e3\u663e\u793a", None))

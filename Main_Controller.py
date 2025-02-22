@@ -1889,26 +1889,32 @@ class ScreenShotThread(QThread):
             if monitor_res:
                 rtsp_list = eval(monitor_res[1])
                 monitor_Camera = camera_to_num(rtsp_list)
-                if len(rtsp_list) > 2 and ui.checkBox_monitor_camera_set.isChecked():
-                    print(rtsp_list)
-                    for i in range(0, len(rtsp_list)):
-                        for j in range(0, len(ranking_array)):
-                            if ranking_array[j][5] == rtsp_list[i]:
-                                ranking_array[j][6] = max_area_count
-                                ranking_array[j][8] = max_lap_count - 1
-                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                        ball_sort[max_area_count][max_lap_count - 1].append('')
-                        ball_sort[max_area_count][max_lap_count - 1][i] = rtsp_list[i]
-                    color_to_num(ranking_array)
-                    print(ranking_array)
+                # if len(rtsp_list) > 2 and ui.checkBox_monitor_camera_set.isChecked():
+                #     print(rtsp_list)
+                #     for i in range(0, len(rtsp_list)):
+                #         for j in range(0, len(ranking_array)):
+                #             if ranking_array[j][5] == rtsp_list[i]:
+                #                 ranking_array[j][6] = max_area_count
+                #                 ranking_array[j][8] = max_lap_count - 1
+                #                 ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                #         ball_sort[max_area_count][max_lap_count - 1].append('')
+                #         ball_sort[max_area_count][max_lap_count - 1][i] = rtsp_list[i]
+                #     color_to_num(ranking_array)
+                #     print(ranking_array)
                 self.signal.emit(monitor_res)
 
-            if obs_res[1] != '[1]' and main_Camera == monitor_Camera:
-                print('识别正确:', main_Camera)
+            if ((obs_res[1] != '[1]' and main_Camera == monitor_Camera)
+                    or (not (ui.checkBox_main_camera_set.isChecked()) and z_ranking_res == main_Camera)):
                 if len(main_Camera) == len(z_ranking_res):
+                    print('主镜头识别正确:', main_Camera)
                     term_status = 1
                     z_ranking_end = copy.deepcopy(main_Camera)
                     lottery_term[4] = str(z_ranking_end)  # 排名
+            elif z_ranking_res == monitor_Camera:
+                print('监控识别正确:', monitor_Camera)
+                term_status = 1
+                z_ranking_end = copy.deepcopy(monitor_Camera)
+                lottery_term[4] = str(z_ranking_end)  # 排名
             else:
                 term_status = 0
                 z_ranking_end = copy.deepcopy(z_ranking_res)
@@ -3329,7 +3335,7 @@ class PositionsLiveThread(QThread):
                         data = positions_live
                         z_ws.send(json.dumps(data))
                         print(f"已发送数据: {data}")
-                    time.sleep(0.01)  # 每 2 秒发送一次
+                    time.sleep(0.05)  # 每 2 秒发送一次
                 except Exception as e:
                     print(f"发送数据时出错: {e}")
                     break  # 退出循环，触发 on_close
