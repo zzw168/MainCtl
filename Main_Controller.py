@@ -19,6 +19,7 @@ import numpy as np
 import psutil
 import pynput
 import requests
+import websocket
 import yaml
 from PIL.ImageOps import scale
 from PyInstaller.utils.hooks.conda import files
@@ -371,7 +372,8 @@ def get_rtsp(rtsp_url):
         cap.release()
         if ret:
             if os.path.exists(ui.lineEdit_Image_Path.text()):
-                lottery_term[6] = '%s/rtsp_%s_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
+                lottery_term[6] = '%s/rtsp_%s_%s.jpg' % (
+                    ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
                 cv2.imwrite(lottery_term[6], frame)
             success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
@@ -3304,6 +3306,46 @@ def json_txt():
 "****************************************卫星图_开始***********************************************"
 
 
+class PositionsLiveThread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(PositionsLiveThread, self).__init__()
+        self.running = True
+        self.run_flg = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        def on_open(z_ws):
+            """连接成功后，持续发送数据"""
+            data = {"message": "Hello, server!"}
+            while True:  # 监测是否需要退出
+                try:
+                    if data != positions_live and ui.radioButton_start_betting.isChecked():
+                        data = positions_live
+                        z_ws.send(json.dumps(data))
+                        print(f"已发送数据: {data}")
+                    time.sleep(0.01)  # 每 2 秒发送一次
+                except Exception as e:
+                    print(f"发送数据时出错: {e}")
+                    break  # 退出循环，触发 on_close
+
+        while self.running:
+            try:
+                ws = websocket.WebSocketApp(WS_URL)
+                ws.on_open = on_open
+                ws.run_forever()  # 运行 WebSocket 连接
+            except Exception as e:
+                print(f"WebSocket 连接失败: {e}")
+
+            print("连接断开，5 秒后重试...")
+            time.sleep(5)
+
+
 class DraggableLabel(QLabel):
     def __init__(self, text, color, parent=None):
         super().__init__(text, parent)
@@ -3406,6 +3448,7 @@ class MapLabel(QLabel):
             for p in fcc_data[0]["content"]:
                 self.path_points.append((p['x'] * map_scale, p['y'] * map_scale))
             self.path_points = divide_path(self.path_points, step_length)
+            print('地图长度:%s' % len(self.path_points))
             if map_scale == 1:
                 map_orbit = self.path_points
 
@@ -3424,6 +3467,7 @@ class MapLabel(QLabel):
         self.timer.start(self.flash_time)  # 每1秒更新一次
 
     def update_positions(self):
+        global positions_live
         # 更新每个小球的位置
         p_num = 0
         if len(self.positions) != balls_count:
@@ -3492,7 +3536,18 @@ class MapLabel(QLabel):
                 #     self.positions[p_num][0] = 0  # 回到起点循环运动
                 p_num += 1
         # if self.positions[0][0] - self.map_action < 300:  # 圈数重置后，重新位置更新范围限制300个点位以内
-        self.map_action = self.positions[0][0]  # 赋值实时位置
+        if self.picture_size == 860:
+            self.map_action = self.positions[0][0]  # 赋值实时位置
+            res = []
+            for i in range(len(self.positions)):
+                x, y = self.path_points[self.positions[i][0]]
+                b = self.positions[i][0] / len(self.path_points)
+                res.append({"pm": i + 1, "id": self.positions[i][2], "x": x, "y": y, "b": b})
+            positions_live = {
+                "raceTrackID": Track_number,
+                "term": term,
+                "result": res
+            }
         # 触发重绘
         self.update()
 
@@ -5279,6 +5334,26 @@ if __name__ == '__main__':
     audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
     ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
     map_orbit = []  # 地图轨迹
+    positions_live = {
+        "raceTrackID": "D",
+        "term": "5712844",
+        "result": [
+            {"pm": 1, "id": 8, "x": 104, "y": 645, "b": 15},
+            {"pm": 2, "id": 3, "x": 101, "y": 355, "b": 13},
+            {"pm": 3, "id": 5, "x": 77, "y": 642, "b": 12},
+            {"pm": 4, "id": 8, "x": 54, "y": 745, "b": 10},
+            {"pm": 5, "id": 7, "x": 31, "y": 891, "b": 10},
+            {"pm": 6, "id": 6, "x": 128, "y": 735, "b": 10},
+            {"pm": 7, "id": 2, "x": 191, "y": 444, "b": 10},
+            {"pm": 8, "id": 1, "x": 124, "y": 605, "b": 9},
+            {"pm": 9, "id": 9, "x": 78, "y": 695, "b": 8},
+            {"pm": 10, "id": 10, "x": 79, "y": 635, "b": 7}
+        ]
+    }
+
+    positions_live_thread = PositionsLiveThread()  # 发送实时位置到服务器线程
+    positions_live_thread.signal.connect(tcpsignal_accept)
+    positions_live_thread.start()
 
     map_label_big = MapLabel()
     layout_big = QVBoxLayout(ui.widget_map_big)

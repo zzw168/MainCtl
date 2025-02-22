@@ -4,6 +4,8 @@ import time
 import requests
 
 url = 'https://marble-api.kaj789.com'
+# WebSocket 服务器
+WS_URL = "wss://ws.kaj789.com/live?token=L8yUwg1wljco3j57u59XdkGKalrK0NtTMX1ok8fSCSYBVj5Vdu"
 
 # 定义请求头
 headers = {
