@@ -5207,11 +5207,11 @@ if __name__ == '__main__':
     ui.comboBox_Scenes.activated.connect(scenes_change)
 
     obs_save_t = threading.Thread(target=obs_save_image, daemon=True)
-    obs_save_t.start()
+    # obs_save_t.start()
     ui.checkBox_saveImgs_main.checkStateChanged.connect(obs_save_thread)
 
     rtsp_save_t = threading.Thread(target=rtsp_save_image, daemon=True)
-    rtsp_save_t.start()
+    # rtsp_save_t.start()
     ui.checkBox_saveImgs_monitor.checkStateChanged.connect(rtsp_save_thread)
 
     "**************************OBS*****************************"
