@@ -891,8 +891,11 @@ class TcpResultThread(QThread):
                                     except:
                                         self.signal.emit(fail('post_result 上传结果错误！'))
                                         print('上传结果错误！')
-
-                                    video_name = cl_request.stop_record()  # 关闭录像
+                                    # 获取录屏状态
+                                    recording_status = cl_request.get_record_status()
+                                    # 检查是否正在录屏
+                                    if recording_status.output_active:  # 确保键名正确
+                                        video_name = cl_request.stop_record()  # 关闭录像
                                     lottery_term[7] = video_name.output_path  # 视频保存路径
                                     lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
                                     end_time = int(time.time())
@@ -1886,6 +1889,8 @@ class ScreenShotThread(QThread):
             self.signal.emit(succeed('截图结果识别运行！'))
 
             obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
+            obs_list = []
+            rtsp_list = []
             if obs_res:
                 obs_list = eval(obs_res[1])
                 main_Camera = camera_to_num(obs_list)
@@ -1907,28 +1912,38 @@ class ScreenShotThread(QThread):
             if monitor_res:
                 rtsp_list = eval(monitor_res[1])
                 monitor_Camera = camera_to_num(rtsp_list)
-                # if len(rtsp_list) > 2 and ui.checkBox_monitor_camera_set.isChecked():
-                #     print(rtsp_list)
-                #     for i in range(0, len(rtsp_list)):
-                #         for j in range(0, len(ranking_array)):
-                #             if ranking_array[j][5] == rtsp_list[i]:
-                #                 ranking_array[j][6] = max_area_count
-                #                 ranking_array[j][8] = max_lap_count - 1
-                #                 ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                #         ball_sort[max_area_count][max_lap_count - 1].append('')
-                #         ball_sort[max_area_count][max_lap_count - 1][i] = rtsp_list[i]
-                #     color_to_num(ranking_array)
-                #     print(ranking_array)
                 self.signal.emit(monitor_res)
 
             if ((obs_res[1] != '[1]' and main_Camera == monitor_Camera)
                     or (not (ui.checkBox_main_camera_set.isChecked()) and z_ranking_res == main_Camera)):
                 if len(main_Camera) == len(z_ranking_res):
                     print('主镜头识别正确:', main_Camera)
+                    if len(obs_list) > 2 and not ui.checkBox_main_camera_set.isChecked():
+                        for i in range(0, len(obs_list)):
+                            for j in range(0, len(ranking_array)):
+                                if ranking_array[j][5] == obs_list[i]:
+                                    ranking_array[j][6] = max_area_count
+                                    ranking_array[j][8] = max_lap_count - 1
+                                    ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                            ball_sort[max_area_count][max_lap_count - 1].append('')
+                            ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
+                        color_to_num(ranking_array)
                     z_ranking_end = copy.deepcopy(main_Camera)
                     lottery_term[4] = str(z_ranking_end)  # 排名
             elif z_ranking_res == monitor_Camera:
                 print('监控识别正确:', monitor_Camera)
+                if len(rtsp_list) > 2:
+                    print(rtsp_list)
+                    for i in range(0, len(rtsp_list)):
+                        for j in range(0, len(ranking_array)):
+                            if ranking_array[j][5] == rtsp_list[i]:
+                                ranking_array[j][6] = max_area_count
+                                ranking_array[j][8] = max_lap_count - 1
+                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                        ball_sort[max_area_count][max_lap_count - 1].append('')
+                        ball_sort[max_area_count][max_lap_count - 1][i] = rtsp_list[i]
+                    color_to_num(ranking_array)
+                    print(ranking_array)
                 z_ranking_end = copy.deepcopy(monitor_Camera)
                 lottery_term[4] = str(z_ranking_end)  # 排名
             else:
@@ -4751,8 +4766,9 @@ def my_test():
     global term
     global z_ranking_res
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    if ui.checkBox_result_show.isChecked():
-        ResultDialog.show()
+    # 获取录屏状态
+    recording_status = cl_request.get_record_status()
+    print(recording_status.output_active)
     # for i in range(98):
     #     ui.textBrowser_msg.append('这是第%s行' % i)
     # ScreenShot_Thread.run_flg = True
