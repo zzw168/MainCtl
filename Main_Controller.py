@@ -3469,13 +3469,23 @@ class DraggableLabel(QLabel):
 
 
 class MapLabel(QLabel):
-    def __init__(self, picture_size=860, ball_space=11, ball_radius=10, flash_time=30, step_length=2, parent=None):
+    def __init__(self, picture_size=860, ball_radius=10, step_length=2.0, ball_space=11, flash_time=30, parent=None):
+        """
+        picture_size 地图像素
+        ball_radius 球半径（像素）
+        step_length 步长（每个轨迹点之间的像素）
+        ball_space  两个球之间的距离（单位:步数）
+        flash_time  画图刷新频率时间
+        """
         super().__init__(parent)
         global map_orbit
         self.map_action = 0  # 地图触发点位
         img = map_data[0]
         pixmap = QPixmap(img)
-        self.picture_size = picture_size
+        self.picture_size = picture_size  # 像素
+        self.step_length = step_length  # 步长
+        self.ball_space = ball_space  # 球之间的距离（步数）
+        self.ball_radius = ball_radius  # 像素
         # 设置label的尺寸
         self.setMaximumSize(picture_size, picture_size)
         self.setPixmap(pixmap)
@@ -3497,13 +3507,11 @@ class MapLabel(QLabel):
                 map_scale = picture_size / int(map_data[2])  # 缩放比例
             for p in fcc_data[0]["content"]:
                 self.path_points.append((p['x'] * map_scale, p['y'] * map_scale))
-            self.path_points = divide_path(self.path_points, step_length)
+            self.path_points = divide_path(self.path_points, self.step_length)
             print('地图长度:%s' % len(self.path_points))
             if map_scale == 1:
                 map_orbit = self.path_points
 
-        self.ball_space = ball_space  # 球之间的距离
-        self.ball_radius = ball_radius  # 小球半径
         # self.num_balls = 8  # 8个小球
         self.speed = 1  # 小球每次前进的步数（可以根据需要调整）
         self.flash_time = flash_time
@@ -5412,13 +5420,14 @@ if __name__ == '__main__':
     positions_live_thread.start()
 
     map_label_big = MapLabel()
+    # map_label_big = MapLabel(picture_size=680, ball_space=11, ball_radius=10, flash_time=30, step_length=2.0,)
     layout_big = QVBoxLayout(ui.widget_map_big)
     layout_big.setContentsMargins(0, 0, 0, 0)
     layout_big.setAlignment(Qt.AlignmentFlag.AlignCenter)
     # 添加自定义的 QLabel 到布局中
     layout_big.addWidget(map_label_big)
 
-    map_label = MapLabel(picture_size=350, ball_space=21, ball_radius=5, flash_time=20, step_length=0.5)
+    map_label = MapLabel(picture_size=350, ball_space=11, ball_radius=5, step_length=1.03)
     map_layout = QVBoxLayout(ui.widget_map)
     map_layout.setContentsMargins(0, 0, 0, 0)
     map_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)

@@ -132,7 +132,7 @@ lineEdit_shoot: '1'
 lineEdit_start: '2'
 map_line: ./img/13_华山.json
 map_picture: ./img/13_华山.jpg
-map_size: '680'
+map_size: '860'
 monitor_sort: '1'
 music_1:
 - false
