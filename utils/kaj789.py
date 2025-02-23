@@ -172,9 +172,9 @@ if __name__ == '__main__':
     # get_stream()
     # test_server()
     # post_status(True)
-    get_term()
+    # get_term()
     # post_start(9613162, 1730369317)
-    post_marble_results(9613183)
+    post_marble_results(9667452,'ManMake','M')
     # time.sleep(5)9613162
     # post_end(9613161, 1730369497)
     # post_upload('./1.png')

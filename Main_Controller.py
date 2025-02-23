@@ -886,6 +886,8 @@ class TcpResultThread(QThread):
                                         post_result(term, betting_end_time, result_data, Track_number)  # 发送最终排名给服务器
                                         if os.path.exists(lottery_term[6]):
                                             post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
+                                        if term_status == 0:
+                                            post_marble_results(term, term_comment, Track_number)  # 上传备注信息
                                     except:
                                         self.signal.emit(fail('post_result 上传结果错误！'))
                                         print('上传结果错误！')
@@ -1678,6 +1680,7 @@ class PlanBallNumThread(QThread):
         global flg_start
         global z_ranking_time
         global term_status
+        global term_comment
         while self.running:
             time.sleep(0.1)
             if (not self.run_flg) or (not flg_start['card']):
@@ -1718,6 +1721,7 @@ class PlanBallNumThread(QThread):
                                 # 超时则跳出循环计球
                                 sc.GASetDiReverseCount()  # 输入次数归0
                                 term_status = 0
+                                term_comment = term_comments[1]
                                 # self.signal.emit(0)
                                 break
                             else:
@@ -1742,7 +1746,7 @@ class PlanBallNumThread(QThread):
                     save_path = '%s' % ui.lineEdit_Image_Path.text()
                     if os.path.exists(save_path):
                         lottery_term[6] = '%s/%s.jpg' % (save_path, term)
-                        resp = cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
+                        resp = cl_request.save_source_screenshot(ui.lineEdit_scene_name.text(), "jpg",
                                                                  lottery_term[6], 1920,
                                                                  1080, 100)
                 else:
@@ -1753,6 +1757,7 @@ class PlanBallNumThread(QThread):
                 tcp_ranking_thread.sleep_time = 0.5  # 恢复正常前端排名数据包发送频率
                 if screen_sort:
                     term_status = 0
+                    term_comment = term_comments[1]
                     ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                 ObsEnd_Thread.ball_flg = True  # 结算页标志2
                 Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
@@ -1871,6 +1876,7 @@ class ScreenShotThread(QThread):
         global Send_Result_End
         global z_ranking_end
         global term_status
+        global term_comment
         global main_Camera, monitor_Camera, fit_Camera
         while self.running:
             time.sleep(1)
@@ -1919,16 +1925,15 @@ class ScreenShotThread(QThread):
                     or (not (ui.checkBox_main_camera_set.isChecked()) and z_ranking_res == main_Camera)):
                 if len(main_Camera) == len(z_ranking_res):
                     print('主镜头识别正确:', main_Camera)
-                    term_status = 1
                     z_ranking_end = copy.deepcopy(main_Camera)
                     lottery_term[4] = str(z_ranking_end)  # 排名
             elif z_ranking_res == monitor_Camera:
                 print('监控识别正确:', monitor_Camera)
-                term_status = 1
                 z_ranking_end = copy.deepcopy(monitor_Camera)
                 lottery_term[4] = str(z_ranking_end)  # 排名
             else:
                 term_status = 0
+                term_comment = term_comments[3]
                 z_ranking_end = copy.deepcopy(z_ranking_res)
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
                     ui.lineEdit_Send_Result.setText('')
@@ -1969,6 +1974,7 @@ class ScreenShotThread(QThread):
                     ui.radioButton_stop_betting.click()  # 封盘
                     ui.checkBox_black_screen.click()
 
+            betting_end_time = int(time.time())
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
 
             self.run_flg = False
@@ -3570,8 +3576,8 @@ class MapLabel(QLabel):
             res = []
             for i in range(len(self.positions)):
                 x, y = self.path_points[self.positions[i][0]]
-                b = self.positions[i][0] / len(self.path_points)
-                res.append({"pm": i + 1, "id": self.positions[i][2], "x": x, "y": y, "b": b})
+                b = round(self.positions[i][0] / len(self.path_points), 2)
+                res.append({"pm": i + 1, "id": self.positions[i][2], "x": round(x, 2), "y": round(y, 2), "b": b})
             positions_live = {
                 "raceTrackID": Track_number,
                 "term": term,
@@ -5303,6 +5309,8 @@ if __name__ == '__main__':
     five_key = [1, 1, 1, 1, 1]
     Track_number = "J"  # 轨道直播编号
     term_status = 1  # 赛事状态（丢球）
+    term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
+    term_comment = 'Revise'
 
     load_main_yaml()
     load_ballsort_yaml()
