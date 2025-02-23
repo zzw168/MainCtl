@@ -3095,6 +3095,10 @@ def load_main_yaml():
         ui.lineEdit_start.setText(main_all['lineEdit_start'])
         ui.lineEdit_shake.setText(main_all['lineEdit_shake'])
         ui.lineEdit_end.setText(main_all['lineEdit_end'])
+        ui.lineEdit_start_count.setText(main_all['lineEdit_start_count'])
+        ui.lineEdit_alarm.setText(main_all['lineEdit_alarm'])
+        ui.lineEdit_shoot_2.setText(main_all['lineEdit_shoot_2'])
+        ui.lineEdit_shoot_3.setText(main_all['lineEdit_shoot_3'])
         ui.lineEdit_Track_number.setText(main_all['Track_number'])
         ui.pushButton_start_game.setEnabled(main_all['pushButton_start_game'])
         for index in range(1, 4):

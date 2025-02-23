@@ -126,13 +126,17 @@ init_array:
   - 0
   - 0
   - 0
+lineEdit_alarm: '14'
 lineEdit_end: '4'
 lineEdit_shake: '3'
 lineEdit_shoot: '1'
+lineEdit_shoot_2: '5'
+lineEdit_shoot_3: '6'
 lineEdit_start: '2'
+lineEdit_start_count: '9'
 map_line: ./img/13_华山.json
 map_picture: ./img/13_华山.jpg
-map_size: '860'
+map_size: '680'
 monitor_sort: '1'
 music_1:
 - false
