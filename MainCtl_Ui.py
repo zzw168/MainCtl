@@ -2123,23 +2123,23 @@ class Ui_MainWindow(object):
         self.lineEdit_shoot.setObjectName(u"lineEdit_shoot")
         self.lineEdit_shoot.setMinimumSize(QSize(0, 0))
         self.lineEdit_shoot.setFont(font5)
-        self.lineEdit_shoot.setReadOnly(True)
+        self.lineEdit_shoot.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_shoot, 0, 1, 1, 1)
 
-        self.lineEdit_map_picture_3 = QLineEdit(self.groupBox_32)
-        self.lineEdit_map_picture_3.setObjectName(u"lineEdit_map_picture_3")
-        self.lineEdit_map_picture_3.setMinimumSize(QSize(0, 0))
-        self.lineEdit_map_picture_3.setFont(font5)
-        self.lineEdit_map_picture_3.setReadOnly(False)
+        self.lineEdit_alarm = QLineEdit(self.groupBox_32)
+        self.lineEdit_alarm.setObjectName(u"lineEdit_alarm")
+        self.lineEdit_alarm.setMinimumSize(QSize(0, 0))
+        self.lineEdit_alarm.setFont(font5)
+        self.lineEdit_alarm.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_map_picture_3, 1, 3, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_alarm, 1, 3, 1, 1)
 
         self.lineEdit_start_count = QLineEdit(self.groupBox_32)
         self.lineEdit_start_count.setObjectName(u"lineEdit_start_count")
         self.lineEdit_start_count.setMinimumSize(QSize(0, 0))
         self.lineEdit_start_count.setFont(font5)
-        self.lineEdit_start_count.setReadOnly(True)
+        self.lineEdit_start_count.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_start_count, 0, 3, 1, 1)
 
@@ -2153,7 +2153,7 @@ class Ui_MainWindow(object):
         self.lineEdit_start.setObjectName(u"lineEdit_start")
         self.lineEdit_start.setMinimumSize(QSize(0, 0))
         self.lineEdit_start.setFont(font5)
-        self.lineEdit_start.setReadOnly(True)
+        self.lineEdit_start.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_start, 1, 1, 1, 1)
 
@@ -2167,7 +2167,7 @@ class Ui_MainWindow(object):
         self.lineEdit_end.setObjectName(u"lineEdit_end")
         self.lineEdit_end.setMinimumSize(QSize(0, 0))
         self.lineEdit_end.setFont(font5)
-        self.lineEdit_end.setReadOnly(True)
+        self.lineEdit_end.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_end, 3, 1, 1, 1)
 
@@ -2177,13 +2177,13 @@ class Ui_MainWindow(object):
 
         self.gridLayout_58.addWidget(self.label_74, 3, 2, 1, 1)
 
-        self.lineEdit_map_picture_4 = QLineEdit(self.groupBox_32)
-        self.lineEdit_map_picture_4.setObjectName(u"lineEdit_map_picture_4")
-        self.lineEdit_map_picture_4.setMinimumSize(QSize(0, 0))
-        self.lineEdit_map_picture_4.setFont(font5)
-        self.lineEdit_map_picture_4.setReadOnly(False)
+        self.lineEdit_shoot_3 = QLineEdit(self.groupBox_32)
+        self.lineEdit_shoot_3.setObjectName(u"lineEdit_shoot_3")
+        self.lineEdit_shoot_3.setMinimumSize(QSize(0, 0))
+        self.lineEdit_shoot_3.setFont(font5)
+        self.lineEdit_shoot_3.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_map_picture_4, 3, 3, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_shoot_3, 3, 3, 1, 1)
 
         self.label_72 = QLabel(self.groupBox_32)
         self.label_72.setObjectName(u"label_72")
@@ -2195,7 +2195,7 @@ class Ui_MainWindow(object):
         self.lineEdit_shake.setObjectName(u"lineEdit_shake")
         self.lineEdit_shake.setMinimumSize(QSize(0, 0))
         self.lineEdit_shake.setFont(font5)
-        self.lineEdit_shake.setReadOnly(True)
+        self.lineEdit_shake.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_shake, 2, 1, 1, 1)
 
@@ -2217,13 +2217,13 @@ class Ui_MainWindow(object):
 
         self.gridLayout_58.addWidget(self.label_76, 1, 2, 1, 1)
 
-        self.lineEdit_map_picture_5 = QLineEdit(self.groupBox_32)
-        self.lineEdit_map_picture_5.setObjectName(u"lineEdit_map_picture_5")
-        self.lineEdit_map_picture_5.setMinimumSize(QSize(0, 0))
-        self.lineEdit_map_picture_5.setFont(font5)
-        self.lineEdit_map_picture_5.setReadOnly(False)
+        self.lineEdit_shoot_2 = QLineEdit(self.groupBox_32)
+        self.lineEdit_shoot_2.setObjectName(u"lineEdit_shoot_2")
+        self.lineEdit_shoot_2.setMinimumSize(QSize(0, 0))
+        self.lineEdit_shoot_2.setFont(font5)
+        self.lineEdit_shoot_2.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_map_picture_5, 2, 3, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_shoot_2, 2, 3, 1, 1)
 
         self.label_77 = QLabel(self.groupBox_32)
         self.label_77.setObjectName(u"label_77")
@@ -3190,7 +3190,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(0)
+        self.tabWidget_Ranking.setCurrentIndex(4)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3538,9 +3538,9 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_shoot.setText(QCoreApplication.translate("MainWindow", u"1", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_map_picture_3.setToolTip("")
+        self.lineEdit_alarm.setToolTip("")
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_map_picture_3.setText(QCoreApplication.translate("MainWindow", u"5", None))
+        self.lineEdit_alarm.setText(QCoreApplication.translate("MainWindow", u"14", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_start_count.setToolTip("")
 #endif // QT_CONFIG(tooltip)
@@ -3555,11 +3555,11 @@ class Ui_MainWindow(object):
         self.lineEdit_end.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_end.setText(QCoreApplication.translate("MainWindow", u"4", None))
-        self.label_74.setText(QCoreApplication.translate("MainWindow", u"\u6307\u5357\u9488\uff1a", None))
+        self.label_74.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c043\uff1a", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_map_picture_4.setToolTip("")
+        self.lineEdit_shoot_3.setToolTip("")
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_map_picture_4.setText(QCoreApplication.translate("MainWindow", u"11", None))
+        self.lineEdit_shoot_3.setText(QCoreApplication.translate("MainWindow", u"6", None))
         self.label_72.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u9707\u52a8\uff1a", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_shake.setToolTip("")
@@ -3567,12 +3567,12 @@ class Ui_MainWindow(object):
         self.lineEdit_shake.setText(QCoreApplication.translate("MainWindow", u"3", None))
         self.label_75.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u5012\u6570\uff1a", None))
         self.label_73.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u5347\u964d\uff1a", None))
-        self.label_76.setText(QCoreApplication.translate("MainWindow", u"\u5730\u9f20\u673a\u5173\uff1a", None))
+        self.label_76.setText(QCoreApplication.translate("MainWindow", u"\u8b66\u544a\u706f\uff1a", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_map_picture_5.setToolTip("")
+        self.lineEdit_shoot_2.setToolTip("")
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_map_picture_5.setText(QCoreApplication.translate("MainWindow", u"10", None))
-        self.label_77.setText(QCoreApplication.translate("MainWindow", u"\u6446\u9524\u673a\u5173\uff1a", None))
+        self.lineEdit_shoot_2.setText(QCoreApplication.translate("MainWindow", u"5", None))
+        self.label_77.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c042\uff1a", None))
         self.groupBox_26.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3\u8bbe\u7f6e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_music_3.setToolTip("")

@@ -3003,6 +3003,14 @@ def save_main_yaml():
                 main_all['source_end'] = ui.lineEdit_source_end.text()
                 main_all['monitor_sort'] = ui.lineEdit_monitor_sort.text()
                 main_all['sony_sort'] = ui.lineEdit_sony_sort.text()
+                main_all['lineEdit_start'] = ui.lineEdit_start.text()
+                main_all['lineEdit_shoot'] = ui.lineEdit_shoot.text()
+                main_all['lineEdit_shake'] = ui.lineEdit_shake.text()
+                main_all['lineEdit_end'] = ui.lineEdit_end.text()
+                main_all['lineEdit_start_count'] = ui.lineEdit_start_count.text()
+                main_all['lineEdit_alarm'] = ui.lineEdit_alarm.text()
+                main_all['lineEdit_shoot_2'] = ui.lineEdit_shoot_2.text()
+                main_all['lineEdit_shoot_3'] = ui.lineEdit_shoot_3.text()
                 for index in range(1, 4):
                     main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                     main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -4117,18 +4125,26 @@ def music_ctl():
 
 
 def play_alarm():  # 报警音
-    if not ui.checkBox_alarm.isChecked():
-        mp3_name = './mp3/alarm.mp3'
-        if os.path.exists(mp3_name):
-            # 加载并播放背景音乐
-            pygame.mixer.music.load(mp3_name)
-            pygame.mixer.music.play(-1)  # 循环播放背景音乐
+    try:
+        index = int(ui.lineEdit_alarm.text()) - 1
+        sc.GASetExtDoBit(index, 1)
+        ui.checkBox_alarm.setChecked(True)
+    except:
+        print('警报电压输出错误！')
+        ui.textBrowser_msg.append(fail('警报电压输出错误！'))
+        flg_start['card'] = False
 
 
 def stop_alarm():
     if ui.checkBox_alarm.isChecked():
-        pygame.mixer.music.stop()
-        ui.checkBox_alarm.setChecked(False)
+        try:
+            index = int(ui.lineEdit_alarm.text()) - 1
+            sc.GASetExtDoBit(index, 0)
+            ui.checkBox_alarm.setChecked(False)
+        except:
+            print('警报电压输出错误！')
+            ui.textBrowser_msg.append(fail('警报电压输出错误！'))
+            flg_start['card'] = False
 
 
 "****************************************卫星图_结束***********************************************"
@@ -5536,6 +5552,15 @@ if __name__ == '__main__':
     ui.lineEdit_music_3.editingFinished.connect(save_main_yaml)
     ui.lineEdit_sony_sort.editingFinished.connect(save_main_yaml)
     ui.lineEdit_monitor_sort.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_start.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_shoot.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_shake.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_end.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_start_count.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_alarm.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_shoot_2.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_shoot_3.editingFinished.connect(save_main_yaml)
+
     ui.radioButton_music_background_1.clicked.connect(save_main_yaml)
     ui.radioButton_music_background_2.clicked.connect(save_main_yaml)
     ui.radioButton_music_background_3.clicked.connect(save_main_yaml)
