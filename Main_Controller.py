@@ -4591,7 +4591,37 @@ def organ_shoot():  # 弹射开关
         return
     try:
         index = int(ui.lineEdit_shoot.text()) - 1
-        if ui.checkBox_shoot.isChecked():
+        if ui.checkBox_shoot.isChecked() or ui.checkBox_shoot1.isChecked():
+            sc.GASetExtDoBit(index, 1)
+        else:
+            sc.GASetExtDoBit(index, 0)
+    except:
+        print('运动卡电压输出错误！')
+        ui.textBrowser_msg.append(fail('运动卡电压输出错误！'))
+        flg_start['card'] = False
+
+
+def organ_shoot2():  # 弹射开关
+    if not flg_start['card']:
+        return
+    try:
+        index = int(ui.lineEdit_shoot_2.text()) - 1
+        if ui.checkBox_shoot2.isChecked():
+            sc.GASetExtDoBit(index, 1)
+        else:
+            sc.GASetExtDoBit(index, 0)
+    except:
+        print('运动卡电压输出错误！')
+        ui.textBrowser_msg.append(fail('运动卡电压输出错误！'))
+        flg_start['card'] = False
+
+
+def organ_shoot3():  # 弹射开关
+    if not flg_start['card']:
+        return
+    try:
+        index = int(ui.lineEdit_shoot_3.text()) - 1
+        if ui.checkBox_shoot3.isChecked():
             sc.GASetExtDoBit(index, 1)
         else:
             sc.GASetExtDoBit(index, 0)
@@ -4606,7 +4636,7 @@ def organ_start():  # 开启开关
         return
     try:
         index = int(ui.lineEdit_start.text()) - 1
-        if ui.checkBox_start.isChecked():
+        if ui.checkBox_start.isChecked() or ui.checkBox_start_2.isChecked():
             sc.GASetExtDoBit(index, 1)
         else:
             sc.GASetExtDoBit(index, 0)
@@ -4621,7 +4651,52 @@ def organ_end():  # 结束开关
         return
     try:
         index = int(ui.lineEdit_end.text()) - 1
-        if ui.checkBox_end.isChecked():
+        if ui.checkBox_end.isChecked() or ui.checkBox_end_2.isChecked():
+            sc.GASetExtDoBit(index, 1)
+        else:
+            sc.GASetExtDoBit(index, 0)
+    except:
+        print('运动卡电压输出错误！')
+        ui.textBrowser_msg.append(fail('运动卡电压输出错误！'))
+        flg_start['card'] = False
+
+
+def organ_shake():  # 震动开关
+    if not flg_start['card']:
+        return
+    try:
+        index = int(ui.lineEdit_shake.text()) - 1
+        if ui.checkBox_shake.isChecked():
+            sc.GASetExtDoBit(index, 1)
+        else:
+            sc.GASetExtDoBit(index, 0)
+    except:
+        print('运动卡电压输出错误！')
+        ui.textBrowser_msg.append(fail('运动卡电压输出错误！'))
+        flg_start['card'] = False
+
+
+def organ_start_count():  # 震动开关
+    if not flg_start['card']:
+        return
+    try:
+        index = int(ui.lineEdit_start_count.text()) - 1
+        if ui.checkBox_start_count.isChecked():
+            sc.GASetExtDoBit(index, 1)
+        else:
+            sc.GASetExtDoBit(index, 0)
+    except:
+        print('运动卡电压输出错误！')
+        ui.textBrowser_msg.append(fail('运动卡电压输出错误！'))
+        flg_start['card'] = False
+
+
+def organ_alarm():  # 震动开关
+    if not flg_start['card']:
+        return
+    try:
+        index = int(ui.lineEdit_alarm.text()) - 1
+        if ui.checkBox_alarm_2.isChecked():
             sc.GASetExtDoBit(index, 1)
         else:
             sc.GASetExtDoBit(index, 0)
@@ -5257,8 +5332,16 @@ if __name__ == '__main__':
     ui.checkBox_test.checkStateChanged.connect(edit_enable)
 
     ui.checkBox_shoot.checkStateChanged.connect(organ_shoot)
+    ui.checkBox_shoot1.checkStateChanged.connect(organ_shoot)
+    ui.checkBox_shoot2.checkStateChanged.connect(organ_shoot2)
+    ui.checkBox_shoot3.checkStateChanged.connect(organ_shoot3)
     ui.checkBox_start.checkStateChanged.connect(organ_start)
+    ui.checkBox_start_2.checkStateChanged.connect(organ_start)
     ui.checkBox_end.checkStateChanged.connect(organ_end)
+    ui.checkBox_end_2.checkStateChanged.connect(organ_end)
+    ui.checkBox_start_count.checkStateChanged.connect(organ_start_count)
+    ui.checkBox_shake.checkStateChanged.connect(organ_shake)
+    ui.checkBox_alarm_2.checkStateChanged.connect(organ_alarm)
     ui.checkBox_switch.checkStateChanged.connect(organ_number)
 
     ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)

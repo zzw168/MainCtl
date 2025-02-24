@@ -1,6 +1,6 @@
 Image_Path: E:/saidao/image
 Track_number: M
-balls_count: '10'
+balls_count: '8'
 cardNo: '15'
 color_ch:
   Brown: 棕 ⑦
@@ -126,16 +126,16 @@ init_array:
   - 0
   - 0
   - 0
-lineEdit_alarm: '14'
+lineEdit_alarm: '1'
 lineEdit_end: '4'
 lineEdit_shake: '3'
 lineEdit_shoot: '1'
-lineEdit_shoot_2: '5'
-lineEdit_shoot_3: '6'
+lineEdit_shoot_2: '1'
+lineEdit_shoot_3: '1'
 lineEdit_start: '2'
-lineEdit_start_count: '9'
-map_line: ./img/13_华山.json
-map_picture: ./img/13_华山.jpg
+lineEdit_start_count: '1'
+map_line: ./img/12_瀑布.json
+map_picture: ./img/12_瀑布.jpg
 map_size: '680'
 monitor_sort: '1'
 music_1:

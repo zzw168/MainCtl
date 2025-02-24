@@ -2119,13 +2119,13 @@ class Ui_MainWindow(object):
         self.groupBox_32.setFont(font1)
         self.gridLayout_58 = QGridLayout(self.groupBox_32)
         self.gridLayout_58.setObjectName(u"gridLayout_58")
-        self.lineEdit_shoot = QLineEdit(self.groupBox_32)
-        self.lineEdit_shoot.setObjectName(u"lineEdit_shoot")
-        self.lineEdit_shoot.setMinimumSize(QSize(0, 0))
-        self.lineEdit_shoot.setFont(font5)
-        self.lineEdit_shoot.setReadOnly(False)
+        self.lineEdit_shoot_2 = QLineEdit(self.groupBox_32)
+        self.lineEdit_shoot_2.setObjectName(u"lineEdit_shoot_2")
+        self.lineEdit_shoot_2.setMinimumSize(QSize(0, 0))
+        self.lineEdit_shoot_2.setFont(font5)
+        self.lineEdit_shoot_2.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_shoot, 0, 1, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_shoot_2, 3, 3, 1, 1)
 
         self.lineEdit_alarm = QLineEdit(self.groupBox_32)
         self.lineEdit_alarm.setObjectName(u"lineEdit_alarm")
@@ -2133,7 +2133,15 @@ class Ui_MainWindow(object):
         self.lineEdit_alarm.setFont(font5)
         self.lineEdit_alarm.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_alarm, 1, 3, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_alarm, 2, 3, 1, 1)
+
+        self.lineEdit_start = QLineEdit(self.groupBox_32)
+        self.lineEdit_start.setObjectName(u"lineEdit_start")
+        self.lineEdit_start.setMinimumSize(QSize(0, 0))
+        self.lineEdit_start.setFont(font5)
+        self.lineEdit_start.setReadOnly(False)
+
+        self.gridLayout_58.addWidget(self.lineEdit_start, 2, 1, 1, 1)
 
         self.lineEdit_start_count = QLineEdit(self.groupBox_32)
         self.lineEdit_start_count.setObjectName(u"lineEdit_start_count")
@@ -2143,39 +2151,13 @@ class Ui_MainWindow(object):
 
         self.gridLayout_58.addWidget(self.lineEdit_start_count, 0, 3, 1, 1)
 
-        self.label_71 = QLabel(self.groupBox_32)
-        self.label_71.setObjectName(u"label_71")
-        self.label_71.setFont(font6)
+        self.lineEdit_shake = QLineEdit(self.groupBox_32)
+        self.lineEdit_shake.setObjectName(u"lineEdit_shake")
+        self.lineEdit_shake.setMinimumSize(QSize(0, 0))
+        self.lineEdit_shake.setFont(font5)
+        self.lineEdit_shake.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.label_71, 1, 0, 1, 1)
-
-        self.lineEdit_start = QLineEdit(self.groupBox_32)
-        self.lineEdit_start.setObjectName(u"lineEdit_start")
-        self.lineEdit_start.setMinimumSize(QSize(0, 0))
-        self.lineEdit_start.setFont(font5)
-        self.lineEdit_start.setReadOnly(False)
-
-        self.gridLayout_58.addWidget(self.lineEdit_start, 1, 1, 1, 1)
-
-        self.label_66 = QLabel(self.groupBox_32)
-        self.label_66.setObjectName(u"label_66")
-        self.label_66.setFont(font6)
-
-        self.gridLayout_58.addWidget(self.label_66, 0, 0, 1, 1)
-
-        self.lineEdit_end = QLineEdit(self.groupBox_32)
-        self.lineEdit_end.setObjectName(u"lineEdit_end")
-        self.lineEdit_end.setMinimumSize(QSize(0, 0))
-        self.lineEdit_end.setFont(font5)
-        self.lineEdit_end.setReadOnly(False)
-
-        self.gridLayout_58.addWidget(self.lineEdit_end, 3, 1, 1, 1)
-
-        self.label_74 = QLabel(self.groupBox_32)
-        self.label_74.setObjectName(u"label_74")
-        self.label_74.setFont(font6)
-
-        self.gridLayout_58.addWidget(self.label_74, 3, 2, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_shake, 3, 1, 1, 1)
 
         self.lineEdit_shoot_3 = QLineEdit(self.groupBox_32)
         self.lineEdit_shoot_3.setObjectName(u"lineEdit_shoot_3")
@@ -2183,53 +2165,71 @@ class Ui_MainWindow(object):
         self.lineEdit_shoot_3.setFont(font5)
         self.lineEdit_shoot_3.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_shoot_3, 3, 3, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_shoot_3, 4, 3, 1, 1)
 
-        self.label_72 = QLabel(self.groupBox_32)
-        self.label_72.setObjectName(u"label_72")
-        self.label_72.setFont(font6)
+        self.lineEdit_end = QLineEdit(self.groupBox_32)
+        self.lineEdit_end.setObjectName(u"lineEdit_end")
+        self.lineEdit_end.setMinimumSize(QSize(0, 0))
+        self.lineEdit_end.setFont(font5)
+        self.lineEdit_end.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.label_72, 2, 0, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_end, 4, 1, 1, 1)
 
-        self.lineEdit_shake = QLineEdit(self.groupBox_32)
-        self.lineEdit_shake.setObjectName(u"lineEdit_shake")
-        self.lineEdit_shake.setMinimumSize(QSize(0, 0))
-        self.lineEdit_shake.setFont(font5)
-        self.lineEdit_shake.setReadOnly(False)
+        self.lineEdit_shoot = QLineEdit(self.groupBox_32)
+        self.lineEdit_shoot.setObjectName(u"lineEdit_shoot")
+        self.lineEdit_shoot.setMinimumSize(QSize(0, 0))
+        self.lineEdit_shoot.setFont(font5)
+        self.lineEdit_shoot.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_shake, 2, 1, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_shoot, 0, 1, 1, 1)
 
-        self.label_75 = QLabel(self.groupBox_32)
-        self.label_75.setObjectName(u"label_75")
-        self.label_75.setFont(font6)
+        self.checkBox_shoot1 = QCheckBox(self.groupBox_32)
+        self.checkBox_shoot1.setObjectName(u"checkBox_shoot1")
+        self.checkBox_shoot1.setFont(font6)
 
-        self.gridLayout_58.addWidget(self.label_75, 0, 2, 1, 1)
+        self.gridLayout_58.addWidget(self.checkBox_shoot1, 0, 0, 1, 1)
 
-        self.label_73 = QLabel(self.groupBox_32)
-        self.label_73.setObjectName(u"label_73")
-        self.label_73.setFont(font6)
+        self.checkBox_start_2 = QCheckBox(self.groupBox_32)
+        self.checkBox_start_2.setObjectName(u"checkBox_start_2")
+        self.checkBox_start_2.setFont(font6)
 
-        self.gridLayout_58.addWidget(self.label_73, 3, 0, 1, 1)
+        self.gridLayout_58.addWidget(self.checkBox_start_2, 2, 0, 1, 1)
 
-        self.label_76 = QLabel(self.groupBox_32)
-        self.label_76.setObjectName(u"label_76")
-        self.label_76.setFont(font6)
+        self.checkBox_shake = QCheckBox(self.groupBox_32)
+        self.checkBox_shake.setObjectName(u"checkBox_shake")
+        self.checkBox_shake.setFont(font6)
 
-        self.gridLayout_58.addWidget(self.label_76, 1, 2, 1, 1)
+        self.gridLayout_58.addWidget(self.checkBox_shake, 3, 0, 1, 1)
 
-        self.lineEdit_shoot_2 = QLineEdit(self.groupBox_32)
-        self.lineEdit_shoot_2.setObjectName(u"lineEdit_shoot_2")
-        self.lineEdit_shoot_2.setMinimumSize(QSize(0, 0))
-        self.lineEdit_shoot_2.setFont(font5)
-        self.lineEdit_shoot_2.setReadOnly(False)
+        self.checkBox_end_2 = QCheckBox(self.groupBox_32)
+        self.checkBox_end_2.setObjectName(u"checkBox_end_2")
+        self.checkBox_end_2.setFont(font6)
 
-        self.gridLayout_58.addWidget(self.lineEdit_shoot_2, 2, 3, 1, 1)
+        self.gridLayout_58.addWidget(self.checkBox_end_2, 4, 0, 1, 1)
 
-        self.label_77 = QLabel(self.groupBox_32)
-        self.label_77.setObjectName(u"label_77")
-        self.label_77.setFont(font6)
+        self.checkBox_start_count = QCheckBox(self.groupBox_32)
+        self.checkBox_start_count.setObjectName(u"checkBox_start_count")
+        self.checkBox_start_count.setFont(font6)
 
-        self.gridLayout_58.addWidget(self.label_77, 2, 2, 1, 1)
+        self.gridLayout_58.addWidget(self.checkBox_start_count, 0, 2, 1, 1)
+
+        self.checkBox_alarm_2 = QCheckBox(self.groupBox_32)
+        self.checkBox_alarm_2.setObjectName(u"checkBox_alarm_2")
+        self.checkBox_alarm_2.setFont(font6)
+
+        self.gridLayout_58.addWidget(self.checkBox_alarm_2, 2, 2, 1, 1)
+
+        self.checkBox_shoot2 = QCheckBox(self.groupBox_32)
+        self.checkBox_shoot2.setObjectName(u"checkBox_shoot2")
+        self.checkBox_shoot2.setFont(font6)
+
+        self.gridLayout_58.addWidget(self.checkBox_shoot2, 3, 2, 1, 1)
+
+        self.checkBox_shoot3 = QCheckBox(self.groupBox_32)
+        self.checkBox_shoot3.setObjectName(u"checkBox_shoot3")
+        self.checkBox_shoot3.setFont(font6)
+
+        self.gridLayout_58.addWidget(self.checkBox_shoot3, 4, 2, 1, 1)
 
 
         self.gridLayout_54.addWidget(self.groupBox_32, 4, 0, 1, 1)
@@ -2382,14 +2382,6 @@ class Ui_MainWindow(object):
         self.groupBox_28.setFont(font1)
         self.gridLayout_59 = QGridLayout(self.groupBox_28)
         self.gridLayout_59.setObjectName(u"gridLayout_59")
-        self.textBrowser_total_msg = QTextBrowser(self.groupBox_28)
-        self.textBrowser_total_msg.setObjectName(u"textBrowser_total_msg")
-        self.textBrowser_total_msg.setFont(font6)
-        self.textBrowser_total_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.textBrowser_total_msg.setReadOnly(False)
-
-        self.gridLayout_59.addWidget(self.textBrowser_total_msg, 0, 1, 1, 1)
-
         self.textBrowser_save_msg = QTextBrowser(self.groupBox_28)
         self.textBrowser_save_msg.setObjectName(u"textBrowser_save_msg")
         self.textBrowser_save_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
@@ -3078,6 +3070,60 @@ class Ui_MainWindow(object):
         self.groupBox_27.setFont(font1)
         self.gridLayout_66 = QGridLayout(self.groupBox_27)
         self.gridLayout_66.setObjectName(u"gridLayout_66")
+        self.groupBox_12 = QGroupBox(self.groupBox_27)
+        self.groupBox_12.setObjectName(u"groupBox_12")
+        self.groupBox_12.setMinimumSize(QSize(50, 50))
+        self.groupBox_12.setMaximumSize(QSize(16777215, 16777215))
+        self.groupBox_12.setFont(font1)
+        self.gridLayout_31 = QGridLayout(self.groupBox_12)
+        self.gridLayout_31.setObjectName(u"gridLayout_31")
+        self.gridLayout_31.setContentsMargins(-1, 0, -1, -1)
+        self.pushButton_Draw = QPushButton(self.groupBox_12)
+        self.pushButton_Draw.setObjectName(u"pushButton_Draw")
+        self.pushButton_Draw.setMinimumSize(QSize(0, 25))
+
+        self.gridLayout_31.addWidget(self.pushButton_Draw, 0, 0, 1, 1)
+
+        self.pushButton_to_TXT = QPushButton(self.groupBox_12)
+        self.pushButton_to_TXT.setObjectName(u"pushButton_to_TXT")
+        self.pushButton_to_TXT.setMinimumSize(QSize(0, 25))
+
+        self.gridLayout_31.addWidget(self.pushButton_to_TXT, 0, 1, 1, 1)
+
+
+        self.gridLayout_66.addWidget(self.groupBox_12, 3, 0, 1, 1)
+
+        self.groupBox_20 = QGroupBox(self.groupBox_27)
+        self.groupBox_20.setObjectName(u"groupBox_20")
+        self.groupBox_20.setMinimumSize(QSize(50, 50))
+        self.groupBox_20.setMaximumSize(QSize(16777215, 16777215))
+        self.groupBox_20.setFont(font1)
+        self.gridLayout_60 = QGridLayout(self.groupBox_20)
+        self.gridLayout_60.setObjectName(u"gridLayout_60")
+        self.gridLayout_60.setContentsMargins(-1, 3, -1, -1)
+        self.checkBox_saveImgs_main = QCheckBox(self.groupBox_20)
+        self.checkBox_saveImgs_main.setObjectName(u"checkBox_saveImgs_main")
+        self.checkBox_saveImgs_main.setFont(font1)
+
+        self.gridLayout_60.addWidget(self.checkBox_saveImgs_main, 0, 0, 1, 1)
+
+        self.checkBox_saveImgs_monitor = QCheckBox(self.groupBox_20)
+        self.checkBox_saveImgs_monitor.setObjectName(u"checkBox_saveImgs_monitor")
+        self.checkBox_saveImgs_monitor.setFont(font1)
+
+        self.gridLayout_60.addWidget(self.checkBox_saveImgs_monitor, 0, 1, 1, 1)
+
+
+        self.gridLayout_66.addWidget(self.groupBox_20, 2, 0, 1, 1)
+
+        self.textBrowser_total_msg = QTextBrowser(self.groupBox_27)
+        self.textBrowser_total_msg.setObjectName(u"textBrowser_total_msg")
+        self.textBrowser_total_msg.setFont(font6)
+        self.textBrowser_total_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.textBrowser_total_msg.setReadOnly(False)
+
+        self.gridLayout_66.addWidget(self.textBrowser_total_msg, 4, 0, 1, 1)
+
         self.groupBox_10 = QGroupBox(self.groupBox_27)
         self.groupBox_10.setObjectName(u"groupBox_10")
         self.groupBox_10.setMinimumSize(QSize(0, 50))
@@ -3105,57 +3151,6 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout_66.addWidget(self.groupBox_10, 1, 0, 1, 1)
-
-        self.groupBox_20 = QGroupBox(self.groupBox_27)
-        self.groupBox_20.setObjectName(u"groupBox_20")
-        self.groupBox_20.setMinimumSize(QSize(50, 50))
-        self.groupBox_20.setMaximumSize(QSize(16777215, 16777215))
-        self.groupBox_20.setFont(font1)
-        self.gridLayout_60 = QGridLayout(self.groupBox_20)
-        self.gridLayout_60.setObjectName(u"gridLayout_60")
-        self.gridLayout_60.setContentsMargins(-1, 3, -1, -1)
-        self.checkBox_saveImgs_main = QCheckBox(self.groupBox_20)
-        self.checkBox_saveImgs_main.setObjectName(u"checkBox_saveImgs_main")
-        self.checkBox_saveImgs_main.setFont(font1)
-
-        self.gridLayout_60.addWidget(self.checkBox_saveImgs_main, 0, 0, 1, 1)
-
-        self.checkBox_saveImgs_monitor = QCheckBox(self.groupBox_20)
-        self.checkBox_saveImgs_monitor.setObjectName(u"checkBox_saveImgs_monitor")
-        self.checkBox_saveImgs_monitor.setFont(font1)
-
-        self.gridLayout_60.addWidget(self.checkBox_saveImgs_monitor, 0, 1, 1, 1)
-
-
-        self.gridLayout_66.addWidget(self.groupBox_20, 2, 0, 1, 1)
-
-        self.groupBox_12 = QGroupBox(self.groupBox_27)
-        self.groupBox_12.setObjectName(u"groupBox_12")
-        self.groupBox_12.setMinimumSize(QSize(50, 50))
-        self.groupBox_12.setMaximumSize(QSize(16777215, 16777215))
-        self.groupBox_12.setFont(font1)
-        self.gridLayout_31 = QGridLayout(self.groupBox_12)
-        self.gridLayout_31.setObjectName(u"gridLayout_31")
-        self.gridLayout_31.setContentsMargins(-1, 0, -1, -1)
-        self.pushButton_Draw = QPushButton(self.groupBox_12)
-        self.pushButton_Draw.setObjectName(u"pushButton_Draw")
-        self.pushButton_Draw.setMinimumSize(QSize(0, 25))
-
-        self.gridLayout_31.addWidget(self.pushButton_Draw, 0, 0, 1, 1)
-
-        self.pushButton_to_TXT = QPushButton(self.groupBox_12)
-        self.pushButton_to_TXT.setObjectName(u"pushButton_to_TXT")
-        self.pushButton_to_TXT.setMinimumSize(QSize(0, 25))
-
-        self.gridLayout_31.addWidget(self.pushButton_to_TXT, 0, 1, 1, 1)
-
-
-        self.gridLayout_66.addWidget(self.groupBox_12, 3, 0, 1, 1)
-
-        self.textBrowser_3 = QTextBrowser(self.groupBox_27)
-        self.textBrowser_3.setObjectName(u"textBrowser_3")
-
-        self.gridLayout_66.addWidget(self.textBrowser_3, 4, 0, 1, 1)
 
         self.groupBox_5 = QGroupBox(self.groupBox_27)
         self.groupBox_5.setObjectName(u"groupBox_5")
@@ -3534,45 +3529,45 @@ class Ui_MainWindow(object):
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_3), QCoreApplication.translate("MainWindow", u"\u56fe\u50cf\u8bc6\u522b", None))
         self.groupBox_32.setTitle(QCoreApplication.translate("MainWindow", u"\u673a\u5173\u7f16\u53f7\u8bf4\u660e", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_shoot.setToolTip("")
+        self.lineEdit_shoot_2.setToolTip("")
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_shoot.setText(QCoreApplication.translate("MainWindow", u"1", None))
+        self.lineEdit_shoot_2.setText(QCoreApplication.translate("MainWindow", u"5", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_alarm.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_alarm.setText(QCoreApplication.translate("MainWindow", u"14", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_start_count.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_start_count.setText(QCoreApplication.translate("MainWindow", u"9", None))
-        self.label_71.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u95f8\u95e8\uff1a", None))
-#if QT_CONFIG(tooltip)
         self.lineEdit_start.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_start.setText(QCoreApplication.translate("MainWindow", u"2", None))
-        self.label_66.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c04\uff1a", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_end.setToolTip("")
+        self.lineEdit_start_count.setToolTip("")
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_end.setText(QCoreApplication.translate("MainWindow", u"4", None))
-        self.label_74.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c043\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_shoot_3.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_shoot_3.setText(QCoreApplication.translate("MainWindow", u"6", None))
-        self.label_72.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u9707\u52a8\uff1a", None))
+        self.lineEdit_start_count.setText(QCoreApplication.translate("MainWindow", u"9", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_shake.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_shake.setText(QCoreApplication.translate("MainWindow", u"3", None))
-        self.label_75.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u5012\u6570\uff1a", None))
-        self.label_73.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u5347\u964d\uff1a", None))
-        self.label_76.setText(QCoreApplication.translate("MainWindow", u"\u8b66\u544a\u706f\uff1a", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_shoot_2.setToolTip("")
+        self.lineEdit_shoot_3.setToolTip("")
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_shoot_2.setText(QCoreApplication.translate("MainWindow", u"5", None))
-        self.label_77.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c042\uff1a", None))
+        self.lineEdit_shoot_3.setText(QCoreApplication.translate("MainWindow", u"6", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_end.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_end.setText(QCoreApplication.translate("MainWindow", u"4", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_shoot.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_shoot.setText(QCoreApplication.translate("MainWindow", u"1", None))
+        self.checkBox_shoot1.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c04\uff1a", None))
+        self.checkBox_start_2.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u95f8\u95e8\uff1a", None))
+        self.checkBox_shake.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u9707\u52a8\uff1a", None))
+        self.checkBox_end_2.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u5347\u964d\uff1a", None))
+        self.checkBox_start_count.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u5012\u6570\uff1a", None))
+        self.checkBox_alarm_2.setText(QCoreApplication.translate("MainWindow", u"\u8b66\u544a\u706f\uff1a", None))
+        self.checkBox_shoot2.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c042\uff1a", None))
+        self.checkBox_shoot3.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c043\uff1a", None))
         self.groupBox_26.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3\u8bbe\u7f6e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_music_3.setToolTip("")
@@ -3616,7 +3611,7 @@ class Ui_MainWindow(object):
         self.lineEdit_source_ranking.setText(QCoreApplication.translate("MainWindow", u"\u6392\u540d\u65f6\u95f4\u7ec4\u4ef6", None))
         self.label_68.setText(QCoreApplication.translate("MainWindow", u"\u753b\u4e2d\u753b\uff1a", None))
         self.label_70.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u622a\u56fe\uff1a", None))
-        self.groupBox_28.setTitle(QCoreApplication.translate("MainWindow", u"\u603b\u63a7\u4fe1\u606f\u53c2\u7167", None))
+        self.groupBox_28.setTitle(QCoreApplication.translate("MainWindow", u"\u64cd\u4f5c\u4fe1\u606f", None))
         self.groupBox_29.setTitle(QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe\u8bbe\u7f6e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_map_picture.setToolTip("")
@@ -3841,63 +3836,16 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_Ch_10.setText(QCoreApplication.translate("MainWindow", u"\u767d", None))
         self.pushButton_Save_Ball.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u5f39\u73e0", None))
         self.groupBox_27.setTitle(QCoreApplication.translate("MainWindow", u"\u8f85\u52a9\u63a7\u5236", None))
+        self.groupBox_12.setTitle(QCoreApplication.translate("MainWindow", u"\u5730\u56fe\u5212\u533a\u7f16\u8f91\u5236\u4f5c", None))
+        self.pushButton_Draw.setText(QCoreApplication.translate("MainWindow", u"\u753b\u56fe\u5de5\u5177", None))
+        self.pushButton_to_TXT.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u6362TXT", None))
+        self.groupBox_20.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u5934\u5f55\u56fe\u64cd\u4f5c", None))
+        self.checkBox_saveImgs_main.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u5934", None))
+        self.checkBox_saveImgs_monitor.setText(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u5934", None))
         self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u4e3b\u673a\u5f55\u56fe\u64cd\u4f5c", None))
         self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
         self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
         self.checkBox_saveImgs.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u59cb\u5f55\u5c4f", None))
-        self.groupBox_20.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u5934\u5f55\u56fe\u64cd\u4f5c", None))
-        self.checkBox_saveImgs_main.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u5934", None))
-        self.checkBox_saveImgs_monitor.setText(QCoreApplication.translate("MainWindow", u"\u76d1\u63a7\u6444\u50cf\u5934", None))
-        self.groupBox_12.setTitle(QCoreApplication.translate("MainWindow", u"\u5730\u56fe\u5212\u533a\u7f16\u8f91\u5236\u4f5c", None))
-        self.pushButton_Draw.setText(QCoreApplication.translate("MainWindow", u"\u753b\u56fe\u5de5\u5177", None))
-        self.pushButton_to_TXT.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u6362TXT", None))
-        self.textBrowser_3.setHtml(QCoreApplication.translate("MainWindow", u"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
-"<html><head><meta name=\"qrichtext\" content=\"1\" /><meta charset=\"utf-8\" /><style type=\"text/css\">\n"
-"p, li { white-space: pre-wrap; }\n"
-"hr { height: 1px; border-width: 0; }\n"
-"li.unchecked::marker { content: \"\\2610\"; }\n"
-"li.checked::marker { content: \"\\2612\"; }\n"
-"</style></head><body style=\" font-family:'\u5fae\u8f6f\u96c5\u9ed1'; font-size:10pt; font-weight:700; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">1.\u52fe\u9009\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u52fe\u9009\u4e86\u7684\u52a8\u4f5c\u624d\u6267\u884c\u3002</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
-"<p styl"
-                        "e=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">2.\u5708\u6570\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8bbe\u7f6e\u4e3a </span><span style=\" font-size:11pt;\">1 </span><span style=\" font-size:11pt; font-weight:400;\">\u5219\u53ea\u5728\u7b2c\u4e00\u5708\u6267\u884c\u8be5\u52a8\u4f5c\uff0c\u8bbe\u7f6e\u4e3a </span><span style=\" font-size:11pt;\">2 </span><span style=\" font-size:11pt; font-weight:400;\">\u5219\u5728\u524d\u4e24\u5708\uff08\u7b2c\u4e00\u7b2c\u4e8c\u5708\uff09\u6267\u884c\u8be5\u52a8\u4f5c\uff0c\u5982\u6b64\u7c7b\u63a8... \u82e5\u8bbe\u7f6e\u4e3a </span><span style=\" font-size:11pt;\">0 </span><span style=\" font-size:11pt; font-weight:400;\">\u5219\u6bcf\u4e00\u5708\u90fd\u6267\u884c\u8be5\u52a8\u4f5c\u3002</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-si"
-                        "ze:11pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">3-10\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8bbe\u7f6e\u9f99\u95e8\u67b6\u4e94\u8f74\u8fd0\u52a8\u7684 \u5750\u6807\uff0c\u901f\u5ea6\uff0c\u52a0\u901f\u51cf\u901f\u3002</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">11.\u955c\u5934\u7f29\u653e\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8bbe\u7f6e\u4e3b\u955c\u5934\u7684\u653e\u5927\uff0c\u7f29\u5c0f\u901f\u5ea6\uff0c\u6b63\u6570\u4e3a\u653e\u5927\u62c9\u8fd1\u955c\u5934\uff0c\u8d1f\u6570\u4e3a\u7f29\u5c0f\u62c9"
-                        "\u8fdc\u955c\u5934\uff0c\u8bbe\u7f6e\u4e3a </span><span style=\" font-size:11pt;\">0 </span><span style=\" font-size:11pt; font-weight:400;\">\u5219\u4e0d\u653e\u5927\u7f29\u5c0f\uff08\u9700\u914d\u5408\u5ef6\u65f6\u4f7f\u7528\uff09\u3002</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">12.\u5ef6\u65f6\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u63a7\u5236\u955c\u5934\u653e\u5927\u7f29\u5c0f\u7684\u65f6\u95f4\uff0c\u7b49\u5f85\u5ef6\u65f6\u65f6\u95f4\u7ed3\u675f\u624d\u8fdb\u884c\u4e0b\u4e00\u52a8\u4f5c\uff0c\u5f53\u955c\u5934\u7f29\u653e\u8bbe\u7f6e\u4e3a </span><span style=\" font-size:11pt;\">0 </span><span style=\" font-size:11pt; font-weight:400;\">\u65f6\u5219\u53ef\u5f53\u4f5c"
-                        "\u52a8\u4f5c\u5ef6\u8fdf\u7b49\u5f85\u4f7f\u7528\u3002\uff08\u4f8b\u5982\u5ef6\u65f6\u8bbe\u7f6e</span><span style=\" font-size:11pt;\">5</span><span style=\" font-size:11pt; font-weight:400;\">\u79d2\uff0c\u5219\u672c\u52a8\u4f5c\u6267\u884c\u5b8c\u6bd5\uff0c\u539f\u5730\u7b49\u5f85</span><span style=\" font-size:11pt;\">5</span><span style=\" font-size:11pt; font-weight:400;\">\u79d2\u540e\u624d\u6267\u884c\u4e0b\u4e00\u52a8\u4f5c\uff09\u3002</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">13.\u673a\u5173\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u8f93\u5165\u673a\u5173\u7f16\u53f7\uff0c\u8fdb\u884c\u673a\u5173\u5f00\u542f\u5173\u95ed\uff0c\u6b63\u6570\u4e3a\u6253\u5f00\u673a\u5173"
-                        "\uff0c\u8d1f\u6570\u4e3a\u5173\u95ed\u673a\u5173\u3002</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">14.\u536b\u661f\u56fe\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u628a\u536b\u661f\u56fe\u5bf9\u5e94\u7684\u955c\u5934\u70b9\u4f4d\u586b\u5165\uff0c\u5219\u5f53\u56fe\u50cf\u8bc6\u522b\u5224\u65ad\u5f39\u73e0\u5230\u8fbe\u8be5\u70b9\u4f4d\uff0c\u5c31\u4f1a\u6267\u884c\u4e0b\u4e00\u52a8\u4f5c\u3002</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0p"
-                        "x; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">15.\u97f3\u6548\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u628a\u536b\u661f\u56fe\u4e2d\u5bf9\u5e94\u7684\u97f3\u6548\u7f16\u53f7\u586b\u5165\uff0c\u5219\u6267\u884c\u8be5\u52a8\u4f5c\u540c\u65f6\u4f1a\u64ad\u653e\u76f8\u5e94\u97f3\u6548\uff0c\u8fd9\u4e2a\u53ef\u4e0e\u536b\u661f\u56fe\u52a8\u6001\u70b9\u4f4d\u97f3\u6548\u914d\u5408\u4f7f\u7528\u3002</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:11pt;\">16.OBS\u753b\u9762\uff1a</span><span style=\" font-size:11pt; font-weight:400;\">\u52a8\u4f5c\u6267\u884c\u540c\u65f6\u63a7\u5236\u5f00\u5173OBS\u753b\u9762\u3002</span></p>\n"
-"<p style=\"-qt-paragraph-type:empty;"
-                        " margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:11pt; font-weight:400;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bo"
-                        "ttom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-inde"
-                        "nt:0; text-indent:0px;\"><br /></p>\n"
-"<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>", None))
         self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u673a\u63a7\u5236", None))
         self.checkBox_Flip_Horizontal.setText(QCoreApplication.translate("MainWindow", u"\u6c34\u5e73\u7ffb\u8f6c", None))
         self.checkBox_Flip_Vertica.setText(QCoreApplication.translate("MainWindow", u"\u5bf9\u89d2\u7ffb\u8f6c", None))
