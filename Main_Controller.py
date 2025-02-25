@@ -855,7 +855,7 @@ class TcpResultThread(QThread):
                                 self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
                                 datalist = {'type': 'updata',
                                             'data': {'qh': str(term), 'rank': []}}
-                                for index in range(len(z_ranking_end)):
+                                for index in range(balls_count):
                                     if is_natural_num(z_ranking_time[index]):
                                         datalist["data"]['rank'].append(
                                             {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
@@ -867,10 +867,10 @@ class TcpResultThread(QThread):
                                 if not ui.radioButton_test_game.isChecked():  # 非测试模式
                                     result_data = {"raceTrackID": Track_number, "term": str(term),
                                                    "actualResultOpeningTime": betting_end_time,
-                                                   "result": z_ranking_end,
+                                                   "result": z_ranking_end[0:balls_count],
                                                    "timings": "[]"}
                                     data_temp = []
-                                    for index in range(len(z_ranking_end)):
+                                    for index in range(balls_count):
                                         if is_natural_num(z_ranking_time[index]):
                                             data_temp.append(
                                                 {"pm": index + 1, "id": z_ranking_end[index],
@@ -1933,7 +1933,7 @@ class ScreenShotThread(QThread):
                             ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
                         color_to_num(ranking_array)
                     z_ranking_end = copy.deepcopy(main_Camera)
-                    lottery_term[4] = str(z_ranking_end)  # 排名
+                    lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             elif z_ranking_res == monitor_Camera:
                 print('监控识别正确:', monitor_Camera)
                 if len(rtsp_list) > 2:
@@ -1949,7 +1949,7 @@ class ScreenShotThread(QThread):
                     color_to_num(ranking_array)
                     print(ranking_array)
                 z_ranking_end = copy.deepcopy(monitor_Camera)
-                lottery_term[4] = str(z_ranking_end)  # 排名
+                lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             else:
                 term_status = 0
                 term_comment = term_comments[3]
@@ -1984,7 +1984,7 @@ class ScreenShotThread(QThread):
                                 Send_Result_End = False
                         time.sleep(1)
                     Send_Result_End = False
-                lottery_term[5] = str(z_ranking_end)  # 排名
+                lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
             if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                 if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
                     ui.radioButton_stop_betting.click()  # 封盘
