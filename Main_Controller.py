@@ -483,7 +483,7 @@ def deal_rank(integration_qiu_array):
                 if action_area[0] >= max_area_count - balls_count and action_area[1] >= max_lap_count - 1:
                     area_limit = balls_count
                 else:
-                    area_limit = balls_count + 2
+                    area_limit = 5
                 # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < 5)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
@@ -1000,7 +1000,10 @@ class UdpThread(QThread):
                         self.signal.emit(fail('array_data:%s < 7数据错误！' % array_data[0]))
                         print('array_data < 7数据错误！', array_data[0])
                         continue
-                    array_data = filter_max_value(array_data)  # 在平时球位置追踪，以置信度为准
+                    if action_area[0] > max_area_count - balls_count - 2:
+                        array_data = filter_max_value(array_data)  # 结束时，以置信度为准
+                    else:
+                        array_data = filter_max_area(array_data)  # 在平时球位置追踪，前面为准
                     if array_data is None or len(array_data) < 1:
                         continue
                     array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
