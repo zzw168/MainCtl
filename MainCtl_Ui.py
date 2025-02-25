@@ -993,14 +993,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_6.addWidget(self.pushButton_ObsConnect, 0, 0, 1, 1)
 
-        self.pushButton_Obs_delete = QPushButton(self.frame_22)
-        self.pushButton_Obs_delete.setObjectName(u"pushButton_Obs_delete")
-        self.pushButton_Obs_delete.setMinimumSize(QSize(0, 30))
-        self.pushButton_Obs_delete.setFont(font1)
-        self.pushButton_Obs_delete.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-
-        self.gridLayout_6.addWidget(self.pushButton_Obs_delete, 0, 1, 1, 1)
-
         self.pushButton_Obs2Table = QPushButton(self.frame_22)
         self.pushButton_Obs2Table.setObjectName(u"pushButton_Obs2Table")
         self.pushButton_Obs2Table.setMinimumSize(QSize(0, 30))
@@ -1016,6 +1008,14 @@ class Ui_MainWindow(object):
         self.pushButton_Source2Table.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_6.addWidget(self.pushButton_Source2Table, 1, 1, 1, 1)
+
+        self.pushButton_Obs_delete = QPushButton(self.frame_22)
+        self.pushButton_Obs_delete.setObjectName(u"pushButton_Obs_delete")
+        self.pushButton_Obs_delete.setMinimumSize(QSize(0, 30))
+        self.pushButton_Obs_delete.setFont(font1)
+        self.pushButton_Obs_delete.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.gridLayout_6.addWidget(self.pushButton_Obs_delete, 0, 1, 1, 1)
 
 
         self.gridLayout_14.addWidget(self.frame_22, 0, 0, 1, 2)
@@ -1198,63 +1198,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_24.addWidget(self.pushButton_CardNext, 2, 2, 1, 1)
 
-        self.groupBox_34 = QGroupBox(self.frame_15)
-        self.groupBox_34.setObjectName(u"groupBox_34")
-        self.groupBox_34.setMaximumSize(QSize(16777215, 150))
-        self.groupBox_34.setFont(font1)
-        self.gridLayout_61 = QGridLayout(self.groupBox_34)
-        self.gridLayout_61.setObjectName(u"gridLayout_61")
-        self.checkBox_shoot = QCheckBox(self.groupBox_34)
-        self.checkBox_shoot.setObjectName(u"checkBox_shoot")
-        self.checkBox_shoot.setFont(font1)
-
-        self.gridLayout_61.addWidget(self.checkBox_shoot, 1, 0, 1, 1)
-
-        self.checkBox_end = QCheckBox(self.groupBox_34)
-        self.checkBox_end.setObjectName(u"checkBox_end")
-        self.checkBox_end.setFont(font1)
-        self.checkBox_end.setChecked(False)
-
-        self.gridLayout_61.addWidget(self.checkBox_end, 1, 2, 1, 1)
-
-        self.checkBox_start = QCheckBox(self.groupBox_34)
-        self.checkBox_start.setObjectName(u"checkBox_start")
-        self.checkBox_start.setFont(font1)
-        self.checkBox_start.setChecked(False)
-
-        self.gridLayout_61.addWidget(self.checkBox_start, 1, 1, 1, 1)
-
-        self.lineEdit_OutNo = QLineEdit(self.groupBox_34)
-        self.lineEdit_OutNo.setObjectName(u"lineEdit_OutNo")
-        self.lineEdit_OutNo.setMaximumSize(QSize(40, 16777215))
-        self.lineEdit_OutNo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_61.addWidget(self.lineEdit_OutNo, 2, 1, 1, 1)
-
-        self.label_78 = QLabel(self.groupBox_34)
-        self.label_78.setObjectName(u"label_78")
-        self.label_78.setMinimumSize(QSize(60, 0))
-        self.label_78.setFont(font1)
-
-        self.gridLayout_61.addWidget(self.label_78, 2, 0, 1, 1)
-
-        self.checkBox_switch = QCheckBox(self.groupBox_34)
-        self.checkBox_switch.setObjectName(u"checkBox_switch")
-        self.checkBox_switch.setFont(font1)
-
-        self.gridLayout_61.addWidget(self.checkBox_switch, 2, 2, 1, 1)
-
-        self.pushButton_CardCloseAll = QPushButton(self.groupBox_34)
-        self.pushButton_CardCloseAll.setObjectName(u"pushButton_CardCloseAll")
-        self.pushButton_CardCloseAll.setMinimumSize(QSize(0, 50))
-        self.pushButton_CardCloseAll.setFont(font1)
-        self.pushButton_CardCloseAll.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-
-        self.gridLayout_61.addWidget(self.pushButton_CardCloseAll, 1, 3, 2, 1)
-
-
-        self.gridLayout_24.addWidget(self.groupBox_34, 3, 0, 1, 3)
-
         self.lineEdit_CardNo = QLineEdit(self.frame_15)
         self.lineEdit_CardNo.setObjectName(u"lineEdit_CardNo")
         self.lineEdit_CardNo.setMaximumSize(QSize(40, 16777215))
@@ -1279,6 +1222,60 @@ class Ui_MainWindow(object):
         self.pushButton_CardStop.setStyleSheet(u"background:rgb(255,0,0)")
 
         self.gridLayout_24.addWidget(self.pushButton_CardStop, 2, 0, 1, 2)
+
+        self.groupBox_34 = QGroupBox(self.frame_15)
+        self.groupBox_34.setObjectName(u"groupBox_34")
+        self.groupBox_34.setMaximumSize(QSize(16777215, 150))
+        self.groupBox_34.setFont(font1)
+        self.gridLayout_61 = QGridLayout(self.groupBox_34)
+        self.gridLayout_61.setObjectName(u"gridLayout_61")
+        self.checkBox_shoot = QCheckBox(self.groupBox_34)
+        self.checkBox_shoot.setObjectName(u"checkBox_shoot")
+        self.checkBox_shoot.setFont(font1)
+
+        self.gridLayout_61.addWidget(self.checkBox_shoot, 0, 0, 1, 1)
+
+        self.checkBox_start = QCheckBox(self.groupBox_34)
+        self.checkBox_start.setObjectName(u"checkBox_start")
+        self.checkBox_start.setFont(font1)
+        self.checkBox_start.setChecked(False)
+
+        self.gridLayout_61.addWidget(self.checkBox_start, 0, 1, 1, 1)
+
+        self.checkBox_end = QCheckBox(self.groupBox_34)
+        self.checkBox_end.setObjectName(u"checkBox_end")
+        self.checkBox_end.setFont(font1)
+        self.checkBox_end.setChecked(False)
+
+        self.gridLayout_61.addWidget(self.checkBox_end, 0, 2, 1, 1)
+
+        self.checkBox_all = QCheckBox(self.groupBox_34)
+        self.checkBox_all.setObjectName(u"checkBox_all")
+
+        self.gridLayout_61.addWidget(self.checkBox_all, 0, 3, 2, 1)
+
+        self.label_78 = QLabel(self.groupBox_34)
+        self.label_78.setObjectName(u"label_78")
+        self.label_78.setMinimumSize(QSize(60, 0))
+        self.label_78.setFont(font1)
+
+        self.gridLayout_61.addWidget(self.label_78, 1, 0, 1, 1)
+
+        self.lineEdit_OutNo = QLineEdit(self.groupBox_34)
+        self.lineEdit_OutNo.setObjectName(u"lineEdit_OutNo")
+        self.lineEdit_OutNo.setMaximumSize(QSize(40, 16777215))
+        self.lineEdit_OutNo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout_61.addWidget(self.lineEdit_OutNo, 1, 1, 1, 1)
+
+        self.checkBox_switch = QCheckBox(self.groupBox_34)
+        self.checkBox_switch.setObjectName(u"checkBox_switch")
+        self.checkBox_switch.setFont(font1)
+
+        self.gridLayout_61.addWidget(self.checkBox_switch, 1, 2, 1, 1)
+
+
+        self.gridLayout_24.addWidget(self.groupBox_34, 3, 0, 1, 3)
 
 
         self.gridLayout_22.addWidget(self.frame_15, 2, 0, 1, 1)
@@ -3162,7 +3159,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(3)
+        self.tabWidget_Ranking.setCurrentIndex(1)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3177,14 +3174,13 @@ class Ui_MainWindow(object):
         self.pushButton_fsave.setDefault(True)
         self.pushButton_rename.setDefault(True)
         self.pushButton_ObsConnect.setDefault(True)
-        self.pushButton_Obs_delete.setDefault(True)
         self.pushButton_Obs2Table.setDefault(True)
         self.pushButton_Source2Table.setDefault(True)
+        self.pushButton_Obs_delete.setDefault(True)
         self.pushButton_ToTable.setDefault(True)
         self.pushButton_CardStart.setDefault(True)
         self.pushButton_CardReset.setDefault(True)
         self.pushButton_CardNext.setDefault(True)
-        self.pushButton_CardCloseAll.setDefault(True)
         self.pushButton_CardRun.setDefault(True)
         self.pushButton_CardStop.setDefault(True)
         self.pushButton_CardStop_2.setDefault(True)
@@ -3339,9 +3335,9 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem27 = self.tableWidget_Sources.horizontalHeaderItem(2)
         ___qtablewidgetitem27.setText(QCoreApplication.translate("MainWindow", u"id", None));
         self.pushButton_ObsConnect.setText(QCoreApplication.translate("MainWindow", u"\u94fe\u63a5OBS", None))
-        self.pushButton_Obs_delete.setText(QCoreApplication.translate("MainWindow", u"\u79fb\u51fa\u8868", None))
         self.pushButton_Obs2Table.setText(QCoreApplication.translate("MainWindow", u"\u89c6\u56fe\u5165\u8868", None))
         self.pushButton_Source2Table.setText(QCoreApplication.translate("MainWindow", u"\u6765\u6e90\u5165\u8868", None))
+        self.pushButton_Obs_delete.setText(QCoreApplication.translate("MainWindow", u"\u79fb\u51fa\u8868", None))
         self.groupBox_6.setTitle(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5361", None))
         self.label_20.setText(QCoreApplication.translate("MainWindow", u"\u8f741\uff1a", None))
         self.label_21.setText(QCoreApplication.translate("MainWindow", u"\u8f742\uff1a", None))
@@ -3354,16 +3350,16 @@ class Ui_MainWindow(object):
         self.pushButton_CardStart.setText(QCoreApplication.translate("MainWindow", u"\u542f\u52a8\u8fd0\u52a8\u5361", None))
         self.pushButton_CardReset.setText(QCoreApplication.translate("MainWindow", u"\u590d\u4f4d", None))
         self.pushButton_CardNext.setText(QCoreApplication.translate("MainWindow", u"\u4e0b\u4e00\u52a8\u4f5c", None))
-        self.groupBox_34.setTitle(QCoreApplication.translate("MainWindow", u"\u673a\u5173\u64cd\u4f5c", None))
-        self.checkBox_shoot.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c04", None))
-        self.checkBox_end.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9", None))
-        self.checkBox_start.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9", None))
-        self.lineEdit_OutNo.setText(QCoreApplication.translate("MainWindow", u"5", None))
-        self.label_78.setText(QCoreApplication.translate("MainWindow", u"\u8f93\u51fa\u53f7\uff1a", None))
-        self.checkBox_switch.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u5173", None))
-        self.pushButton_CardCloseAll.setText(QCoreApplication.translate("MainWindow", u"\u5173\u5168\u90e8", None))
         self.pushButton_CardRun.setText(QCoreApplication.translate("MainWindow", u"\u8fd0\u52a8\u5f00\u542f", None))
         self.pushButton_CardStop.setText(QCoreApplication.translate("MainWindow", u"\u505c\u6b62", None))
+        self.groupBox_34.setTitle(QCoreApplication.translate("MainWindow", u"\u673a\u5173\u64cd\u4f5c", None))
+        self.checkBox_shoot.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c04", None))
+        self.checkBox_start.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9", None))
+        self.checkBox_end.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9", None))
+        self.checkBox_all.setText(QCoreApplication.translate("MainWindow", u"\u5168\u90e8", None))
+        self.label_78.setText(QCoreApplication.translate("MainWindow", u"\u8f93\u51fa\u53f7\uff1a", None))
+        self.lineEdit_OutNo.setText(QCoreApplication.translate("MainWindow", u"5", None))
+        self.checkBox_switch.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u5173", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_1), QCoreApplication.translate("MainWindow", u"\u8def\u5f84\u8bbe\u7f6e", None))
         self.groupBox_21.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u955c\u5934\u70b9\u4f4d\u8bbe\u7f6e", None))
         self.pushButton_del_camera.setText(QCoreApplication.translate("MainWindow", u"\u51cf\u5c11\u70b9\u4f4d", None))

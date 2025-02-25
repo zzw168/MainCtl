@@ -41,7 +41,7 @@
          <enum>Qt::FocusPolicy::NoFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -2224,32 +2224,6 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="1">
-                    <widget class="QPushButton" name="pushButton_Obs_delete">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>30</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>true</bold>
-                      </font>
-                     </property>
-                     <property name="focusPolicy">
-                      <enum>Qt::FocusPolicy::NoFocus</enum>
-                     </property>
-                     <property name="text">
-                      <string>移出表</string>
-                     </property>
-                     <property name="default">
-                      <bool>true</bool>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="1" column="0">
                     <widget class="QPushButton" name="pushButton_Obs2Table">
                      <property name="minimumSize">
@@ -2296,6 +2270,32 @@
                      </property>
                      <property name="text">
                       <string>来源入表</string>
+                     </property>
+                     <property name="default">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QPushButton" name="pushButton_Obs_delete">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>30</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="focusPolicy">
+                      <enum>Qt::FocusPolicy::NoFocus</enum>
+                     </property>
+                     <property name="text">
+                      <string>移出表</string>
                      </property>
                      <property name="default">
                       <bool>true</bool>
@@ -2723,152 +2723,6 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="0" colspan="3">
-                    <widget class="QGroupBox" name="groupBox_34">
-                     <property name="maximumSize">
-                      <size>
-                       <width>16777215</width>
-                       <height>150</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>true</bold>
-                      </font>
-                     </property>
-                     <property name="title">
-                      <string>机关操作</string>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_61">
-                      <item row="1" column="0">
-                       <widget class="QCheckBox" name="checkBox_shoot">
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>弹射</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="2">
-                       <widget class="QCheckBox" name="checkBox_end">
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>终点</string>
-                        </property>
-                        <property name="checked">
-                         <bool>false</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="1">
-                       <widget class="QCheckBox" name="checkBox_start">
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>起点</string>
-                        </property>
-                        <property name="checked">
-                         <bool>false</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="1">
-                       <widget class="QLineEdit" name="lineEdit_OutNo">
-                        <property name="maximumSize">
-                         <size>
-                          <width>40</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="text">
-                         <string>5</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="0">
-                       <widget class="QLabel" name="label_78">
-                        <property name="minimumSize">
-                         <size>
-                          <width>60</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>输出号：</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="2">
-                       <widget class="QCheckBox" name="checkBox_switch">
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="text">
-                         <string>开关</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="3" rowspan="2">
-                       <widget class="QPushButton" name="pushButton_CardCloseAll">
-                        <property name="minimumSize">
-                         <size>
-                          <width>0</width>
-                          <height>50</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="focusPolicy">
-                         <enum>Qt::FocusPolicy::NoFocus</enum>
-                        </property>
-                        <property name="text">
-                         <string>关全部</string>
-                        </property>
-                        <property name="default">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
                    <item row="0" column="1">
                     <widget class="QLineEdit" name="lineEdit_CardNo">
                      <property name="maximumSize">
@@ -2938,6 +2792,133 @@
                      <property name="default">
                       <bool>true</bool>
                      </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0" colspan="3">
+                    <widget class="QGroupBox" name="groupBox_34">
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>150</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="title">
+                      <string>机关操作</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_61">
+                      <item row="0" column="0">
+                       <widget class="QCheckBox" name="checkBox_shoot">
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>弹射</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QCheckBox" name="checkBox_start">
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>起点</string>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="2">
+                       <widget class="QCheckBox" name="checkBox_end">
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>终点</string>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="3" rowspan="2">
+                       <widget class="QCheckBox" name="checkBox_all">
+                        <property name="text">
+                         <string>全部</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_78">
+                        <property name="minimumSize">
+                         <size>
+                          <width>60</width>
+                          <height>0</height>
+                         </size>
+                        </property>
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>输出号：</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QLineEdit" name="lineEdit_OutNo">
+                        <property name="maximumSize">
+                         <size>
+                          <width>40</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>5</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignmentFlag::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="2">
+                       <widget class="QCheckBox" name="checkBox_switch">
+                        <property name="font">
+                         <font>
+                          <family>微软雅黑</family>
+                          <pointsize>10</pointsize>
+                          <bold>true</bold>
+                         </font>
+                        </property>
+                        <property name="text">
+                         <string>开关</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                   </layout>

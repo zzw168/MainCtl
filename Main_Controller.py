@@ -3208,8 +3208,33 @@ def card_reset():
 def card_close_all():
     if not flg_start['card']:
         return
+    ui.checkBox_all.setChecked(False)
     for index in range(0, 16):
-        sc.GASetExtDoBit(index, 0)
+        if ui.checkBox_all.isChecked():
+            sc.GASetExtDoBit(index, 1)
+        else:
+            sc.GASetExtDoBit(index, 0)
+        time.sleep(0.1)
+    ui.textBrowser.append(succeed('已经关闭所有机关！'))
+    ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
+    ui.textBrowser_background_data.append(succeed('已经关闭所有机关！'))
+
+
+def card_on_off_all():
+    if not flg_start['card']:
+        return
+    for index in range(0, 16):
+        if index not in [int(ui.lineEdit_shoot.text()),
+                         int(ui.lineEdit_start.text()),
+                         int(ui.lineEdit_shake.text()),
+                         int(ui.lineEdit_end.text()),
+                         int(ui.lineEdit_alarm.text()),
+                         int(ui.lineEdit_start_count.text()),
+                         ]:
+            if ui.checkBox_all.isChecked():
+                sc.GASetExtDoBit(index, 1)
+            else:
+                sc.GASetExtDoBit(index, 0)
         time.sleep(0.1)
     ui.textBrowser.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
@@ -5346,7 +5371,7 @@ if __name__ == '__main__':
     ui.pushButton_CardNext.clicked.connect(cmd_next)
     ui.pushButton_to_TXT.clicked.connect(json_txt)
     ui.pushButton_Draw.clicked.connect(open_draw)
-    ui.pushButton_CardCloseAll.clicked.connect(card_close_all)
+    ui.checkBox_all.stateChanged.connect(card_on_off_all)
     ui.pushButton_CardClose.clicked.connect(card_close_all)
 
     # ui.pushButton_start_game.clicked.connect(cmd_loop)
