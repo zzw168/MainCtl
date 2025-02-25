@@ -41,7 +41,7 @@
          <enum>Qt::FocusPolicy::NoFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -3604,8 +3604,8 @@
                     <widget class="QFrame" name="frame_5">
                      <property name="minimumSize">
                       <size>
-                       <width>230</width>
-                       <height>42</height>
+                       <width>264</width>
+                       <height>54</height>
                       </size>
                      </property>
                      <property name="font">
@@ -3621,334 +3621,386 @@
                      <property name="frameShadow">
                       <enum>QFrame::Shadow::Raised</enum>
                      </property>
-                     <layout class="QGridLayout" name="gridLayout_68">
-                      <property name="leftMargin">
-                       <number>0</number>
+                     <widget class="QLineEdit" name="lineEdit_result_7">
+                      <property name="geometry">
+                       <rect>
+                        <x>176</x>
+                        <y>10</y>
+                        <width>24</width>
+                        <height>34</height>
+                       </rect>
                       </property>
-                      <property name="rightMargin">
-                       <number>18</number>
+                      <property name="minimumSize">
+                       <size>
+                        <width>24</width>
+                        <height>34</height>
+                       </size>
                       </property>
-                      <item row="0" column="7">
-                       <widget class="QLineEdit" name="lineEdit_result_7">
-                        <property name="minimumSize">
-                         <size>
-                          <width>24</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>26</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>16</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>0</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="5">
-                       <widget class="QLineEdit" name="lineEdit_result_5">
-                        <property name="minimumSize">
-                         <size>
-                          <width>24</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>26</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>16</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>0</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="3">
-                       <widget class="QLineEdit" name="lineEdit_result_3">
-                        <property name="minimumSize">
-                         <size>
-                          <width>24</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>26</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>16</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>0</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="1">
-                       <widget class="QLineEdit" name="lineEdit_result_1">
-                        <property name="minimumSize">
-                         <size>
-                          <width>24</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>26</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>16</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>0</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="8">
-                       <widget class="QLineEdit" name="lineEdit_result_8">
-                        <property name="minimumSize">
-                         <size>
-                          <width>24</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>26</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>16</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>0</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="6">
-                       <widget class="QLineEdit" name="lineEdit_result_6">
-                        <property name="minimumSize">
-                         <size>
-                          <width>24</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>26</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>16</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>0</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="9">
-                       <widget class="QLineEdit" name="lineEdit_result_9">
-                        <property name="minimumSize">
-                         <size>
-                          <width>24</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>26</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>16</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>0</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="2">
-                       <widget class="QLineEdit" name="lineEdit_result_2">
-                        <property name="minimumSize">
-                         <size>
-                          <width>24</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>26</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>16</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>0</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="4">
-                       <widget class="QLineEdit" name="lineEdit_result_4">
-                        <property name="minimumSize">
-                         <size>
-                          <width>24</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>26</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>16</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>0</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="0">
-                       <widget class="QLineEdit" name="lineEdit_result_0">
-                        <property name="minimumSize">
-                         <size>
-                          <width>24</width>
-                          <height>10</height>
-                         </size>
-                        </property>
-                        <property name="maximumSize">
-                         <size>
-                          <width>26</width>
-                          <height>16777215</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>16</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="toolTip">
-                         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                        </property>
-                        <property name="text">
-                         <string>0</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignmentFlag::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
+                      <property name="maximumSize">
+                       <size>
+                        <width>26</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                     <widget class="QLineEdit" name="lineEdit_result_5">
+                      <property name="geometry">
+                       <rect>
+                        <x>126</x>
+                        <y>10</y>
+                        <width>24</width>
+                        <height>34</height>
+                       </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>24</width>
+                        <height>34</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>26</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                     <widget class="QLineEdit" name="lineEdit_result_3">
+                      <property name="geometry">
+                       <rect>
+                        <x>76</x>
+                        <y>10</y>
+                        <width>24</width>
+                        <height>34</height>
+                       </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>24</width>
+                        <height>34</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>26</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                     <widget class="QLineEdit" name="lineEdit_result_1">
+                      <property name="geometry">
+                       <rect>
+                        <x>26</x>
+                        <y>10</y>
+                        <width>24</width>
+                        <height>34</height>
+                       </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>24</width>
+                        <height>34</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>26</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                     <widget class="QLineEdit" name="lineEdit_result_8">
+                      <property name="geometry">
+                       <rect>
+                        <x>201</x>
+                        <y>10</y>
+                        <width>24</width>
+                        <height>34</height>
+                       </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>24</width>
+                        <height>34</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>26</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                     <widget class="QLineEdit" name="lineEdit_result_6">
+                      <property name="geometry">
+                       <rect>
+                        <x>151</x>
+                        <y>10</y>
+                        <width>24</width>
+                        <height>34</height>
+                       </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>24</width>
+                        <height>34</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>26</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                     <widget class="QLineEdit" name="lineEdit_result_9">
+                      <property name="geometry">
+                       <rect>
+                        <x>226</x>
+                        <y>10</y>
+                        <width>24</width>
+                        <height>34</height>
+                       </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>24</width>
+                        <height>34</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>26</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                     <widget class="QLineEdit" name="lineEdit_result_2">
+                      <property name="geometry">
+                       <rect>
+                        <x>51</x>
+                        <y>10</y>
+                        <width>24</width>
+                        <height>34</height>
+                       </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>24</width>
+                        <height>34</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>26</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                     <widget class="QLineEdit" name="lineEdit_result_4">
+                      <property name="geometry">
+                       <rect>
+                        <x>101</x>
+                        <y>10</y>
+                        <width>24</width>
+                        <height>34</height>
+                       </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>24</width>
+                        <height>34</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>26</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
+                     <widget class="QLineEdit" name="lineEdit_result_0">
+                      <property name="geometry">
+                       <rect>
+                        <x>1</x>
+                        <y>10</y>
+                        <width>24</width>
+                        <height>34</height>
+                       </rect>
+                      </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>24</width>
+                        <height>34</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>26</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="font">
+                       <font>
+                        <family>微软雅黑</family>
+                        <pointsize>16</pointsize>
+                        <bold>true</bold>
+                       </font>
+                      </property>
+                      <property name="toolTip">
+                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;空格键_下一个&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      </property>
+                      <property name="text">
+                       <string>0</string>
+                      </property>
+                      <property name="alignment">
+                       <set>Qt::AlignmentFlag::AlignCenter</set>
+                      </property>
+                     </widget>
                     </widget>
                    </item>
                    <item row="6" column="0" colspan="3">

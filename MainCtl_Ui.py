@@ -1588,103 +1588,80 @@ class Ui_MainWindow(object):
 
         self.frame_5 = QFrame(self.groupBox_8)
         self.frame_5.setObjectName(u"frame_5")
-        self.frame_5.setMinimumSize(QSize(230, 42))
+        self.frame_5.setMinimumSize(QSize(264, 54))
         self.frame_5.setFont(font3)
         self.frame_5.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
-        self.gridLayout_68 = QGridLayout(self.frame_5)
-        self.gridLayout_68.setObjectName(u"gridLayout_68")
-        self.gridLayout_68.setContentsMargins(0, -1, 18, -1)
         self.lineEdit_result_7 = QLineEdit(self.frame_5)
         self.lineEdit_result_7.setObjectName(u"lineEdit_result_7")
-        self.lineEdit_result_7.setMinimumSize(QSize(24, 10))
+        self.lineEdit_result_7.setGeometry(QRect(176, 10, 24, 34))
+        self.lineEdit_result_7.setMinimumSize(QSize(24, 34))
         self.lineEdit_result_7.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_7.setFont(font3)
         self.lineEdit_result_7.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_68.addWidget(self.lineEdit_result_7, 0, 7, 1, 1)
-
         self.lineEdit_result_5 = QLineEdit(self.frame_5)
         self.lineEdit_result_5.setObjectName(u"lineEdit_result_5")
-        self.lineEdit_result_5.setMinimumSize(QSize(24, 10))
+        self.lineEdit_result_5.setGeometry(QRect(126, 10, 24, 34))
+        self.lineEdit_result_5.setMinimumSize(QSize(24, 34))
         self.lineEdit_result_5.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_5.setFont(font3)
         self.lineEdit_result_5.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_68.addWidget(self.lineEdit_result_5, 0, 5, 1, 1)
-
         self.lineEdit_result_3 = QLineEdit(self.frame_5)
         self.lineEdit_result_3.setObjectName(u"lineEdit_result_3")
-        self.lineEdit_result_3.setMinimumSize(QSize(24, 10))
+        self.lineEdit_result_3.setGeometry(QRect(76, 10, 24, 34))
+        self.lineEdit_result_3.setMinimumSize(QSize(24, 34))
         self.lineEdit_result_3.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_3.setFont(font3)
         self.lineEdit_result_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_68.addWidget(self.lineEdit_result_3, 0, 3, 1, 1)
-
         self.lineEdit_result_1 = QLineEdit(self.frame_5)
         self.lineEdit_result_1.setObjectName(u"lineEdit_result_1")
-        self.lineEdit_result_1.setMinimumSize(QSize(24, 10))
+        self.lineEdit_result_1.setGeometry(QRect(26, 10, 24, 34))
+        self.lineEdit_result_1.setMinimumSize(QSize(24, 34))
         self.lineEdit_result_1.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_1.setFont(font3)
         self.lineEdit_result_1.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_68.addWidget(self.lineEdit_result_1, 0, 1, 1, 1)
-
         self.lineEdit_result_8 = QLineEdit(self.frame_5)
         self.lineEdit_result_8.setObjectName(u"lineEdit_result_8")
-        self.lineEdit_result_8.setMinimumSize(QSize(24, 10))
+        self.lineEdit_result_8.setGeometry(QRect(201, 10, 24, 34))
+        self.lineEdit_result_8.setMinimumSize(QSize(24, 34))
         self.lineEdit_result_8.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_8.setFont(font3)
         self.lineEdit_result_8.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_68.addWidget(self.lineEdit_result_8, 0, 8, 1, 1)
-
         self.lineEdit_result_6 = QLineEdit(self.frame_5)
         self.lineEdit_result_6.setObjectName(u"lineEdit_result_6")
-        self.lineEdit_result_6.setMinimumSize(QSize(24, 10))
+        self.lineEdit_result_6.setGeometry(QRect(151, 10, 24, 34))
+        self.lineEdit_result_6.setMinimumSize(QSize(24, 34))
         self.lineEdit_result_6.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_6.setFont(font3)
         self.lineEdit_result_6.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_68.addWidget(self.lineEdit_result_6, 0, 6, 1, 1)
-
         self.lineEdit_result_9 = QLineEdit(self.frame_5)
         self.lineEdit_result_9.setObjectName(u"lineEdit_result_9")
-        self.lineEdit_result_9.setMinimumSize(QSize(24, 10))
+        self.lineEdit_result_9.setGeometry(QRect(226, 10, 24, 34))
+        self.lineEdit_result_9.setMinimumSize(QSize(24, 34))
         self.lineEdit_result_9.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_9.setFont(font3)
         self.lineEdit_result_9.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_68.addWidget(self.lineEdit_result_9, 0, 9, 1, 1)
-
         self.lineEdit_result_2 = QLineEdit(self.frame_5)
         self.lineEdit_result_2.setObjectName(u"lineEdit_result_2")
-        self.lineEdit_result_2.setMinimumSize(QSize(24, 10))
+        self.lineEdit_result_2.setGeometry(QRect(51, 10, 24, 34))
+        self.lineEdit_result_2.setMinimumSize(QSize(24, 34))
         self.lineEdit_result_2.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_2.setFont(font3)
         self.lineEdit_result_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_68.addWidget(self.lineEdit_result_2, 0, 2, 1, 1)
-
         self.lineEdit_result_4 = QLineEdit(self.frame_5)
         self.lineEdit_result_4.setObjectName(u"lineEdit_result_4")
-        self.lineEdit_result_4.setMinimumSize(QSize(24, 10))
+        self.lineEdit_result_4.setGeometry(QRect(101, 10, 24, 34))
+        self.lineEdit_result_4.setMinimumSize(QSize(24, 34))
         self.lineEdit_result_4.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_4.setFont(font3)
         self.lineEdit_result_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_68.addWidget(self.lineEdit_result_4, 0, 4, 1, 1)
-
         self.lineEdit_result_0 = QLineEdit(self.frame_5)
         self.lineEdit_result_0.setObjectName(u"lineEdit_result_0")
-        self.lineEdit_result_0.setMinimumSize(QSize(24, 10))
+        self.lineEdit_result_0.setGeometry(QRect(1, 10, 24, 34))
+        self.lineEdit_result_0.setMinimumSize(QSize(24, 34))
         self.lineEdit_result_0.setMaximumSize(QSize(26, 16777215))
         self.lineEdit_result_0.setFont(font3)
         self.lineEdit_result_0.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        self.gridLayout_68.addWidget(self.lineEdit_result_0, 0, 0, 1, 1)
-
 
         self.gridLayout_28.addWidget(self.frame_5, 3, 1, 1, 2)
 
@@ -3185,7 +3162,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(0)
+        self.tabWidget_Ranking.setCurrentIndex(3)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)

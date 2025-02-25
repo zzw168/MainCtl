@@ -483,7 +483,7 @@ def deal_rank(integration_qiu_array):
                 if action_area[0] >= max_area_count - balls_count and action_area[1] >= max_lap_count - 1:
                     area_limit = balls_count
                 else:
-                    area_limit = 5
+                    area_limit = balls_count + 2
                 # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < 5)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
@@ -1015,6 +1015,7 @@ class UdpThread(QThread):
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
                     deal_rank(array_data)
                     balls_start = len(ball_sort[1][0])  # 更新起点球数
+                    self.signal.emit(balls_start)
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~3', ranking_array)
                     deal_action()
                     con_data = []
@@ -2264,9 +2265,11 @@ class PlanCmdThread(QThread):
                         break
                     if (plan_list[plan_index][0] == '1' and  # 是否勾选,且在圈数范围内
                             (action_area[1] < int(float(plan_list[plan_index][1][0])) or  # 运行圈数在设定圈数范围内
-                             (int(float(plan_list[plan_index][1][0])) == 0))):  # 或者设定圈数的值为 0 时，可以忽略圈数执行
+                             (int(float(plan_list[plan_index][1][0])) == 0))):  # 或者设定圈数的值为 0 时，最后一圈执行
                         self.signal.emit(plan_index)  # 控制列表跟踪变色的信号
-
+                        if (int(float(plan_list[plan_index][1][0])) == 0
+                                and action_area[1] < max_lap_count - 1):
+                            continue
                         try:
                             # print("开启机关")
                             if int(float(plan_list[plan_index][12][0])) != 0:
@@ -2428,6 +2431,7 @@ class PlanCmdThread(QThread):
                             except:
                                 print("场景数据出错！")
                                 self.signal.emit(fail("场景数据出错！"))
+
                 # 强制中断情况处理
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断情况下的动作
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
@@ -2441,7 +2445,7 @@ class PlanCmdThread(QThread):
                     self.signal.emit(succeed("测试流程：完成！"))
                     self.run_flg = False  # 测试模式，不自动关闭任何机关
                 else:  # 每次循环增加一圈，初始化动作位置为0，初始化地图位置为0
-                    # map_label_big.map_action = 0
+                    map_label_big.map_action = 0
                     action_area[2] = 1  # 写入标志 1 为独占写入
                     action_area[0] = 0
                     action_area[1] += 1
@@ -3127,7 +3131,7 @@ def load_main_yaml():
         five_axis = main_all['five_axis']
         five_key = main_all['five_key']
         Track_number = main_all['Track_number']
-        for i in range(balls_count - 1, 10):
+        for i in range(balls_count, 10):
             getattr(ui, 'lineEdit_result_%s' % i).hide()
             getattr(result_ui, 'lineEdit_result_%s' % i).hide()
     # except:
@@ -3605,22 +3609,22 @@ class MapLabel(QLabel):
                     if init_array[color_index][5] == ranking_array[num][5]:
                         self.positions[p_num][2] = color_index + 1
                         break
-                # if index >= len(self.path_points):
-                #     self.positions[p_num][0] = 0  # 回到起点循环运动
+                if index >= len(self.path_points):
+                    self.positions[p_num][0] = 0  # 回到起点循环运动
                 p_num += 1
-        # if self.positions[0][0] - self.map_action < 300:  # 圈数重置后，重新位置更新范围限制300个点位以内
-        if self.picture_size == 860:
-            self.map_action = self.positions[0][0]  # 赋值实时位置
-            res = []
-            for i in range(len(self.positions)):
-                x, y = self.path_points[self.positions[i][0]]
-                b = round(self.positions[i][0] / len(self.path_points), 2)
-                res.append({"pm": i + 1, "id": self.positions[i][2], "x": round(x, 2), "y": round(y, 2), "b": b})
-            positions_live = {
-                "raceTrackID": Track_number,
-                "term": term,
-                "result": res
-            }
+        if self.positions[0][0] - self.map_action < 600:  # 圈数重置后，重新位置更新范围限制300个点位以内
+            if self.picture_size == 860:
+                self.map_action = self.positions[0][0]  # 赋值实时位置
+                res = []
+                for i in range(len(self.positions)):
+                    x, y = self.path_points[self.positions[i][0]]
+                    b = round(self.positions[i][0] / len(self.path_points), 2)
+                    res.append({"pm": i + 1, "id": self.positions[i][2], "x": round(x, 2), "y": round(y, 2), "b": b})
+                positions_live = {
+                    "raceTrackID": Track_number,
+                    "term": term,
+                    "result": res
+                }
         # 触发重绘
         self.update()
 
