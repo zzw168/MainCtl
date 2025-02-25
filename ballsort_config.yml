@@ -1,5 +1,5 @@
 max_area_count: 60
 max_lap_count: 1
 reset_time: 30
-time_count_ball: 15
+time_count_ball: 20
 time_send_result: 0

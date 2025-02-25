@@ -2310,9 +2310,9 @@ class PlanCmdThread(QThread):
                                     PlanBallNum_Thread.run_flg = True  # 终点计数器线程
 
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
-                                sc.GASetExtDoBit(3, 1)  # 打开终点开关
-                                sc.GASetExtDoBit(1, 0)  # 关闭闸门
-                                sc.GASetExtDoBit(0, 0)  # 关闭弹射
+                                sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                                sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
+                                sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                             # 轴运动
                             axis_bit = 0  # 非延迟轴统计
                             max_delay_time = 0  # 记录最大延迟时间
@@ -2432,9 +2432,9 @@ class PlanCmdThread(QThread):
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断情况下的动作
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
                     print('另外开关~~~~~~~~~')
-                    sc.GASetExtDoBit(3, 1)  # 打开终点开关
-                    sc.GASetExtDoBit(1, 0)  # 关闭闸门
-                    sc.GASetExtDoBit(0, 0)  # 关闭弹射
+                    sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                    sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
+                    sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                     main_music_worker.toggle_enablesignal.emit(False)
                     self.signal.emit(succeed("运动流程：中断！"))
                 if ui.checkBox_test.isChecked():
@@ -2448,9 +2448,9 @@ class PlanCmdThread(QThread):
                     action_area[2] = 0  # 写入标志 0 为任意写入
             else:  # 运行出错，或者超出圈数，流程完成时执行
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
-                    sc.GASetExtDoBit(3, 1)  # 打开终点开关
-                    sc.GASetExtDoBit(1, 0)  # 关闭闸门
-                    sc.GASetExtDoBit(0, 0)  # 关闭弹射
+                    sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                    sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
+                    sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                 self.signal.emit(succeed("运动流程：完成！"))
                 print('动作已完成！')
                 if not flg_start['card']:
@@ -3127,6 +3127,9 @@ def load_main_yaml():
         five_axis = main_all['five_axis']
         five_key = main_all['five_key']
         Track_number = main_all['Track_number']
+        for i in range(balls_count - 1, 10):
+            getattr(ui, 'lineEdit_result_%s' % i).hide()
+            getattr(result_ui, 'lineEdit_result_%s' % i).hide()
     # except:
     #     print('初始化出错~！')
     else:
@@ -3657,7 +3660,13 @@ class MapLabel(QLabel):
                 painter.drawEllipse(int(x - self.ball_radius), int(y - self.ball_radius),
                                     self.ball_radius * 2, self.ball_radius * 2)
                 if self.picture_size == 860:
-                    if str(self.positions[index_position][2]) == '1':
+                    if str(self.positions[index_position][2]) == '7':
+                        font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
+                        painter.setFont(font)
+                        painter.setPen('black')
+                        painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
+                                         str(self.positions[index_position][2]))
+                    elif str(self.positions[index_position][2]) == '1':
                         font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
                         painter.setFont(font)
                         painter.setPen('gray')
@@ -4810,7 +4819,6 @@ def query_sql():
 
         if conn:
             local_ip = tool_unit.check_network_with_ip()
-
             # 查询配置表的 SQL 语句
             user_value = local_ip[1]  # 网卡号
             key_value = "电压输出%"  # 读取字段
@@ -4868,10 +4876,23 @@ def flip_vertica():  # 主镜头垂直翻转
 def my_test():
     global term
     global z_ranking_res
+    requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
     print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    # 获取录屏状态
-    recording_status = cl_request.get_record_status()
-    print(recording_status.output_active)
+    # requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
+    # print('1~~~~~~~~~~~~~~~~~~~~~~~~~')
+    # tcp_result_thread.send_type = 'updata'
+    # tcp_result_thread.run_flg = True
+    # cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
+    #                                   True)  # 打开视频来源
+    # print('2~~~~~~~~~~~~~~~~~~~~~~~~~')
+    # time.sleep(0.1)
+    # cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
+    #                                   False)  # 打开视频来源
+    # print('3~~~~~~~~~~~~~~~~~~~~~~~~~')
+    # time.sleep(0.1)
+    # cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
+    #                                   False)  # 打开视频来源
+    # print('4~~~~~~~~~~~~~~~~~~~~~~~~~')
     # for i in range(98):
     #     ui.textBrowser_msg.append('这是第%s行' % i)
     # ScreenShot_Thread.run_flg = True
@@ -5324,8 +5345,8 @@ if __name__ == '__main__':
     ui.pushButton_CardCloseAll.clicked.connect(card_close_all)
     ui.pushButton_CardClose.clicked.connect(card_close_all)
 
-    ui.pushButton_start_game.clicked.connect(cmd_loop)
-    # ui.pushButton_start_game.clicked.connect(my_test)
+    # ui.pushButton_start_game.clicked.connect(cmd_loop)
+    ui.pushButton_start_game.clicked.connect(my_test)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
