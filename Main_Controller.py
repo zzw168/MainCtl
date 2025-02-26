@@ -5362,8 +5362,8 @@ if __name__ == '__main__':
     ui.checkBox_all.stateChanged.connect(card_on_off_all)
     ui.pushButton_CardClose.clicked.connect(card_close_all)
 
-    # ui.pushButton_start_game.clicked.connect(cmd_loop)
-    ui.pushButton_start_game.clicked.connect(my_test)
+    ui.pushButton_start_game.clicked.connect(cmd_loop)
+    # ui.pushButton_start_game.clicked.connect(my_test)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)

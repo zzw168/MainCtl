@@ -1027,7 +1027,7 @@ class Ui_MainWindow(object):
 
         self.textBrowser = QTextBrowser(self.frame_10)
         self.textBrowser.setObjectName(u"textBrowser")
-        self.textBrowser.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.textBrowser.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.textBrowser.setReadOnly(False)
 
         self.gridLayout_34.addWidget(self.textBrowser, 2, 0, 1, 1)
@@ -1236,12 +1236,14 @@ class Ui_MainWindow(object):
         self.checkBox_shoot = QCheckBox(self.groupBox_34)
         self.checkBox_shoot.setObjectName(u"checkBox_shoot")
         self.checkBox_shoot.setFont(font1)
+        self.checkBox_shoot.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_61.addWidget(self.checkBox_shoot, 0, 0, 1, 1)
 
         self.checkBox_start = QCheckBox(self.groupBox_34)
         self.checkBox_start.setObjectName(u"checkBox_start")
         self.checkBox_start.setFont(font1)
+        self.checkBox_start.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.checkBox_start.setChecked(False)
 
         self.gridLayout_61.addWidget(self.checkBox_start, 0, 1, 1, 1)
@@ -1249,12 +1251,14 @@ class Ui_MainWindow(object):
         self.checkBox_end = QCheckBox(self.groupBox_34)
         self.checkBox_end.setObjectName(u"checkBox_end")
         self.checkBox_end.setFont(font1)
+        self.checkBox_end.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.checkBox_end.setChecked(False)
 
         self.gridLayout_61.addWidget(self.checkBox_end, 0, 2, 1, 1)
 
         self.checkBox_all = QCheckBox(self.groupBox_34)
         self.checkBox_all.setObjectName(u"checkBox_all")
+        self.checkBox_all.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_61.addWidget(self.checkBox_all, 0, 3, 2, 1)
 
@@ -1268,6 +1272,7 @@ class Ui_MainWindow(object):
         self.lineEdit_OutNo = QLineEdit(self.groupBox_34)
         self.lineEdit_OutNo.setObjectName(u"lineEdit_OutNo")
         self.lineEdit_OutNo.setMaximumSize(QSize(40, 16777215))
+        self.lineEdit_OutNo.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.lineEdit_OutNo.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.gridLayout_61.addWidget(self.lineEdit_OutNo, 1, 1, 1, 1)
@@ -1275,6 +1280,7 @@ class Ui_MainWindow(object):
         self.checkBox_switch = QCheckBox(self.groupBox_34)
         self.checkBox_switch.setObjectName(u"checkBox_switch")
         self.checkBox_switch.setFont(font1)
+        self.checkBox_switch.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_61.addWidget(self.checkBox_switch, 1, 2, 1, 1)
 
@@ -2109,6 +2115,7 @@ class Ui_MainWindow(object):
         self.lineEdit_alarm.setObjectName(u"lineEdit_alarm")
         self.lineEdit_alarm.setMinimumSize(QSize(0, 0))
         self.lineEdit_alarm.setFont(font5)
+        self.lineEdit_alarm.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.lineEdit_alarm.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_alarm, 2, 3, 1, 1)
@@ -3163,7 +3170,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(1)
+        self.tabWidget_Ranking.setCurrentIndex(0)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
