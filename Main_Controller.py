@@ -481,16 +481,17 @@ def deal_rank(integration_qiu_array):
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = 0
                 if action_area[0] >= max_area_count - balls_count and action_area[1] >= max_lap_count - 1:
-                    area_limit = balls_count+2
+                    area_limit = balls_count + 2
                 else:
-                    area_limit = balls_count+2
+                    area_limit = balls_count + 2
                 # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < 5)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
                             (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                                     # or ranking_array[0][6] - ranking_array[r_index][6] > 5
                             ))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
-                        or (q_item[6] < 5 and ranking_array[r_index][6] >= max_area_count - balls_count - 6)):  # 跨圈情况
+                        or (q_item[6] < area_limit and
+                            ranking_array[r_index][6] >= max_area_count - balls_count - area_limit)):  # 跨圈情况
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_array[r_index][9] = 1
@@ -3227,12 +3228,12 @@ def card_on_off_all():
     if not flg_start['card']:
         return
     for index in range(0, 16):
-        if index not in [int(ui.lineEdit_shoot.text())-1,
-                         int(ui.lineEdit_start.text())-1,
-                         int(ui.lineEdit_shake.text())-1,
-                         int(ui.lineEdit_end.text())-1,
-                         int(ui.lineEdit_alarm.text())-1,
-                         int(ui.lineEdit_start_count.text())-1,
+        if index not in [int(ui.lineEdit_shoot.text()) - 1,
+                         int(ui.lineEdit_start.text()) - 1,
+                         int(ui.lineEdit_shake.text()) - 1,
+                         int(ui.lineEdit_end.text()) - 1,
+                         int(ui.lineEdit_alarm.text()) - 1,
+                         int(ui.lineEdit_start_count.text()) - 1,
                          ]:
             if ui.checkBox_all.isChecked():
                 sc.GASetExtDoBit(index, 1)
