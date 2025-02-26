@@ -481,9 +481,9 @@ def deal_rank(integration_qiu_array):
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = 0
                 if action_area[0] >= max_area_count - balls_count and action_area[1] >= max_lap_count - 1:
-                    area_limit = balls_count
+                    area_limit = balls_count+2
                 else:
-                    area_limit = 5
+                    area_limit = balls_count+2
                 # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < 5)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
@@ -801,7 +801,7 @@ class TcpRankingThread(QThread):
                                     d = {"mc": self.send_time_data[0], 'data': self.send_time_data[1],
                                          'type': 'time'}
                                 else:
-                                    d = {'data': z_ranking_res, 'type': 'pm'}
+                                    d = {'data': z_ranking_res[0: balls_count], 'type': 'pm'}
                                     # time.sleep(1)
                                     # d = {"mc": self.send_time_data[0], 'data': '7.98',
                                     #      'type': 'time'}
@@ -1003,7 +1003,7 @@ class UdpThread(QThread):
                     if action_area[0] > max_area_count - balls_count - 2:
                         array_data = filter_max_value(array_data)  # 结束时，以置信度为准
                     else:
-                        array_data = filter_max_area(array_data)  # 在平时球位置追踪，前面为准
+                        array_data = filter_max_value(array_data)  # 在平时球位置追踪，前面为准
                     if array_data is None or len(array_data) < 1:
                         continue
                     array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
@@ -1956,7 +1956,6 @@ class ScreenShotThread(QThread):
                 z_ranking_end = copy.deepcopy(z_ranking_res)
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
                     ui.lineEdit_Send_Result.setText('')
-                    play_alarm()  # 警报声
                     Send_Result_End = False
                     while True:
                         if ui.checkBox_result_show.isChecked():
@@ -2028,6 +2027,7 @@ def ScreenShotsignal_accept(msg):
                 getattr(result_ui, 'lineEdit_result_%s' % index).setText('')
     elif msg == '显示结果对话框':
         ResultDialog.show()
+        play_alarm()  # 警报声
     elif msg == 'send_res':
         ui.lineEdit_Send_Result.setText('')
     elif msg == 'send_ok':
@@ -3227,12 +3227,12 @@ def card_on_off_all():
     if not flg_start['card']:
         return
     for index in range(0, 16):
-        if index not in [int(ui.lineEdit_shoot.text()),
-                         int(ui.lineEdit_start.text()),
-                         int(ui.lineEdit_shake.text()),
-                         int(ui.lineEdit_end.text()),
-                         int(ui.lineEdit_alarm.text()),
-                         int(ui.lineEdit_start_count.text()),
+        if index not in [int(ui.lineEdit_shoot.text())-1,
+                         int(ui.lineEdit_start.text())-1,
+                         int(ui.lineEdit_shake.text())-1,
+                         int(ui.lineEdit_end.text())-1,
+                         int(ui.lineEdit_alarm.text())-1,
+                         int(ui.lineEdit_start_count.text())-1,
                          ]:
             if ui.checkBox_all.isChecked():
                 sc.GASetExtDoBit(index, 1)
@@ -3643,16 +3643,17 @@ class MapLabel(QLabel):
         if self.positions[0][0] - self.map_action < 600:  # 圈数重置后，重新位置更新范围限制300个点位以内
             if self.picture_size == 860:
                 self.map_action = self.positions[0][0]  # 赋值实时位置
-                res = []
-                for i in range(len(self.positions)):
-                    x, y = self.path_points[self.positions[i][0]]
-                    b = round(self.positions[i][0] / len(self.path_points), 2)
-                    res.append({"pm": i + 1, "id": self.positions[i][2], "x": round(x, 2), "y": round(y, 2), "b": b})
-                positions_live = {
-                    "raceTrackID": Track_number,
-                    "term": term,
-                    "result": res
-                }
+        res = []
+        if self.picture_size == 860:
+            for i in range(balls_count):
+                x, y = self.path_points[self.positions[i][0]]
+                b = round(self.positions[i][0] / len(self.path_points), 2)
+                res.append({"pm": i + 1, "id": self.positions[i][2], "x": round(x, 2), "y": round(y, 2), "b": b})
+            positions_live = {
+                "raceTrackID": Track_number,
+                "term": term,
+                "result": res
+            }
         # 触发重绘
         self.update()
 
@@ -4171,9 +4172,9 @@ def music_ctl():
 
 def play_alarm():  # 报警音
     try:
+        ui.checkBox_alarm.setChecked(True)
         index = int(ui.lineEdit_alarm.text()) - 1
         sc.GASetExtDoBit(index, 1)
-        ui.checkBox_alarm.setChecked(True)
     except:
         print('警报电压输出错误！')
         ui.textBrowser_msg.append(fail('警报电压输出错误！'))
@@ -4908,23 +4909,7 @@ def flip_vertica():  # 主镜头垂直翻转
 def my_test():
     global term
     global z_ranking_res
-    requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
-    print('~~~~~~~~~~~~~~~~~~~~~~~~~')
-    # requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
-    # print('1~~~~~~~~~~~~~~~~~~~~~~~~~')
-    # tcp_result_thread.send_type = 'updata'
-    # tcp_result_thread.run_flg = True
-    # cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
-    #                                   True)  # 打开视频来源
-    # print('2~~~~~~~~~~~~~~~~~~~~~~~~~')
-    # time.sleep(0.1)
-    # cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
-    #                                   False)  # 打开视频来源
-    # print('3~~~~~~~~~~~~~~~~~~~~~~~~~')
-    # time.sleep(0.1)
-    # cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
-    #                                   False)  # 打开视频来源
-    # print('4~~~~~~~~~~~~~~~~~~~~~~~~~')
+    play_alarm()
     # for i in range(98):
     #     ui.textBrowser_msg.append('这是第%s行' % i)
     # ScreenShot_Thread.run_flg = True

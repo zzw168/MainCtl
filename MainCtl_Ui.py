@@ -947,6 +947,7 @@ class Ui_MainWindow(object):
         self.groupBox_4.setObjectName(u"groupBox_4")
         self.groupBox_4.setMaximumSize(QSize(16777215, 248))
         self.groupBox_4.setFont(font1)
+        self.groupBox_4.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.gridLayout_14 = QGridLayout(self.groupBox_4)
         self.gridLayout_14.setObjectName(u"gridLayout_14")
         self.gridLayout_14.setContentsMargins(-1, 0, -1, 6)
@@ -966,7 +967,7 @@ class Ui_MainWindow(object):
         __qtablewidgetitem30 = QTableWidgetItem()
         self.tableWidget_Sources.setHorizontalHeaderItem(2, __qtablewidgetitem30)
         self.tableWidget_Sources.setObjectName(u"tableWidget_Sources")
-        self.tableWidget_Sources.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
+        self.tableWidget_Sources.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.tableWidget_Sources.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.tableWidget_Sources.horizontalHeader().setDefaultSectionSize(80)
         self.tableWidget_Sources.horizontalHeader().setStretchLastSection(True)
@@ -975,6 +976,7 @@ class Ui_MainWindow(object):
 
         self.comboBox_Scenes = QComboBox(self.groupBox_4)
         self.comboBox_Scenes.setObjectName(u"comboBox_Scenes")
+        self.comboBox_Scenes.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_14.addWidget(self.comboBox_Scenes, 1, 1, 1, 1)
 
@@ -1025,6 +1027,7 @@ class Ui_MainWindow(object):
 
         self.textBrowser = QTextBrowser(self.frame_10)
         self.textBrowser.setObjectName(u"textBrowser")
+        self.textBrowser.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.textBrowser.setReadOnly(False)
 
         self.gridLayout_34.addWidget(self.textBrowser, 2, 0, 1, 1)
@@ -1032,6 +1035,7 @@ class Ui_MainWindow(object):
         self.groupBox_6 = QGroupBox(self.frame_10)
         self.groupBox_6.setObjectName(u"groupBox_6")
         self.groupBox_6.setFont(font1)
+        self.groupBox_6.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.gridLayout_22 = QGridLayout(self.groupBox_6)
         self.gridLayout_22.setObjectName(u"gridLayout_22")
         self.gridLayout_22.setContentsMargins(-1, 0, -1, 0)

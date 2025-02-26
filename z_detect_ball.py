@@ -101,8 +101,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 else:
                     text_x = array[0] - 50
                     text_y = (array[1] + array[3]) // 2 + 13
-                if color_ch[array[5]] in ['1', '10']:
-                    if color_ch[array[5]] == '10':
+                if color_ch[array[5]] in ['1', '7', '10']:
+                    if color_ch[array[5]] in ['7', '10']:
                         text_x -= 15
                     cv2.putText(img, "%s" % (color_ch[array[5]]), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX,
                                 fontScale=1.3,

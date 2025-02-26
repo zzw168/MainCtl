@@ -2126,6 +2126,9 @@
                  <bold>true</bold>
                 </font>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::NoFocus</enum>
+               </property>
                <property name="title">
                 <string>OBS管理</string>
                </property>
@@ -2152,7 +2155,7 @@
                 <item row="2" column="0" colspan="2">
                  <widget class="QTableWidget" name="tableWidget_Sources">
                   <property name="focusPolicy">
-                   <enum>Qt::FocusPolicy::ClickFocus</enum>
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
                   </property>
                   <property name="selectionBehavior">
                    <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
@@ -2181,7 +2184,11 @@
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QComboBox" name="comboBox_Scenes"/>
+                 <widget class="QComboBox" name="comboBox_Scenes">
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
+                  </property>
+                 </widget>
                 </item>
                 <item row="0" column="0" colspan="2">
                  <widget class="QFrame" name="frame_22">
@@ -2310,6 +2317,9 @@
              </item>
              <item row="2" column="0">
               <widget class="QTextBrowser" name="textBrowser">
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::NoFocus</enum>
+               </property>
                <property name="readOnly">
                 <bool>false</bool>
                </property>
@@ -2323,6 +2333,9 @@
                  <pointsize>10</pointsize>
                  <bold>true</bold>
                 </font>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::NoFocus</enum>
                </property>
                <property name="title">
                 <string>运动卡</string>
