@@ -1793,7 +1793,8 @@ def PlanBallNumsignal_accept(msg):
         ui.lineEdit_ball_end.setText(str(msg))
     elif '人工检查' in msg:
         TrapBallDialog.show()
-        ui.radioButton_stop_betting.click()
+        if ui.radioButton_start_betting.isChecked():
+            ui.radioButton_stop_betting.click()
     elif '计球倒计时' in msg:
         text_lines = ui.textBrowser_msg.toHtml().splitlines()
         if len(text_lines) >= 1:
@@ -5306,11 +5307,11 @@ def set_trap_btn():
 
 def trap_ok():
     PlanBallNum_Thread.run_flg = False
-    TrapBall_ui.hide()
+    TrapBallDialog.hide()
 
 
 def trap_cancel():
-    TrapBall_ui.hide()
+    TrapBallDialog.hide()
 
 
 "************************************ResultDlg_Ui*********************************************"
