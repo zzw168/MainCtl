@@ -33,9 +33,11 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QChec
 import obsws_python as obs
 import pygame
 
+from BallsNumDlg_Ui import Ui_Dialog_BallsNum
 from Camera_Ui import Ui_Camera_Dialog
 from ResultDlg_Ui import Ui_Dialog_Result
 from Speed_Ui import Ui_Dialog_Set_Speed
+from TrapBallDlg_Ui import Ui_Dialog_TrapBall
 from utils import tool_unit
 from utils.SportCard_unit import *
 from utils.tool_unit import *
@@ -568,7 +570,6 @@ def reset_ranking_array():
     global z_ranking_time
     global balls_start
     # global previous_position
-    balls_start = 0
 
     ranking_array = []  # 排名数组
     for row in range(0, len(init_array)):
@@ -580,6 +581,7 @@ def reset_ranking_array():
         ball_sort.append([])
         for col in range(0, max_lap_count):
             ball_sort[row].append([])
+    balls_start = 0
     for row in range(0, len(init_array)):
         for col in range(0, 5):
             if col == 0:
@@ -1050,7 +1052,7 @@ def udpsignal_accept(msg):
             if bt_udp_time.styleSheet() != 'background:rgb(0, 255, 0)':
                 bt_udp_time.setStyleSheet('background:rgb(0, 255, 0)')
                 bt_udp_time.setText('图像识别状态正常')
-        if int(ui.lineEdit_ball_start.text()) < balls_start:  # 更新起点球数
+        if int(ui.lineEdit_ball_start.text()) < balls_start or balls_start == 0:  # 更新起点球数
             ui.lineEdit_balls_start.setText(str(balls_start))
             ui.lineEdit_ball_start.setText(str(balls_start))
         # if int(ui.lineEdit_area.text()) != action_area[0]:  # 更新触发区域
@@ -1501,6 +1503,12 @@ class ReStartThread(QThread):
             time.sleep(1)
             if not self.run_flg:
                 continue
+            if ui.checkBox_shoot_0.isChecked():
+                self.signal.emit('auto_shoot')
+                while ui.checkBox_shoot_0.isChecked():
+                    time.sleep(1)
+                    if balls_start == balls_count:
+                        break
             if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
@@ -1537,8 +1545,6 @@ class ReStartThread(QThread):
                 countdown = int(countdown)
             else:
                 countdown = 60
-            if ui.checkBox_shoot_0.isChecked():
-                self.signal.emit('auto_shoot')
             for t in range(countdown, -1, -1):
                 if not ui.checkBox_restart.isChecked():
                     self.run_flg = False
@@ -1709,6 +1715,8 @@ class PlanBallNumThread(QThread):
                         # print(res, value)
                         if res == 0:
                             num = int(value[0] / 2)
+                            if num == 1:
+                                requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
                             if num != num_old:
                                 t = time.time()
                                 if num_old < len(z_ranking_time):  # 保存每个球到达终点的时间
@@ -1721,17 +1729,19 @@ class PlanBallNumThread(QThread):
                             if num > balls_count - 2 and screen_sort:
                                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                                 screen_sort = False
-                            if num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
+                            if num >= balls_count and ui.checkBox_Pass_Recognition_Start.isChecked():
                                 break
-                            elif num >= balls_count and ui.checkBox_Pass_Recognition_Start.isChecked():
-                                break
+                            # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
+                            #     break
                             elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
                                 # 超时则跳出循环计球
                                 sc.GASetDiReverseCount()  # 输入次数归0
                                 term_status = 0
                                 term_comment = term_comments[1]
-                                # self.signal.emit(0)
-                                break
+                                self.signal.emit('人工检查')
+                                time.sleep(1)
+                                if not self.run_flg:
+                                    break
                             else:
                                 time_num = time.time() - time_old
                                 if time_num > 1:
@@ -1746,7 +1756,7 @@ class PlanBallNumThread(QThread):
                             break
                         time.sleep(0.01)
 
-                    for index in range(num_old - 1, len(z_ranking_time)):
+                    for index in range(num_old - 1, balls_count):
                         if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
                             tcp_ranking_thread.send_time_data = [index + 1, '%s' % z_ranking_time[index]]
                             tcp_ranking_thread.send_time_flg = True
@@ -1781,6 +1791,8 @@ class PlanBallNumThread(QThread):
 def PlanBallNumsignal_accept(msg):
     if isinstance(msg, int):
         ui.lineEdit_ball_end.setText(str(msg))
+    elif '人工检查' in msg:
+        TrapBallDialog.show()
     elif '计球倒计时' in msg:
         text_lines = ui.textBrowser_msg.toHtml().splitlines()
         if len(text_lines) >= 1:
@@ -1835,7 +1847,6 @@ class ObsEndThread(QThread):
                     num += 1
                     time.sleep(1)
             try:
-                requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
                 tcp_result_thread.send_type = 'updata'
                 tcp_result_thread.run_flg = True
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
@@ -2128,20 +2139,23 @@ class ShootThread(QThread):
             if not self.run_flg:
                 continue
             print('弹射上珠线程！')
+            self.signal.emit(succeed("正在弹射上珠。。。"))
             try:
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
                 sc.GASetExtDoBit(shoot_index, 1)
                 time.sleep(0.5)
                 end_index = int(ui.lineEdit_end.text()) - 1
                 sc.GASetExtDoBit(end_index, 0)
+                time_count = 0
                 while self.run_flg:
                     time.sleep(1)
                     if (ui.lineEdit_balls_auto.text().isdigit()
-                            and int(ui.lineEdit_balls_start.text()) >= int(ui.lineEdit_balls_auto.text())):
+                            and balls_start >= int(ui.lineEdit_balls_auto.text())):
                         break
-                    elif (ui.lineEdit_balls_auto.text().isdigit()
-                          and balls_start >= int(ui.lineEdit_balls_auto.text())):
-                        break
+                    time_count += 1
+                    if time_count >= 10:
+                        self.signal.emit(fail("弹射上珠不够"))
+
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
                 sc.GASetExtDoBit(shoot_index, 0)
                 self.run_flg = False
@@ -2154,6 +2168,8 @@ class ShootThread(QThread):
 def shootsignal_accept(msg):
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
+    if "弹射上珠不够" in msg:
+        BallsNumDialog.show()
 
 
 '''
@@ -3175,6 +3191,8 @@ def cmd_run():
     save_plan_yaml()
     plan_refresh()
     reset_ranking_array()
+    if not ui.checkBox_all.isChecked():
+        ui.checkBox_all.setChecked(True)
     ui.radioButton_test_game.setChecked(True)  # 模拟模式
     auto_shoot()  # 自动上珠
     PlanCmd_Thread.run_flg = True
@@ -3182,6 +3200,8 @@ def cmd_run():
 
 def cmd_loop():
     ui.radioButton_start_betting.click()  # 开盘
+    if not ui.checkBox_all.isChecked():
+        ui.checkBox_all.setChecked(True)
     ReStart_Thread.run_flg = True
 
 
@@ -3633,14 +3653,15 @@ class MapLabel(QLabel):
                     index = self.positions[p_num][0] + self.speed
                     if index > len(self.path_points) - self.ball_radius - 1:
                         index = len(self.path_points) - 1
-                self.positions[p_num][0] = index
-                self.positions[p_num][1] = color
-                for color_index in range(len(init_array)):
-                    if init_array[color_index][5] == ranking_array[num][5]:
-                        self.positions[p_num][2] = color_index + 1
-                        break
-                if index >= len(self.path_points):
-                    self.positions[p_num][0] = 0  # 回到起点循环运动
+                if index <= len(self.path_points):
+                    self.positions[p_num][0] = index
+                    self.positions[p_num][1] = color
+                    for color_index in range(len(init_array)):
+                        if init_array[color_index][5] == ranking_array[num][5]:
+                            self.positions[p_num][2] = color_index + 1
+                            break
+                # if index >= len(self.path_points):
+                #     self.positions[p_num][0] = 0  # 回到起点循环运动
                 p_num += 1
         if self.positions[0][0] - self.map_action < 600:  # 圈数重置后，重新位置更新范围限制300个点位以内
             if self.picture_size == 860:
@@ -5228,6 +5249,26 @@ class ResultUi(QDialog, Ui_Dialog_Result):
         super(ResultUi, self).setupUi(z_dialog)
 
 
+class BallsNumUi(QDialog, Ui_Dialog_BallsNum):
+    def __init__(self):
+        super().__init__()
+
+    def setupUi(self, z_dialog):
+        super(BallsNumUi, self).setupUi(z_dialog)
+
+
+class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
+    def __init__(self):
+        super().__init__()
+
+    def setupUi(self, z_dialog):
+        super(TrapBallUi, self).setupUi(z_dialog)
+
+
+def balls_num_btn():
+    BallsNumDialog.hide()
+
+
 if __name__ == '__main__':
     app = ZApp(sys.argv)
 
@@ -5236,15 +5277,25 @@ if __name__ == '__main__':
     ui.setupUi(z_window)
     z_window.show()
 
-    SpeedDialog = QDialog(z_window)
-    speed_ui = SpeedUi()
-    speed_ui.setupUi(SpeedDialog)
+    TrapBallDialog = QDialog(z_window)
+    TrapBall_ui = BallsNumUi()
+    TrapBall_ui.setupUi(TrapBallDialog)
+    TrapBall_ui.pushButton_ok.clicked.connect(balls_num_btn)
+
+    BallsNumDialog = QDialog(z_window)  #
+    BallsNum_ui = BallsNumUi()
+    BallsNum_ui.setupUi(BallsNumDialog)
+    BallsNum_ui.pushButton_ok.clicked.connect(balls_num_btn)
+    # BallsNumDialog.show()
 
     ResultDialog = QDialog(z_window)
     result_ui = ResultUi()
     result_ui.setupUi(ResultDialog)
     result_ui.pushButton_Send_Res.clicked.connect(result2end)
-    # ResultDialog.show()
+
+    SpeedDialog = QDialog(z_window)
+    speed_ui = SpeedUi()
+    speed_ui.setupUi(SpeedDialog)
 
     speed_ui.buttonBox.accepted.connect(accept_speed)
     speed_ui.buttonBox.rejected.connect(reject_speed)
