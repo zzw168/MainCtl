@@ -28,7 +28,7 @@ from PySide6 import QtWidgets
 from PySide6.QtCore import Qt, QThread, Signal, Slot, QTimer, QPropertyAnimation, QEvent
 from PySide6.QtGui import QBrush, QColor, QPixmap, QMouseEvent, QPen, QTextCursor
 from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu, QMessageBox, QFileDialog, \
-    QAbstractButton, QMdiSubWindow, QMdiArea, QDialog, QSplitter
+    QAbstractButton, QMdiSubWindow, QMdiArea, QDialog, QSplitter, QLayout
 
 import obsws_python as obs
 import pygame
@@ -1721,9 +1721,9 @@ class PlanBallNumThread(QThread):
                                 t = time.time()
                                 if num_old < len(z_ranking_time):  # 保存每个球到达终点的时间
                                     z_ranking_time[num_old] = '%.2f' % (t - ranking_time_start)
-                                    if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
-                                        tcp_ranking_thread.send_time_data = [num, '%s"' % z_ranking_time[num - 1]]
-                                        tcp_ranking_thread.send_time_flg = True
+                                    # if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
+                                    tcp_ranking_thread.send_time_data = [num, '%s"' % z_ranking_time[num - 1]]
+                                    tcp_ranking_thread.send_time_flg = True
                                 self.signal.emit(num)
                                 num_old = num
                             if num > balls_count - 2 and screen_sort:
@@ -1757,9 +1757,9 @@ class PlanBallNumThread(QThread):
                         time.sleep(0.01)
 
                     for index in range(num_old - 1, balls_count):
-                        if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
-                            tcp_ranking_thread.send_time_data = [index + 1, '%s' % z_ranking_time[index]]
-                            tcp_ranking_thread.send_time_flg = True
+                        # if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
+                        tcp_ranking_thread.send_time_data = [index + 1, '%s' % z_ranking_time[index]]
+                        tcp_ranking_thread.send_time_flg = True
                         time.sleep(0.5)
                     save_path = '%s' % ui.lineEdit_Image_Path.text()
                     if os.path.exists(save_path):
@@ -5257,6 +5257,10 @@ class BallsNumUi(QDialog, Ui_Dialog_BallsNum):
         super(BallsNumUi, self).setupUi(z_dialog)
 
 
+def balls_num_btn():
+    BallsNumDialog.hide()
+
+
 class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
     def __init__(self):
         super().__init__()
@@ -5265,9 +5269,36 @@ class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
         super(TrapBallUi, self).setupUi(z_dialog)
 
 
-def balls_num_btn():
-    BallsNumDialog.hide()
+class MyPushButton(QPushButton):
+    def __init__(self, text, parent=None):
+        super().__init__(text, parent)
+        self.setObjectName(text)
 
+    def mousePressEvent(self, event):
+        global z_ranking_time
+        items = self.objectName().split('_')
+        print(items)
+        if items[2].isdigit():
+            num = int(items[2])
+            if z_ranking_time[num - 1] in ['TRAP', 'OUT']:
+                z_ranking_time[num - 1] = items[1]
+                tcp_ranking_thread.send_time_data = [num, '%s' % z_ranking_time[num - 1]]
+                tcp_ranking_thread.send_time_flg = True
+
+        super().mousePressEvent(event)  # 确保按钮仍然触发默认的点击事件
+
+
+def set_trap_btn():
+    for index in range(10):
+        if index < balls_count:
+            getattr(TrapBall_ui, 'pushButton_TRAP_%s' % (index + 1), None).__class__ = MyPushButton
+            getattr(TrapBall_ui, 'pushButton_OUT_%s' % (index + 1), None).__class__ = MyPushButton
+        else:
+            getattr(TrapBall_ui, 'pushButton_TRAP_%s' % (index + 1), None).hide()
+            getattr(TrapBall_ui, 'pushButton_OUT_%s' % (index + 1), None).hide()
+
+
+"************************************ResultDlg_Ui*********************************************"
 
 if __name__ == '__main__':
     app = ZApp(sys.argv)
@@ -5278,9 +5309,9 @@ if __name__ == '__main__':
     z_window.show()
 
     TrapBallDialog = QDialog(z_window)
-    TrapBall_ui = BallsNumUi()
+    TrapBall_ui = TrapBallUi()
     TrapBall_ui.setupUi(TrapBallDialog)
-    TrapBall_ui.pushButton_ok.clicked.connect(balls_num_btn)
+    TrapBallDialog.show()
 
     BallsNumDialog = QDialog(z_window)  #
     BallsNum_ui = BallsNumUi()
@@ -5541,6 +5572,7 @@ if __name__ == '__main__':
     ranking_time_start = time.time()  # 比赛开始时间
 
     init_ranking_table()  # 初始化排名数据表
+    set_trap_btn()  # 初始化TRAP按钮
 
     # 1. Udp 接收数据 14
     try:
