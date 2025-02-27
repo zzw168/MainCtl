@@ -239,13 +239,13 @@ class Ui_Dialog_TrapBall(object):
 
         self.gridLayout.addWidget(self.pushButton_ok, 2, 6, 1, 1)
 
-        self.pushButton_ok_2 = QPushButton(Dialog_TrapBall)
-        self.pushButton_ok_2.setObjectName(u"pushButton_ok_2")
-        self.pushButton_ok_2.setMinimumSize(QSize(150, 38))
-        self.pushButton_ok_2.setMaximumSize(QSize(150, 16777215))
-        self.pushButton_ok_2.setStyleSheet(u"background:rgb(230,0,0)")
+        self.pushButton_cancel = QPushButton(Dialog_TrapBall)
+        self.pushButton_cancel.setObjectName(u"pushButton_cancel")
+        self.pushButton_cancel.setMinimumSize(QSize(150, 38))
+        self.pushButton_cancel.setMaximumSize(QSize(150, 16777215))
+        self.pushButton_cancel.setStyleSheet(u"background:rgb(230,0,0)")
 
-        self.gridLayout.addWidget(self.pushButton_ok_2, 2, 4, 1, 1)
+        self.gridLayout.addWidget(self.pushButton_cancel, 2, 4, 1, 1)
 
         self.frame_2 = QFrame(Dialog_TrapBall)
         self.frame_2.setObjectName(u"frame_2")
@@ -299,6 +299,6 @@ class Ui_Dialog_TrapBall(object):
         self.pushButton_OUT_10.setText(QCoreApplication.translate("Dialog_TrapBall", u"10", None))
         self.label_3.setText("")
         self.pushButton_ok.setText(QCoreApplication.translate("Dialog_TrapBall", u"\u786e\u8ba4(confirm)", None))
-        self.pushButton_ok_2.setText(QCoreApplication.translate("Dialog_TrapBall", u"\u53d6\u6d88(Cancel)", None))
+        self.pushButton_cancel.setText(QCoreApplication.translate("Dialog_TrapBall", u"\u53d6\u6d88(Cancel)", None))
     # retranslateUi
 

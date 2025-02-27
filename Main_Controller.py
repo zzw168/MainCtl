@@ -590,7 +590,7 @@ def reset_ranking_array():
                 con_data[row][col] = 0
     action_area = [0, 0, 0]  # 初始化触发区域
     z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
-    z_ranking_time = ['TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'TRAP', 'OUT', 'OUT']  # 初始化网页排名时间
+    z_ranking_time = [''] * 10  # 初始化网页排名时间
     tcp_ranking_thread.sleep_time = 0.5  # 重置排名数据包发送时间
     alarm_worker.toggle_enablesignal.emit(False)
     if flg_start['obs'] and not ui.checkBox_test.isChecked():
@@ -713,7 +713,7 @@ def init_ranking_table():
         con_data.append([])
         z_ranking_res.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
         z_ranking_end.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
-        z_ranking_time.append('TRAP')  # z_ranking_time[1,2,3,4,5,6,7,8,9,10]    初始化网页排名时间
+        z_ranking_time.append('')  # z_ranking_time[1,2,3,4,5,6,7,8,9,10]    初始化网页排名时间
         for j in range(0, 5):
             if j == 0:
                 con_data[i].append(init_array[i][5])  # con_data[[yellow,0,0,0,0]]
@@ -1507,7 +1507,7 @@ class ReStartThread(QThread):
                 self.signal.emit('auto_shoot')
                 while ui.checkBox_shoot_0.isChecked():
                     time.sleep(1)
-                    if balls_start == balls_count:
+                    if balls_start >= balls_count:
                         break
             if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                 response = get_term(Track_number)
@@ -1735,7 +1735,7 @@ class PlanBallNumThread(QThread):
                             #     break
                             elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
                                 # 超时则跳出循环计球
-                                sc.GASetDiReverseCount()  # 输入次数归0
+                                # sc.GASetDiReverseCount()  # 输入次数归0
                                 term_status = 0
                                 term_comment = term_comments[1]
                                 self.signal.emit('人工检查')
@@ -1756,11 +1756,11 @@ class PlanBallNumThread(QThread):
                             break
                         time.sleep(0.01)
 
-                    for index in range(num_old - 1, balls_count):
-                        # if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
-                        tcp_ranking_thread.send_time_data = [index + 1, '%s' % z_ranking_time[index]]
-                        tcp_ranking_thread.send_time_flg = True
-                        time.sleep(0.5)
+                    for index in range(balls_count):
+                        if z_ranking_time[index] == '':
+                            tcp_ranking_thread.send_time_data = [index + 1, 'TRAP']
+                            tcp_ranking_thread.send_time_flg = True
+                            time.sleep(0.5)
                     save_path = '%s' % ui.lineEdit_Image_Path.text()
                     if os.path.exists(save_path):
                         lottery_term[6] = '%s/%s.jpg' % (save_path, term)
@@ -1793,6 +1793,7 @@ def PlanBallNumsignal_accept(msg):
         ui.lineEdit_ball_end.setText(str(msg))
     elif '人工检查' in msg:
         TrapBallDialog.show()
+        ui.radioButton_stop_betting.click()
     elif '计球倒计时' in msg:
         text_lines = ui.textBrowser_msg.toHtml().splitlines()
         if len(text_lines) >= 1:
@@ -1998,11 +1999,10 @@ class ScreenShotThread(QThread):
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
             if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                 if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
-                    ui.radioButton_stop_betting.click()  # 封盘
+                    self.signal.emit('封盘')
+
                 if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
-                    ui.checkBox_restart.setChecked(False)
-                    ui.radioButton_stop_betting.click()  # 封盘
-                    ui.checkBox_black_screen.click()
+                    self.signal.emit('黑屏')
 
             betting_end_time = int(time.time())
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
@@ -2037,6 +2037,11 @@ def ScreenShotsignal_accept(msg):
             else:
                 getattr(ui, 'lineEdit_result_%s' % index).setText('')
                 getattr(result_ui, 'lineEdit_result_%s' % index).setText('')
+    elif msg == '黑屏':
+        ui.radioButton_stop_betting.click()  # 封盘
+        ui.checkBox_black_screen.click()
+    elif msg == '封盘':
+        ui.radioButton_stop_betting.click()  # 封盘
     elif msg == '显示结果对话框':
         ResultDialog.show()
         play_alarm()  # 警报声
@@ -2149,8 +2154,9 @@ class ShootThread(QThread):
                 time_count = 0
                 while self.run_flg:
                     time.sleep(1)
-                    if (ui.lineEdit_balls_auto.text().isdigit()
-                            and balls_start >= int(ui.lineEdit_balls_auto.text())):
+                    if ((ui.lineEdit_balls_auto.text().isdigit()
+                            and balls_start >= int(ui.lineEdit_balls_auto.text()))
+                            or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         break
                     time_count += 1
                     if time_count >= 10:
@@ -5280,7 +5286,7 @@ class MyPushButton(QPushButton):
         print(items)
         if items[2].isdigit():
             num = int(items[2])
-            if z_ranking_time[num - 1] in ['TRAP', 'OUT']:
+            if z_ranking_time[num - 1] in ['TRAP', 'OUT', '']:
                 z_ranking_time[num - 1] = items[1]
                 tcp_ranking_thread.send_time_data = [num, '%s' % z_ranking_time[num - 1]]
                 tcp_ranking_thread.send_time_flg = True
@@ -5298,6 +5304,15 @@ def set_trap_btn():
             getattr(TrapBall_ui, 'pushButton_OUT_%s' % (index + 1), None).hide()
 
 
+def trap_ok():
+    PlanBallNum_Thread.run_flg = False
+    TrapBall_ui.hide()
+
+
+def trap_cancel():
+    TrapBall_ui.hide()
+
+
 "************************************ResultDlg_Ui*********************************************"
 
 if __name__ == '__main__':
@@ -5311,7 +5326,8 @@ if __name__ == '__main__':
     TrapBallDialog = QDialog(z_window)
     TrapBall_ui = TrapBallUi()
     TrapBall_ui.setupUi(TrapBallDialog)
-    TrapBallDialog.show()
+    TrapBall_ui.pushButton_ok.clicked.connect(trap_ok)
+    TrapBall_ui.pushButton_cancel.clicked.connect(trap_cancel)
 
     BallsNumDialog = QDialog(z_window)  #
     BallsNum_ui = BallsNumUi()
