@@ -2449,11 +2449,12 @@ class PlanCmdThread(QThread):
                     self.signal.emit(succeed("测试流程：完成！"))
                     self.run_flg = False  # 测试模式，不自动关闭任何机关
                 else:  # 每次循环增加一圈，初始化动作位置为0，初始化地图位置为0
-                    map_label_big.map_action = 0
                     action_area[2] = 1  # 写入标志 1 为独占写入
                     action_area[0] = 0
                     action_area[1] += 1
                     action_area[2] = 0  # 写入标志 0 为任意写入
+                    if action_area[1] < max_lap_count:
+                        map_label_big.map_action = 0
             else:  # 运行出错，或者超出圈数，流程完成时执行
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关

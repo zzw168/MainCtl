@@ -66,6 +66,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                          round(r[4].item(), 2), names[int(r[5].item())]]
                 qiu_array.append(array)
 
+            qiu_array = filter_max_value(qiu_array)
+
             if post_data['sort'][0] == '0':
                 qiu_array.sort(key=lambda x: (x[0]), reverse=True)
             elif post_data['sort'][0] == '1':
@@ -74,7 +76,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 qiu_array.sort(key=lambda y: (y[1]), reverse=True)
             else:
                 qiu_array.sort(key=lambda y: (y[1]), reverse=False)
-            qiu_array = filter_max_value(qiu_array)
 
             for array in qiu_array:
                 cv2.rectangle(img, (array[0], array[1]), (array[2], array[3]), color=color_rects[array[5]], thickness=5)
@@ -195,12 +196,12 @@ if __name__ == '__main__':
                 'blue': '2',
                 'red': '3',
                 'purple': '4',
-                'orange': '5',
+                'orange': '9',
                 'green': '6',
-                'Brown': '7',
+                'Brown': '10',
                 'black': '8',
-                'pink': '9',
-                'White': '10'}
+                'pink': '5',
+                'White': '7'}
     # color_ch = {'yellow': '黄',
     #             'blue': '蓝',
     #             'red': '红',
