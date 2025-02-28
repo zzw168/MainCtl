@@ -481,9 +481,12 @@ def deal_rank(integration_qiu_array):
                     if result_count >= max_area_count - balls_count - 6:
                         ranking_array[r_index][8] += 1
                         if ranking_array[r_index][8] > max_lap_count - 1:
-                            ranking_array[r_index][8] = 0
-                if action_area[0] >= max_area_count - balls_count and action_area[1] >= max_lap_count - 1:
-                    area_limit = balls_count + 2
+                            ranking_array[r_index][8] = max_lap_count - 1
+                if (action_area[0] >= max_area_count - balls_count - 30
+                        and action_area[1] >= max_lap_count - 1):
+                    area_limit = max_area_count
+                    for i in range(len(ranking_array)):
+                        ranking_array[i][8] = max_lap_count - 1
                 else:
                     area_limit = balls_count + 2
                 # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
@@ -840,6 +843,7 @@ class TcpResultThread(QThread):
     def run(self) -> None:
         global lottery_term
         global tcp_result_socket
+        global action_area
 
         tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcp_result_socket.bind(result_tcpServer_addr)
@@ -912,6 +916,11 @@ class TcpResultThread(QThread):
                                         self.send_type = ''
                                     else:
                                         self.run_flg = False
+                                    while PlanCmd_Thread.run_flg:
+                                        time.sleep(1)
+                                    action_area = [0, 0, 0]  # 初始化触发区域
+                                    PlanCmd_Thread.background_state = True
+                                    PlanCmd_Thread.run_flg = True
                                     ReStart_Thread.run_flg = True  # 1分钟后重启动作
                                 else:
                                     self.run_flg = False
@@ -1499,6 +1508,7 @@ class ReStartThread(QThread):
         global term
         global betting_start_time
         global betting_end_time
+        global action_area
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -1553,7 +1563,11 @@ class ReStartThread(QThread):
                 self.signal.emit(t)
             if ui.checkBox_restart.isChecked():
                 reset_ranking_array()  # 初始化排名，位置变量
+                while PlanCmd_Thread.run_flg:
+                    time.sleep(1)
+                # action_area = [0, 0, 0]  # 初始化触发区域
                 PlanCmd_Thread.run_flg = True
+
             print("循环启动！")
             self.run_flg = False
 
@@ -2160,7 +2174,7 @@ class ShootThread(QThread):
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         break
                     time_count += 1
-                    if time_count >= 10:
+                    if time_count >= 20:
                         self.signal.emit(fail("弹射上珠不够"))
 
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
@@ -2254,6 +2268,7 @@ class PlanCmdThread(QThread):
         self.run_flg = False
         self.cmd_next = False
         self.running = True
+        self.background_state = False
 
     def stop(self):
         self.run_flg = False
@@ -2264,7 +2279,7 @@ class PlanCmdThread(QThread):
         global action_area
         global ranking_time_start
         global lottery_term
-        global back_view
+
         axis_list = [1, 2, 4, 8, 16]
         while self.running:
             time.sleep(0.1)
@@ -2293,10 +2308,11 @@ class PlanCmdThread(QThread):
                         break
                     if plan_list[plan_index][0] != '1':  # 是否勾选,且在圈数范围内
                         continue
-                    if (((action_area[1] < int(float(plan_list[plan_index][1][0])) or  # 运行圈数在设定圈数范围内
-                          (float(plan_list[plan_index][1][0]) == 0))  # 或者设定圈数的值为 0 时，最后一圈执行
-                         and (float(plan_list[plan_index][1][0]) <= max_lap_count))
-                            or (float(plan_list[plan_index][1][0]) > max_lap_count and back_view)):
+                    if (((((action_area[1] < int(float(plan_list[plan_index][1][0]))  # 运行圈数在设定圈数范围内
+                           and (float(plan_list[plan_index][1][0]) >= 0))  # 或者设定圈数的值为 0 时，最后一圈执行
+                          or float(plan_list[plan_index][1][0]) == 0)
+                          and not self.background_state))
+                            or (float(plan_list[plan_index][1][0]) < 0 and self.background_state)):  # 背景动作
                         self.signal.emit(plan_index)  # 控制列表跟踪变色的信号
                         if (int(float(plan_list[plan_index][1][0])) == 0
                                 and action_area[1] < max_lap_count - 1):
@@ -2463,6 +2479,12 @@ class PlanCmdThread(QThread):
                                 print("场景数据出错！")
                                 self.signal.emit(fail("场景数据出错！"))
 
+                # 背景模式不循环
+                if self.background_state:
+                    self.background_state = False
+                    self.run_flg = False
+                    self.signal.emit(succeed("背景模式结束！"))
+                    continue
                 # 强制中断情况处理
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断情况下的动作
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
@@ -4865,8 +4887,18 @@ def stop_betting():
 def auto_shoot():  # 自动上珠
     global balls_start
     global ball_sort
+    global ranking_array
     if ui.checkBox_shoot_0.isChecked():
-        ball_sort[1][0] = []
+        ranking_array = []  # 排名数组
+        for row in range(0, len(init_array)):
+            ranking_array.append([])
+            for col in range(0, len(init_array[row])):
+                ranking_array[row].append(init_array[row][col])
+        ball_sort = []  # 位置寄存器
+        for row in range(0, max_area_count + 1):
+            ball_sort.append([])
+            for col in range(0, max_lap_count):
+                ball_sort[row].append([])
         balls_start = 0
         ui.lineEdit_balls_start.setText('0')
         ui.lineEdit_ball_start.setText('0')
@@ -4944,6 +4976,8 @@ def my_test():
     global term
     global z_ranking_res
     play_alarm()
+    PlanCmd_Thread.background_state = True
+    PlanCmd_Thread.run_flg = True
     # for i in range(98):
     #     ui.textBrowser_msg.append('这是第%s行' % i)
     # ScreenShot_Thread.run_flg = True
@@ -5398,7 +5432,6 @@ if __name__ == '__main__':
     flg_key_run = True  # 键盘控制标志
     axis_reset = False  # 轴复位标志
     flg_start = {'card': False, 's485': False, 'obs': False, 'ai': False, 'ai_end': False, 'server': False}  # 各硬件启动标志
-    back_view = False
 
     load_plan_yaml()
 
@@ -5483,8 +5516,8 @@ if __name__ == '__main__':
     ui.checkBox_all.stateChanged.connect(card_on_off_all)
     ui.pushButton_CardClose.clicked.connect(card_close_all)
 
-    ui.pushButton_start_game.clicked.connect(cmd_loop)
-    # ui.pushButton_start_game.clicked.connect(my_test)
+    # ui.pushButton_start_game.clicked.connect(cmd_loop)
+    ui.pushButton_start_game.clicked.connect(my_test)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
