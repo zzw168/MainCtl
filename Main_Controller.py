@@ -1729,7 +1729,7 @@ class PlanBallNumThread(QThread):
                             if num > balls_count - 2 and screen_sort:
                                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                                 screen_sort = False
-                            if num >= balls_count and ui.checkBox_Pass_Recognition_Start.isChecked():
+                            if num >= balls_count:
                                 break
                             # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
                             #     break
@@ -2156,7 +2156,7 @@ class ShootThread(QThread):
                 while self.run_flg:
                     time.sleep(1)
                     if ((ui.lineEdit_balls_auto.text().isdigit()
-                            and balls_start >= int(ui.lineEdit_balls_auto.text()))
+                         and balls_start >= int(ui.lineEdit_balls_auto.text()))
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         break
                     time_count += 1
@@ -2264,6 +2264,7 @@ class PlanCmdThread(QThread):
         global action_area
         global ranking_time_start
         global lottery_term
+        global back_view
         axis_list = [1, 2, 4, 8, 16]
         while self.running:
             time.sleep(0.1)
@@ -2290,9 +2291,12 @@ class PlanCmdThread(QThread):
                     if (not self.run_flg) or (not flg_start['card']):  # 强制停止线程
                         print('动作未开始！')
                         break
-                    if (plan_list[plan_index][0] == '1' and  # 是否勾选,且在圈数范围内
-                            (action_area[1] < int(float(plan_list[plan_index][1][0])) or  # 运行圈数在设定圈数范围内
-                             (int(float(plan_list[plan_index][1][0])) == 0))):  # 或者设定圈数的值为 0 时，最后一圈执行
+                    if plan_list[plan_index][0] != '1':  # 是否勾选,且在圈数范围内
+                        continue
+                    if (((action_area[1] < int(float(plan_list[plan_index][1][0])) or  # 运行圈数在设定圈数范围内
+                          (float(plan_list[plan_index][1][0]) == 0))  # 或者设定圈数的值为 0 时，最后一圈执行
+                         and (float(plan_list[plan_index][1][0]) <= max_lap_count))
+                            or (float(plan_list[plan_index][1][0]) > max_lap_count and back_view)):
                         self.signal.emit(plan_index)  # 控制列表跟踪变色的信号
                         if (int(float(plan_list[plan_index][1][0])) == 0
                                 and action_area[1] < max_lap_count - 1):
@@ -3618,14 +3622,14 @@ class MapLabel(QLabel):
                         index = len(ranking_array) * self.ball_space - p_num * self.ball_space
                 elif (ranking_array[num][6] >= max_area_count - balls_count + 1
                       and ranking_array[num][8] >= max_lap_count - 1  # 最后一圈处理
-                      and self.positions[p_num][0] > len(self.path_points) - p_num * self.ball_space - 10):
+                      and self.positions[p_num][0] > len(self.path_points) - p_num * self.ball_space - 20):
                     if p_num == 0:
                         index = len(self.path_points) - 1
                     else:
                         index = len(self.path_points) - 1 - p_num * self.ball_space
                 elif ranking_array[num][8] == action_area[1]:  # 同圈才运动
                     area_num = max_area_count - balls_count  # 跟踪区域数量
-                    p = int(len(self.path_points) * (ranking_array[num][6] / area_num)) - 1
+                    p = int(len(self.path_points) * (ranking_array[num][6] / area_num)) - 5
                     color = self.color_names[ranking_array[num][5]]
                     if p - self.positions[p_num][0] > 50:
                         self.speed = 3
@@ -3660,7 +3664,7 @@ class MapLabel(QLabel):
                     index = self.positions[p_num][0] + self.speed
                     if index > len(self.path_points) - self.ball_radius - 1:
                         index = len(self.path_points) - 1
-                if index <= len(self.path_points):
+                if index <= len(self.path_points) and ranking_array[num][8] < max_lap_count:
                     self.positions[p_num][0] = index
                     self.positions[p_num][1] = color
                     for color_index in range(len(init_array)):
@@ -5265,6 +5269,21 @@ class BallsNumUi(QDialog, Ui_Dialog_BallsNum):
 
 
 def balls_num_btn():
+    # reset_ranking_array()
+    global ball_sort
+    global balls_start
+    global ranking_array
+    ranking_array = []  # 排名数组
+    for row in range(0, len(init_array)):
+        ranking_array.append([])
+        for col in range(0, len(init_array[row])):
+            ranking_array[row].append(init_array[row][col])
+    ball_sort = []  # 位置寄存器
+    for row in range(0, max_area_count + 1):
+        ball_sort.append([])
+        for col in range(0, max_lap_count):
+            ball_sort[row].append([])
+    balls_start = 0
     BallsNumDialog.hide()
 
 
@@ -5379,6 +5398,7 @@ if __name__ == '__main__':
     flg_key_run = True  # 键盘控制标志
     axis_reset = False  # 轴复位标志
     flg_start = {'card': False, 's485': False, 'obs': False, 'ai': False, 'ai_end': False, 'server': False}  # 各硬件启动标志
+    back_view = False
 
     load_plan_yaml()
 
