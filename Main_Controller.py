@@ -4592,6 +4592,7 @@ class TestStatusThread(QThread):
     def run(self) -> None:
         global flg_start
         while self.running:
+            time.sleep(1)
             if not self.run_flg:
                 continue
             cardnum = ui.lineEdit_CardNo.text()
@@ -4634,6 +4635,14 @@ class TestStatusThread(QThread):
                             flg_start['ai'] = True
                 except:
                     flg_start['ai'] = False
+
+            import os
+
+            path1 = ui.lineEdit_saidao_Path.text()
+            path2 = ui.lineEdit_upload_Path.text()
+            folder_name = os.path.basename(path1)
+            folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
+            limit_folder_size(folder_path, max_files=5000)  # 限制文件夹数量
 
             self.signal.emit('标志')
 
