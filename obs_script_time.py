@@ -43,7 +43,7 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.wfile.write(response_text.encode('utf-8'))
             elif path == '/reset':
                 running = False
-                restart_time()
+                reset_time()
                 self.send_response(200)
                 self.send_header('Content-type', 'text/html')
                 self.end_headers()
@@ -56,10 +56,23 @@ class RequestHandler(BaseHTTPRequestHandler):
                 self.end_headers()
                 response_text = f"End Time: {end_time}"
                 # Handle request parameters
+                period = ' '
+                if 'period' in query_params:
+                    period = str(query_params['period'][0])
+                update_period_text(period)
+                self.wfile.write(b"Send Term")
+            elif path == '/term':
+
+                running = False
+                self.send_response(200)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+                response_text = f"End Time: {end_time}"
+                # Handle request parameters
                 term = ' '
                 if 'term' in query_params:
                     term = str(query_params['term'][0])
-                update_period_text(term)
+                update_term_text(term)
                 self.wfile.write(b"Send Term")
             else:
                 self.send_response(404)
@@ -158,7 +171,7 @@ def update_timer():
                 seconds = 999
                 milliseconds = 99
 
-            timer_text = f"{seconds:02d}’{milliseconds:02d}"
+            timer_text = f"{seconds:02d}.{milliseconds:02d}”"
 
             source = obs.obs_get_source_by_name(source_name)
             if source:
@@ -183,7 +196,7 @@ def stop_timer(timenow):
             seconds = 99
             milliseconds = 99
         print(f"Error in update_timer: {seconds}")
-        timer_text = f"{seconds:02d}’{milliseconds:02d}"
+        timer_text = f"{seconds:02d}.{milliseconds:02d}”"
 
         source = obs.obs_get_source_by_name(source_name)
         if source:
@@ -200,7 +213,7 @@ def stop_timer(timenow):
 
 def reset_time():
     global source_name
-    timer_text = "00’00"
+    timer_text = "00.00”"
     source = obs.obs_get_source_by_name(source_name)
     if source:
         settings = obs.obs_data_create()
@@ -246,7 +259,30 @@ def update_gmt_text():
 
 # 修改文本来源的函数
 def update_period_text(new_text):
-    source_name = "period"  # 这里是你创建的来源名称
+    source_name = "计时器"  # 这里是你创建的来源名称
+
+    # 获取该来源
+    source = obs.obs_get_source_by_name(source_name)
+    if source is not None:
+        # 获取该来源的当前设置
+        settings = obs.obs_source_get_settings(source)
+
+        # 修改文本内容
+        obs.obs_data_set_string(settings, "text", new_text)
+
+        # 应用新的设置
+        obs.obs_source_update(source, settings)
+
+        # 释放资源
+        obs.obs_data_release(settings)
+        obs.obs_source_release(source)
+    else:
+        print(f"来源 {source_name} 未找到")
+
+
+# 修改文本来源的函数
+def update_term_text(new_text):
+    source_name = "期号"  # 这里是你创建的来源名称
 
     # 获取该来源
     source = obs.obs_get_source_by_name(source_name)

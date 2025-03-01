@@ -337,7 +337,7 @@ def obs_save_image():
             resp = cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
                                                      '%s/%s.jpg' % (save_path, time.time()), 1920,
                                                      1080, 100)
-            time.sleep(2)
+            time.sleep(1)
 
 
 def obs_save_thread():
@@ -440,6 +440,7 @@ def rtsp_save_image():
                 cap.release()
                 print(f'无法打开摄像头')
                 return
+            time.sleep(1)
 
 
 def rtsp_save_thread():
@@ -484,19 +485,19 @@ def deal_rank(integration_qiu_array):
                             ranking_array[r_index][8] = max_lap_count - 1
                 if (action_area[0] >= max_area_count - balls_count - 30
                         and action_area[1] >= max_lap_count - 1):
-                    area_limit = max_area_count
+                    area_limit = max_area_count / 2
                     for i in range(len(ranking_array)):
                         ranking_array[i][8] = max_lap_count - 1
                 else:
-                    area_limit = balls_count + 2
+                    area_limit = max_area_count / 4
                 # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < 5)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
                             (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                                     # or ranking_array[0][6] - ranking_array[r_index][6] > 5
                             ))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
-                        or (q_item[6] < area_limit and
-                            ranking_array[r_index][6] >= max_area_count - balls_count - area_limit)):  # 跨圈情况
+                        or (q_item[6] < area_limit + 10 and
+                            ranking_array[r_index][6] >= max_area_count - balls_count - area_limit - 10)):  # 跨圈情况
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_array[r_index][9] = 1
@@ -806,8 +807,6 @@ class TcpRankingThread(QThread):
                                 if self.send_time_flg:
                                     d = {"mc": self.send_time_data[0], 'data': self.send_time_data[1],
                                          'type': 'time'}
-                                    if self.send_time_data[0] == 1:
-                                        requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
                                 else:
                                     d = {'data': z_ranking_res[0: balls_count], 'type': 'pm'}
                                     # time.sleep(1)
@@ -873,6 +872,7 @@ class TcpResultThread(QThread):
                                             {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
                                 print(datalist)
                                 ws.send(json.dumps(datalist))
+
                                 if not ui.radioButton_test_game.isChecked():  # 非测试模式
                                     result_data = {"raceTrackID": Track_number, "term": str(term),
                                                    "actualResultOpeningTime": betting_end_time,
@@ -900,12 +900,13 @@ class TcpResultThread(QThread):
                                     except:
                                         self.signal.emit(fail('post_result 上传结果错误！'))
                                         print('上传结果错误！')
+
                                     # 获取录屏状态
                                     recording_status = cl_request.get_record_status()
                                     # 检查是否正在录屏
                                     if recording_status.output_active:  # 确保键名正确
                                         video_name = cl_request.stop_record()  # 关闭录像
-                                    lottery_term[7] = video_name.output_path  # 视频保存路径
+                                        lottery_term[7] = video_name.output_path  # 视频保存路径
                                     lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
                                     end_time = int(time.time())
                                     lottery_term[8] = str(end_time)
@@ -913,6 +914,12 @@ class TcpResultThread(QThread):
                                     # lottery2sql()  # 保存数据库
                                     lottery2yaml()  # 保存数据
                                 self.signal.emit(succeed('第%s期 结束！' % term))
+                                # 获取录屏状态
+                                recording_status = cl_request.get_record_status()
+                                # 检查是否正在录屏
+                                if recording_status.output_active:  # 确保键名正确
+                                    time.sleep(3)
+                                    cl_request.stop_record()  # 关闭录像
                                 if ui.checkBox_restart.isChecked():
                                     if not ui.radioButton_test_game.isChecked():
                                         self.send_type = ''
@@ -1531,7 +1538,7 @@ class ReStartThread(QThread):
                             continue
                     self.signal.emit('term_ok')
                     term = response['term']
-                    requests.get(url="%s/period?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
+                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
                     tcp_result_thread.send_type = 'time'
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
@@ -1734,8 +1741,6 @@ class PlanBallNumThread(QThread):
                         # print(res, value)
                         if res == 0:
                             num = int(value[0] / 2)
-                            # if num == 1:
-                            #     requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
                             if num != num_old:
                                 t = time.time()
                                 if num_old < len(z_ranking_time):  # 保存每个球到达终点的时间
@@ -1743,6 +1748,10 @@ class PlanBallNumThread(QThread):
                                     # if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
                                     tcp_ranking_thread.send_time_data = [num, '%s"' % z_ranking_time[num - 1]]
                                     tcp_ranking_thread.send_time_flg = True
+                                if num == 1:
+                                    requests.get(
+                                        url='%s/period?period=%s"' % (obs_script_addr, z_ranking_time[num - 1]))
+                                    self.signal.emit('录终点图')
                                 self.signal.emit(num)
                                 num_old = num
                             if num > balls_count - 2 and screen_sort:
@@ -1810,6 +1819,10 @@ class PlanBallNumThread(QThread):
 def PlanBallNumsignal_accept(msg):
     if isinstance(msg, int):
         ui.lineEdit_ball_end.setText(str(msg))
+    elif '录终点图' in msg:
+        if not ui.checkBox_test.isChecked():  # 非测试模式:
+            ui.checkBox_saveImgs_main.setChecked(True)
+            ui.checkBox_saveImgs_monitor.setChecked(True)
     elif '人工检查' in msg:
         TrapBallDialog.show()
         if ui.radioButton_start_betting.isChecked():
@@ -1858,6 +1871,7 @@ class ObsEndThread(QThread):
             if not (self.screen_flg and self.ball_flg):
                 continue
             print('结算页面运行！')
+            self.signal.emit('录图结束')
             num = 0
             num_end = ui.lineEdit_time_send_result.text()
             if num_end.isdigit():
@@ -1888,6 +1902,9 @@ class ObsEndThread(QThread):
 
 def ObsEndsignal_accept(msg):
     print(msg)
+    if '录图结束' in msg:
+        ui.checkBox_saveImgs_main.setChecked(False)
+        ui.checkBox_saveImgs_monitor.setChecked(False)
 
 
 '''
@@ -2330,13 +2347,14 @@ class PlanCmdThread(QThread):
                                 else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
-                                    if flg_start['obs']:  # 非测试模式:
+                                    if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
                                         try:
                                             cl_request.start_record()  # 开启OBS录像
                                         except:
                                             print('OBS脚本开始错误！')
-                                    ranking_time_start = time.time()  # 每个球的起跑时间
+
                                     requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
+                                    ranking_time_start = time.time()  # 每个球的起跑时间
 
                                     if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                                         post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
@@ -3235,10 +3253,11 @@ def cmd_run():
     save_plan_yaml()
     plan_refresh()
     reset_ranking_array()
-    if not ui.checkBox_all.isChecked():
-        ui.checkBox_all.setChecked(True)
+    if not ui.checkBox_test.isChecked():
+        if not ui.checkBox_all.isChecked():
+            ui.checkBox_all.setChecked(True)
+        auto_shoot()  # 自动上珠
     ui.radioButton_test_game.setChecked(True)  # 模拟模式
-    auto_shoot()  # 自动上珠
     PlanCmd_Thread.run_flg = True
 
 
@@ -3655,7 +3674,7 @@ class MapLabel(QLabel):
                         index = len(ranking_array) * self.ball_space
                     else:
                         index = len(ranking_array) * self.ball_space - p_num * self.ball_space
-                elif (ranking_array[num][6] >= max_area_count - balls_count + 1
+                elif (ranking_array[num][6] >= max_area_count - balls_count - 2
                       and ranking_array[num][8] >= max_lap_count - 1  # 最后一圈处理
                       and self.positions[p_num][0] > len(self.path_points) - p_num * self.ball_space - 20):
                     if p_num == 0:
@@ -3670,13 +3689,16 @@ class MapLabel(QLabel):
                         self.speed = 3
                     elif 30 >= p - self.positions[p_num][0] >= 25:
                         self.speed = 2
-                    elif p < self.positions[p_num][0]:
+                    elif p < self.positions[p_num][0] and (self.positions[p_num][0] < len(self.path_points) / 3):
                         self.speed = 0
+                    elif p < self.positions[p_num][0] and (self.positions[p_num][0] > len(self.path_points) / 3 * 2):
+                        self.speed = 0
+                        self.positions[p_num][0] = p
                     else:
                         self.speed = 1
-                    if self.positions[p_num][0] > len(self.path_points) - self.ball_radius - 1:
-                        index = 0
-                    elif p_num == 0:
+                    # if self.positions[p_num][0] > len(self.path_points) - self.ball_radius * 5 - 1:
+                    #     index = 0
+                    if p_num == 0:
                         index = self.positions[p_num][0] + self.speed
                     elif (0 < self.positions[p_num - 1][0] - self.positions[p_num][0] < self.ball_space
                           and int(len(self.path_points) * (5 / area_num)) < self.positions[p_num][0] < len(
@@ -3692,13 +3714,17 @@ class MapLabel(QLabel):
                         self.speed = 3
                     elif 30 >= p - self.positions[p_num][0] >= 25:
                         self.speed = 2
-                    elif p < self.positions[p_num][0]:
+                    elif p < self.positions[p_num][0] and (self.positions[p_num][0] < len(self.path_points) / 3):
                         self.speed = 0
+                    elif p < self.positions[p_num][0] and (self.positions[p_num][0] > len(self.path_points) / 3 * 2):
+                        self.speed = 0
+                        self.positions[p_num][0] = p
                     else:
                         self.speed = 1
                     index = self.positions[p_num][0] + self.speed
                     if index > len(self.path_points) - self.ball_radius - 1:
                         index = len(self.path_points) - 1
+                    # index = 0
                 if index <= len(self.path_points) and ranking_array[num][8] < max_lap_count:
                     self.positions[p_num][0] = index
                     self.positions[p_num][1] = color
