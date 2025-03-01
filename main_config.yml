@@ -128,7 +128,7 @@ init_array:
 lineEdit_alarm: '10'
 lineEdit_end: '5'
 lineEdit_end1_Path: D:/数据/瀑布_终点/obs
-lineEdit_end2_Path: D:/数据/瀑布_终点/rtsp
+lineEdit_end2_Path: D:/rtsp
 lineEdit_saidao_Path: Z:/瀑布_赛道
 lineEdit_shake: '11'
 lineEdit_shoot: '1'

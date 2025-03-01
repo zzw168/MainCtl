@@ -430,9 +430,9 @@ def rtsp_save_image():
                 ret, frame = cap.read()
                 cap.release()
                 if ret:
-                    if os.path.exists(ui.lineEdit_upload_Path.text()):
-                        f = '%s/%s.jpg' % (save_path, time.time())
-                        cv2.imwrite(f, frame)
+                    f = '%s/%s.jpg' % (save_path, int(time.time()))
+                    print('~~~~~~~~~~~~~~~~~~~~~~~~~~%s' % f)
+                    cv2.imwrite(f, frame)
                 else:
                     print("无法读取视频帧")
                     return
