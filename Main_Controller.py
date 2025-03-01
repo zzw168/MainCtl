@@ -1525,14 +1525,13 @@ class ReStartThread(QThread):
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
                     if term == response['term']:
-                        self.signal.emit('term')
+                        self.signal.emit('term_p')
                         if not ui.checkBox_continue_term.isChecked():
                             time.sleep(3)
                             continue
-                        else:
-                            ui.checkBox_continue_term.setChecked(False)
+                    self.signal.emit('term_ok')
                     term = response['term']
-                    requests.get(url="%s/period?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本计时
+                    requests.get(url="%s/period?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
                     tcp_result_thread.send_type = 'time'
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
@@ -1577,9 +1576,13 @@ class ReStartThread(QThread):
 def restartsignal_accept(msg):
     if isinstance(msg, bool):
         lottery_data2table()
-    # print(msg)
-    elif msg == 'term':
+    elif msg == 'term_ok':
+        ui.checkBox_continue_term.setChecked(False)
+        ui.groupBox_term.setStyleSheet("QGroupBox { background-color: red; }")  # 让 GroupBox 变红
+        ui.pushButton_term.setText(str(term))
+    elif msg == 'term_p':
         ui.lineEdit_term.setText(str(term))
+        ui.groupBox_term.setStyleSheet("")  # 让 GroupBox 变回原色
         ui.textBrowser_msg.append(fail('期号重复，3秒后重新获取！'))
         scroll_to_bottom(ui.textBrowser_msg)
     elif msg == 'auto_shoot':
@@ -4901,6 +4904,11 @@ def stop_betting():
     ui.checkBox_restart.setChecked(False)
     ReStart_Thread.run_flg = False  # 停止循环
     post_status(False, Track_number)
+    ui.groupBox_term.setStyleSheet('')
+
+
+def test_betting():
+    ui.groupBox_term.setStyleSheet('')
 
 
 def auto_shoot():  # 自动上珠
@@ -5890,7 +5898,7 @@ if __name__ == '__main__':
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
-    # ui.radioButton_test_game.clicked.connect(lambda: ui.checkBox_test.setChecked(True))
+    ui.radioButton_test_game.clicked.connect(test_betting)  # 模拟
     ui.checkBox_black_screen.checkStateChanged.connect(black_screen)
 
     ui.pushButton_ready.clicked.connect(card_start)
