@@ -305,8 +305,8 @@ def get_picture(scence_current):
         flg_start['obs'] = False
         return ['', '[1]', 'obs']
     img = resp.image_data[22:]
-    # if os.path.exists(ui.lineEdit_Image_Path.text()):
-    #     img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
+    # if os.path.exists(ui.lineEdit_upload_Path.text()):
+    #     img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_upload_Path.text(), lottery_term[0], int(time.time()))
     #     str2image_file(img, img_file)  # 保存图片
     form_data = {
         'CameraType': 'obs',
@@ -317,8 +317,8 @@ def get_picture(scence_current):
         res = requests.post(url=recognition_addr, data=form_data, timeout=8)
         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
         # r_img = r_list[0]
-        # if os.path.exists(ui.lineEdit_Image_Path.text()):
-        #     image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
+        # if os.path.exists(ui.lineEdit_upload_Path.text()):
+        #     image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_upload_Path.text(), lottery_term[0]), 'wb')
         #     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
         #     image_json.close()
         flg_start['ai_end'] = True
@@ -331,11 +331,11 @@ def get_picture(scence_current):
 
 
 def obs_save_image():
-    save_path = '%s/obs/' % ui.lineEdit_Image_Path.text()
+    save_path = ui.lineEdit_end1_Path.text()
     if os.path.exists(save_path):
         while ui.checkBox_saveImgs_main.isChecked():
             resp = cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
-                                                     '%s%s.jpg' % (save_path, time.time()), 1920,
+                                                     '%s/%s.jpg' % (save_path, time.time()), 1920,
                                                      1080, 100)
             time.sleep(2)
 
@@ -373,9 +373,9 @@ def get_rtsp(rtsp_url):
         ret, frame = cap.read()
         cap.release()
         if ret:
-            # if os.path.exists(ui.lineEdit_Image_Path.text()):
+            # if os.path.exists(ui.lineEdit_upload_Path.text()):
             #     lottery_term[6] = '%s/rtsp_%s_%s.jpg' % (
-            #         ui.lineEdit_Image_Path.text(), lottery_term[0], int(time.time()))
+            #         ui.lineEdit_upload_Path.text(), lottery_term[0], int(time.time()))
             #     cv2.imwrite(lottery_term[6], frame)
             success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
@@ -390,8 +390,8 @@ def get_rtsp(rtsp_url):
                     res = requests.post(url=recognition_addr, data=form_data, timeout=8)
                     r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
                     # r_img = r_list[0]
-                    # if os.path.exists(ui.lineEdit_Image_Path.text()):
-                    #     image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_Image_Path.text(), lottery_term[0]), 'wb')
+                    # if os.path.exists(ui.lineEdit_upload_Path.text()):
+                    #     image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_upload_Path.text(), lottery_term[0]), 'wb')
                     #     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
                     #     image_json.close()
                     flg_start['ai_end'] = True
@@ -416,7 +416,7 @@ def get_rtsp(rtsp_url):
 
 
 def rtsp_save_image():
-    save_path = '%s/rtsp/' % ui.lineEdit_Image_Path.text()
+    save_path = ui.lineEdit_end2_Path.text()
     if os.path.exists(save_path):
         try:
             ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
@@ -430,8 +430,8 @@ def rtsp_save_image():
                 ret, frame = cap.read()
                 cap.release()
                 if ret:
-                    if os.path.exists(ui.lineEdit_Image_Path.text()):
-                        f = '%s%s.jpg' % (save_path, time.time())
+                    if os.path.exists(ui.lineEdit_upload_Path.text()):
+                        f = '%s/%s.jpg' % (save_path, time.time())
                         cv2.imwrite(f, frame)
                 else:
                     print("无法读取视频帧")
@@ -806,6 +806,8 @@ class TcpRankingThread(QThread):
                                 if self.send_time_flg:
                                     d = {"mc": self.send_time_data[0], 'data': self.send_time_data[1],
                                          'type': 'time'}
+                                    if self.send_time_data[0] == 1:
+                                        requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
                                 else:
                                     d = {'data': z_ranking_res[0: balls_count], 'type': 'pm'}
                                     # time.sleep(1)
@@ -1729,8 +1731,8 @@ class PlanBallNumThread(QThread):
                         # print(res, value)
                         if res == 0:
                             num = int(value[0] / 2)
-                            if num == 1:
-                                requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
+                            # if num == 1:
+                            #     requests.get(url="%s/stop" % obs_script_addr)  # 发送信号，停止OBS计时
                             if num != num_old:
                                 t = time.time()
                                 if num_old < len(z_ranking_time):  # 保存每个球到达终点的时间
@@ -1775,7 +1777,7 @@ class PlanBallNumThread(QThread):
                             tcp_ranking_thread.send_time_data = [index + 1, 'TRAP']
                             tcp_ranking_thread.send_time_flg = True
                             time.sleep(0.5)
-                    save_path = '%s' % ui.lineEdit_Image_Path.text()
+                    save_path = '%s' % ui.lineEdit_upload_Path.text()
                     if os.path.exists(save_path):
                         lottery_term[6] = '%s/%s.jpg' % (save_path, term)
                         resp = cl_request.save_source_screenshot(ui.lineEdit_scene_name.text(), "jpg",
@@ -2309,8 +2311,8 @@ class PlanCmdThread(QThread):
                     if plan_list[plan_index][0] != '1':  # 是否勾选,且在圈数范围内
                         continue
                     if (((((action_area[1] < int(float(plan_list[plan_index][1][0]))  # 运行圈数在设定圈数范围内
-                           and (float(plan_list[plan_index][1][0]) >= 0))  # 或者设定圈数的值为 0 时，最后一圈执行
-                          or float(plan_list[plan_index][1][0]) == 0)
+                            and (float(plan_list[plan_index][1][0]) >= 0))  # 或者设定圈数的值为 0 时，最后一圈执行
+                           or float(plan_list[plan_index][1][0]) == 0)
                           and not self.background_state))
                             or (float(plan_list[plan_index][1][0]) < 0 and self.background_state)):  # 背景动作
                         self.signal.emit(plan_index)  # 控制列表跟踪变色的信号
@@ -2325,18 +2327,18 @@ class PlanCmdThread(QThread):
                                 else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
-                                    requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
+                                    if flg_start['obs']:  # 非测试模式:
+                                        try:
+                                            cl_request.start_record()  # 开启OBS录像
+                                        except:
+                                            print('OBS脚本开始错误！')
                                     ranking_time_start = time.time()  # 每个球的起跑时间
+                                    requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
+
                                     if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                                         post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
                                         lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                         self.signal.emit('进行中')  # 修改结果列表中的赛事状态
-                                        if flg_start['obs']:  # 非测试模式:
-                                            try:
-                                                cl_request.start_record()  # 开启OBS录像
-                                            except:
-                                                print('OBS脚本开始错误！')
-
                             if (plan_list[plan_index][15][0].isdigit()
                                     and int(plan_list[plan_index][15][0]) > 0):  # 播放音效
                                 tb_audio = ui.tableWidget_Audio
@@ -3053,7 +3055,10 @@ def save_main_yaml():
                 main_all['map_picture'] = ui.lineEdit_map_picture.text()
                 main_all['map_size'] = ui.lineEdit_map_size.text()
                 main_all['map_line'] = ui.lineEdit_map_line.text()
-                main_all['Image_Path'] = ui.lineEdit_Image_Path.text()
+                main_all['lineEdit_upload_Path'] = ui.lineEdit_upload_Path.text()
+                main_all['lineEdit_saidao_Path'] = ui.lineEdit_saidao_Path.text()
+                main_all['lineEdit_end1_Path'] = ui.lineEdit_end1_Path.text()
+                main_all['lineEdit_end2_Path'] = ui.lineEdit_end2_Path.text()
                 main_all['scene_name'] = ui.lineEdit_scene_name.text()
                 main_all['source_ranking'] = ui.lineEdit_source_ranking.text()
                 main_all['source_picture'] = ui.lineEdit_source_picture.text()
@@ -3143,7 +3148,10 @@ def load_main_yaml():
         ui.lineEdit_map_picture.setText(main_all['map_picture'])
         ui.lineEdit_map_size.setText(main_all['map_size'])
         ui.lineEdit_map_line.setText(main_all['map_line'])
-        ui.lineEdit_Image_Path.setText(main_all['Image_Path'])
+        ui.lineEdit_upload_Path.setText(main_all['lineEdit_upload_Path'])
+        ui.lineEdit_saidao_Path.setText(main_all['lineEdit_saidao_Path'])
+        ui.lineEdit_end1_Path.setText(main_all['lineEdit_end1_Path'])
+        ui.lineEdit_end2_Path.setText(main_all['lineEdit_end2_Path'])
         ui.lineEdit_scene_name.setText(main_all['scene_name'])
         ui.lineEdit_source_ranking.setText(main_all['source_ranking'])
         ui.lineEdit_source_picture.setText(main_all['source_picture'])
@@ -3422,10 +3430,12 @@ def save_images():
         saveBackground = 1  # 0 无球录图标志
     form_data = {
         'saveImgRun': saveImgRun,
+        'requestType': 'saveImg',
         'saveBackground': saveBackground,
         'saveImgNum': '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15',
         # 'saveImgNum': '1',
-        # 'saveImgPath': 'D:/saidao',
+        # 'saveImgPath': r'\\%s\%s' % (local_ip[2], ui.lineEdit_saidao_Path.text()),
+        'saveImgPath': r'%s' % ui.lineEdit_saidao_Path.text(),
     }
     try:
         for index in range(len(wakeup_addr)):
@@ -4912,12 +4922,14 @@ def auto_shoot():  # 自动上珠
 
 
 def query_sql():
+    global local_ip
     # 创建数据库连接
     try:
         conn = create_connection("192.168.0.80", "root", "root", "dataini")
 
         if conn:
             local_ip = tool_unit.check_network_with_ip()
+            print(local_ip)
             # 查询配置表的 SQL 语句
             user_value = local_ip[1]  # 网卡号
             key_value = "电压输出%"  # 读取字段
@@ -5805,6 +5817,8 @@ if __name__ == '__main__':
 
     "**************************摄像头结果_结束*****************************"
     "**************************参数设置_开始*****************************"
+    local_ip = []
+
     ui.lineEdit_UdpServer_Port.editingFinished.connect(save_main_yaml)
     ui.lineEdit_TcpServer_Port.editingFinished.connect(save_main_yaml)
     ui.lineEdit_result_tcpServer_port.editingFinished.connect(save_main_yaml)
@@ -5821,7 +5835,10 @@ if __name__ == '__main__':
     ui.lineEdit_map_picture.editingFinished.connect(save_main_yaml)
     ui.lineEdit_map_size.editingFinished.connect(save_main_yaml)
     ui.lineEdit_map_line.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_Image_Path.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_upload_Path.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_saidao_Path.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_end1_Path.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_end2_Path.editingFinished.connect(save_main_yaml)
     ui.lineEdit_scene_name.editingFinished.connect(save_main_yaml)
     ui.lineEdit_source_ranking.editingFinished.connect(save_main_yaml)
     ui.lineEdit_source_picture.editingFinished.connect(save_main_yaml)

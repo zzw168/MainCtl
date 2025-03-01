@@ -1,4 +1,3 @@
-Image_Path: E:/saidao/image
 Track_number: L
 balls_count: '8'
 cardNo: '13'
@@ -128,12 +127,16 @@ init_array:
   - 0
 lineEdit_alarm: '10'
 lineEdit_end: '5'
+lineEdit_end1_Path: D:/数据/瀑布_终点/obs
+lineEdit_end2_Path: D:/数据/瀑布_终点/rtsp
+lineEdit_saidao_Path: Z:/瀑布_赛道
 lineEdit_shake: '11'
 lineEdit_shoot: '1'
 lineEdit_shoot_2: '2'
 lineEdit_shoot_3: '4'
 lineEdit_start: '3'
 lineEdit_start_count: '13'
+lineEdit_upload_Path: D:/数据/上报
 map_line: ./img/12_瀑布.json
 map_picture: ./img/12_瀑布.jpg
 map_size: '680'

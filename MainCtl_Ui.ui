@@ -6148,7 +6148,7 @@
                <property name="maximumSize">
                 <size>
                  <width>600</width>
-                 <height>130</height>
+                 <height>300</height>
                 </size>
                </property>
                <property name="font">
@@ -6159,20 +6159,28 @@
                 </font>
                </property>
                <property name="title">
-                <string>结果图片</string>
+                <string>结果图片保存</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_62">
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>9</number>
-                </property>
-                <item row="0" column="1" colspan="2">
-                 <widget class="QLineEdit" name="lineEdit_Image_Path">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_86">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>赛道：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEdit_saidao_Path">
                   <property name="minimumSize">
                    <size>
-                    <width>300</width>
+                    <width>100</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -6187,15 +6195,15 @@
                    <string/>
                   </property>
                   <property name="text">
-                   <string>E:/saidao/image</string>
+                   <string>Z:/数据/瀑布_赛道</string>
                   </property>
                   <property name="readOnly">
                    <bool>false</bool>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_86">
+                <item row="0" column="2">
+                 <widget class="QLabel" name="label_94">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -6204,11 +6212,117 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>保存路径：</string>
+                   <string>终点1：</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0" colspan="3">
+                <item row="0" column="3">
+                 <widget class="QLineEdit" name="lineEdit_end1_Path">
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>D:/数据/瀑布_终点/obs</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_93">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>上报：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="lineEdit_upload_Path">
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>D:/数据/上报</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="2">
+                 <widget class="QLabel" name="label_95">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>终点2：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3">
+                 <widget class="QLineEdit" name="lineEdit_end2_Path">
+                  <property name="minimumSize">
+                   <size>
+                    <width>100</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>D:/数据/瀑布_终点/rtsp</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0" colspan="4">
                  <widget class="QGroupBox" name="groupBox_36">
                   <property name="minimumSize">
                    <size>
@@ -7978,7 +8092,7 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>监控摄像头</string>
+                   <string>网络摄像头</string>
                   </property>
                  </widget>
                 </item>
