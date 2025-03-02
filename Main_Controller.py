@@ -485,7 +485,7 @@ def deal_rank(integration_qiu_array):
                             ranking_array[r_index][8] = max_lap_count - 1
                 if (action_area[0] >= max_area_count - balls_count - 30
                         and action_area[1] >= max_lap_count - 1):
-                    area_limit = max_area_count / 2
+                    area_limit = max_area_count / 3
                     for i in range(len(ranking_array)):
                         ranking_array[i][8] = max_lap_count - 1
                 else:
@@ -497,7 +497,7 @@ def deal_rank(integration_qiu_array):
                                     # or ranking_array[0][6] - ranking_array[r_index][6] > 5
                             ))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
                         or (q_item[6] < max_area_count / 3 and
-                            ranking_array[r_index][6] >= max_area_count - balls_count - area_limit - 10)):  # 跨圈情况
+                            ranking_array[r_index][6] >= max_area_count / 3 * 2)):  # 跨圈情况
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_array[r_index][9] = 1
@@ -545,6 +545,8 @@ def sort_ranking():
             continue
         if not (ranking_array[i][5] in ball_sort[ranking_array[i][6]][ranking_array[i][8]]):
             ball_sort[ranking_array[i][6]][ranking_array[i][8]].append(copy.deepcopy(ranking_array[i][5]))  # 添加寄存器球排序
+            if len(ball_sort[max_area_count][max_lap_count-1]) >= 1:
+                break
     # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
     for i in range(0, len(ranking_array)):
         for j in range(0, len(ranking_array) - i - 1):
@@ -964,6 +966,8 @@ def tcpsignal_accept(msg):
         tb_result.item(0, 8).setText(lottery_term[8])  # 存档时间
     # print(msg)
     else:
+        if '结束' in msg:
+            ui.groupBox_term.setStyleSheet("")  # 让 GroupBox 变黄
         ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser_msg)
         ui.textBrowser_background_data.append(msg)
@@ -1558,6 +1562,8 @@ class ReStartThread(QThread):
                     self.run_flg = False
                     continue
             else:
+                term = str(int(term) + 1)
+                self.signal.emit('测试期号')
                 countdown = ui.lineEdit_Time_Restart_Ranking.text()
             if countdown.isdigit():
                 countdown = int(countdown)
@@ -1583,6 +1589,9 @@ class ReStartThread(QThread):
 def restartsignal_accept(msg):
     if isinstance(msg, bool):
         lottery_data2table()
+    elif msg == '测试期号':
+        ui.groupBox_term.setStyleSheet("QGroupBox { background-color: yellow; }")  # 让 GroupBox 变黄
+        ui.pushButton_term.setText(str(term))
     elif msg == 'term_ok':
         ui.checkBox_continue_term.setChecked(False)
         ui.groupBox_term.setStyleSheet("QGroupBox { background-color: red; }")  # 让 GroupBox 变红
@@ -1820,7 +1829,7 @@ def PlanBallNumsignal_accept(msg):
     if isinstance(msg, int):
         ui.lineEdit_ball_end.setText(str(msg))
     elif '录终点图' in msg:
-        if not ui.checkBox_test.isChecked():  # 非测试模式:
+        if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():  # 非测试模式:
             ui.checkBox_saveImgs_main.setChecked(True)
             ui.checkBox_saveImgs_monitor.setChecked(True)
     elif '人工检查' in msg:
@@ -1903,8 +1912,9 @@ class ObsEndThread(QThread):
 def ObsEndsignal_accept(msg):
     print(msg)
     if '录图结束' in msg:
-        ui.checkBox_saveImgs_main.setChecked(False)
-        ui.checkBox_saveImgs_monitor.setChecked(False)
+        if ui.checkBox_saveImgs_auto.isChecked():
+            ui.checkBox_saveImgs_main.setChecked(False)
+            ui.checkBox_saveImgs_monitor.setChecked(False)
 
 
 '''
@@ -2057,11 +2067,21 @@ def ScreenShotsignal_accept(msg):
         pixmap.loadFromData(img)
         pixmap = pixmap.scaled(int(400 * 1.8), int(225 * 1.8))
         if msg[2] == 'obs':
+            painter = QPainter(pixmap)
+            painter.setFont(QFont("Arial", 50, QFont.Bold))  # 设置字体
+            painter.setPen(QColor(255, 0, 0))  # 设定颜色（红色）
+            painter.drawText(10, 60, "1")  # (x, y, "文本")
+            painter.end()  # 结束绘制
             ui.lineEdit_Main_Camera.setText(str(main_Camera))
             if ui.checkBox_main_camera.isChecked():
                 main_camera_ui.label_picture.setPixmap(pixmap)
             ui.label_main_picture.setPixmap(pixmap)
         elif msg[2] == 'monitor':
+            painter = QPainter(pixmap)
+            painter.setFont(QFont("Arial", 50, QFont.Bold))  # 设置字体
+            painter.setPen(QColor(0, 255, 0))  # 设定颜色（红色）
+            painter.drawText(10, 60, "2")  # (x, y, "文本")
+            painter.end()  # 结束绘制
             ui.lineEdit_Backup_Camera.setText(str(monitor_Camera))
             if ui.checkBox_monitor_cam.isChecked():
                 monitor_camera_ui.label_picture.setPixmap(pixmap)
@@ -3258,6 +3278,7 @@ def cmd_run():
             ui.checkBox_all.setChecked(True)
         auto_shoot()  # 自动上珠
     ui.radioButton_test_game.setChecked(True)  # 模拟模式
+    ui.checkBox_saveImgs_auto.setChecked(True)
     PlanCmd_Thread.run_flg = True
 
 
@@ -3279,6 +3300,7 @@ def cmd_stop():
     ReStart_Thread.run_flg = False  # 停止循环
     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
     Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+    ui.pushButton_CardStop_2.setChecked(False)
     sc.card_stop()  # 立即停止
 
 
@@ -4661,14 +4683,12 @@ class TestStatusThread(QThread):
                             flg_start['ai'] = True
                 except:
                     flg_start['ai'] = False
-
-            import os
-
-            path1 = ui.lineEdit_saidao_Path.text()
-            path2 = ui.lineEdit_upload_Path.text()
-            folder_name = os.path.basename(path1)
-            folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
-            limit_folder_size(folder_path, max_files=5000)  # 限制文件夹数量
+            if ui.checkBox_saveImgs.isChecked():
+                path1 = ui.lineEdit_saidao_Path.text()
+                path2 = ui.lineEdit_upload_Path.text()
+                folder_name = os.path.basename(path1)
+                folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
+                limit_folder_size(folder_path, max_files=5000)  # 限制文件夹数量
 
             self.signal.emit('标志')
 
