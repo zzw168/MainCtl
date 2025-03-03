@@ -59,8 +59,8 @@ def post_start(term, betting_start_time, Track_number='I'):  # 开始比赛
     POST_start_data = {"raceTrackID": Track_number, "term": str(term), "actualStartTime": betting_start_time}
     print(POST_start_data)
     response = requests.post('%s%s' % (url, POST_start_url), headers=headers, json=POST_start_data)
-    print('start:', response.content)
-    return response.content
+    print('start:', response.text)
+    return response.text
 
 
 def post_end(term, betting_end_time, status=1, Track_number='I'):  # 结束比赛
@@ -69,8 +69,8 @@ def post_end(term, betting_end_time, status=1, Track_number='I'):  # 结束比�
                      "status": status}  # 1: 正常, 0: 不正常
     print(POST_end_data)
     response = requests.post('%s%s' % (url, POST_end_url), headers=headers, json=POST_end_data)
-    print('end:', response.content)
-    return response.content
+    print('end:', response.text)
+    return response.text
 
 
 def post_result(term, betting_end_time, result_data='', Track_number='I'):  # 发送赛果

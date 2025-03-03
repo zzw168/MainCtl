@@ -32,6 +32,7 @@ class Serial485:
     def cam_open(self):
         try:
             self.ser = serial.Serial(self.s485_Cam_No, 9600, timeout=5)
+            print('摄像头端口:%s' % self.s485_Cam_No)
             return self.ser.is_open
         except:
             return False
