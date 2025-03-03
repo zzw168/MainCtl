@@ -171,7 +171,7 @@ def update_timer():
                 seconds = 999
                 milliseconds = 99
 
-            timer_text = f"{seconds:02d}.{milliseconds:02d}”"
+            timer_text = f'{seconds:02d}.{milliseconds:02d}"'
 
             source = obs.obs_get_source_by_name(source_name)
             if source:
@@ -196,7 +196,7 @@ def stop_timer(timenow):
             seconds = 99
             milliseconds = 99
         print(f"Error in update_timer: {seconds}")
-        timer_text = f"{seconds:02d}.{milliseconds:02d}”"
+        timer_text = f'{seconds:02d}.{milliseconds:02d}"'
 
         source = obs.obs_get_source_by_name(source_name)
         if source:
@@ -213,7 +213,7 @@ def stop_timer(timenow):
 
 def reset_time():
     global source_name
-    timer_text = "00.00”"
+    timer_text = '00.00"'
     source = obs.obs_get_source_by_name(source_name)
     if source:
         settings = obs.obs_data_create()

@@ -1575,7 +1575,8 @@ class ReStartThread(QThread):
                             continue
                     self.signal.emit('term_ok')
                     term = response['term']
-                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
+                    Script_Thread.run_type = 'term'
+                    Script_Thread.run_flg = True  # 开始OBS的python脚本计时
                     tcp_result_thread.send_type = 'time'
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
@@ -1596,6 +1597,9 @@ class ReStartThread(QThread):
                     continue
             else:
                 term = str(int(term) + 1)
+                Script_Thread.run_type = 'term'
+                Script_Thread.run_flg = True  # 开始OBS的python脚本计时
+                # requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
                 self.signal.emit('测试期号')
                 countdown = ui.lineEdit_Time_Restart_Ranking.text()
             if countdown.isdigit():
@@ -2394,15 +2398,12 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 0)
                                 else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
-                                if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
+                                if plan_list[plan_index][12][0] == ui.lineEdit_start_count.text():  # '9'倒数机关打开
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
                                         try:
                                             cl_request.start_record()  # 开启OBS录像
                                         except:
                                             print('OBS脚本开始错误！')
-                                    Script_Thread.run_type = 'start'
-                                    Script_Thread.run_flg = True    # 开始OBS的python脚本计时
-                                    ranking_time_start = time.time()  # 每个球的起跑时间
 
                                     if not ui.radioButton_test_game.isChecked():  # 非模拟模式
                                         res_start = post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
@@ -2412,6 +2413,12 @@ class PlanCmdThread(QThread):
                                         else:
                                             self.signal.emit('开始信号发送失败:%s' % res_start)  # 修改结果列表中的赛事状态
                                             break
+                                if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
+                                    if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
+                                        Script_Thread.run_type = 'start'
+                                        Script_Thread.run_flg = True  # 开始OBS的python脚本计时
+                                        ranking_time_start = time.time()  # 每个球的起跑时间
+
                             if (plan_list[plan_index][15][0].isdigit()
                                     and int(plan_list[plan_index][15][0]) > 0):  # 播放音效
                                 tb_audio = ui.tableWidget_Audio
@@ -2428,7 +2435,7 @@ class PlanCmdThread(QThread):
                                     sound_effect.play(loops=sound_times, maxtime=sound_delay)  # 播放音效
 
                             if (not ui.checkBox_test.isChecked()
-                                    and (len(plan_list) - 6 <= plan_index)
+                                    and (len(plan_list) / 3 * 2 <= plan_index)
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
                                 if len(plan_list) - 2 == plan_index:  # 到达最后两个动作时，触发球计数器启动
@@ -4684,11 +4691,14 @@ class ScriptThread(QThread):
                     requests.get(url="%s/reset" % obs_script_addr)
                 elif self.run_type == 'period':
                     requests.get(url='%s/period?period=%s' % (obs_script_addr, self.param))
+                elif self.run_type == 'term':
+                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
             except:
                 print('OBS脚本链接错误！')
                 flg_start['obs'] = False
 
             self.run_flg = False
+
 
 def script_signal_accept(msg):
     ui.textBrowser.append(msg)
@@ -5254,6 +5264,7 @@ class ZApp(QApplication):
             ObsEnd_Thread.stop()
             Shoot_Thread.stop()
             positions_live_thread.stop()
+            Script_Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -5281,6 +5292,7 @@ class ZApp(QApplication):
             ObsEnd_Thread.wait()
             Shoot_Thread.wait()
             positions_live_thread.wait()
+            Script_Thread.wait()
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
