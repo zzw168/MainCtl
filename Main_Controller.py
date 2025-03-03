@@ -856,7 +856,7 @@ class TcpResultThread(QThread):
         tcp_result_socket.bind(result_tcpServer_addr)
         tcp_result_socket.listen(5)
         while self.running:
-            try:
+            # try:
                 con, addr = tcp_result_socket.accept()
                 print("Accepted. {0}, {1}".format(con, str(addr)))
                 if not con:
@@ -864,112 +864,112 @@ class TcpResultThread(QThread):
                 with WebsocketServer(con) as ws:
                     while self.run_flg:
                         time.sleep(1)
-                        try:
-                            if self.send_type == 'updata':
-                                self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
-                                datalist = {'type': 'updata',
-                                            'data': {'qh': str(term), 'rank': []}}
+                        # try:
+                        if self.send_type == 'updata':
+                            self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
+                            datalist = {'type': 'updata',
+                                        'data': {'qh': str(term), 'rank': []}}
+                            for index in range(balls_count):
+                                if is_natural_num(z_ranking_time[index]):
+                                    datalist["data"]['rank'].append(
+                                        {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
+                                else:
+                                    datalist["data"]['rank'].append(
+                                        {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
+                            print(datalist)
+                            ws.send(json.dumps(datalist))
+
+                            if not ui.radioButton_test_game.isChecked():  # 非测试模式
+                                result_data = {"raceTrackID": Track_number, "term": str(term),
+                                               "actualResultOpeningTime": betting_end_time,
+                                               "result": z_ranking_end[0:balls_count],
+                                               "timings": "[]"}
+                                data_temp = []
                                 for index in range(balls_count):
                                     if is_natural_num(z_ranking_time[index]):
-                                        datalist["data"]['rank'].append(
-                                            {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
+                                        data_temp.append(
+                                            {"pm": index + 1, "id": z_ranking_end[index],
+                                             "time": float(z_ranking_time[index])})
                                     else:
-                                        datalist["data"]['rank'].append(
-                                            {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
-                                print(datalist)
-                                ws.send(json.dumps(datalist))
+                                        data_temp.append(
+                                            {"pm": index + 1, "id": z_ranking_end[index],
+                                             "time": z_ranking_time[index]})
+                                result_data["timings"] = json.dumps(data_temp)
+                                # print(result_data)
+                                try:
+                                    res_end = post_end(term, betting_end_time, term_status,
+                                                       Track_number)  # 发送游戏结束信号给服务器
+                                    print(res_end, '~~~~~~~~~~~~~post_end')
+                                    self.signal.emit(fail('post_end:%s' % res_end))
+                                    res_result = post_result(term, betting_end_time, result_data,
+                                                             Track_number)  # 发送最终排名给服务器
+                                    print(res_result, '~~~~~~~~~~~~~post_result')
+                                    self.signal.emit(fail('post_result:%s' % res_result))
+                                    if os.path.exists(lottery_term[6]):
+                                        res_upload = post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
+                                        print(res_upload, '~~~~~~~~~~~~~post_upload')
+                                        self.signal.emit(fail('post_upload:%s' % res_upload))
+                                    if term_status == 0:
+                                        res_marble_results = post_marble_results(term, term_comment,
+                                                                                 Track_number)  # 上传备注信息
+                                        print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
+                                        self.signal.emit(fail('post_marble_results:%s' % res_marble_results))
+                                except:
+                                    self.signal.emit(fail('post_result 上传结果错误！'))
+                                    print('上传结果错误！')
 
-                                if not ui.radioButton_test_game.isChecked():  # 非测试模式
-                                    result_data = {"raceTrackID": Track_number, "term": str(term),
-                                                   "actualResultOpeningTime": betting_end_time,
-                                                   "result": z_ranking_end[0:balls_count],
-                                                   "timings": "[]"}
-                                    data_temp = []
-                                    for index in range(balls_count):
-                                        if is_natural_num(z_ranking_time[index]):
-                                            data_temp.append(
-                                                {"pm": index + 1, "id": z_ranking_end[index],
-                                                 "time": float(z_ranking_time[index])})
-                                        else:
-                                            data_temp.append(
-                                                {"pm": index + 1, "id": z_ranking_end[index],
-                                                 "time": z_ranking_time[index]})
-                                    result_data["timings"] = json.dumps(data_temp)
-                                    # print(result_data)
-                                    try:
-                                        res_end = post_end(term, betting_end_time, term_status,
-                                                           Track_number)  # 发送游戏结束信号给服务器
-                                        print(res_end, '~~~~~~~~~~~~~post_end')
-                                        self.signal.emit(fail('post_end:%s' % res_end))
-                                        res_result = post_result(term, betting_end_time, result_data,
-                                                                 Track_number)  # 发送最终排名给服务器
-                                        print(res_result, '~~~~~~~~~~~~~post_result')
-                                        self.signal.emit(fail('post_result:%s' % res_result))
-                                        if os.path.exists(lottery_term[6]):
-                                            res_upload = post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
-                                            print(res_upload, '~~~~~~~~~~~~~post_upload')
-                                            self.signal.emit(fail('post_upload:%s' % res_upload))
-                                        if term_status == 0:
-                                            res_marble_results = post_marble_results(term, term_comment,
-                                                                                     Track_number)  # 上传备注信息
-                                            print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
-                                            self.signal.emit(fail('post_marble_results:%s' % res_marble_results))
-                                    except:
-                                        self.signal.emit(fail('post_result 上传结果错误！'))
-                                        print('上传结果错误！')
-
-                                    # 获取录屏状态
-                                    recording_status = cl_request.get_record_status()
-                                    # 检查是否正在录屏
-                                    if recording_status.output_active:  # 确保键名正确
-                                        video_name = cl_request.stop_record()  # 关闭录像
-                                        lottery_term[7] = video_name.output_path  # 视频保存路径
-                                    lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-                                    end_time = int(time.time())
-                                    self.signal.emit('save_video')
-                                    # lottery2sql()  # 保存数据库
-                                    lottery2yaml()  # 保存数据
-                                self.signal.emit(succeed('第%s期 结束！' % term))
                                 # 获取录屏状态
                                 recording_status = cl_request.get_record_status()
                                 # 检查是否正在录屏
                                 if recording_status.output_active:  # 确保键名正确
-                                    time.sleep(3)
-                                    cl_request.stop_record()  # 关闭录像
-                                if ui.checkBox_restart.isChecked():
-                                    if not ui.radioButton_test_game.isChecked():
-                                        self.send_type = ''
-                                    else:
-                                        self.run_flg = False
-                                    while PlanCmd_Thread.run_flg:
-                                        time.sleep(1)
-                                    ReStart_Thread.run_flg = True  # 1分钟后重启动作
+                                    video_name = cl_request.stop_record()  # 关闭录像
+                                    lottery_term[7] = video_name.output_path  # 视频保存路径
+                                lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+                                end_time = int(time.time())
+                                self.signal.emit('save_video')
+                                # lottery2sql()  # 保存数据库
+                                lottery2json()  # 保存数据
+                            self.signal.emit(succeed('第%s期 结束！' % term))
+                            # 获取录屏状态
+                            recording_status = cl_request.get_record_status()
+                            # 检查是否正在录屏
+                            if recording_status.output_active:  # 确保键名正确
+                                time.sleep(3)
+                                cl_request.stop_record()  # 关闭录像
+                            if ui.checkBox_restart.isChecked():
+                                if not ui.radioButton_test_game.isChecked():
+                                    self.send_type = ''
                                 else:
-                                    action_area = [0, 0, 0]  # 初始化触发区域
-                                    PlanCmd_Thread.end_state = True  # 运行背景
-                                    PlanCmd_Thread.run_flg = True
-                                    self.signal.emit('结束动画')
-                                    if ui.checkBox_shoot_0.isChecked():
-                                        self.signal.emit('auto_shoot')
                                     self.run_flg = False
-                            elif self.send_type == 'time':
-                                datalist = {'type': 'time',
-                                            'data': str(term)}
-                                ws.send(json.dumps(datalist))
-                                self.send_type = ''
-                                self.run_flg = False
+                                while PlanCmd_Thread.run_flg:
+                                    time.sleep(1)
+                                ReStart_Thread.run_flg = True  # 1分钟后重启动作
                             else:
-                                datalist = {'type': 'pong',
-                                            'data': str(term)}
-                                ws.send(json.dumps(datalist))
+                                action_area = [0, 0, 0]  # 初始化触发区域
+                                PlanCmd_Thread.end_state = True  # 运行背景
+                                PlanCmd_Thread.run_flg = True
+                                self.signal.emit('结束动画')
+                                if ui.checkBox_shoot_0.isChecked():
+                                    self.signal.emit('auto_shoot')
+                                self.run_flg = False
+                        elif self.send_type == 'time':
+                            datalist = {'type': 'time',
+                                        'data': str(term)}
+                            ws.send(json.dumps(datalist))
+                            self.send_type = ''
+                            self.run_flg = False
+                        else:
+                            datalist = {'type': 'pong',
+                                        'data': str(term)}
+                            ws.send(json.dumps(datalist))
 
-                        except Exception as e:
-                            print("pingpong_result_1 错误：%s" % e)
-                            # self.signal.emit("pingpong 错误：%s" % e)
-                            break
-            except Exception as e:
-                print("pingpong_result_2 错误：%s" % e)
-                self.signal.emit("pingpong_result_2 错误：%s" % e)
+                        # except Exception as e:
+                        #     print("pingpong_result_1 错误：%s" % e)
+                        #     # self.signal.emit("pingpong 错误：%s" % e)
+                        #     break
+            # except Exception as e:
+            #     print("pingpong_result_2 错误：%s" % e)
+            #     self.signal.emit("pingpong_result_2 错误：%s" % e)
 
 
 def tcpsignal_accept(msg):
@@ -1551,6 +1551,8 @@ class ReStartThread(QThread):
             if not self.run_flg:
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
+            while PlanCmd_Thread.run_flg:
+                time.sleep(1)
             PlanCmd_Thread.background_state = True  # 运行背景
             PlanCmd_Thread.run_flg = True
             self.signal.emit('过场动画')
@@ -1613,6 +1615,8 @@ class ReStartThread(QThread):
                 time.sleep(1)
                 self.signal.emit(t)
             reset_ranking_array()  # 初始化排名，位置变量
+            while PlanCmd_Thread.run_flg:
+                time.sleep(1)
             PlanCmd_Thread.run_flg = True
 
             print("循环启动！")
@@ -3324,7 +3328,8 @@ def cmd_run():
     if not ui.checkBox_test.isChecked():
         if not ui.checkBox_all.isChecked():
             ui.checkBox_all.setChecked(True)
-        ReStart_Thread.run_flg = True
+        if not ReStart_Thread.run_flg:
+            ReStart_Thread.run_flg = True
         ui.radioButton_test_game.setChecked(True)  # 模拟模式
         ui.checkBox_saveImgs_auto.setChecked(True)
     else:
@@ -4516,25 +4521,18 @@ def lottery_yaml_init():
             lottery_data2table()
 
 
-def lottery2yaml():
-    file = "./lottery_data.yml"
+def lottery2json():
+    lottery_list = []
+    current_date = time.strftime("%Y-%m-%d", time.localtime())
+    file = "./terms/%s.json" % current_date
     if os.path.exists(file):
-        # try:
-        f = open(file, 'r', encoding='utf-8')
-        lottery_all = yaml.safe_load(f)
-        f.close()
-        lottery_list = lottery_all['lottery_list']
-        current_date = time.time()
-        list_temp = []
-        for index in range(len(lottery_list)):
-            if int(lottery_list[index][8]) > current_date - 604800:
-                list_temp.append(copy.deepcopy(lottery_list[index]))
-        list_temp.append(lottery_term)
-        lottery_all['lottery_date'] = current_date
-        lottery_all['lottery_list'] = copy.deepcopy(list_temp)
-        with open(file, "w", encoding="utf-8") as f:
-            yaml.dump(lottery_all, f, allow_unicode=True)
-        f.close()
+        # with open(file, "r", encoding="utf-8") as f:
+        #     for line in f:
+        #         print(json.loads(line))  # 逐行解析 JSON
+        #         lottery_list.append(json.loads(line))
+        # f.close()
+        with open("data.jsonl", "a", encoding="utf-8") as f:
+            f.write(json.dumps(lottery_term) + "\n")
 
 
 def lottery2sql():  # 保存数据库

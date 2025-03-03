@@ -32,9 +32,14 @@ class TableWidgetDemo(QWidget):
         combo = QComboBox()
         combo.addItems(["选项1", "选项2", "选项3"])  # 添加选项
         self.table.setCellWidget(row, col, combo)  # 在该单元格放置 ComboBox
+def test():
+    with open("example.txt", "a", encoding="utf-8") as file:
+        file.write("Appending some data.\n")
 
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = TableWidgetDemo()
-    window.show()
-    sys.exit(app.exec_())
+    # app = QApplication(sys.argv)
+    # window = TableWidgetDemo()
+    # window.show()
+    #
+    # sys.exit(app.exec_())
+    test()
