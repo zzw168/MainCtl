@@ -479,7 +479,7 @@ def deal_rank(integration_qiu_array):
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
                 if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
-                    if result_count >= max_area_count / 3 * 2:
+                    if result_count >= max_area_count / 2:
                         ranking_array[r_index][8] += 1
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = max_lap_count - 1
@@ -1771,91 +1771,94 @@ class PlanBallNumThread(QThread):
             if (not self.run_flg) or (not flg_start['card']):
                 continue
             print('正在接收运动卡输入信息！')
-            try:
-                res = sc.GASetDiReverseCount()  # 输入次数归0
-                tcp_ranking_thread.sleep_time = 0.1  # 终点前端排名时间发送设置
-                time_now = time.time()
-                time_old = time.time()
-                sec_ = 0
-                num_old = 0
-                term_status = 1
-                screen_sort = True
-                if res == 0:
-                    while True:
-                        res, value = sc.GAGetDiReverseCount()
-                        # print(res, value)
-                        if res == 0:
-                            num = int(value[0] / 2)
-                            if num != num_old:
-                                t = time.time()
-                                if num_old < len(z_ranking_time):  # 保存每个球到达终点的时间
-                                    z_ranking_time[num_old] = '%.2f' % (t - ranking_time_start)
-                                    # if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
-                                    tcp_ranking_thread.send_time_data = [num, '%s"' % z_ranking_time[num - 1]]
-                                    tcp_ranking_thread.send_time_flg = True
-                                if num == 1:
-                                    self.signal.emit('录终点图')
-                                self.signal.emit(num)
-                                num_old = num
-                            if num > balls_count - 2 and screen_sort:
-                                ScreenShot_Thread.run_flg = True  # 终点截图识别线程
-                                screen_sort = False
-                            if num >= balls_count:
-                                break
-                            # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
-                            #     break
-                            elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
-                                # 超时则跳出循环计球
-                                # sc.GASetDiReverseCount()  # 输入次数归0
-                                term_status = 0
-                                term_comment = term_comments[1]
-                                self.signal.emit('人工检查')
-                                time.sleep(1)
-                                if not self.run_flg:
-                                    break
-                            else:
-                                time_num = time.time() - time_old
-                                if time_num > 1:
-                                    time_old = time.time()
-                                    sec_ += 1
-                                    self.signal.emit(
-                                        succeed('计球倒计时：%s' %
-                                                str(int(ui.lineEdit_time_count_ball.text()) - sec_)))
-                        else:
-                            flg_start['card'] = False
-                            self.signal.emit(fail("运动板x输入通信出错！"))
+            # try:
+            res = sc.GASetDiReverseCount()  # 输入次数归0
+            tcp_ranking_thread.sleep_time = 0.1  # 终点前端排名时间发送设置
+            time_now = time.time()
+            time_old = time.time()
+            sec_ = 0
+            num_old = 0
+            term_status = 1
+            screen_sort = True
+            if res == 0:
+                while True:
+                    res, value = sc.GAGetDiReverseCount()
+                    # print(res, value)
+                    if res == 0:
+                        num = int(value[0] / 2)
+                        if num != num_old:
+                            t = time.time()
+                            if num_old < len(z_ranking_time):  # 保存每个球到达终点的时间
+                                z_ranking_time[num_old] = '%.2f' % (t - ranking_time_start)
+                                # if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
+                                tcp_ranking_thread.send_time_data = [num, '%s"' % z_ranking_time[num - 1]]
+                                tcp_ranking_thread.send_time_flg = True
+                            if num == 1:
+                                self.signal.emit('录终点图')
+                            self.signal.emit(num)
+                            num_old = num
+                        if num > balls_count - 2 and screen_sort:
+                            ScreenShot_Thread.run_flg = True  # 终点截图识别线程
+                            screen_sort = False
+                        if num >= balls_count:
                             break
-                        time.sleep(0.01)
+                        # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
+                        #     break
+                        elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
+                            # 超时则跳出循环计球
+                            # sc.GASetDiReverseCount()  # 输入次数归0
+                            term_status = 0
+                            term_comment = term_comments[1]
+                            if ui.checkBox_Pass_Ranking_Twice.isChecked():
+                                self.run_flg = False
+                            else:
+                                self.signal.emit('人工检查')
+                            time.sleep(1)
+                            if not self.run_flg:
+                                break
+                        else:
+                            time_num = time.time() - time_old
+                            if time_num > 1:
+                                time_old = time.time()
+                                sec_ += 1
+                                self.signal.emit(
+                                    succeed('计球倒计时：%s' %
+                                            str(int(ui.lineEdit_time_count_ball.text()) - sec_)))
+                    else:
+                        flg_start['card'] = False
+                        self.signal.emit(fail("运动板x输入通信出错！"))
+                    time.sleep(0.01)
 
-                    for index in range(balls_count):
-                        if z_ranking_time[index] == '':
-                            tcp_ranking_thread.send_time_data = [index + 1, 'TRAP']
-                            tcp_ranking_thread.send_time_flg = True
-                            time.sleep(0.5)
-                    save_path = '%s' % ui.lineEdit_upload_Path.text()
-                    if os.path.exists(save_path):
-                        lottery_term[6] = '%s/%s.jpg' % (save_path, term)
-                        resp = cl_request.save_source_screenshot(ui.lineEdit_scene_name.text(), "jpg",
-                                                                 lottery_term[6], 1920,
-                                                                 1080, 100)
-                else:
-                    print("次数归0 失败！")
-                    flg_start['card'] = False
-                    self.signal.emit(fail("运动板x输入通信出错！"))
-
-                tcp_ranking_thread.sleep_time = 0.5  # 恢复正常前端排名数据包发送频率
-                if screen_sort:
-                    term_status = 0
-                    term_comment = term_comments[1]
-                    ScreenShot_Thread.run_flg = True  # 终点截图识别线程
-                ObsEnd_Thread.ball_flg = True  # 结算页标志2
-                Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-                Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-                main_music_worker.toggle_enablesignal.emit(False)
-            except:
-                print("接收运动卡输入 运行出错！")
+                for index in range(balls_count):
+                    if z_ranking_time[index] == '':
+                        z_ranking_time[index] = 'TRAP'
+                        tcp_ranking_thread.send_time_data = [index + 1, z_ranking_time[index]]
+                        tcp_ranking_thread.send_time_flg = True
+                        time.sleep(0.5)
+                save_path = '%s' % ui.lineEdit_upload_Path.text()
+                if os.path.exists(save_path):
+                    lottery_term[6] = '%s/%s.jpg' % (save_path, term)
+                    resp = cl_request.save_source_screenshot(ui.lineEdit_scene_name.text(), "jpg",
+                                                             lottery_term[6], 1920,
+                                                             1080, 100)
+            else:
+                print("次数归0 失败！")
                 flg_start['card'] = False
                 self.signal.emit(fail("运动板x输入通信出错！"))
+
+            tcp_ranking_thread.sleep_time = 0.5  # 恢复正常前端排名数据包发送频率
+            if screen_sort:
+                term_status = 0
+                term_comment = term_comments[1]
+                ScreenShot_Thread.run_flg = True  # 终点截图识别线程
+            ObsEnd_Thread.ball_flg = True  # 结算页标志2
+            Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
+            Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+            main_music_worker.toggle_enablesignal.emit(False)
+            # except:
+            #     print("接收运动卡输入 运行出错！")
+            #     flg_start['card'] = False
+            #     self.signal.emit(fail("运动板x输入通信出错！"))
             self.run_flg = False
 
 
@@ -3756,9 +3759,9 @@ class MapLabel(QLabel):
                         self.speed = 3
                     elif 30 >= p - self.positions[p_num][0] >= 25:
                         self.speed = 2
-                    elif p < self.positions[p_num][0] and (self.positions[p_num][0] < len(self.path_points) / 3 * 2):
+                    elif p < self.positions[p_num][0] and (self.positions[p_num][0] < len(self.path_points) / 2):
                         self.speed = 0
-                    elif p < self.positions[p_num][0] and (self.positions[p_num][0] > len(self.path_points) / 3 * 2):
+                    elif p < self.positions[p_num][0] and (self.positions[p_num][0] > len(self.path_points) / 2):
                         self.speed = 0
                         self.positions[p_num][0] = p  # 跨圈情况
                     else:
