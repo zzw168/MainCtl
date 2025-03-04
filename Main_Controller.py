@@ -1777,7 +1777,7 @@ class PlanBallNumThread(QThread):
             print('正在接收运动卡输入信息！')
             # try:
             res = sc.GASetDiReverseCount()  # 输入次数归0
-            tcp_ranking_thread.sleep_time = 0.1  # 终点前端排名时间发送设置
+            tcp_ranking_thread.sleep_time = 0.05  # 终点前端排名时间发送设置
             time_now = time.time()
             time_old = time.time()
             sec_ = 0
@@ -1790,14 +1790,16 @@ class PlanBallNumThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     # print(res, value)
                     if res == 0:
-                        num = int(value[0] / 2)
+                        # num = int(value[0] / 2)
+                        num = value[0]
+                        print(num, num_old, num_send)
                         if num != num_old:
                             t = time.time()
                             if num_send < len(z_ranking_time):  # 保存每个球到达终点的时间
                                 z_ranking_time[num_send] = '%.2f' % (t - ranking_time_start)
-                                # if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
-                                tcp_ranking_thread.send_time_data = [num_send + 1, '%s"' % z_ranking_time[num_send]]
-                                tcp_ranking_thread.send_time_flg = True
+                                if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
+                                    tcp_ranking_thread.send_time_data = [num_send + 1, '%s"' % z_ranking_time[num_send]]
+                                    tcp_ranking_thread.send_time_flg = True
                             if num_send == 0:
                                 self.signal.emit('录终点图')
                             self.signal.emit(num)
@@ -1839,8 +1841,9 @@ class PlanBallNumThread(QThread):
                     if z_ranking_time[index] == '':
                         t = time.time()
                         z_ranking_time[index] = '%.2f' % (t - ranking_time_start)
-                        tcp_ranking_thread.send_time_data = [num_send + 1, '%s"' % z_ranking_time[num_send]]
-                        tcp_ranking_thread.send_time_flg = True
+                        if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
+                            tcp_ranking_thread.send_time_data = [num_send + 1, '%s"' % z_ranking_time[num_send]]
+                            tcp_ranking_thread.send_time_flg = True
                         time.sleep(0.5)
                 save_path = '%s' % ui.lineEdit_upload_Path.text()
                 if os.path.exists(save_path):
@@ -3761,7 +3764,6 @@ class MapLabel(QLabel):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
                                 break
-                    print(self.positions)
                 elif (ranking_array[num][6] >= max_area_count - balls_count - 2
                       and ranking_array[num][8] >= max_lap_count - 1  # 最后一圈处理
                       and self.positions[num][0] > len(self.path_points) - num * self.ball_space - 20):
@@ -3781,7 +3783,6 @@ class MapLabel(QLabel):
                                 break
 
                 elif ranking_array[num][8] == action_area[1]:  # 同圈才运动
-                    # print(self.positions)
                     for p_num in range(len(self.positions)):
                         if self.positions[p_num][1] == ranking_array[num][5]:
                             area_num = max_area_count - balls_count  # 跟踪区域数量
