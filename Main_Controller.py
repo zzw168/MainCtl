@@ -857,119 +857,119 @@ class TcpResultThread(QThread):
         tcp_result_socket.listen(5)
         while self.running:
             # try:
-                con, addr = tcp_result_socket.accept()
-                print("Accepted. {0}, {1}".format(con, str(addr)))
-                if not con:
-                    continue
-                with WebsocketServer(con) as ws:
-                    while self.run_flg:
-                        time.sleep(1)
-                        # try:
-                        if self.send_type == 'updata':
-                            self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
-                            datalist = {'type': 'updata',
-                                        'data': {'qh': str(term), 'rank': []}}
+            con, addr = tcp_result_socket.accept()
+            print("Accepted. {0}, {1}".format(con, str(addr)))
+            if not con:
+                continue
+            with WebsocketServer(con) as ws:
+                while self.run_flg:
+                    time.sleep(1)
+                    # try:
+                    if self.send_type == 'updata':
+                        self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
+                        datalist = {'type': 'updata',
+                                    'data': {'qh': str(term), 'rank': []}}
+                        for index in range(balls_count):
+                            if is_natural_num(z_ranking_time[index]):
+                                datalist["data"]['rank'].append(
+                                    {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
+                            else:
+                                datalist["data"]['rank'].append(
+                                    {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
+                        print(datalist)
+                        ws.send(json.dumps(datalist))
+
+                        if not ui.radioButton_test_game.isChecked():  # 非测试模式
+                            result_data = {"raceTrackID": Track_number, "term": str(term),
+                                           "actualResultOpeningTime": betting_end_time,
+                                           "result": z_ranking_end[0:balls_count],
+                                           "timings": "[]"}
+                            data_temp = []
                             for index in range(balls_count):
                                 if is_natural_num(z_ranking_time[index]):
-                                    datalist["data"]['rank'].append(
-                                        {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
+                                    data_temp.append(
+                                        {"pm": index + 1, "id": z_ranking_end[index],
+                                         "time": float(z_ranking_time[index])})
                                 else:
-                                    datalist["data"]['rank'].append(
-                                        {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
-                            print(datalist)
-                            ws.send(json.dumps(datalist))
+                                    data_temp.append(
+                                        {"pm": index + 1, "id": z_ranking_end[index],
+                                         "time": z_ranking_time[index]})
+                            result_data["timings"] = json.dumps(data_temp)
+                            # print(result_data)
+                            try:
+                                res_end = post_end(term, betting_end_time, term_status,
+                                                   Track_number)  # 发送游戏结束信号给服务器
+                                print(res_end, '~~~~~~~~~~~~~post_end')
+                                self.signal.emit(fail('post_end:%s' % res_end))
+                                res_result = post_result(term, betting_end_time, result_data,
+                                                         Track_number)  # 发送最终排名给服务器
+                                print(res_result, '~~~~~~~~~~~~~post_result')
+                                self.signal.emit(fail('post_result:%s' % res_result))
+                                if os.path.exists(lottery_term[6]):
+                                    res_upload = post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
+                                    print(res_upload, '~~~~~~~~~~~~~post_upload')
+                                    self.signal.emit(fail('post_upload:%s' % res_upload))
+                                if term_status == 0:
+                                    res_marble_results = post_marble_results(term, term_comment,
+                                                                             Track_number)  # 上传备注信息
+                                    print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
+                                    self.signal.emit(fail('post_marble_results:%s' % res_marble_results))
+                            except:
+                                self.signal.emit(fail('post_result 上传结果错误！'))
+                                print('上传结果错误！')
 
-                            if not ui.radioButton_test_game.isChecked():  # 非测试模式
-                                result_data = {"raceTrackID": Track_number, "term": str(term),
-                                               "actualResultOpeningTime": betting_end_time,
-                                               "result": z_ranking_end[0:balls_count],
-                                               "timings": "[]"}
-                                data_temp = []
-                                for index in range(balls_count):
-                                    if is_natural_num(z_ranking_time[index]):
-                                        data_temp.append(
-                                            {"pm": index + 1, "id": z_ranking_end[index],
-                                             "time": float(z_ranking_time[index])})
-                                    else:
-                                        data_temp.append(
-                                            {"pm": index + 1, "id": z_ranking_end[index],
-                                             "time": z_ranking_time[index]})
-                                result_data["timings"] = json.dumps(data_temp)
-                                # print(result_data)
-                                try:
-                                    res_end = post_end(term, betting_end_time, term_status,
-                                                       Track_number)  # 发送游戏结束信号给服务器
-                                    print(res_end, '~~~~~~~~~~~~~post_end')
-                                    self.signal.emit(fail('post_end:%s' % res_end))
-                                    res_result = post_result(term, betting_end_time, result_data,
-                                                             Track_number)  # 发送最终排名给服务器
-                                    print(res_result, '~~~~~~~~~~~~~post_result')
-                                    self.signal.emit(fail('post_result:%s' % res_result))
-                                    if os.path.exists(lottery_term[6]):
-                                        res_upload = post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
-                                        print(res_upload, '~~~~~~~~~~~~~post_upload')
-                                        self.signal.emit(fail('post_upload:%s' % res_upload))
-                                    if term_status == 0:
-                                        res_marble_results = post_marble_results(term, term_comment,
-                                                                                 Track_number)  # 上传备注信息
-                                        print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
-                                        self.signal.emit(fail('post_marble_results:%s' % res_marble_results))
-                                except:
-                                    self.signal.emit(fail('post_result 上传结果错误！'))
-                                    print('上传结果错误！')
-
-                                # 获取录屏状态
-                                recording_status = cl_request.get_record_status()
-                                # 检查是否正在录屏
-                                if recording_status.output_active:  # 确保键名正确
-                                    video_name = cl_request.stop_record()  # 关闭录像
-                                    lottery_term[7] = video_name.output_path  # 视频保存路径
-                                lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-                                end_time = int(time.time())
-                                self.signal.emit('save_video')
-                                # lottery2sql()  # 保存数据库
-                                lottery2json()  # 保存数据
-                            self.signal.emit(succeed('第%s期 结束！' % term))
                             # 获取录屏状态
                             recording_status = cl_request.get_record_status()
                             # 检查是否正在录屏
                             if recording_status.output_active:  # 确保键名正确
-                                time.sleep(3)
-                                cl_request.stop_record()  # 关闭录像
-                            if ui.checkBox_restart.isChecked():
-                                if not ui.radioButton_test_game.isChecked():
-                                    self.send_type = ''
-                                else:
-                                    self.run_flg = False
-                                while PlanCmd_Thread.run_flg:
-                                    time.sleep(1)
-                                ReStart_Thread.run_flg = True  # 1分钟后重启动作
+                                video_name = cl_request.stop_record()  # 关闭录像
+                                lottery_term[7] = video_name.output_path  # 视频保存路径
+                            lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+                            end_time = int(time.time())
+                            self.signal.emit('save_video')
+                            # lottery2sql()  # 保存数据库
+                            lottery2json()  # 保存数据
+                        self.signal.emit(succeed('第%s期 结束！' % term))
+                        # 获取录屏状态
+                        recording_status = cl_request.get_record_status()
+                        # 检查是否正在录屏
+                        if recording_status.output_active:  # 确保键名正确
+                            time.sleep(3)
+                            cl_request.stop_record()  # 关闭录像
+                        if ui.checkBox_restart.isChecked():
+                            if not ui.radioButton_test_game.isChecked():
+                                self.send_type = ''
                             else:
-                                action_area = [0, 0, 0]  # 初始化触发区域
-                                PlanCmd_Thread.end_state = True  # 运行背景
-                                PlanCmd_Thread.run_flg = True
-                                self.signal.emit('结束动画')
-                                if ui.checkBox_shoot_0.isChecked():
-                                    self.signal.emit('auto_shoot')
                                 self.run_flg = False
-                        elif self.send_type == 'time':
-                            datalist = {'type': 'time',
-                                        'data': str(term)}
-                            ws.send(json.dumps(datalist))
-                            self.send_type = ''
-                            self.run_flg = False
+                            while PlanCmd_Thread.run_flg:
+                                time.sleep(1)
+                            ReStart_Thread.run_flg = True  # 1分钟后重启动作
                         else:
-                            datalist = {'type': 'pong',
-                                        'data': str(term)}
-                            ws.send(json.dumps(datalist))
+                            action_area = [0, 0, 0]  # 初始化触发区域
+                            PlanCmd_Thread.end_state = True  # 运行背景
+                            PlanCmd_Thread.run_flg = True
+                            self.signal.emit('结束动画')
+                            if ui.checkBox_shoot_0.isChecked():
+                                self.signal.emit('auto_shoot')
+                            self.run_flg = False
+                    elif self.send_type == 'time':
+                        datalist = {'type': 'time',
+                                    'data': str(term)}
+                        ws.send(json.dumps(datalist))
+                        self.send_type = ''
+                        self.run_flg = False
+                    else:
+                        datalist = {'type': 'pong',
+                                    'data': str(term)}
+                        ws.send(json.dumps(datalist))
 
-                        # except Exception as e:
-                        #     print("pingpong_result_1 错误：%s" % e)
-                        #     # self.signal.emit("pingpong 错误：%s" % e)
-                        #     break
-            # except Exception as e:
-            #     print("pingpong_result_2 错误：%s" % e)
-            #     self.signal.emit("pingpong_result_2 错误：%s" % e)
+                    # except Exception as e:
+                    #     print("pingpong_result_1 错误：%s" % e)
+                    #     # self.signal.emit("pingpong 错误：%s" % e)
+                    #     break
+        # except Exception as e:
+        #     print("pingpong_result_2 错误：%s" % e)
+        #     self.signal.emit("pingpong_result_2 错误：%s" % e)
 
 
 def tcpsignal_accept(msg):
@@ -1782,6 +1782,7 @@ class PlanBallNumThread(QThread):
             time_old = time.time()
             sec_ = 0
             num_old = 0
+            num_send = 0
             term_status = 1
             screen_sort = True
             if res == 0:
@@ -1792,19 +1793,20 @@ class PlanBallNumThread(QThread):
                         num = int(value[0] / 2)
                         if num != num_old:
                             t = time.time()
-                            if num_old < len(z_ranking_time):  # 保存每个球到达终点的时间
-                                z_ranking_time[num_old] = '%.2f' % (t - ranking_time_start)
+                            if num_send < len(z_ranking_time):  # 保存每个球到达终点的时间
+                                z_ranking_time[num_send] = '%.2f' % (t - ranking_time_start)
                                 # if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
-                                tcp_ranking_thread.send_time_data = [num, '%s"' % z_ranking_time[num - 1]]
+                                tcp_ranking_thread.send_time_data = [num_send + 1, '%s"' % z_ranking_time[num_send]]
                                 tcp_ranking_thread.send_time_flg = True
-                            if num == 1:
+                            if num_send == 0:
                                 self.signal.emit('录终点图')
                             self.signal.emit(num)
+                            num_send += 1
                             num_old = num
-                        if num > balls_count - 2 and screen_sort:
+                        if num_send > balls_count - 2 and screen_sort:
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
-                        if num >= balls_count:
+                        if num_send >= balls_count:
                             break
                         # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
                         #     break
@@ -1835,8 +1837,9 @@ class PlanBallNumThread(QThread):
 
                 for index in range(balls_count):
                     if z_ranking_time[index] == '':
-                        z_ranking_time[index] = 'TRAP'
-                        tcp_ranking_thread.send_time_data = [index + 1, z_ranking_time[index]]
+                        t = time.time()
+                        z_ranking_time[index] = '%.2f' % (t - ranking_time_start)
+                        tcp_ranking_thread.send_time_data = [num_send + 1, '%s"' % z_ranking_time[num_send]]
                         tcp_ranking_thread.send_time_flg = True
                         time.sleep(0.5)
                 save_path = '%s' % ui.lineEdit_upload_Path.text()
@@ -3727,7 +3730,7 @@ class MapLabel(QLabel):
         self.flash_time = flash_time
         self.positions = []  # 每个球的当前位置索引
         for num in range(balls_count):
-            self.positions.append([num * self.ball_space, QColor(255, 0, 0), 0])
+            self.positions.append([num * self.ball_space, init_array[num][5], 0])
 
         # 创建定时器，用于定时更新球的位置
         self.timer = QTimer(self)
@@ -3737,71 +3740,91 @@ class MapLabel(QLabel):
     def update_positions(self):
         global positions_live
         # 更新每个小球的位置
-        p_num = 0
         if len(self.positions) != balls_count:
             self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码]
             for num in range(balls_count):
-                self.positions.append([num * self.ball_space, QColor(255, 0, 0), 0])
+                self.positions.append([num * self.ball_space, init_array[num][5], 0])
         for num in range(0, balls_count):
             if ranking_array[num][5] in self.color_names.keys():
-                color = self.color_names[ranking_array[num][5]]
                 if ranking_array[num][6] == 0:  # 起点
-                    if p_num == 0:
+                    for i in range(len(self.positions)):
+                        if self.positions[i][1] == ranking_array[num][5]:
+                            self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
+                            break
+                    if num == 0:
                         index = len(ranking_array) * self.ball_space
                     else:
-                        index = len(ranking_array) * self.ball_space - p_num * self.ball_space
+                        index = len(ranking_array) * self.ball_space - num * self.ball_space
+                    if index < len(self.path_points) and ranking_array[num][8] < max_lap_count:
+                        self.positions[num][0] = index
+                        for color_index in range(len(init_array)):
+                            if init_array[color_index][5] == ranking_array[num][5]:
+                                self.positions[num][2] = color_index + 1
+                                break
+                    print(self.positions)
                 elif (ranking_array[num][6] >= max_area_count - balls_count - 2
                       and ranking_array[num][8] >= max_lap_count - 1  # 最后一圈处理
-                      and self.positions[p_num][0] > len(self.path_points) - p_num * self.ball_space - 20):
-                    if p_num == 0:
-                        index = len(self.path_points) - 1
-                    else:
-                        index = len(self.path_points) - 1 - p_num * self.ball_space
-                elif ranking_array[num][8] == action_area[1]:  # 同圈才运动
-                    area_num = max_area_count - balls_count  # 跟踪区域数量
-                    p = int(len(self.path_points) * (ranking_array[num][6] / area_num)) - 5
-                    if p - self.positions[p_num][0] > 50:
-                        self.speed = 3
-                    elif 30 >= p - self.positions[p_num][0] >= 25:
-                        self.speed = 2
-                    elif p < self.positions[p_num][0] and (self.positions[p_num][0] < len(self.path_points) / 2):
-                        self.speed = 0
-                    elif p < self.positions[p_num][0] and (self.positions[p_num][0] > len(self.path_points) / 2):
-                        self.speed = 0
-                        self.positions[p_num][0] = p  # 跨圈情况
-                    else:
-                        self.speed = 1
-                    if p_num == 0:
-                        index = self.positions[p_num][0] + self.speed
-                    elif (0 < self.positions[p_num - 1][0] - self.positions[p_num][0] < self.ball_space
-                          and int(len(self.path_points) * (5 / area_num)) < self.positions[p_num][0] < len(
-                                self.path_points) - self.ball_space):
-                        index = self.positions[p_num][0] - self.ball_radius
-                    else:
-                        index = self.positions[p_num][0] + self.speed
-                else:  # 不同圈情况
-                    area_num = max_area_count - balls_count  # 跟踪区域数量
-                    p = int(len(self.path_points) * (ranking_array[num][6] / area_num)) - 1
-                    if p - self.positions[p_num][0] > 50:
-                        self.speed = 3
-                    elif 30 >= p - self.positions[p_num][0] >= 25:
-                        self.speed = 2
-                    elif p < self.positions[p_num][0]:
-                        self.speed = 0
-                    else:
-                        self.speed = 1
-                    index = self.positions[p_num][0] + self.speed
-                    if index > len(self.path_points) - self.ball_radius - 1:
-                        index = len(self.path_points) - 1
-                    # index = 0
-                if index <= len(self.path_points) and ranking_array[num][8] < max_lap_count:
-                    self.positions[p_num][0] = index
-                    self.positions[p_num][1] = color
-                    for color_index in range(len(init_array)):
-                        if init_array[color_index][5] == ranking_array[num][5]:
-                            self.positions[p_num][2] = color_index + 1
+                      and self.positions[num][0] > len(self.path_points) - num * self.ball_space - 20):
+                    for i in range(len(self.positions)):
+                        if self.positions[i][1] == ranking_array[num][5]:
+                            self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
                             break
-                p_num += 1
+                    if num == 0:
+                        index = len(self.path_points) - 1
+                    else:
+                        index = len(self.path_points) - 1 - num * self.ball_space
+                    if index < len(self.path_points) and ranking_array[num][8] < max_lap_count:
+                        self.positions[num][0] = index
+                        for color_index in range(len(init_array)):
+                            if init_array[color_index][5] == ranking_array[num][5]:
+                                self.positions[num][2] = color_index + 1
+                                break
+
+                elif ranking_array[num][8] == action_area[1]:  # 同圈才运动
+                    # print(self.positions)
+                    for p_num in range(len(self.positions)):
+                        if self.positions[p_num][1] == ranking_array[num][5]:
+                            area_num = max_area_count - balls_count  # 跟踪区域数量
+                            p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
+                            if p - self.positions[p_num][0] > 50:
+                                self.speed = 3
+                            elif 30 >= p - self.positions[p_num][0] >= 25:
+                                self.speed = 2
+                            elif p < self.positions[p_num][0] and (self.positions[p_num][0] < len(self.path_points) / 2):
+                                self.speed = 0
+                            elif p < self.positions[p_num][0] and (self.positions[p_num][0] > len(self.path_points) / 2):
+                                self.speed = 0
+                                self.positions[p_num][0] = p  # 跨圈情况
+                            else:
+                                self.speed = 1
+                            index = self.positions[p_num][0] + self.speed
+                            if index < len(self.path_points) and ranking_array[num][8] < max_lap_count:
+                                self.positions[p_num][0] = index
+                                for color_index in range(len(init_array)):
+                                    if init_array[color_index][5] == ranking_array[num][5]:
+                                        self.positions[p_num][2] = color_index + 1
+                                        break
+                else:  # 不同圈情况
+                    for p_num in range(len(self.positions)):
+                        if self.positions[p_num][1] == ranking_array[num][5]:
+                            area_num = max_area_count - balls_count  # 跟踪区域数量
+                            p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
+                            if p - self.positions[p_num][0] > 50:
+                                self.speed = 3
+                            elif 30 >= p - self.positions[p_num][0] >= 25:
+                                self.speed = 2
+                            elif p < self.positions[p_num][0]:
+                                self.speed = 0
+                            else:
+                                self.speed = 1
+                            index = self.positions[p_num][0] + self.speed
+                            if index < len(self.path_points) and ranking_array[num][8] < max_lap_count:
+                                self.positions[p_num][0] = index
+                                for color_index in range(len(init_array)):
+                                    if init_array[color_index][5] == ranking_array[num][5]:
+                                        self.positions[p_num][2] = color_index + 1
+                                        break
+
         if self.positions[0][0] - self.map_action < 600:  # 圈数重置后，重新位置更新范围限制300个点位以内
             if self.picture_size == 860:
                 self.map_action = self.positions[0][0]  # 赋值实时位置
@@ -3850,7 +3873,7 @@ class MapLabel(QLabel):
             if index in range(len(self.path_points)):
                 x, y = self.path_points[index]
                 # 设置球的颜色
-                painter.setBrush(QBrush(self.positions[index_position][1], Qt.SolidPattern))
+                painter.setBrush(QBrush(self.color_names[self.positions[index_position][1]], Qt.SolidPattern))
                 # 绘制球
                 painter.drawEllipse(int(x - self.ball_radius), int(y - self.ball_radius),
                                     self.ball_radius * 2, self.ball_radius * 2)
