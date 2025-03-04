@@ -3754,11 +3754,11 @@ class MapLabel(QLabel):
                 self.positions.append([num * self.ball_space, init_array[num][5], 0])
         for num in range(0, balls_count):
             if ranking_array[num][5] in self.color_names.keys():
+                for i in range(len(self.positions)):    # 排序
+                    if self.positions[i][1] == ranking_array[num][5]:
+                        self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
+                        break
                 if ranking_array[num][6] == 0:  # 起点
-                    for i in range(len(self.positions)):
-                        if self.positions[i][1] == ranking_array[num][5]:
-                            self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
-                            break
                     if num == 0:
                         index = len(ranking_array) * self.ball_space
                     else:
@@ -3772,10 +3772,6 @@ class MapLabel(QLabel):
                 elif (ranking_array[num][6] >= max_area_count - balls_count - 2
                       and ranking_array[num][8] >= max_lap_count - 1  # 最后一圈处理
                       and self.positions[num][0] > len(self.path_points) - num * self.ball_space - 20):
-                    for i in range(len(self.positions)):
-                        if self.positions[i][1] == ranking_array[num][5]:
-                            self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
-                            break
                     if num == 0:
                         index = len(self.path_points) - 1
                     else:
@@ -3832,13 +3828,9 @@ class MapLabel(QLabel):
                                     if init_array[color_index][5] == ranking_array[num][5]:
                                         self.positions[p_num][2] = color_index + 1
                                         break
-        max_position = self.positions[0][0]
-        for i in range(len(self.positions)):
-            if self.positions[i][0] > max_position:
-                max_position = self.positions[i][0]
-        if max_position - self.map_action < len(self.path_points) / 3:  # 圈数重置后，重新位置更新范围限制300个点位以内
+        if self.positions[0][0] - self.map_action < len(self.path_points) / 3:  # 圈数重置后，重新位置更新范围限制300个点位以内
             if self.picture_size == 860:
-                self.map_action = max_position  # 赋值实时位置
+                self.map_action = self.positions[0][0]  # 赋值实时位置
         res = []
         if self.picture_size == 860:
             for i in range(balls_count):
