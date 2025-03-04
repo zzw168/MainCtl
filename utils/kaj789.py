@@ -42,7 +42,7 @@ def test_server(Track_number='I'):
         return False
 
 
-def get_term(Track_number='I'):  # 取期号
+def get_term(Track_number='M'):  # 取期号
     GET_term_url = '/v2/forecast/%s' % Track_number  # 取得期号，开始时间，结束时间，运行时长
     response = requests.get('%s%s' % (url, GET_term_url), headers=headers)
     print(response.status_code)
@@ -159,7 +159,7 @@ def get_stream(Track_number='I'):
         return False
 
 
-def post_status(status=True, Track_number='I'):  # 发送开盘封盘状态，开盘了才能正常进行操作
+def post_status(status=True, Track_number='M'):  # 发送开盘封盘状态，开盘了才能正常进行操作
     POST_status_url = '/status/%s' % Track_number
     POST_status_data = {"status": status}  # true: 开盘, false: 封盘
     response = requests.post('%s%s' % (url, POST_status_url), headers=headers, json=POST_status_data)
@@ -171,12 +171,12 @@ if __name__ == '__main__':
     # get_marble_settings()
     # get_stream()
     # test_server()
-    # post_status(True)
-    # get_term()
-    # post_start(9613162, 1730369317)
-    post_marble_results(9667452,'ManMake','M')
+    # post_status(True, 'M')
+    # get_term('M')
+    post_start(9667595, 1741085865, 'M')
+    # post_marble_results(9667595,'Invalid Term','M')
     # time.sleep(5)9613162
-    # post_end(9613161, 1730369497)
+    # post_end(9667595, 1741086045, 0,'M')
     # post_upload('./1.png')
     # post_result(9613161, 1730369497)
     # post_status(False)

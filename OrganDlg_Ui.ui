@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog_BallsNum</class>
+ <widget class="QDialog" name="Dialog_BallsNum">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>412</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>500</width>
+    <height>230</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>500</width>
+    <height>1000</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>结果确认</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="3">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="title">
+      <string>机关控制</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="4" column="4">
+       <widget class="QLineEdit" name="lineEdit_organ_13"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="checkBox_organ_4">
+        <property name="text">
+         <string>Y4</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QCheckBox" name="checkBox_organ_12">
+        <property name="text">
+         <string>Y12</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="checkBox_organ_3">
+        <property name="text">
+         <string>Y3</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLineEdit" name="lineEdit_organ_8"/>
+      </item>
+      <item row="3" column="4">
+       <widget class="QLineEdit" name="lineEdit_organ_12"/>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="lineEdit_organ_5"/>
+      </item>
+      <item row="7" column="0">
+       <widget class="QCheckBox" name="checkBox_organ_8">
+        <property name="text">
+         <string>Y8</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QCheckBox" name="checkBox_organ_9">
+        <property name="text">
+         <string>Y9</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="3">
+       <widget class="QCheckBox" name="checkBox_organ_14">
+        <property name="text">
+         <string>Y14</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="3">
+       <widget class="QCheckBox" name="checkBox_organ_16">
+        <property name="text">
+         <string>Y16</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLineEdit" name="lineEdit_organ_7"/>
+      </item>
+      <item row="5" column="4">
+       <widget class="QLineEdit" name="lineEdit_organ_14"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkBox_organ_2">
+        <property name="text">
+         <string>Y2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="4">
+       <widget class="QLineEdit" name="lineEdit_organ_15"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBox_organ_1">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Y1</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="lineEdit_organ_4"/>
+      </item>
+      <item row="2" column="4">
+       <widget class="QLineEdit" name="lineEdit_organ_11"/>
+      </item>
+      <item row="6" column="0">
+       <widget class="QCheckBox" name="checkBox_organ_7">
+        <property name="text">
+         <string>Y7</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="lineEdit_organ_2"/>
+      </item>
+      <item row="2" column="3">
+       <widget class="QCheckBox" name="checkBox_organ_11">
+        <property name="text">
+         <string>Y11</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QCheckBox" name="checkBox_organ_6">
+        <property name="text">
+         <string>Y6</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QLineEdit" name="lineEdit_organ_10"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="lineEdit_organ_3"/>
+      </item>
+      <item row="6" column="3">
+       <widget class="QCheckBox" name="checkBox_organ_15">
+        <property name="text">
+         <string>Y15</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="3">
+       <widget class="QCheckBox" name="checkBox_organ_13">
+        <property name="text">
+         <string>Y13</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QLineEdit" name="lineEdit_organ_9"/>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="lineEdit_organ_6"/>
+      </item>
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="checkBox_organ_5">
+        <property name="text">
+         <string>Y5</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="4">
+       <widget class="QLineEdit" name="lineEdit_organ_16"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit_organ_1"/>
+      </item>
+      <item row="1" column="3">
+       <widget class="QCheckBox" name="checkBox_organ_10">
+        <property name="text">
+         <string>Y10</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" rowspan="8">
+       <widget class="QFrame" name="frame_3">
+        <property name="minimumSize">
+         <size>
+          <width>50</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">width: 30px; height: 30px;</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Shape::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Shadow::Raised</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="pushButton_ok">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>38</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>200</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="text">
+      <string>确认(confirm)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QFrame" name="frame_2">
+     <property name="font">
+      <font>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Raised</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

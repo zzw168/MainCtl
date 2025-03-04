@@ -4734,6 +4734,55 @@ def script_signal_accept(msg):
     scroll_to_bottom(ui.textBrowser_msg)
 
 
+class Kaj789Thread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(Kaj789Thread, self).__init__()
+        self.run_flg = True
+        self.running = True
+        self.run_type = ''
+        self.param = ''
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        while self.running:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
+            try:
+                if self.run_type == 'post_status':  # 开盘
+                    requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
+                if self.run_type == 'get_term':     # 取得期号
+                    requests.get(url="%s/reset" % obs_script_addr)
+                elif self.run_type == 'post_start': # 比赛开始
+                    requests.get(url='%s/period?period=%s' % (obs_script_addr, self.param))
+                elif self.run_type == 'post_end':   # 比赛结束
+                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
+                elif self.run_type == 'post_result':    # 发送结果
+                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
+                elif self.run_type == 'post_upload':    # 上传图片
+                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
+                elif self.run_type == 'post_marble_results':    # 发送备注
+                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
+            except:
+                print('OBS脚本链接错误！')
+                flg_start['obs'] = False
+
+            self.run_flg = False
+
+
+def kaj789_signal_accept(msg):
+    ui.textBrowser.append(msg)
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser)
+    scroll_to_bottom(ui.textBrowser_msg)
+
+
 class TestStatusThread(QThread):
     signal = Signal(object)
 
@@ -5692,9 +5741,13 @@ if __name__ == '__main__':
     TestStatus_Thread.signal.connect(test_statussignal_accept)
     TestStatus_Thread.start()
 
-    Script_Thread = ScriptThread()  # 测试线程 13
+    Script_Thread = ScriptThread()  # OBS脚本线程
     Script_Thread.signal.connect(script_signal_accept)
     Script_Thread.start()
+
+    Kaj789_Thread = Kaj789Thread()  # KAJ789发送线程
+    Kaj789_Thread.signal.connect(kaj789_signal_accept)
+    Kaj789_Thread.start()
 
     ui.pushButton_fsave.clicked.connect(save_plan_yaml)
     ui.pushButton_rename.clicked.connect(plan_rename)
