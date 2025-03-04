@@ -5565,21 +5565,23 @@ class OrganCheckBox(QCheckBox):
 
 def organ_show():
     file = "./organ_config.json"
-    with open(file, "r", encoding="utf-8") as f:
-        data = json.load(f)  # 读取 JSON 并转换为 Python 字典
-    for i in range(len(data)):
-        # organ_ui.lineEdit_organ_1.setText(data[i])
-        getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).setText(data[i])
-        OrganDialog.show()
+    if os.path.exists(file):
+        with open(file, "r", encoding="utf-8") as f:
+            data = json.load(f)  # 读取 JSON 并转换为 Python 字典
+        for i in range(len(data)):
+            # organ_ui.lineEdit_organ_1.setText(data[i])
+            getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).setText(data[i])
+    OrganDialog.show()
 
 
 def organ_ok():
     file = "./organ_config.json"
-    data = []
-    with open(file, "w", encoding="utf-8") as f:
-        for i in range(16):
-            data.append(getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).text())
-        json.dump(data, f, ensure_ascii=False, indent=4)  # `ensure_ascii=False` 支持中文
+    if os.path.exists(file):
+        data = []
+        with open(file, "w", encoding="utf-8") as f:
+            for i in range(16):
+                data.append(getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).text())
+            json.dump(data, f, ensure_ascii=False, indent=4)  # `ensure_ascii=False` 支持中文
     OrganDialog.hide()
 
 
