@@ -2127,18 +2127,10 @@ class Ui_MainWindow(object):
         self.groupBox_32 = QGroupBox(self.frame_24)
         self.groupBox_32.setObjectName(u"groupBox_32")
         self.groupBox_32.setMinimumSize(QSize(0, 0))
-        self.groupBox_32.setMaximumSize(QSize(600, 150))
+        self.groupBox_32.setMaximumSize(QSize(600, 180))
         self.groupBox_32.setFont(font1)
         self.gridLayout_58 = QGridLayout(self.groupBox_32)
         self.gridLayout_58.setObjectName(u"gridLayout_58")
-        self.lineEdit_shoot_2 = QLineEdit(self.groupBox_32)
-        self.lineEdit_shoot_2.setObjectName(u"lineEdit_shoot_2")
-        self.lineEdit_shoot_2.setMinimumSize(QSize(0, 0))
-        self.lineEdit_shoot_2.setFont(font5)
-        self.lineEdit_shoot_2.setReadOnly(False)
-
-        self.gridLayout_58.addWidget(self.lineEdit_shoot_2, 3, 3, 1, 1)
-
         self.lineEdit_alarm = QLineEdit(self.groupBox_32)
         self.lineEdit_alarm.setObjectName(u"lineEdit_alarm")
         self.lineEdit_alarm.setMinimumSize(QSize(0, 0))
@@ -2146,23 +2138,7 @@ class Ui_MainWindow(object):
         self.lineEdit_alarm.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.lineEdit_alarm.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_alarm, 2, 3, 1, 1)
-
-        self.lineEdit_start = QLineEdit(self.groupBox_32)
-        self.lineEdit_start.setObjectName(u"lineEdit_start")
-        self.lineEdit_start.setMinimumSize(QSize(0, 0))
-        self.lineEdit_start.setFont(font5)
-        self.lineEdit_start.setReadOnly(False)
-
-        self.gridLayout_58.addWidget(self.lineEdit_start, 2, 1, 1, 1)
-
-        self.lineEdit_start_count = QLineEdit(self.groupBox_32)
-        self.lineEdit_start_count.setObjectName(u"lineEdit_start_count")
-        self.lineEdit_start_count.setMinimumSize(QSize(0, 0))
-        self.lineEdit_start_count.setFont(font5)
-        self.lineEdit_start_count.setReadOnly(False)
-
-        self.gridLayout_58.addWidget(self.lineEdit_start_count, 0, 3, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_alarm, 3, 3, 1, 1)
 
         self.lineEdit_shake = QLineEdit(self.groupBox_32)
         self.lineEdit_shake.setObjectName(u"lineEdit_shake")
@@ -2170,15 +2146,27 @@ class Ui_MainWindow(object):
         self.lineEdit_shake.setFont(font5)
         self.lineEdit_shake.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_shake, 3, 1, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_shake, 4, 1, 1, 1)
 
-        self.lineEdit_shoot_3 = QLineEdit(self.groupBox_32)
-        self.lineEdit_shoot_3.setObjectName(u"lineEdit_shoot_3")
-        self.lineEdit_shoot_3.setMinimumSize(QSize(0, 0))
-        self.lineEdit_shoot_3.setFont(font5)
-        self.lineEdit_shoot_3.setReadOnly(False)
+        self.checkBox_alarm_2 = QCheckBox(self.groupBox_32)
+        self.checkBox_alarm_2.setObjectName(u"checkBox_alarm_2")
+        self.checkBox_alarm_2.setFont(font6)
 
-        self.gridLayout_58.addWidget(self.lineEdit_shoot_3, 4, 3, 1, 1)
+        self.gridLayout_58.addWidget(self.checkBox_alarm_2, 3, 2, 1, 1)
+
+        self.lineEdit_start = QLineEdit(self.groupBox_32)
+        self.lineEdit_start.setObjectName(u"lineEdit_start")
+        self.lineEdit_start.setMinimumSize(QSize(0, 0))
+        self.lineEdit_start.setFont(font5)
+        self.lineEdit_start.setReadOnly(False)
+
+        self.gridLayout_58.addWidget(self.lineEdit_start, 3, 1, 1, 1)
+
+        self.checkBox_start_2 = QCheckBox(self.groupBox_32)
+        self.checkBox_start_2.setObjectName(u"checkBox_start_2")
+        self.checkBox_start_2.setFont(font6)
+
+        self.gridLayout_58.addWidget(self.checkBox_start_2, 3, 0, 1, 1)
 
         self.lineEdit_end = QLineEdit(self.groupBox_32)
         self.lineEdit_end.setObjectName(u"lineEdit_end")
@@ -2186,7 +2174,25 @@ class Ui_MainWindow(object):
         self.lineEdit_end.setFont(font5)
         self.lineEdit_end.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_end, 4, 1, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_end, 5, 1, 1, 1)
+
+        self.checkBox_shoot1 = QCheckBox(self.groupBox_32)
+        self.checkBox_shoot1.setObjectName(u"checkBox_shoot1")
+        self.checkBox_shoot1.setFont(font6)
+
+        self.gridLayout_58.addWidget(self.checkBox_shoot1, 1, 0, 1, 1)
+
+        self.checkBox_shoot2 = QCheckBox(self.groupBox_32)
+        self.checkBox_shoot2.setObjectName(u"checkBox_shoot2")
+        self.checkBox_shoot2.setFont(font6)
+
+        self.gridLayout_58.addWidget(self.checkBox_shoot2, 4, 2, 1, 1)
+
+        self.checkBox_shoot3 = QCheckBox(self.groupBox_32)
+        self.checkBox_shoot3.setObjectName(u"checkBox_shoot3")
+        self.checkBox_shoot3.setFont(font6)
+
+        self.gridLayout_58.addWidget(self.checkBox_shoot3, 5, 2, 1, 1)
 
         self.lineEdit_shoot = QLineEdit(self.groupBox_32)
         self.lineEdit_shoot.setObjectName(u"lineEdit_shoot")
@@ -2194,55 +2200,55 @@ class Ui_MainWindow(object):
         self.lineEdit_shoot.setFont(font5)
         self.lineEdit_shoot.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.lineEdit_shoot, 0, 1, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_shoot, 1, 1, 1, 1)
 
-        self.checkBox_shoot1 = QCheckBox(self.groupBox_32)
-        self.checkBox_shoot1.setObjectName(u"checkBox_shoot1")
-        self.checkBox_shoot1.setFont(font6)
+        self.lineEdit_shoot_2 = QLineEdit(self.groupBox_32)
+        self.lineEdit_shoot_2.setObjectName(u"lineEdit_shoot_2")
+        self.lineEdit_shoot_2.setMinimumSize(QSize(0, 0))
+        self.lineEdit_shoot_2.setFont(font5)
+        self.lineEdit_shoot_2.setReadOnly(False)
 
-        self.gridLayout_58.addWidget(self.checkBox_shoot1, 0, 0, 1, 1)
-
-        self.checkBox_start_2 = QCheckBox(self.groupBox_32)
-        self.checkBox_start_2.setObjectName(u"checkBox_start_2")
-        self.checkBox_start_2.setFont(font6)
-
-        self.gridLayout_58.addWidget(self.checkBox_start_2, 2, 0, 1, 1)
+        self.gridLayout_58.addWidget(self.lineEdit_shoot_2, 4, 3, 1, 1)
 
         self.checkBox_shake = QCheckBox(self.groupBox_32)
         self.checkBox_shake.setObjectName(u"checkBox_shake")
         self.checkBox_shake.setFont(font6)
 
-        self.gridLayout_58.addWidget(self.checkBox_shake, 3, 0, 1, 1)
+        self.gridLayout_58.addWidget(self.checkBox_shake, 4, 0, 1, 1)
+
+        self.lineEdit_start_count = QLineEdit(self.groupBox_32)
+        self.lineEdit_start_count.setObjectName(u"lineEdit_start_count")
+        self.lineEdit_start_count.setMinimumSize(QSize(0, 0))
+        self.lineEdit_start_count.setFont(font5)
+        self.lineEdit_start_count.setReadOnly(False)
+
+        self.gridLayout_58.addWidget(self.lineEdit_start_count, 1, 3, 1, 1)
+
+        self.lineEdit_shoot_3 = QLineEdit(self.groupBox_32)
+        self.lineEdit_shoot_3.setObjectName(u"lineEdit_shoot_3")
+        self.lineEdit_shoot_3.setMinimumSize(QSize(0, 0))
+        self.lineEdit_shoot_3.setFont(font5)
+        self.lineEdit_shoot_3.setReadOnly(False)
+
+        self.gridLayout_58.addWidget(self.lineEdit_shoot_3, 5, 3, 1, 1)
 
         self.checkBox_end_2 = QCheckBox(self.groupBox_32)
         self.checkBox_end_2.setObjectName(u"checkBox_end_2")
         self.checkBox_end_2.setFont(font6)
 
-        self.gridLayout_58.addWidget(self.checkBox_end_2, 4, 0, 1, 1)
+        self.gridLayout_58.addWidget(self.checkBox_end_2, 5, 0, 1, 1)
 
         self.checkBox_start_count = QCheckBox(self.groupBox_32)
         self.checkBox_start_count.setObjectName(u"checkBox_start_count")
         self.checkBox_start_count.setFont(font6)
 
-        self.gridLayout_58.addWidget(self.checkBox_start_count, 0, 2, 1, 1)
+        self.gridLayout_58.addWidget(self.checkBox_start_count, 1, 2, 1, 1)
 
-        self.checkBox_alarm_2 = QCheckBox(self.groupBox_32)
-        self.checkBox_alarm_2.setObjectName(u"checkBox_alarm_2")
-        self.checkBox_alarm_2.setFont(font6)
+        self.pushButton_Organ = QPushButton(self.groupBox_32)
+        self.pushButton_Organ.setObjectName(u"pushButton_Organ")
+        self.pushButton_Organ.setMinimumSize(QSize(0, 25))
 
-        self.gridLayout_58.addWidget(self.checkBox_alarm_2, 2, 2, 1, 1)
-
-        self.checkBox_shoot2 = QCheckBox(self.groupBox_32)
-        self.checkBox_shoot2.setObjectName(u"checkBox_shoot2")
-        self.checkBox_shoot2.setFont(font6)
-
-        self.gridLayout_58.addWidget(self.checkBox_shoot2, 3, 2, 1, 1)
-
-        self.checkBox_shoot3 = QCheckBox(self.groupBox_32)
-        self.checkBox_shoot3.setObjectName(u"checkBox_shoot3")
-        self.checkBox_shoot3.setFont(font6)
-
-        self.gridLayout_58.addWidget(self.checkBox_shoot3, 4, 2, 1, 1)
+        self.gridLayout_58.addWidget(self.pushButton_Organ, 0, 0, 1, 4)
 
 
         self.gridLayout_54.addWidget(self.groupBox_32, 4, 0, 1, 1)
@@ -3245,7 +3251,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(3)
+        self.tabWidget_Ranking.setCurrentIndex(4)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_ready.setDefault(True)
         self.pushButton_start_game_2.setDefault(True)
@@ -3591,45 +3597,46 @@ class Ui_MainWindow(object):
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_3), QCoreApplication.translate("MainWindow", u"\u56fe\u50cf\u8bc6\u522b", None))
         self.groupBox_32.setTitle(QCoreApplication.translate("MainWindow", u"\u673a\u5173\u7f16\u53f7\u8bf4\u660e", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_shoot_2.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_shoot_2.setText(QCoreApplication.translate("MainWindow", u"5", None))
-#if QT_CONFIG(tooltip)
         self.lineEdit_alarm.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_alarm.setText(QCoreApplication.translate("MainWindow", u"14", None))
 #if QT_CONFIG(tooltip)
+        self.lineEdit_shake.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_shake.setText(QCoreApplication.translate("MainWindow", u"3", None))
+        self.checkBox_alarm_2.setText(QCoreApplication.translate("MainWindow", u"\u8b66\u544a\u706f\uff1a", None))
+#if QT_CONFIG(tooltip)
         self.lineEdit_start.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_start.setText(QCoreApplication.translate("MainWindow", u"2", None))
+        self.checkBox_start_2.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u95f8\u95e8\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_end.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_end.setText(QCoreApplication.translate("MainWindow", u"4", None))
+        self.checkBox_shoot1.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c04\uff1a", None))
+        self.checkBox_shoot2.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c042\uff1a", None))
+        self.checkBox_shoot3.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c043\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_shoot.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_shoot.setText(QCoreApplication.translate("MainWindow", u"1", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_shoot_2.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_shoot_2.setText(QCoreApplication.translate("MainWindow", u"5", None))
+        self.checkBox_shake.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u9707\u52a8\uff1a", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_start_count.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_start_count.setText(QCoreApplication.translate("MainWindow", u"9", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_shake.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_shake.setText(QCoreApplication.translate("MainWindow", u"3", None))
-#if QT_CONFIG(tooltip)
         self.lineEdit_shoot_3.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_shoot_3.setText(QCoreApplication.translate("MainWindow", u"6", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_end.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_end.setText(QCoreApplication.translate("MainWindow", u"4", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_shoot.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_shoot.setText(QCoreApplication.translate("MainWindow", u"1", None))
-        self.checkBox_shoot1.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c04\uff1a", None))
-        self.checkBox_start_2.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u95f8\u95e8\uff1a", None))
-        self.checkBox_shake.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u9707\u52a8\uff1a", None))
         self.checkBox_end_2.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u5347\u964d\uff1a", None))
         self.checkBox_start_count.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u5012\u6570\uff1a", None))
-        self.checkBox_alarm_2.setText(QCoreApplication.translate("MainWindow", u"\u8b66\u544a\u706f\uff1a", None))
-        self.checkBox_shoot2.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c042\uff1a", None))
-        self.checkBox_shoot3.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c043\uff1a", None))
+        self.pushButton_Organ.setText(QCoreApplication.translate("MainWindow", u"\u673a\u5173\u63a7\u5236\u9762\u677f", None))
         self.groupBox_26.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3\u8bbe\u7f6e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_music_3.setToolTip("")

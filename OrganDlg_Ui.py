@@ -19,16 +19,16 @@ from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QFrame,
     QGridLayout, QGroupBox, QLineEdit, QPushButton,
     QSizePolicy, QWidget)
 
-class Ui_Dialog_BallsNum(object):
-    def setupUi(self, Dialog_BallsNum):
-        if not Dialog_BallsNum.objectName():
-            Dialog_BallsNum.setObjectName(u"Dialog_BallsNum")
-        Dialog_BallsNum.resize(500, 412)
-        Dialog_BallsNum.setMinimumSize(QSize(500, 230))
-        Dialog_BallsNum.setMaximumSize(QSize(500, 1000))
-        self.gridLayout = QGridLayout(Dialog_BallsNum)
+class Ui_Dialog_Organ(object):
+    def setupUi(self, Dialog_Organ):
+        if not Dialog_Organ.objectName():
+            Dialog_Organ.setObjectName(u"Dialog_Organ")
+        Dialog_Organ.resize(500, 412)
+        Dialog_Organ.setMinimumSize(QSize(500, 230))
+        Dialog_Organ.setMaximumSize(QSize(500, 1000))
+        self.gridLayout = QGridLayout(Dialog_Organ)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.groupBox = QGroupBox(Dialog_BallsNum)
+        self.groupBox = QGroupBox(Dialog_Organ)
         self.groupBox.setObjectName(u"groupBox")
         font = QFont()
         font.setPointSize(10)
@@ -210,14 +210,14 @@ class Ui_Dialog_BallsNum(object):
 
         self.gridLayout.addWidget(self.groupBox, 0, 0, 1, 3)
 
-        self.pushButton_ok = QPushButton(Dialog_BallsNum)
+        self.pushButton_ok = QPushButton(Dialog_Organ)
         self.pushButton_ok.setObjectName(u"pushButton_ok")
         self.pushButton_ok.setMinimumSize(QSize(0, 38))
         self.pushButton_ok.setMaximumSize(QSize(200, 16777215))
 
         self.gridLayout.addWidget(self.pushButton_ok, 1, 1, 1, 1)
 
-        self.frame_2 = QFrame(Dialog_BallsNum)
+        self.frame_2 = QFrame(Dialog_Organ)
         self.frame_2.setObjectName(u"frame_2")
         font1 = QFont()
         font1.setPointSize(20)
@@ -227,7 +227,7 @@ class Ui_Dialog_BallsNum(object):
 
         self.gridLayout.addWidget(self.frame_2, 1, 2, 1, 1)
 
-        self.frame = QFrame(Dialog_BallsNum)
+        self.frame = QFrame(Dialog_Organ)
         self.frame.setObjectName(u"frame")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
@@ -235,30 +235,30 @@ class Ui_Dialog_BallsNum(object):
         self.gridLayout.addWidget(self.frame, 1, 0, 1, 1)
 
 
-        self.retranslateUi(Dialog_BallsNum)
+        self.retranslateUi(Dialog_Organ)
 
-        QMetaObject.connectSlotsByName(Dialog_BallsNum)
+        QMetaObject.connectSlotsByName(Dialog_Organ)
     # setupUi
 
-    def retranslateUi(self, Dialog_BallsNum):
-        Dialog_BallsNum.setWindowTitle(QCoreApplication.translate("Dialog_BallsNum", u"\u7ed3\u679c\u786e\u8ba4", None))
-        self.groupBox.setTitle(QCoreApplication.translate("Dialog_BallsNum", u"\u673a\u5173\u63a7\u5236", None))
-        self.checkBox_organ_4.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y4", None))
-        self.checkBox_organ_12.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y12", None))
-        self.checkBox_organ_3.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y3", None))
-        self.checkBox_organ_8.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y8", None))
-        self.checkBox_organ_9.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y9", None))
-        self.checkBox_organ_14.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y14", None))
-        self.checkBox_organ_16.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y16", None))
-        self.checkBox_organ_2.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y2", None))
-        self.checkBox_organ_1.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y1", None))
-        self.checkBox_organ_7.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y7", None))
-        self.checkBox_organ_11.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y11", None))
-        self.checkBox_organ_6.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y6", None))
-        self.checkBox_organ_15.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y15", None))
-        self.checkBox_organ_13.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y13", None))
-        self.checkBox_organ_5.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y5", None))
-        self.checkBox_organ_10.setText(QCoreApplication.translate("Dialog_BallsNum", u"Y10", None))
-        self.pushButton_ok.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u786e\u8ba4(confirm)", None))
+    def retranslateUi(self, Dialog_Organ):
+        Dialog_Organ.setWindowTitle(QCoreApplication.translate("Dialog_Organ", u"\u7ed3\u679c\u786e\u8ba4", None))
+        self.groupBox.setTitle(QCoreApplication.translate("Dialog_Organ", u"\u673a\u5173\u63a7\u5236", None))
+        self.checkBox_organ_4.setText(QCoreApplication.translate("Dialog_Organ", u"Y4", None))
+        self.checkBox_organ_12.setText(QCoreApplication.translate("Dialog_Organ", u"Y12", None))
+        self.checkBox_organ_3.setText(QCoreApplication.translate("Dialog_Organ", u"Y3", None))
+        self.checkBox_organ_8.setText(QCoreApplication.translate("Dialog_Organ", u"Y8", None))
+        self.checkBox_organ_9.setText(QCoreApplication.translate("Dialog_Organ", u"Y9", None))
+        self.checkBox_organ_14.setText(QCoreApplication.translate("Dialog_Organ", u"Y14", None))
+        self.checkBox_organ_16.setText(QCoreApplication.translate("Dialog_Organ", u"Y16", None))
+        self.checkBox_organ_2.setText(QCoreApplication.translate("Dialog_Organ", u"Y2", None))
+        self.checkBox_organ_1.setText(QCoreApplication.translate("Dialog_Organ", u"Y1", None))
+        self.checkBox_organ_7.setText(QCoreApplication.translate("Dialog_Organ", u"Y7", None))
+        self.checkBox_organ_11.setText(QCoreApplication.translate("Dialog_Organ", u"Y11", None))
+        self.checkBox_organ_6.setText(QCoreApplication.translate("Dialog_Organ", u"Y6", None))
+        self.checkBox_organ_15.setText(QCoreApplication.translate("Dialog_Organ", u"Y15", None))
+        self.checkBox_organ_13.setText(QCoreApplication.translate("Dialog_Organ", u"Y13", None))
+        self.checkBox_organ_5.setText(QCoreApplication.translate("Dialog_Organ", u"Y5", None))
+        self.checkBox_organ_10.setText(QCoreApplication.translate("Dialog_Organ", u"Y10", None))
+        self.pushButton_ok.setText(QCoreApplication.translate("Dialog_Organ", u"\u786e\u8ba4(confirm)", None))
     # retranslateUi
 

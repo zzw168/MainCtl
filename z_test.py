@@ -1,3 +1,5 @@
+import json
+
 from PySide6.QtWidgets import QApplication, QTableWidget, QTableWidgetItem, QComboBox, QVBoxLayout, QWidget
 import sys
 
@@ -33,8 +35,12 @@ class TableWidgetDemo(QWidget):
         combo.addItems(["选项1", "选项2", "选项3"])  # 添加选项
         self.table.setCellWidget(row, col, combo)  # 在该单元格放置 ComboBox
 def test():
-    with open("example.txt", "a", encoding="utf-8") as file:
-        file.write("Appending some data.\n")
+    file = "./organ_config.json"
+    with open(file, "r", encoding="utf-8") as f:
+        data = json.load(f)  # 读取 JSON 并转换为 Python 字典
+    for i in range(len(data)):
+        print(data, len(data))
+
 
 if __name__ == '__main__':
     # app = QApplication(sys.argv)

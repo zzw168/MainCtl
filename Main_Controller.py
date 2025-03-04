@@ -35,6 +35,7 @@ import pygame
 
 from BallsNumDlg_Ui import Ui_Dialog_BallsNum
 from Camera_Ui import Ui_Camera_Dialog
+from OrganDlg_Ui import Ui_Dialog_Organ
 from ResultDlg_Ui import Ui_Dialog_Result
 from Speed_Ui import Ui_Dialog_Set_Speed
 from TrapBallDlg_Ui import Ui_Dialog_TrapBall
@@ -3754,7 +3755,7 @@ class MapLabel(QLabel):
                 self.positions.append([num * self.ball_space, init_array[num][5], 0])
         for num in range(0, balls_count):
             if ranking_array[num][5] in self.color_names.keys():
-                for i in range(len(self.positions)):    # 排序
+                for i in range(len(self.positions)):  # 排序
                     if self.positions[i][1] == ranking_array[num][5]:
                         self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
                         break
@@ -4757,17 +4758,17 @@ class Kaj789Thread(QThread):
             try:
                 if self.run_type == 'post_status':  # 开盘
                     requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
-                if self.run_type == 'get_term':     # 取得期号
+                if self.run_type == 'get_term':  # 取得期号
                     requests.get(url="%s/reset" % obs_script_addr)
-                elif self.run_type == 'post_start': # 比赛开始
+                elif self.run_type == 'post_start':  # 比赛开始
                     requests.get(url='%s/period?period=%s' % (obs_script_addr, self.param))
-                elif self.run_type == 'post_end':   # 比赛结束
+                elif self.run_type == 'post_end':  # 比赛结束
                     requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
-                elif self.run_type == 'post_result':    # 发送结果
+                elif self.run_type == 'post_result':  # 发送结果
                     requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
-                elif self.run_type == 'post_upload':    # 上传图片
+                elif self.run_type == 'post_upload':  # 上传图片
                     requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
-                elif self.run_type == 'post_marble_results':    # 发送备注
+                elif self.run_type == 'post_marble_results':  # 发送备注
                     requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
             except:
                 print('OBS脚本链接错误！')
@@ -5529,6 +5530,59 @@ def monitor_cam_change():
 "************************************ResultDlg_Ui*********************************************"
 
 
+class OrganUi(QDialog, Ui_Dialog_Organ):
+    def __init__(self):
+        super().__init__()
+
+    def setupUi(self, z_dialog):
+        super(OrganUi, self).setupUi(z_dialog)
+
+        for i in range(16):
+            getattr(self, 'checkBox_organ_%s'%(i+1)).__class__ = OrganCheckBox
+
+
+class OrganCheckBox(QCheckBox):
+    def __init__(self, text="", parent=None):
+        super().__init__(text, parent)
+
+    def mousePressEvent(self, event):
+        organ_num = self.objectName().split('_')[2]
+        if not flg_start['card']:
+            return
+        try:
+            index = int(organ_num) - 1
+            if not self.isChecked():
+                sc.GASetExtDoBit(index, 1)
+            else:
+                sc.GASetExtDoBit(index, 0)
+        except:
+            print('机关%s输出错误！' % organ_num)
+            ui.textBrowser_msg.append(fail('机关%s输出错误！' % organ_num))
+            flg_start['card'] = False
+
+        super().mousePressEvent(event)  # 让父类继续处理事件（否则复选框不会切换状态）
+
+
+def organ_show():
+    file = "./organ_config.json"
+    with open(file, "r", encoding="utf-8") as f:
+        data = json.load(f)  # 读取 JSON 并转换为 Python 字典
+    for i in range(len(data)):
+        # organ_ui.lineEdit_organ_1.setText(data[i])
+        getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).setText(data[i])
+        OrganDialog.show()
+
+
+def organ_ok():
+    file = "./organ_config.json"
+    data = []
+    with open(file, "w", encoding="utf-8") as f:
+        for i in range(16):
+            data.append(getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).text())
+        json.dump(data, f, ensure_ascii=False, indent=4)  # `ensure_ascii=False` 支持中文
+    OrganDialog.hide()
+
+
 class ResultUi(QDialog, Ui_Dialog_Result):
     def __init__(self):
         super().__init__()
@@ -5632,6 +5686,11 @@ if __name__ == '__main__':
     BallsNum_ui.setupUi(BallsNumDialog)
     BallsNum_ui.pushButton_ok.clicked.connect(balls_num_btn)
     # BallsNumDialog.show()
+
+    OrganDialog = QDialog(z_window)
+    organ_ui = OrganUi()
+    organ_ui.setupUi(OrganDialog)
+    organ_ui.pushButton_ok.clicked.connect(organ_ok)
 
     ResultDialog = QDialog(z_window)
     result_ui = ResultUi()
@@ -6102,6 +6161,7 @@ if __name__ == '__main__':
     ui.radioButton_music_background_2.clicked.connect(save_main_yaml)
     ui.radioButton_music_background_3.clicked.connect(save_main_yaml)
     ui.pushButton_Save_Ball.clicked.connect(save_main_yaml)
+    ui.pushButton_Organ.clicked.connect(organ_show)
 
     ui.checkBox_Flip_Horizontal.clicked.connect(flip_horizontal)
     ui.checkBox_Flip_Vertica.clicked.connect(flip_vertica)

@@ -41,7 +41,7 @@
          <enum>Qt::FocusPolicy::NoFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -5239,7 +5239,7 @@
                <property name="maximumSize">
                 <size>
                  <width>600</width>
-                 <height>150</height>
+                 <height>180</height>
                 </size>
                </property>
                <property name="font">
@@ -5254,32 +5254,6 @@
                </property>
                <layout class="QGridLayout" name="gridLayout_58">
                 <item row="3" column="3">
-                 <widget class="QLineEdit" name="lineEdit_shoot_2">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>5</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="3">
                  <widget class="QLineEdit" name="lineEdit_alarm">
                   <property name="minimumSize">
                    <size>
@@ -5308,59 +5282,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
-                 <widget class="QLineEdit" name="lineEdit_start">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>2</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
-                 <widget class="QLineEdit" name="lineEdit_start_count">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>9</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
+                <item row="4" column="1">
                  <widget class="QLineEdit" name="lineEdit_shake">
                   <property name="minimumSize">
                    <size>
@@ -5386,8 +5308,22 @@
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="3">
-                 <widget class="QLineEdit" name="lineEdit_shoot_3">
+                <item row="3" column="2">
+                 <widget class="QCheckBox" name="checkBox_alarm_2">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>警告灯：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="lineEdit_start">
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
@@ -5405,14 +5341,28 @@
                    <string/>
                   </property>
                   <property name="text">
-                   <string>6</string>
+                   <string>2</string>
                   </property>
                   <property name="readOnly">
                    <bool>false</bool>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="1">
+                <item row="3" column="0">
+                 <widget class="QCheckBox" name="checkBox_start_2">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>起点闸门：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="1">
                  <widget class="QLineEdit" name="lineEdit_end">
                   <property name="minimumSize">
                    <size>
@@ -5438,7 +5388,49 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
+                <item row="1" column="0">
+                 <widget class="QCheckBox" name="checkBox_shoot1">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>弹射：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="2">
+                 <widget class="QCheckBox" name="checkBox_shoot2">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>弹射2：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="2">
+                 <widget class="QCheckBox" name="checkBox_shoot3">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>弹射3：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
                  <widget class="QLineEdit" name="lineEdit_shoot">
                   <property name="minimumSize">
                    <size>
@@ -5464,35 +5456,33 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="checkBox_shoot1">
+                <item row="4" column="3">
+                 <widget class="QLineEdit" name="lineEdit_shoot_2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
+                    <pointsize>10</pointsize>
                     <bold>false</bold>
                    </font>
                   </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
                   <property name="text">
-                   <string>弹射：</string>
+                   <string>5</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
-                 <widget class="QCheckBox" name="checkBox_start_2">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>起点闸门：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
+                <item row="4" column="0">
                  <widget class="QCheckBox" name="checkBox_shake">
                   <property name="font">
                    <font>
@@ -5506,7 +5496,59 @@
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="0">
+                <item row="1" column="3">
+                 <widget class="QLineEdit" name="lineEdit_start_count">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>9</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="3">
+                 <widget class="QLineEdit" name="lineEdit_shoot_3">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>6</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0">
                  <widget class="QCheckBox" name="checkBox_end_2">
                   <property name="font">
                    <font>
@@ -5520,7 +5562,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="2">
+                <item row="1" column="2">
                  <widget class="QCheckBox" name="checkBox_start_count">
                   <property name="font">
                    <font>
@@ -5534,45 +5576,16 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="2">
-                 <widget class="QCheckBox" name="checkBox_alarm_2">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
+                <item row="0" column="0" colspan="4">
+                 <widget class="QPushButton" name="pushButton_Organ">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
                   </property>
                   <property name="text">
-                   <string>警告灯：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
-                 <widget class="QCheckBox" name="checkBox_shoot2">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>弹射2：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="2">
-                 <widget class="QCheckBox" name="checkBox_shoot3">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>弹射3：</string>
+                   <string>机关控制面板</string>
                   </property>
                  </widget>
                 </item>
