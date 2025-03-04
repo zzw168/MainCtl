@@ -41,7 +41,7 @@
          <enum>Qt::FocusPolicy::NoFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -4169,7 +4169,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>300</height>
+                  <height>10</height>
                  </size>
                 </property>
                 <property name="font">
@@ -4226,7 +4226,7 @@
                 <property name="minimumSize">
                  <size>
                   <width>0</width>
-                  <height>300</height>
+                  <height>10</height>
                  </size>
                 </property>
                 <property name="font">
@@ -4311,8 +4311,8 @@
               <widget class="QGroupBox" name="groupBox_14">
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
-                 <height>10</height>
+                 <width>450</width>
+                 <height>420</height>
                 </size>
                </property>
                <property name="maximumSize">
@@ -4355,8 +4355,8 @@
               <widget class="QGroupBox" name="groupBox_7">
                <property name="minimumSize">
                 <size>
-                 <width>0</width>
-                 <height>10</height>
+                 <width>500</width>
+                 <height>420</height>
                 </size>
                </property>
                <property name="maximumSize">

@@ -1200,6 +1200,7 @@ class ZUi(QMainWindow, Ui_MainWindow):
 
         # 创建一个 QSplitter
         splitter = QSplitter(Qt.Horizontal)
+        # splitter = QSplitter(Qt.Vertical)
 
         # 将已有的 QGroupBox 添加到 QSplitter 中
         splitter.addWidget(self.groupBox_main_camera)
@@ -1790,9 +1791,8 @@ class PlanBallNumThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     # print(res, value)
                     if res == 0:
-                        # num = int(value[0] / 2)
-                        num = value[0]
-                        print(num, num_old, num_send)
+                        num = int(value[0] / 2)
+                        # print(num, num_old, num_send)
                         if num != num_old:
                             t = time.time()
                             if num_send < len(z_ranking_time):  # 保存每个球到达终点的时间
@@ -1806,6 +1806,7 @@ class PlanBallNumThread(QThread):
                             num_send += 1
                             num_old = num
                         if num_send > balls_count - 2 and screen_sort:
+                            print(num_send, balls_count, '~~~~~~~~~~~~~~~~~~~')
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
                         if num_send >= balls_count:
@@ -1841,10 +1842,14 @@ class PlanBallNumThread(QThread):
                     if z_ranking_time[index] == '':
                         t = time.time()
                         z_ranking_time[index] = '%.2f' % (t - ranking_time_start)
-                        if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
-                            tcp_ranking_thread.send_time_data = [num_send + 1, '%s"' % z_ranking_time[num_send]]
-                            tcp_ranking_thread.send_time_flg = True
-                        time.sleep(0.5)
+                    if not tcp_ranking_thread.send_time_flg:  # 发送排名时间并打开前端排名时间发送标志
+                        if z_ranking_time[index] not in ['TRAP', 'OUT']:
+                            s = '%s"' % z_ranking_time[index]
+                        else:
+                            s = z_ranking_time[index]
+                        tcp_ranking_thread.send_time_data = [index + 1, s]
+                        tcp_ranking_thread.send_time_flg = True
+                    time.sleep(0.5)
                 save_path = '%s' % ui.lineEdit_upload_Path.text()
                 if os.path.exists(save_path):
                     lottery_term[6] = '%s/%s.jpg' % (save_path, term)
@@ -3791,9 +3796,11 @@ class MapLabel(QLabel):
                                 self.speed = 3
                             elif 30 >= p - self.positions[p_num][0] >= 25:
                                 self.speed = 2
-                            elif p < self.positions[p_num][0] and (self.positions[p_num][0] < len(self.path_points) / 2):
+                            elif p < self.positions[p_num][0] and (
+                                    self.positions[p_num][0] < len(self.path_points) / 2):
                                 self.speed = 0
-                            elif p < self.positions[p_num][0] and (self.positions[p_num][0] > len(self.path_points) / 2):
+                            elif p < self.positions[p_num][0] and (
+                                    self.positions[p_num][0] > len(self.path_points) / 2):
                                 self.speed = 0
                                 self.positions[p_num][0] = p  # 跨圈情况
                             else:
@@ -3825,10 +3832,13 @@ class MapLabel(QLabel):
                                     if init_array[color_index][5] == ranking_array[num][5]:
                                         self.positions[p_num][2] = color_index + 1
                                         break
-
-        if self.positions[0][0] - self.map_action < 600:  # 圈数重置后，重新位置更新范围限制300个点位以内
+        max_position = self.positions[0][0]
+        for i in range(len(self.positions)):
+            if self.positions[i][0] > max_position:
+                max_position = self.positions[i][0]
+        if max_position - self.map_action < len(self.path_points) / 3:  # 圈数重置后，重新位置更新范围限制300个点位以内
             if self.picture_size == 860:
-                self.map_action = self.positions[0][0]  # 赋值实时位置
+                self.map_action = max_position  # 赋值实时位置
         res = []
         if self.picture_size == 860:
             for i in range(balls_count):
@@ -5556,6 +5566,7 @@ def trap_ok():
 
 
 def trap_cancel():
+    PlanBallNum_Thread.run_flg = False
     TrapBallDialog.hide()
 
 
