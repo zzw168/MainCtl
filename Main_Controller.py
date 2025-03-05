@@ -897,15 +897,27 @@ class TcpResultThread(QThread):
                                                              Track_number)  # 发送最终排名给服务器
                                     print(res_result, '~~~~~~~~~~~~~post_result')
                                     self.signal.emit({'post_result': res_result})
+                                    if res_result == 'OK':
+                                        lottery_term[8] = "发送成功"
+                                    else:
+                                        lottery_term[8] = "发送失败"
                                     if os.path.exists(lottery_term[6]):
                                         res_upload = post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
                                         print(res_upload, '~~~~~~~~~~~~~post_upload')
                                         self.signal.emit({'post_upload': res_upload})
+                                        if res_upload == 'OK':
+                                            lottery_term[8] = "上传成功"
+                                        else:
+                                            lottery_term[8] = "上传失败"
                                     if term_comment != '':
                                         res_marble_results = post_marble_results(term, term_comment,
                                                                                  Track_number)  # 上传备注信息
                                         print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
                                         self.signal.emit({'post_marble_results': res_marble_results})
+                                        if res_marble_results == 'OK':
+                                            lottery_term[8] = "备注成功"
+                                        else:
+                                            lottery_term[8] = "备注失败"
                             except:
                                 self.signal.emit(fail('post_result 上传结果错误！'))
                                 print('上传结果错误！')
@@ -917,7 +929,6 @@ class TcpResultThread(QThread):
                                 video_name = cl_request.stop_record()  # 关闭录像
                                 lottery_term[7] = video_name.output_path  # 视频保存路径
                             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-                            end_time = int(time.time())
                             self.signal.emit('save_video')
                             # lottery2sql()  # 保存数据库
                             lottery2json()  # 保存数据
