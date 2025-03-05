@@ -892,20 +892,21 @@ class TcpResultThread(QThread):
                                 res_end = post_end(term, betting_end_time, term_status,
                                                    Track_number)  # 发送游戏结束信号给服务器
                                 print(res_end, '~~~~~~~~~~~~~post_end')
-                                self.signal.emit(fail('post_end:%s' % res_end))
-                                res_result = post_result(term, betting_end_time, result_data,
-                                                         Track_number)  # 发送最终排名给服务器
-                                print(res_result, '~~~~~~~~~~~~~post_result')
-                                self.signal.emit(fail('post_result:%s' % res_result))
-                                if os.path.exists(lottery_term[6]):
-                                    res_upload = post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
-                                    print(res_upload, '~~~~~~~~~~~~~post_upload')
-                                    self.signal.emit(fail('post_upload:%s' % res_upload))
-                                if term_status == 0:
-                                    res_marble_results = post_marble_results(term, term_comment,
-                                                                             Track_number)  # 上传备注信息
-                                    print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
-                                    self.signal.emit(fail('post_marble_results:%s' % res_marble_results))
+                                self.signal.emit({'post_end': res_end})
+                                if res_end == 'OK':
+                                    res_result = post_result(term, betting_end_time, result_data,
+                                                             Track_number)  # 发送最终排名给服务器
+                                    print(res_result, '~~~~~~~~~~~~~post_result')
+                                    self.signal.emit({'post_result': res_result})
+                                    if os.path.exists(lottery_term[6]):
+                                        res_upload = post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
+                                        print(res_upload, '~~~~~~~~~~~~~post_upload')
+                                        self.signal.emit({'post_upload': res_upload})
+                                    if term_status == 0:
+                                        res_marble_results = post_marble_results(term, term_comment,
+                                                                                 Track_number)  # 上传备注信息
+                                        print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
+                                        self.signal.emit({'post_marble_results': res_marble_results})
                             except:
                                 self.signal.emit(fail('post_result 上传结果错误！'))
                                 print('上传结果错误！')
@@ -975,6 +976,30 @@ def tcpsignal_accept(msg):
         tb_result.item(0, 8).setText(lottery_term[8])  # 结果上传状态
         tb_result.item(0, 9).setText(lottery_term[9])  # 图片上传状态
     # print(msg)
+    elif isinstance(msg, dict):
+        if 'post_end' in msg.keys():
+            if msg['post_end'] == 'OK':
+                message = succeed('发送结束标志成功！')
+        else:
+            message = fail('发送结束标志失败:%s' % msg['post_end'])
+        if 'post_result' in msg.keys():
+            if msg['post_result'] == 'OK':
+                message = succeed('发送结果成功！')
+        else:
+            message = fail('发送结果失败:%s' % msg['post_result'])
+        if 'post_upload' in msg.keys():
+            if msg['post_upload'] == 'OK':
+                message = succeed('发送图片成功！')
+        else:
+            message = fail('发送图片失败:%s' % msg['post_upload'])
+        if 'post_marble_results' in msg.keys():
+            if msg['post_marble_results'] == 'OK':
+                message = succeed('发送备注成功！')
+        else:
+            message = fail('发送备注失败:%s' % msg['post_marble_results'])
+
+        ui.textBrowser_msg.append(message)
+        scroll_to_bottom(ui.textBrowser_msg)
     elif msg == 'auto_shoot':
         ui.lineEdit_ball_end.setText('0')
         ui.checkBox_shoot_0.setChecked(True)
@@ -5531,7 +5556,7 @@ class OrganUi(QDialog, Ui_Dialog_Organ):
         super(OrganUi, self).setupUi(z_dialog)
 
         for i in range(16):
-            getattr(self, 'checkBox_organ_%s'%(i+1)).__class__ = OrganCheckBox
+            getattr(self, 'checkBox_organ_%s' % (i + 1)).__class__ = OrganCheckBox
 
 
 class OrganCheckBox(QCheckBox):

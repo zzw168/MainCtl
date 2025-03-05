@@ -145,7 +145,7 @@ def post_aiupload(term, ai_img_path, Track_number='I'):
     return response.text
 
 
-def get_stream(Track_number='I'):
+def get_stream(Track_number='M'):
     global stream_url
     GET_stream_url = '/stream/%s' % Track_number
     response = requests.get('%s%s' % (url, GET_stream_url), headers=headers)
