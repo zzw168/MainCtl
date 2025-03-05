@@ -91,7 +91,7 @@ def post_result(term, betting_end_time, result_data='', Track_number='I'):  # �
                                 {"pm": 8, "id": 8, "time": 130.98},
                                 {"pm": 9, "id": 9, "time": 130.99},
                                 {"pm": 10, "id": 10, "time": 131.22}])}
-    response = requests.post('%s%s' % (url, POST_result_url), headers=headers, json=POST_result_data)
+    response = requests.post('%s%s' % (url, POST_result_url), headers=headers, json=POST_result_data, timeout=10)
     print(POST_result_data)
     print('result:', response.text)
     return response.text
@@ -102,7 +102,7 @@ def post_upload(term, img_path, Track_number='I'):  # 上传图片
     POST_upload_url = '/upload/%s/%s' % (Track_number, term)
     with open(img_path, 'rb') as f:
         files = {'file': ('image.jpg', f, 'image/jpeg')}  # 创建上传文件对象
-        response = requests.post('%s%s' % (url, POST_upload_url), files=files, headers=headers)
+        response = requests.post('%s%s' % (url, POST_upload_url), files=files, headers=headers, timeout=10)
     print('upload:', response.text)
     return response.text
 
@@ -171,12 +171,12 @@ if __name__ == '__main__':
     # get_marble_settings()
     # get_stream()
     # test_server()
-    # post_status(True, 'M')
+    post_status(True, 'M')
     # get_term('M')
-    post_start(9667595, 1741085865, 'M')
+    # post_start(9667595, 1741157430, 'M')
     # post_marble_results(9667595,'Invalid Term','M')
     # time.sleep(5)9613162
-    # post_end(9667595, 1741086045, 0,'M')
+    # post_end(9667595, 1741157610, 1,'M')
     # post_upload('./1.png')
     # post_result(9613161, 1730369497)
     # post_status(False)

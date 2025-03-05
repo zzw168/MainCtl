@@ -7,7 +7,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pynput
 import websocket
-import yaml
 
 from PySide6.QtCore import QThread, Signal, Slot, QTimer, QEvent
 from PySide6.QtGui import QMouseEvent, QPen, QTextCursor
@@ -4001,7 +4000,6 @@ def load_points_json(color):
         file = "ai_points.json"
     else:
         return
-    # file = "camera_points.yml"
     if os.path.exists(file):
         try:
             f = open(file, 'r', encoding='utf-8')
@@ -4549,14 +4547,14 @@ def lottery_sql_init():
         print(f"Unexpected error: {e}")
 
 
-def lottery_yaml_init():
+def lottery_json_init():
     global lottery_term
     current_date = time.strftime("%Y-%m-%d", time.localtime())
-    file = "./terms/%s.yml" % current_date
+    file = "./terms/%s.json" % current_date
     print(file)
     if os.path.exists(file):
         f = open(file, 'r', encoding='utf-8')
-        lottery_all = yaml.safe_load(f)
+        lottery_all = json.load(f)
         f.close()
         lottery_list = lottery_all['lottery_list']
         for row in range(len(lottery_list)):
@@ -6195,7 +6193,7 @@ if __name__ == '__main__':
     labels = []
     lottery_term = ['0'] * 10  # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 图片, 录像, 发送状态, 图片上传状态]
     # start_lottery_server_bat()  # 模拟开奖王服务器
-    lottery_yaml_init()
+    lottery_json_init()
 
     term = '8000'  # 期号
     betting_start_time = 0  # 比赛预定开始时间
