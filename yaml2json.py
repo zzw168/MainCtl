@@ -30,5 +30,5 @@ def convert_yaml_to_json(folder_path):
             print(f"转换失败: {yaml_file}, 错误信息: {e}")
 
 # 运行转换（修改为你的文件夹路径）
-folder_path = "your_folder_path"  # 替换为实际的文件夹路径
+folder_path = "./"  # 替换为实际的文件夹路径
 convert_yaml_to_json(folder_path)
