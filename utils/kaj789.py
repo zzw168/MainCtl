@@ -103,6 +103,7 @@ def post_upload(term, img_path, Track_number='I'):  # 上传图片
     with open(img_path, 'rb') as f:
         files = {'file': ('image.jpg', f, 'image/jpeg')}  # 创建上传文件对象
         response = requests.post('%s%s' % (url, POST_upload_url), files=files, headers=headers, timeout=10)
+    print(files)
     print('upload:', response.text)
     return response.text
 

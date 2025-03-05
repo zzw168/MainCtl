@@ -842,6 +842,7 @@ class TcpResultThread(QThread):
         global lottery_term
         global tcp_result_socket
         global action_area
+        global term_comment
 
         tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcp_result_socket.bind(result_tcpServer_addr)
@@ -867,7 +868,7 @@ class TcpResultThread(QThread):
                             else:
                                 datalist["data"]['rank'].append(
                                     {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
-                        print(datalist)
+                        # print(datalist)
                         ws.send(json.dumps(datalist))
 
                         if ui.radioButton_start_betting.isChecked():  # 开盘模式
@@ -914,31 +915,35 @@ class TcpResultThread(QThread):
                                                                                  Track_number)  # 上传备注信息
                                         print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
                                         self.signal.emit({'post_marble_results': res_marble_results})
-                                        if res_marble_results == 'OK':
+                                        if 'marble_results' in res_marble_results:
                                             lottery_term[8] = term_comment
                                         else:
                                             lottery_term[8] = "备注失败"
+                                        term_comment = ''
                             except:
                                 self.signal.emit(fail('post_result 上传结果错误！'))
                                 print('上传结果错误！')
 
-                            # 获取录屏状态
-                            recording_status = cl_request.get_record_status()
+                            if ui.radioButton_start_betting.isChecked():  # 开盘模式
+                                if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
+                                    self.signal.emit('封盘')
+
+                                if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
+                                    self.signal.emit('黑屏')
+                        self.signal.emit(succeed('第%s期 结束！' % term))
+                        # 获取录屏状态
+                        recording_status = cl_request.get_record_status()
+                        try:
                             # 检查是否正在录屏
                             if recording_status.output_active:  # 确保键名正确
                                 video_name = cl_request.stop_record()  # 关闭录像
                                 lottery_term[10] = video_name.output_path  # 视频保存路径
-                            lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-                            self.signal.emit('save_video')
-                            # lottery2sql()  # 保存数据库
-                            lottery2json()  # 保存数据
-                        self.signal.emit(succeed('第%s期 结束！' % term))
-                        # 获取录屏状态
-                        recording_status = cl_request.get_record_status()
-                        # 检查是否正在录屏
-                        if recording_status.output_active:  # 确保键名正确
-                            time.sleep(3)
-                            cl_request.stop_record()  # 关闭录像
+                        except:
+                            pass
+                        lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+                        self.signal.emit('save_video')
+                        # lottery2sql()  # 保存数据库
+                        lottery2json()  # 保存数据
                         if ui.checkBox_restart.isChecked():
                             if ui.radioButton_start_betting.isChecked():
                                 self.send_type = ''
@@ -987,27 +992,32 @@ def tcpsignal_accept(msg):
         tb_result.item(0, 9).setText(lottery_term[9])  # 照片保存路径
         tb_result.item(0, 10).setText(lottery_term[10])  # 视频保存路径
     # print(msg)
+    elif msg == '黑屏':
+        ui.radioButton_stop_betting.click()  # 封盘
+        ui.checkBox_black_screen.click()
+    elif msg == '封盘':
+        ui.radioButton_stop_betting.click()  # 封盘
     elif isinstance(msg, dict):
         if 'post_end' in msg.keys():
             if msg['post_end'] == 'OK':
                 message = succeed('发送结束标志成功！')
-        else:
-            message = fail('发送结束标志失败:%s' % msg['post_end'])
+            else:
+                message = fail('发送结束标志失败:%s' % msg['post_end'])
         if 'post_result' in msg.keys():
             if msg['post_result'] == 'OK':
                 message = succeed('发送结果成功！')
-        else:
-            message = fail('发送结果失败:%s' % msg['post_result'])
+            else:
+                message = fail('发送结果失败:%s' % msg['post_result'])
         if 'post_upload' in msg.keys():
             if msg['post_upload'] == 'OK':
                 message = succeed('发送图片成功！')
-        else:
-            message = fail('发送图片失败:%s' % msg['post_upload'])
-        if 'post_marble_results' in msg.keys():
-            if msg['post_marble_results'] == 'OK':
+            else:
+                message = fail('发送图片失败:%s' % msg['post_upload'])
+        if term in msg.keys():
+            if 'marble_results' in msg['post_marble_results'] :
                 message = succeed('发送备注成功！')
-        else:
-            message = fail('发送备注失败:%s' % msg['post_marble_results'])
+            else:
+                message = fail('发送备注失败:%s' % msg['post_marble_results'])
 
         ui.textBrowser_msg.append(message)
         scroll_to_bottom(ui.textBrowser_msg)
@@ -1372,10 +1382,10 @@ class ZUi(QMainWindow, Ui_MainWindow):
 
         action = menu.exec(screenPos)
         if action == item0:
-            exe_path = tb_result.item(row_num, 6).text()
+            exe_path = tb_result.item(row_num, 9).text()
             os.startfile(exe_path)
         if action == item1:
-            exe_path = tb_result.item(row_num, 7).text()
+            exe_path = tb_result.item(row_num, 10).text()
             os.startfile(exe_path)
         if action == item2:
             pass
@@ -1596,6 +1606,8 @@ class ReStartThread(QThread):
                     if (balls_start >= balls_count
                             or balls_start >= int(ui.lineEdit_balls_auto.text())):
                         break
+            if not self.run_flg:
+                continue
             while PlanCmd_Thread.run_flg:
                 print('等待背景结束~~~~~~~')
                 time.sleep(1)
@@ -1868,7 +1880,7 @@ class PlanBallNumThread(QThread):
                         flg_start['card'] = False
                         self.signal.emit(fail("运动板x输入通信出错！"))
                     time.sleep(0.01)
-
+                self.signal.emit('检查结束')
                 for index in range(balls_count):
                     if z_ranking_time[index] == '':
                         t = time.time()
@@ -1915,6 +1927,8 @@ def PlanBallNumsignal_accept(msg):
         if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():  # 非测试模式:
             ui.checkBox_saveImgs_main.setChecked(True)
             ui.checkBox_saveImgs_monitor.setChecked(True)
+    elif '检查结束' in msg:
+        TrapBallDialog.hide()
     elif '人工检查' in msg:
         TrapBallDialog.show()
         if ui.radioButton_start_betting.isChecked():
@@ -2127,12 +2141,6 @@ class ScreenShotThread(QThread):
                         time.sleep(1)
                     Send_Result_End = False
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
-            if ui.radioButton_start_betting.isChecked():  # 开盘模式
-                if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
-                    self.signal.emit('封盘')
-
-                if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
-                    self.signal.emit('黑屏')
 
             betting_end_time = int(time.time())
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
@@ -2177,11 +2185,6 @@ def ScreenShotsignal_accept(msg):
             else:
                 getattr(ui, 'lineEdit_result_%s' % index).setText('')
                 getattr(result_ui, 'lineEdit_result_%s' % index).setText('')
-    elif msg == '黑屏':
-        ui.radioButton_stop_betting.click()  # 封盘
-        ui.checkBox_black_screen.click()
-    elif msg == '封盘':
-        ui.radioButton_stop_betting.click()  # 封盘
     elif msg == '显示结果对话框':
         ResultDialog.show()
         play_alarm()  # 警报声
@@ -2316,6 +2319,10 @@ def shootsignal_accept(msg):
     scroll_to_bottom(ui.textBrowser_msg)
     if "弹射上珠不够" in msg:
         BallsNumDialog.show()
+        if ui.radioButton_start_betting.isChecked():
+            ui.radioButton_stop_betting.click()
+        ui.checkBox_restart.setChecked(False)
+        ReStart_Thread.run_flg = False
 
 
 '''
@@ -5981,7 +5988,7 @@ if __name__ == '__main__':
     Track_number = "M"  # 轨道直播编号
     term_status = 1  # 赛事状态（丢球）
     term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
-    term_comment = 'Revise'
+    term_comment = ''
 
     load_main_json()
     load_ballsort_json()
