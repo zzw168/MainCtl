@@ -214,6 +214,7 @@ class Ui_Dialog_Organ(object):
         self.pushButton_ok.setObjectName(u"pushButton_ok")
         self.pushButton_ok.setMinimumSize(QSize(0, 38))
         self.pushButton_ok.setMaximumSize(QSize(200, 16777215))
+        self.pushButton_ok.setFont(font)
 
         self.gridLayout.addWidget(self.pushButton_ok, 1, 1, 1, 1)
 
@@ -259,6 +260,6 @@ class Ui_Dialog_Organ(object):
         self.checkBox_organ_13.setText(QCoreApplication.translate("Dialog_Organ", u"Y13", None))
         self.checkBox_organ_5.setText(QCoreApplication.translate("Dialog_Organ", u"Y5", None))
         self.checkBox_organ_10.setText(QCoreApplication.translate("Dialog_Organ", u"Y10", None))
-        self.pushButton_ok.setText(QCoreApplication.translate("Dialog_Organ", u"\u786e\u8ba4(confirm)", None))
+        self.pushButton_ok.setText(QCoreApplication.translate("Dialog_Organ", u"\u4fdd\u5b58(SAVE)", None))
     # retranslateUi
 

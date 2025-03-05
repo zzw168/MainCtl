@@ -246,8 +246,14 @@
        <height>16777215</height>
       </size>
      </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
-      <string>确认(confirm)</string>
+      <string>保存(SAVE)</string>
      </property>
     </widget>
    </item>

@@ -1,34 +1,18 @@
 import copy
-import json
-import math
-import os
-import random
 import re
 import subprocess
 import sys
 import threading
-import time
-from asyncio import timeout
-from concurrent.futures import ThreadPoolExecutor
-from http.client import responses
 from http.server import BaseHTTPRequestHandler, HTTPServer
-from time import sleep
 
-import cv2
-import numpy as np
-import psutil
 import pynput
-import requests
 import websocket
 import yaml
-from PIL.ImageOps import scale
-from PyInstaller.utils.hooks.conda import files
-from PySide6 import QtWidgets
 
-from PySide6.QtCore import Qt, QThread, Signal, Slot, QTimer, QPropertyAnimation, QEvent
-from PySide6.QtGui import QBrush, QColor, QPixmap, QMouseEvent, QPen, QTextCursor
-from PySide6.QtWidgets import QApplication, QMainWindow, QTableWidgetItem, QCheckBox, QMenu, QMessageBox, QFileDialog, \
-    QAbstractButton, QMdiSubWindow, QMdiArea, QDialog, QSplitter, QLayout
+from PySide6.QtCore import QThread, Signal, Slot, QTimer, QEvent
+from PySide6.QtGui import QMouseEvent, QPen, QTextCursor
+from PySide6.QtWidgets import QMenu, QMessageBox, QFileDialog, \
+    QAbstractButton, QDialog, QSplitter
 
 import obsws_python as obs
 import pygame
@@ -41,6 +25,7 @@ from Speed_Ui import Ui_Dialog_Set_Speed
 from TrapBallDlg_Ui import Ui_Dialog_TrapBall
 from utils import tool_unit
 from utils.SportCard_unit import *
+from kaj789_table import Kaj789Ui
 from utils.tool_unit import *
 from utils.Serial485_unit import *
 from MainCtl_Ui import *
@@ -660,13 +645,13 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         print('执行停止')
 
 
-def load_ballsort_yaml():
+def load_ballsort_json():
     global max_lap_count
     global max_area_count
-    file = "./ballsort_config.yml"
+    file = "./ballsort_config.json"
     if os.path.exists(file):
         f = open(file, 'r', encoding='utf-8')
-        ballsort_all = yaml.safe_load(f)
+        ballsort_all = json.load(f)
         max_area_count = int(ballsort_all['max_area_count'])
         max_lap_count = int(ballsort_all['max_lap_count'])
 
@@ -681,13 +666,14 @@ def load_ballsort_yaml():
         print("文件不存在")
 
 
-def save_ballsort_yaml():
+def save_ballsort_json():
     global max_lap_count
     global max_area_count
-    file = "./ballsort_config.yml"
+    global ball_sort
+    file = "./ballsort_config.json"
     if os.path.exists(file):
         f = open(file, 'r', encoding='utf-8')
-        ballsort_all = yaml.safe_load(f)
+        ballsort_all = json.load(f)
         f.close()
         if (ui.lineEdit_lap_Ranking.text().isdigit()
                 and ui.lineEdit_area_Ranking.text().isdigit()
@@ -699,9 +685,14 @@ def save_ballsort_yaml():
             ballsort_all['time_count_ball'] = int(ui.lineEdit_time_count_ball.text())
             max_lap_count = int(ui.lineEdit_lap_Ranking.text())
             max_area_count = int(ui.lineEdit_area_Ranking.text())
+            ball_sort = []  # 位置寄存器
+            for row in range(0, max_area_count + 1):
+                ball_sort.append([])
+                for col in range(0, max_lap_count):
+                    ball_sort[row].append([])
             # print(ballsort_conf)
             with open(file, "w", encoding="utf-8") as f:
-                yaml.dump(ballsort_all, f, allow_unicode=True)
+                json.dump(ballsort_all, f, indent=4, ensure_ascii=False)
             f.close()
             ui.textBrowser_background_data.setText(
                 succeed("%s,%s,%s 保存服务器完成" % (ballsort_all['max_lap_count'],
@@ -880,7 +871,7 @@ class TcpResultThread(QThread):
                         print(datalist)
                         ws.send(json.dumps(datalist))
 
-                        if not ui.radioButton_test_game.isChecked():  # 非测试模式
+                        if ui.radioButton_start_betting.isChecked():  # 非测试模式
                             result_data = {"raceTrackID": Track_number, "term": str(term),
                                            "actualResultOpeningTime": betting_end_time,
                                            "result": z_ranking_end[0:balls_count],
@@ -938,7 +929,7 @@ class TcpResultThread(QThread):
                             time.sleep(3)
                             cl_request.stop_record()  # 关闭录像
                         if ui.checkBox_restart.isChecked():
-                            if not ui.radioButton_test_game.isChecked():
+                            if ui.radioButton_start_betting.isChecked():
                                 self.send_type = ''
                             else:
                                 self.run_flg = False
@@ -1569,7 +1560,7 @@ class ReStartThread(QThread):
             while PlanCmd_Thread.run_flg:
                 print('等待背景结束~~~~~~~')
                 time.sleep(1)
-            if not ui.radioButton_test_game.isChecked():  # 非模拟模式
+            if ui.radioButton_start_betting.isChecked():  # 非模拟模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
                     if term == response['term']:
@@ -1580,7 +1571,7 @@ class ReStartThread(QThread):
                     self.signal.emit('term_ok')
                     term = response['term']
                     Script_Thread.run_type = 'term'
-                    Script_Thread.run_flg = True  # 开始OBS的python脚本计时
+                    Script_Thread.run_flg = True  # 发送期号到OBS的python脚本
                     tcp_result_thread.send_type = 'time'
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
@@ -1655,7 +1646,7 @@ def restartsignal_accept(msg):
             plan_refresh()
             ui.lineEdit_ball_end.setText('0')
         ui.lineEdit_time.setText(str(msg))
-        if not ui.radioButton_test_game.isChecked():  # 非测试模式
+        if ui.radioButton_start_betting.isChecked():  # 开盘模式
             tb_result = ui.tableWidget_Results
             tb_result.item(0, 2).setText(str(msg))
 
@@ -2097,7 +2088,7 @@ class ScreenShotThread(QThread):
                         time.sleep(1)
                     Send_Result_End = False
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
-            if not ui.radioButton_test_game.isChecked():  # 非模拟模式
+            if ui.radioButton_start_betting.isChecked():  # 开盘模式
                 if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
                     self.signal.emit('封盘')
 
@@ -2424,13 +2415,14 @@ class PlanCmdThread(QThread):
                                         except:
                                             print('OBS脚本开始错误！')
 
-                                    if not ui.radioButton_test_game.isChecked():  # 非模拟模式
+                                    if ui.radioButton_start_betting.isChecked():  # 非模拟模式
                                         res_start = post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
                                         if str(res_start) == 'OK':
                                             lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                             self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                         else:
                                             self.signal.emit('开始信号发送失败:%s' % res_start)  # 修改结果列表中的赛事状态
+                                            self.run_flg = False
                                             break
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
@@ -2952,7 +2944,7 @@ def load_speed():
 
 
 # 保存方案
-def save_plan_yaml():
+def save_plan_json():
     global plan_list
     global plan_all
     tb_step = ui.tableWidget_Step
@@ -3002,30 +2994,29 @@ def save_plan_yaml():
     plan_num = comb.currentIndex()
     plan_name = comb.currentText()
 
-    file = "Plan_config.yml"
-    if os.path.exists(file):
-        plan_all['plans']['plan%d' % (plan_num + 1)]['plan_name'] = plan_name
-        plan_all['plans']['plan%d' % (plan_num + 1)]['plan_list'] = plan_list_temp
-        try:
-            with open(file, "w", encoding="utf-8") as f:
-                yaml.dump(plan_all, f, allow_unicode=True)
-            f.close()
-            ui.textBrowser.append(succeed('方案保存：成功'))
-        except:
-            ui.textBrowser.append(fail('方案保存：失败'))
-        print("保存成功~！")
+    file = "Plan_config.json"
+    plan_all['plans']['plan%d' % (plan_num + 1)]['plan_name'] = plan_name
+    plan_all['plans']['plan%d' % (plan_num + 1)]['plan_list'] = plan_list_temp
+    try:
+        # 写入 JSON 文件
+        with open(file, "w", encoding="utf-8") as file:
+            json.dump(plan_all, file, indent=4, ensure_ascii=False)
+        ui.textBrowser.append(succeed('方案保存：成功'))
+    except:
+        ui.textBrowser.append(fail('方案保存：失败'))
+    print("保存成功~！")
 
 
 # 载入方案
-def load_plan_yaml():
+def load_plan_json():
     global plan_names
     global plan_all
     global camera_points
-    file = "Plan_config.yml"
+    file = "Plan_config.json"
     if os.path.exists(file):
         try:
             f = open(file, 'r', encoding='utf-8')
-            plan_all = yaml.safe_load(f)
+            plan_all = json.load(f)
             f.close()
             for plan in plan_all['plans']:
                 plan_names.append(plan_all['plans'][plan]['plan_name'])
@@ -3123,7 +3114,7 @@ def plan_refresh():  # 刷新方案列表
         # ai_points[index][0].show()
 
 
-def save_main_yaml():
+def save_main_json():
     global init_array
     global color_ch
     global udpServer_addr
@@ -3138,11 +3129,11 @@ def save_main_yaml():
     global five_axis
     global five_key
 
-    file = "main_config.yml"
+    file = "main_config.json"
     if os.path.exists(file):
         try:
             with (open(file, "r", encoding="utf-8") as f):
-                main_all = yaml.safe_load(f)
+                main_all = json.load(f)
                 # print(main_all)
                 main_all['cardNo'] = ui.lineEdit_cardNo.text()
                 main_all['s485_Axis_No'] = ui.lineEdit_s485_Axis_No.text()
@@ -3202,7 +3193,7 @@ def save_main_yaml():
                 five_key = main_all['five_key']
                 map_data = [main_all['map_picture'], main_all['map_line'], main_all['map_size']]
             with open(file, "w", encoding="utf-8") as f:
-                yaml.dump(main_all, f, allow_unicode=True)
+                json.dump(main_all, f, indent=4, ensure_ascii=False)
             f.close()
             ui.textBrowser_save_msg.append(succeed('方案保存：成功'))
         except:
@@ -3210,7 +3201,7 @@ def save_main_yaml():
         print("保存成功~！")
 
 
-def load_main_yaml():
+def load_main_json():
     global init_array
     global color_ch
     global udpServer_addr
@@ -3225,11 +3216,11 @@ def load_main_yaml():
     global five_axis
     global five_key
     global Track_number
-    file = "main_config.yml"
+    file = "main_config.json"
     if os.path.exists(file):
         # try:
         f = open(file, 'r', encoding='utf-8')
-        main_all = yaml.safe_load(f)
+        main_all = json.load(f)
         # print(main_all)
         f.close()
 
@@ -3334,7 +3325,7 @@ def edit_enable():
 
 
 def cmd_run():
-    save_plan_yaml()
+    save_plan_json()
     plan_refresh()
     reset_ranking_array()
     if not ui.checkBox_test.isChecked():
@@ -3917,13 +3908,13 @@ def save_points(color):
     points_save = []
     table_save = []
     if color == 'red':
-        file = "camera_points.yml"
+        file = "camera_points.json"
         for index in range(len(camera_points)):
             points_save.append([index, [(camera_points[index][1][0]), (camera_points[index][1][1])],
                                 [(camera_points[index][2][0]), (camera_points[index][2][1])],
                                 [(camera_points[index][3][0]), (camera_points[index][3][1])]])
     elif color == 'blue':
-        file = "audio_points.yml"
+        file = "audio_points.json"
         for index in range(len(audio_points)):
             points_save.append([index, [(audio_points[index][1][0]), (audio_points[index][1][1])],
                                 [(audio_points[index][2][0]), (audio_points[index][2][1])],
@@ -3939,7 +3930,7 @@ def save_points(color):
                 row_data.append(tb_audio.item(row, col).text())
             table_save.append(row_data)
     elif color == 'green':
-        file = "ai_points.yml"
+        file = "ai_points.json"
         for index in range(len(ai_points)):
             points_save.append([index, [(ai_points[index][1][0]), (ai_points[index][1][1])],
                                 [(ai_points[index][2][0]), (ai_points[index][2][1])],
@@ -3956,39 +3947,38 @@ def save_points(color):
             table_save.append(row_data)
     else:
         return
-    if os.path.exists(file):
-        try:
-            with open(file, "w", encoding="utf-8") as f:
-                if color == 'red':
-                    yaml.dump({'camera_points': points_save}, f, allow_unicode=True)
-                elif color == 'blue':
-                    yaml.dump({'audio_points': points_save, 'audio_table': table_save}, f, allow_unicode=True)
-                elif color == 'green':
-                    yaml.dump({'ai_points': points_save, 'ai_table': table_save}, f, allow_unicode=True)
-            f.close()
-            ui.textBrowser.append(succeed('%s点位保存：成功' % color))
-        except:
-            ui.textBrowser.append(fail('%s点位保存：失败' % color))
-        print("保存成功~！")
+    try:
+        with open(file, "w", encoding="utf-8") as f:
+            if color == 'red':
+                json.dump({'camera_points': points_save}, f, indent=4, ensure_ascii=False)
+            elif color == 'blue':
+                json.dump({'audio_points': points_save, 'audio_table': table_save}, f, indent=4, ensure_ascii=False)
+            elif color == 'green':
+                json.dump({'ai_points': points_save, 'ai_table': table_save}, f, indent=4, ensure_ascii=False)
+        f.close()
+        ui.textBrowser.append(succeed('%s点位保存：成功' % color))
+    except:
+        ui.textBrowser.append(fail('%s点位保存：失败' % color))
+    print("保存成功~！")
 
 
-def load_points_yaml(color):
+def load_points_json(color):
     global camera_points
     global audio_points
     global ai_points
     if color == 'red':
-        file = "camera_points.yml"
+        file = "camera_points.json"
     elif color == 'blue':
-        file = "audio_points.yml"
+        file = "audio_points.json"
     elif color == 'green':
-        file = "ai_points.yml"
+        file = "ai_points.json"
     else:
         return
     # file = "camera_points.yml"
     if os.path.exists(file):
         try:
             f = open(file, 'r', encoding='utf-8')
-            points_all = yaml.safe_load(f)
+            points_all = json.load(f)
             f.close()
             if color == 'red':
                 camera_points = points_all['camera_points']
@@ -4552,14 +4542,13 @@ def lottery2json():
     lottery_list = []
     current_date = time.strftime("%Y-%m-%d", time.localtime())
     file = "./terms/%s.json" % current_date
-    if os.path.exists(file):
-        # with open(file, "r", encoding="utf-8") as f:
-        #     for line in f:
-        #         print(json.loads(line))  # 逐行解析 JSON
-        #         lottery_list.append(json.loads(line))
-        # f.close()
-        with open("data.jsonl", "a", encoding="utf-8") as f:
-            f.write(json.dumps(lottery_term) + "\n")
+    # with open(file, "r", encoding="utf-8") as f:
+    #     for line in f:
+    #         print(json.loads(line))  # 逐行解析 JSON
+    #         lottery_list.append(json.loads(line))
+    # f.close()
+    with open(file, "a", encoding="utf-8") as f:
+        f.write(json.dumps(lottery_term) + "\n")
 
 
 def lottery2sql():  # 保存数据库
@@ -4757,7 +4746,9 @@ class Kaj789Thread(QThread):
                 continue
             try:
                 if self.run_type == 'post_status':  # 开盘
-                    requests.get(url="%s/start" % obs_script_addr)  # 开始OBS的python脚本计时
+                    res_status = post_status(True, Track_number)
+                    if str(res_status) == 'OK':
+                        self.signal.emit(succeed('开盘成功！'))
                 if self.run_type == 'get_term':  # 取得期号
                     requests.get(url="%s/reset" % obs_script_addr)
                 elif self.run_type == 'post_start':  # 比赛开始
@@ -5225,7 +5216,6 @@ def my_test():
     # ScreenShot_Thread.run_flg = True
     # z_ranking_res = [1,4,5,3,2,6,7,8,9,10]
     # tcp_ranking_thread.run_flg = True
-    # lottery2yaml()
     # s = int(ui.lineEdit_result_send.text())
     # s485.cam_zoom_step(s)
     # time.sleep(5)
@@ -5245,7 +5235,6 @@ def my_test():
     # print(res.text)
     # check_network_with_ip()
     # result_data2table()
-    # save_main_yaml()
     # 加载音效
     # sound_effect = pygame.mixer.Sound('D:/pythonProject/Main_controller/mp3/07_冰原起泡准备声1.wav')
     # sound_effect.play(loops=10, maxtime=5000)  # 播放音效
@@ -5342,6 +5331,7 @@ class ZApp(QApplication):
             Shoot_Thread.stop()
             positions_live_thread.stop()
             Script_Thread.stop()
+            Kaj789Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -5370,6 +5360,7 @@ class ZApp(QApplication):
             Shoot_Thread.wait()
             positions_live_thread.wait()
             Script_Thread.wait()
+            Kaj789Thread.wait()
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -5582,7 +5573,7 @@ def organ_ok():
             for i in range(16):
                 data.append(getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).text())
             json.dump(data, f, ensure_ascii=False, indent=4)  # `ensure_ascii=False` 支持中文
-    OrganDialog.hide()
+    # OrganDialog.hide()
 
 
 class ResultUi(QDialog, Ui_Dialog_Result):
@@ -5677,6 +5668,10 @@ if __name__ == '__main__':
     ui.setupUi(z_window)
     z_window.show()
 
+    Kaj789Dialog = QDialog()  #
+    Kaj789_ui = Kaj789Ui()
+    Kaj789_ui.setupUi(Kaj789Dialog)
+
     TrapBallDialog = QDialog(z_window)
     TrapBall_ui = TrapBallUi()
     TrapBall_ui.setupUi(TrapBallDialog)
@@ -5738,7 +5733,7 @@ if __name__ == '__main__':
     axis_reset = False  # 轴复位标志
     flg_start = {'card': False, 's485': False, 'obs': False, 'ai': False, 'ai_end': False, 'server': False}  # 各硬件启动标志
 
-    load_plan_yaml()
+    load_plan_json()
 
     tb_step_worker = UiWorker(ui.tableWidget_Step)
     main_music_worker = UiWorker(ui.checkBox_main_music)
@@ -5810,7 +5805,7 @@ if __name__ == '__main__':
     Kaj789_Thread.signal.connect(kaj789_signal_accept)
     Kaj789_Thread.start()
 
-    ui.pushButton_fsave.clicked.connect(save_plan_yaml)
+    ui.pushButton_fsave.clicked.connect(save_plan_json)
     ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardStop.clicked.connect(cmd_stop)
@@ -5939,13 +5934,13 @@ if __name__ == '__main__':
     map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json', '860']  # 卫星地图资料
     five_axis = [1, 1, 1, 1, 1]
     five_key = [1, 1, 1, 1, 1]
-    Track_number = "J"  # 轨道直播编号
+    Track_number = "M"  # 轨道直播编号
     term_status = 1  # 赛事状态（丢球）
     term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
     term_comment = 'Revise'
 
-    load_main_yaml()
-    load_ballsort_yaml()
+    load_main_json()
+    load_ballsort_json()
 
     # 初始化列表
     con_data = []  # 排名数组
@@ -5993,10 +5988,10 @@ if __name__ == '__main__':
     Update_Thread.signal.connect(rankingsignal_accept)
     Update_Thread.start()
 
-    ui.pushButton_save_Ranking.clicked.connect(save_ballsort_yaml)
+    ui.pushButton_save_Ranking.clicked.connect(save_ballsort_json)
 
-    ui.lineEdit_time_send_result.editingFinished.connect(save_ballsort_yaml)
-    ui.lineEdit_time_count_ball.editingFinished.connect(save_ballsort_yaml)
+    ui.lineEdit_time_send_result.editingFinished.connect(save_ballsort_json)
+    ui.lineEdit_time_count_ball.editingFinished.connect(save_ballsort_json)
 
     # 初始化球数组，位置寄存器
     reset_ranking_array()  # 重置排名数组
@@ -6052,9 +6047,9 @@ if __name__ == '__main__':
     ui.radioButton_music_2.clicked.connect(music_ctl)
     ui.radioButton_music_3.clicked.connect(music_ctl)
 
-    load_points_yaml('red')
-    load_points_yaml('blue')
-    load_points_yaml('green')
+    load_points_json('red')
+    load_points_json('blue')
+    load_points_json('green')
 
     ui.pushButton_add_camera.clicked.connect(add_camera_points)
     ui.pushButton_del_camera.clicked.connect(del_camera_points)
@@ -6120,49 +6115,49 @@ if __name__ == '__main__':
     "**************************参数设置_开始*****************************"
     local_ip = []
 
-    ui.lineEdit_UdpServer_Port.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_TcpServer_Port.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_result_tcpServer_port.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_wakeup_addr.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_rtsp_url.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_recognition_addr.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_obs_script_addr.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_cardNo.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_CardNo.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_s485_Axis_No.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_s485_Cam_No.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_five_axis.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_five_key.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_map_picture.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_map_size.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_map_line.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_upload_Path.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_saidao_Path.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_end1_Path.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_end2_Path.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_scene_name.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_source_ranking.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_source_picture.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_source_settlement.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_source_end.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_music_1.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_music_2.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_music_3.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_sony_sort.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_monitor_sort.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_start.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_shoot.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_shake.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_end.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_start_count.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_alarm.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_shoot_2.editingFinished.connect(save_main_yaml)
-    ui.lineEdit_shoot_3.editingFinished.connect(save_main_yaml)
+    ui.lineEdit_UdpServer_Port.editingFinished.connect(save_main_json)
+    ui.lineEdit_TcpServer_Port.editingFinished.connect(save_main_json)
+    ui.lineEdit_result_tcpServer_port.editingFinished.connect(save_main_json)
+    ui.lineEdit_wakeup_addr.editingFinished.connect(save_main_json)
+    ui.lineEdit_rtsp_url.editingFinished.connect(save_main_json)
+    ui.lineEdit_recognition_addr.editingFinished.connect(save_main_json)
+    ui.lineEdit_obs_script_addr.editingFinished.connect(save_main_json)
+    ui.lineEdit_cardNo.editingFinished.connect(save_main_json)
+    ui.lineEdit_CardNo.editingFinished.connect(save_main_json)
+    ui.lineEdit_s485_Axis_No.editingFinished.connect(save_main_json)
+    ui.lineEdit_s485_Cam_No.editingFinished.connect(save_main_json)
+    ui.lineEdit_five_axis.editingFinished.connect(save_main_json)
+    ui.lineEdit_five_key.editingFinished.connect(save_main_json)
+    ui.lineEdit_map_picture.editingFinished.connect(save_main_json)
+    ui.lineEdit_map_size.editingFinished.connect(save_main_json)
+    ui.lineEdit_map_line.editingFinished.connect(save_main_json)
+    ui.lineEdit_upload_Path.editingFinished.connect(save_main_json)
+    ui.lineEdit_saidao_Path.editingFinished.connect(save_main_json)
+    ui.lineEdit_end1_Path.editingFinished.connect(save_main_json)
+    ui.lineEdit_end2_Path.editingFinished.connect(save_main_json)
+    ui.lineEdit_scene_name.editingFinished.connect(save_main_json)
+    ui.lineEdit_source_ranking.editingFinished.connect(save_main_json)
+    ui.lineEdit_source_picture.editingFinished.connect(save_main_json)
+    ui.lineEdit_source_settlement.editingFinished.connect(save_main_json)
+    ui.lineEdit_source_end.editingFinished.connect(save_main_json)
+    ui.lineEdit_music_1.editingFinished.connect(save_main_json)
+    ui.lineEdit_music_2.editingFinished.connect(save_main_json)
+    ui.lineEdit_music_3.editingFinished.connect(save_main_json)
+    ui.lineEdit_sony_sort.editingFinished.connect(save_main_json)
+    ui.lineEdit_monitor_sort.editingFinished.connect(save_main_json)
+    ui.lineEdit_start.editingFinished.connect(save_main_json)
+    ui.lineEdit_shoot.editingFinished.connect(save_main_json)
+    ui.lineEdit_shake.editingFinished.connect(save_main_json)
+    ui.lineEdit_end.editingFinished.connect(save_main_json)
+    ui.lineEdit_start_count.editingFinished.connect(save_main_json)
+    ui.lineEdit_alarm.editingFinished.connect(save_main_json)
+    ui.lineEdit_shoot_2.editingFinished.connect(save_main_json)
+    ui.lineEdit_shoot_3.editingFinished.connect(save_main_json)
 
-    ui.radioButton_music_background_1.clicked.connect(save_main_yaml)
-    ui.radioButton_music_background_2.clicked.connect(save_main_yaml)
-    ui.radioButton_music_background_3.clicked.connect(save_main_yaml)
-    ui.pushButton_Save_Ball.clicked.connect(save_main_yaml)
+    ui.radioButton_music_background_1.clicked.connect(save_main_json)
+    ui.radioButton_music_background_2.clicked.connect(save_main_json)
+    ui.radioButton_music_background_3.clicked.connect(save_main_json)
+    ui.pushButton_Save_Ball.clicked.connect(save_main_json)
     ui.pushButton_Organ.clicked.connect(organ_show)
 
     ui.checkBox_Flip_Horizontal.clicked.connect(flip_horizontal)
