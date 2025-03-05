@@ -66,7 +66,7 @@ def post_start(term, betting_start_time, Track_number='I'):  # 开始比赛
 def post_end(term, betting_end_time, status=1, Track_number='I'):  # 结束比赛
     POST_end_url = '/end'
     POST_end_data = {"raceTrackID": Track_number, "term": str(term), "actualEndTime": betting_end_time,
-                     "status": status}  # 1: 正常, 0: 不正常
+                     "status": status}  # 1: 正常, 0: 不正常(只有一种情况:前三名检测不到)
     print(POST_end_data)
     response = requests.post('%s%s' % (url, POST_end_url), headers=headers, json=POST_end_data)
     print('end:', response.text)

@@ -901,7 +901,7 @@ class TcpResultThread(QThread):
                                         res_upload = post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
                                         print(res_upload, '~~~~~~~~~~~~~post_upload')
                                         self.signal.emit({'post_upload': res_upload})
-                                    if term_status == 0:
+                                    if term_comment != '':
                                         res_marble_results = post_marble_results(term, term_comment,
                                                                                  Track_number)  # 上传备注信息
                                         print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
@@ -1803,12 +1803,11 @@ class PlanBallNumThread(QThread):
             term_status = 1
             screen_sort = True
             if res == 0:
-                while True:
+                while self.run_flg:
                     res, value = sc.GAGetDiReverseCount()
                     # print(res, value)
                     if res == 0:
                         num = int(value[0] / 2)
-                        # print(num, num_old, num_send)
                         if num != num_old:
                             t = time.time()
                             if num_send < len(z_ranking_time):  # 保存每个球到达终点的时间
@@ -1822,7 +1821,6 @@ class PlanBallNumThread(QThread):
                             num_send += 1
                             num_old = num
                         if num_send > balls_count - 2 and screen_sort:
-                            print(num_send, balls_count, '~~~~~~~~~~~~~~~~~~~')
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
                         if num_send >= balls_count:
@@ -1831,9 +1829,6 @@ class PlanBallNumThread(QThread):
                         #     break
                         elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
                             # 超时则跳出循环计球
-                            # sc.GASetDiReverseCount()  # 输入次数归0
-                            term_status = 0
-                            term_comment = term_comments[1]
                             if ui.checkBox_Pass_Ranking_Twice.isChecked():
                                 self.run_flg = False
                             else:
@@ -4553,10 +4548,11 @@ def lottery_json_init():
     file = "./terms/%s.json" % current_date
     print(file)
     if os.path.exists(file):
-        f = open(file, 'r', encoding='utf-8')
-        lottery_all = json.load(f)
-        f.close()
-        lottery_list = lottery_all['lottery_list']
+        lottery_list = []
+        with open(file, "r", encoding="utf-8") as f:
+            for line in f:
+                print(json.loads(line))  # 逐行解析 JSON
+                lottery_list.append(json.loads(line))
         for row in range(len(lottery_list)):
             for col in range(len(lottery_list[row])):
                 lottery_term[col] = lottery_list[row][col]
@@ -4564,16 +4560,12 @@ def lottery_json_init():
 
 
 def lottery2json():
-    lottery_list = []
     current_date = time.strftime("%Y-%m-%d", time.localtime())
     file = "./terms/%s.json" % current_date
-    # with open(file, "r", encoding="utf-8") as f:
-    #     for line in f:
-    #         print(json.loads(line))  # 逐行解析 JSON
-    #         lottery_list.append(json.loads(line))
-    # f.close()
     with open(file, "a", encoding="utf-8") as f:
         f.write(json.dumps(lottery_term) + "\n")
+
+    limit_folder_size("./terms/", max_files=7)  # 删除超过7天的记录
 
 
 def lottery2sql():  # 保存数据库
@@ -5644,19 +5636,21 @@ class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
         super(TrapBallUi, self).setupUi(z_dialog)
 
 
-class MyPushButton(QPushButton):
+class TrapPushButton(QPushButton):
     def __init__(self, text, parent=None):
         super().__init__(text, parent)
         self.setObjectName(text)
 
     def mousePressEvent(self, event):
         global z_ranking_time
+        global term_comment
         items = self.objectName().split('_')
         print(items)
         if items[2].isdigit():
             num = int(items[2])
             if z_ranking_time[num - 1] in ['TRAP', 'OUT', '']:
                 z_ranking_time[num - 1] = items[1]
+                term_comment = term_comments[1]
                 tcp_ranking_thread.send_time_data = [num, '%s' % z_ranking_time[num - 1]]
                 tcp_ranking_thread.send_time_flg = True
 
@@ -5666,8 +5660,8 @@ class MyPushButton(QPushButton):
 def set_trap_btn():
     for index in range(10):
         if index < balls_count:
-            getattr(TrapBall_ui, 'pushButton_TRAP_%s' % (index + 1), None).__class__ = MyPushButton
-            getattr(TrapBall_ui, 'pushButton_OUT_%s' % (index + 1), None).__class__ = MyPushButton
+            getattr(TrapBall_ui, 'pushButton_TRAP_%s' % (index + 1), None).__class__ = TrapPushButton
+            getattr(TrapBall_ui, 'pushButton_OUT_%s' % (index + 1), None).__class__ = TrapPushButton
         else:
             getattr(TrapBall_ui, 'pushButton_TRAP_%s' % (index + 1), None).hide()
             getattr(TrapBall_ui, 'pushButton_OUT_%s' % (index + 1), None).hide()
