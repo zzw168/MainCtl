@@ -871,7 +871,7 @@ class TcpResultThread(QThread):
                         print(datalist)
                         ws.send(json.dumps(datalist))
 
-                        if ui.radioButton_start_betting.isChecked():  # 非测试模式
+                        if ui.radioButton_start_betting.isChecked():  # 开盘模式
                             result_data = {"raceTrackID": Track_number, "term": str(term),
                                            "actualResultOpeningTime": betting_end_time,
                                            "result": z_ranking_end[0:balls_count],
@@ -1646,9 +1646,9 @@ def restartsignal_accept(msg):
             plan_refresh()
             ui.lineEdit_ball_end.setText('0')
         ui.lineEdit_time.setText(str(msg))
-        if ui.radioButton_start_betting.isChecked():  # 开盘模式
-            tb_result = ui.tableWidget_Results
-            tb_result.item(0, 2).setText(str(msg))
+        # if ui.radioButton_start_betting.isChecked():  # 开盘模式
+        tb_result = ui.tableWidget_Results
+        tb_result.item(0, 2).setText(str(msg))
 
 
 '''
@@ -2061,17 +2061,18 @@ class ScreenShotThread(QThread):
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
                     ui.lineEdit_Send_Result.setText('')
                     Send_Result_End = False
-                    while True:
-                        if ui.checkBox_result_show.isChecked():
-                            self.signal.emit('显示结果对话框')
+                    while self.run_flg:
+                        # if ui.checkBox_result_show.isChecked():
+                        self.signal.emit('显示结果对话框')
                         if Send_Result_End:
                             try:
                                 send_list = []
                                 for i in range(len(z_ranking_res)):
                                     if getattr(ui, 'lineEdit_result_%s' % i).text().isdigit():
-                                        send_list.append(int(getattr(ui, 'lineEdit_result_%s' % i).text()))
+                                        num = int(getattr(ui, 'lineEdit_result_%s' % i).text())
+                                        if num not in send_list:
+                                            send_list.append(num)
                                 if len(send_list) == len(z_ranking_end):
-                                    z_ranking_end = copy.deepcopy(send_list)
                                     for i in range(0, len(send_list)):
                                         for j in range(0, len(z_ranking_end)):
                                             if send_list[i] == z_ranking_end[j]:
@@ -2409,21 +2410,20 @@ class PlanCmdThread(QThread):
                                 else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start_count.text():  # '9'倒数机关打开
-                                    if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
-                                        try:
-                                            cl_request.start_record()  # 开启OBS录像
-                                        except:
-                                            print('OBS脚本开始错误！')
-
                                     if ui.radioButton_start_betting.isChecked():  # 非模拟模式
                                         res_start = post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
                                         if str(res_start) == 'OK':
                                             lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                             self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                         else:
-                                            self.signal.emit('开始信号发送失败:%s' % res_start)  # 修改结果列表中的赛事状态
+                                            self.signal.emit('开始信号发送失败,进行封盘操作')  # 修改结果列表中的赛事状态
                                             self.run_flg = False
                                             break
+                                    if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
+                                        try:
+                                            cl_request.start_record()  # 开启OBS录像
+                                        except:
+                                            print('OBS脚本开始错误！')
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
                                         Script_Thread.run_type = 'start'
@@ -2626,10 +2626,12 @@ def signal_accept(msg):
         elif isinstance(msg, dict):
             if 'map_action' in msg.keys():
                 ui.lineEdit_area.setText(str(msg['map_action']))
-        elif msg == '进行中':
-            tb_result = ui.tableWidget_Results
-            tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
         else:
+            if msg == '进行中':
+                tb_result = ui.tableWidget_Results
+                tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
+            elif msg == '开始信号发送失败,进行封盘操作':
+                ui.radioButton_stop_betting.click()
             ui.textBrowser.append(str(msg))
             ui.textBrowser_msg.append(str(msg))
             scroll_to_bottom(ui.textBrowser)
