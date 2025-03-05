@@ -1,0 +1,208 @@
+{
+    "Track_number": "M",
+    "balls_count": "10",
+    "cardNo": "15",
+    "color_ch": {
+        "Brown": "棕 ⑦",
+        "White": "白 ⑩",
+        "black": "黑 ⑧",
+        "blue": "蓝 ②",
+        "green": "绿 ⑥",
+        "orange": "橙 ⑤",
+        "pink": "粉 ⑨",
+        "purple": "紫 ④",
+        "red": "红 ③",
+        "yellow": "黄 ①"
+    },
+    "five_axis": [
+        1,
+        1,
+        1,
+        1,
+        -1
+    ],
+    "five_key": [
+        1,
+        1,
+        1,
+        1,
+        -1
+    ],
+    "init_array": [
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            "yellow",
+            0,
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            "blue",
+            0,
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            "red",
+            0,
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            "purple",
+            0,
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            "orange",
+            0,
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            "green",
+            0,
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            "Brown",
+            0,
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            "black",
+            0,
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            "pink",
+            0,
+            0,
+            0,
+            0
+        ],
+        [
+            0,
+            0,
+            0,
+            0,
+            0,
+            "White",
+            0,
+            0,
+            0,
+            0
+        ]
+    ],
+    "lineEdit_alarm": "14",
+    "lineEdit_end": "4",
+    "lineEdit_end1_Path": "D:/数据/14_黄山_终点/obs",
+    "lineEdit_end2_Path": "D:/rtsp",
+    "lineEdit_saidao_Path": "Z:/14_黄山_赛道",
+    "lineEdit_shake": "3",
+    "lineEdit_shoot": "1",
+    "lineEdit_shoot_2": "5",
+    "lineEdit_shoot_3": "6",
+    "lineEdit_start": "2",
+    "lineEdit_start_count": "9",
+    "lineEdit_upload_Path": "D:/数据/上报",
+    "map_line": "./img/13_华山.json",
+    "map_picture": "./img/13_华山.jpg",
+    "map_size": "680",
+    "monitor_sort": "1",
+    "music_1": [
+        false,
+        "./mp3/07_冰原背景音乐1.mp3"
+    ],
+    "music_2": [
+        true,
+        "./mp3/07_冰原背景音乐2.mp3"
+    ],
+    "music_3": [
+        false,
+        "./mp3/07_冰原背景音乐3.mp3"
+    ],
+    "obs_script_addr": "http://127.0.0.1:8899",
+    "pushButton_start_game": true,
+    "recognition_addr": "http://127.0.0.1:6066",
+    "result_tcpServer_addr": [
+        "0.0.0.0",
+        "8888"
+    ],
+    "rtsp_url": "rtsp://admin:123456@192.168.0.34:554/Streaming/Channels/101",
+    "s485_Axis_No": "COM22",
+    "s485_Cam_No": "COM23",
+    "scene_name": "现场",
+    "sony_sort": "0",
+    "source_end": "终点1",
+    "source_picture": "画中画",
+    "source_ranking": "排名时间组件",
+    "source_settlement": "结算页",
+    "tcpServer_addr": [
+        "0.0.0.0",
+        "9999"
+    ],
+    "udpServer_addr": [
+        "0.0.0.0",
+        "19734"
+    ],
+    "wakeup_addr": [
+        "http://192.168.0.115:8080"
+    ]
+}
