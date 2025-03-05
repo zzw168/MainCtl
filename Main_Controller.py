@@ -898,24 +898,24 @@ class TcpResultThread(QThread):
                                     print(res_result, '~~~~~~~~~~~~~post_result')
                                     self.signal.emit({'post_result': res_result})
                                     if res_result == 'OK':
-                                        lottery_term[8] = "发送成功"
+                                        lottery_term[6] = "发送成功"
                                     else:
-                                        lottery_term[8] = "发送失败"
-                                    if os.path.exists(lottery_term[6]):
-                                        res_upload = post_upload(term, lottery_term[6], Track_number)  # 上传结果图片
+                                        lottery_term[6] = "发送失败"
+                                    if os.path.exists(lottery_term[9]):
+                                        res_upload = post_upload(term, lottery_term[9], Track_number)  # 上传结果图片
                                         print(res_upload, '~~~~~~~~~~~~~post_upload')
                                         self.signal.emit({'post_upload': res_upload})
                                         if res_upload == 'OK':
-                                            lottery_term[8] = "上传成功"
+                                            lottery_term[7] = "上传成功"
                                         else:
-                                            lottery_term[8] = "上传失败"
+                                            lottery_term[7] = "上传失败"
                                     if term_comment != '':
                                         res_marble_results = post_marble_results(term, term_comment,
                                                                                  Track_number)  # 上传备注信息
                                         print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
                                         self.signal.emit({'post_marble_results': res_marble_results})
                                         if res_marble_results == 'OK':
-                                            lottery_term[8] = "备注成功"
+                                            lottery_term[8] = term_comment
                                         else:
                                             lottery_term[8] = "备注失败"
                             except:
@@ -927,7 +927,7 @@ class TcpResultThread(QThread):
                             # 检查是否正在录屏
                             if recording_status.output_active:  # 确保键名正确
                                 video_name = cl_request.stop_record()  # 关闭录像
-                                lottery_term[7] = video_name.output_path  # 视频保存路径
+                                lottery_term[10] = video_name.output_path  # 视频保存路径
                             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
                             self.signal.emit('save_video')
                             # lottery2sql()  # 保存数据库
@@ -981,10 +981,11 @@ def tcpsignal_accept(msg):
         tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（0.已结束）
         tb_result.item(0, 4).setText(lottery_term[4])  # 自动赛果
         tb_result.item(0, 5).setText(lottery_term[5])  # 手动赛果
-        tb_result.item(0, 6).setText(lottery_term[6])  # 照片保存路径
-        tb_result.item(0, 7).setText(lottery_term[7])  # 视频保存路径
-        tb_result.item(0, 8).setText(lottery_term[8])  # 结果上传状态
-        tb_result.item(0, 9).setText(lottery_term[9])  # 图片上传状态
+        tb_result.item(0, 6).setText(lottery_term[6])  # 图片上传状态
+        tb_result.item(0, 7).setText(lottery_term[7])  # 结果上传状态
+        tb_result.item(0, 8).setText(lottery_term[8])  # 备注
+        tb_result.item(0, 9).setText(lottery_term[9])  # 照片保存路径
+        tb_result.item(0, 10).setText(lottery_term[10])  # 视频保存路径
     # print(msg)
     elif isinstance(msg, dict):
         if 'post_end' in msg.keys():
@@ -1012,6 +1013,7 @@ def tcpsignal_accept(msg):
         scroll_to_bottom(ui.textBrowser_msg)
     elif msg == 'auto_shoot':
         ui.lineEdit_ball_end.setText('0')
+        ui.lineEdit_balls_end.setText('0')
         ui.checkBox_shoot_0.setChecked(True)
         auto_shoot()  # 自动上珠
         ui.textBrowser_msg.append(msg)
@@ -1242,13 +1244,15 @@ class ZUi(QMainWindow, Ui_MainWindow):
         tb_result = self.tableWidget_Results
         tb_result.horizontalHeader().resizeSection(0, 100)
         tb_result.horizontalHeader().resizeSection(1, 150)
-        tb_result.horizontalHeader().resizeSection(2, 50)
+        tb_result.horizontalHeader().resizeSection(2, 40)
         tb_result.horizontalHeader().resizeSection(3, 50)
-        tb_result.horizontalHeader().resizeSection(4, 200)
-        tb_result.horizontalHeader().resizeSection(5, 200)
-        tb_result.horizontalHeader().resizeSection(6, 200)
-        tb_result.horizontalHeader().resizeSection(7, 200)
-        tb_result.horizontalHeader().resizeSection(8, 150)
+        tb_result.horizontalHeader().resizeSection(4, 170)
+        tb_result.horizontalHeader().resizeSection(5, 170)
+        tb_result.horizontalHeader().resizeSection(6, 80)
+        tb_result.horizontalHeader().resizeSection(7, 80)
+        tb_result.horizontalHeader().resizeSection(8, 80)
+        tb_result.horizontalHeader().resizeSection(9, 150)
+        tb_result.horizontalHeader().resizeSection(10, 150)
 
         tb_result.setColumnHidden(0, True)
         tb_result.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
@@ -1617,9 +1621,6 @@ class ReStartThread(QThread):
                         countdown = str(30)
                     else:
                         countdown = str(countdown)
-                    lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
-                    if lottery:
-                        self.signal.emit(lottery)
                 else:  # 封盘模式，退出循环
                     tcp_result_thread.send_type = 'time'
                     self.signal.emit('error')
@@ -1632,6 +1633,11 @@ class ReStartThread(QThread):
                 # requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
                 self.signal.emit('测试期号')
                 countdown = ui.lineEdit_Time_Restart_Ranking.text()
+
+            lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
+            if lottery:
+                self.signal.emit(lottery)
+
             if countdown.isdigit():
                 countdown = int(countdown)
             else:
@@ -1671,15 +1677,18 @@ def restartsignal_accept(msg):
         scroll_to_bottom(ui.textBrowser_msg)
     elif msg == 'auto_shoot':
         ui.lineEdit_ball_end.setText('0')
+        ui.lineEdit_balls_end.setText('0')
         ui.checkBox_shoot_0.setChecked(True)
         auto_shoot()  # 自动上珠
     elif msg == 'error':
+        ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
         scroll_to_bottom(ui.textBrowser_msg)
     elif isinstance(msg, int):
         if int(msg) == 1:
             plan_refresh()
             ui.lineEdit_ball_end.setText('0')
+            ui.lineEdit_balls_end.setText('0')
         ui.lineEdit_time.setText(str(msg))
         # if ui.radioButton_start_betting.isChecked():  # 开盘模式
         tb_result = ui.tableWidget_Results
@@ -1874,9 +1883,9 @@ class PlanBallNumThread(QThread):
                     time.sleep(0.5)
                 save_path = '%s' % ui.lineEdit_upload_Path.text()
                 if os.path.exists(save_path):
-                    lottery_term[6] = '%s/%s.jpg' % (save_path, term)
+                    lottery_term[9] = '%s/%s.jpg' % (save_path, term)
                     resp = cl_request.save_source_screenshot(ui.lineEdit_scene_name.text(), "jpg",
-                                                             lottery_term[6], 1920,
+                                                             lottery_term[9], 1920,
                                                              1080, 100)
             else:
                 print("次数归0 失败！")
@@ -1885,7 +1894,6 @@ class PlanBallNumThread(QThread):
 
             tcp_ranking_thread.sleep_time = 0.5  # 恢复正常前端排名数据包发送频率
             if screen_sort:
-                term_status = 0
                 term_comment = term_comments[1]
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
             ObsEnd_Thread.ball_flg = True  # 结算页标志2
@@ -1902,6 +1910,7 @@ class PlanBallNumThread(QThread):
 def PlanBallNumsignal_accept(msg):
     if isinstance(msg, int):
         ui.lineEdit_ball_end.setText(str(msg))
+        ui.lineEdit_balls_end.setText(str(msg))
     elif '录终点图' in msg:
         if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():  # 非测试模式:
             ui.checkBox_saveImgs_main.setChecked(True)
@@ -2043,7 +2052,6 @@ class ScreenShotThread(QThread):
                         ball_sort[max_area_count][max_lap_count - 1].append('')
                         ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
                     color_to_num(ranking_array)
-                    print(ranking_array)
                 self.signal.emit(obs_res)
 
             monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
@@ -2069,7 +2077,7 @@ class ScreenShotThread(QThread):
                     z_ranking_end = copy.deepcopy(main_Camera)
                     lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             elif z_ranking_res == monitor_Camera:
-                print('监控识别正确:', monitor_Camera)
+                print('网络识别正确:', monitor_Camera)
                 if len(rtsp_list) > 2:
                     print(rtsp_list)
                     for i in range(0, len(rtsp_list)):
@@ -2440,7 +2448,7 @@ class PlanCmdThread(QThread):
                                 else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start_count.text():  # '9'倒数机关打开
-                                    if ui.radioButton_start_betting.isChecked():  # 非模拟模式
+                                    if ui.radioButton_start_betting.isChecked():  # 开盘模式
                                         res_start = post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
                                         if str(res_start) == 'OK':
                                             lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
@@ -2449,6 +2457,9 @@ class PlanCmdThread(QThread):
                                             self.signal.emit('开始信号发送失败,进行封盘操作')  # 修改结果列表中的赛事状态
                                             self.run_flg = False
                                             break
+                                    else:
+                                        lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
+                                        self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
                                         try:
                                             cl_request.start_record()  # 开启OBS录像
@@ -4606,7 +4617,7 @@ def get_lottery_term():  # 创建开奖记录
         local_time = time.localtime(betting_start_time)
         start_time = time.strftime("%Y-%m-%d %H:%M:%S", local_time)
         lottery_term[1] = start_time
-        lottery_term[2] = '0'
+        lottery_term[2] = ''
         lottery_term[3] = '未开始'  # 新一期比赛的状态（2.未开始）
         lottery_term[4] = ''
         lottery_term[5] = ''
@@ -4614,6 +4625,9 @@ def get_lottery_term():  # 创建开奖记录
         lottery_term[7] = ''
         lottery_term[8] = ''
         lottery_term[9] = ''
+        lottery_term[10] = ''
+        lottery_term[11] = ''
+        lottery_term[12] = ''
         flg_start['server'] = True
         return True
     except:
@@ -5359,7 +5373,7 @@ class ZApp(QApplication):
             Shoot_Thread.stop()
             positions_live_thread.stop()
             Script_Thread.stop()
-            Kaj789Thread.stop()
+            Kaj789_Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -5388,7 +5402,7 @@ class ZApp(QApplication):
             Shoot_Thread.wait()
             positions_live_thread.wait()
             Script_Thread.wait()
-            Kaj789Thread.wait()
+            Kaj789_Thread.wait()
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -5698,7 +5712,7 @@ if __name__ == '__main__':
     ui.setupUi(z_window)
     z_window.show()
 
-    Kaj789Dialog = QDialog()  #
+    Kaj789Dialog = QDialog(z_window)  #
     Kaj789_ui = Kaj789Ui()
     Kaj789_ui.setupUi(Kaj789Dialog)
 
@@ -6196,7 +6210,8 @@ if __name__ == '__main__':
     "**************************参数设置_结束*****************************"
     "**************************直播大厅_开始*****************************"
     labels = []
-    lottery_term = ['0'] * 10  # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 图片, 录像, 发送状态, 图片上传状态]
+    # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 发送状态, 图片上传状态, 备注, 图片, 录像, 补发状态, 补传图片]
+    lottery_term = ['0'] * 13
     # start_lottery_server_bat()  # 模拟开奖王服务器
     lottery_json_init()
 

@@ -106,6 +106,21 @@
             </column>
             <column>
              <property name="text">
+              <string>发送状态</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>图片上传</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>备注</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
               <string>图片</string>
              </property>
             </column>
@@ -116,12 +131,12 @@
             </column>
             <column>
              <property name="text">
-              <string>发送状态</string>
+              <string>补发状态</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>图片上传</string>
+              <string>补传状态</string>
              </property>
             </column>
            </widget>
