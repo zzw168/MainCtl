@@ -3773,7 +3773,7 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>索尼:</string>
+                      <string>主摄:</string>
                      </property>
                     </widget>
                    </item>
@@ -3799,7 +3799,7 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>监控:</string>
+                      <string>网络:</string>
                      </property>
                     </widget>
                    </item>
@@ -4270,7 +4270,7 @@
                  </font>
                 </property>
                 <property name="title">
-                 <string>监控摄像机识别结果</string>
+                 <string>网络摄像头识别结果</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
@@ -4289,7 +4289,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="1" column="0" colspan="2">
+                 <item row="1" column="0" colspan="3">
                   <widget class="QLabel" name="label_monitor_picture">
                    <property name="minimumSize">
                     <size>
@@ -4299,6 +4299,19 @@
                    </property>
                    <property name="text">
                     <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1">
+                  <widget class="QPushButton" name="pushButton_NetCamera">
+                   <property name="minimumSize">
+                    <size>
+                     <width>150</width>
+                     <height>0</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string>网络摄像头设置</string>
                    </property>
                   </widget>
                  </item>
@@ -4327,7 +4340,7 @@
                  </font>
                 </property>
                 <property name="title">
-                 <string>索尼摄像机识别结果</string>
+                 <string>主摄像头识别结果</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>

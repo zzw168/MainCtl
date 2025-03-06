@@ -2562,7 +2562,11 @@ class PlanCmdThread(QThread):
                                 if float(plan_list[plan_index][11][0]) > 0:
                                     time.sleep(float(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
                                 # 摄像头缩放
-                                if 0 < int(float(plan_list[plan_index][10][0])) <= 80:  # 摄像头缩放
+                                if (0 < int(float(plan_list[plan_index][10][0])) <= 80
+                                        and ((plan_index > 0
+                                              and float(plan_list[plan_index][10][0])
+                                              != float(plan_list[plan_index - 1][10][0]))
+                                             or plan_index == 0)):  # 摄像头缩放
                                     PlanCam_Thread.camitem = [int(float(plan_list[plan_index][10][0])),
                                                               float(plan_list[plan_index][11][0])]
                                     PlanCam_Thread.run_flg = True  # 摄像头线程
@@ -2640,6 +2644,8 @@ class PlanCmdThread(QThread):
                 if self.end_state:
                     self.end_state = False
                     self.run_flg = False
+                    ui.checkBox_end_stop.setChecked(False)
+                    ui.checkBox_end_BlackScreen.setChecked(False)
                     if flg_start['card']:
                         for index in range(0, 16):  # 关闭所有机关
                             if index not in [int(ui.lineEdit_shoot.text()) - 1,
@@ -3392,6 +3398,13 @@ def edit_enable():
         tb_step.setEnabled(True)
     else:
         tb_step.setEnabled(False)
+
+
+def net_camera():
+    r_url = ui.lineEdit_rtsp_url.text()
+    parsed_url = r_url.split('@')[-1]
+    ip_address = parsed_url.split(':')[0]
+    webbrowser.open(ip_address)
 
 
 def cmd_run():
@@ -6308,6 +6321,7 @@ if __name__ == '__main__':
     ui.radioButton_music_background_3.clicked.connect(save_main_json)
     ui.pushButton_Save_Ball.clicked.connect(save_main_json)
     ui.pushButton_Organ.clicked.connect(organ_show)
+    ui.pushButton_NetCamera.clicked.connect(net_camera)
 
     ui.checkBox_Flip_Horizontal.clicked.connect(flip_horizontal)
     ui.checkBox_Flip_Vertica.clicked.connect(flip_vertica)
