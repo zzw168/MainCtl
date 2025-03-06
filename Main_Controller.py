@@ -843,6 +843,7 @@ class TcpResultThread(QThread):
         global tcp_result_socket
         global action_area
         global term_comment
+        global betting_loop_flg
 
         tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcp_result_socket.bind(result_tcpServer_addr)
@@ -924,12 +925,13 @@ class TcpResultThread(QThread):
                                 self.signal.emit(fail('post_result 上传结果错误！'))
                                 print('上传结果错误！')
 
-                            if ui.radioButton_start_betting.isChecked():  # 开盘模式
-                                if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
-                                    self.signal.emit('封盘')
+                        if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
+                            self.signal.emit('封盘')
+                            betting_loop_flg = False
 
-                                if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
-                                    self.signal.emit('黑屏')
+                        if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
+                            self.signal.emit('黑屏')
+                            betting_loop_flg = False
                         self.signal.emit(succeed('第%s期 结束！' % term))
                         # 获取录屏状态
                         recording_status = cl_request.get_record_status()
@@ -944,11 +946,8 @@ class TcpResultThread(QThread):
                         self.signal.emit('save_video')
                         # lottery2sql()  # 保存数据库
                         lottery2json()  # 保存数据
-                        if ui.checkBox_restart.isChecked():
-                            if ui.radioButton_start_betting.isChecked():
-                                self.send_type = ''
-                            else:
-                                self.run_flg = False
+                        if betting_loop_flg:
+                            self.send_type = ''
                             while PlanCmd_Thread.run_flg:
                                 time.sleep(1)
                             ReStart_Thread.run_flg = True  # 1分钟后重启动作
@@ -1655,7 +1654,7 @@ class ReStartThread(QThread):
             else:
                 countdown = 60
             for t in range(countdown, -1, -1):
-                if not ui.checkBox_restart.isChecked():
+                if betting_loop_flg:
                     self.run_flg = False
                     break
                 time.sleep(1)
@@ -2114,7 +2113,6 @@ class ScreenShotThread(QThread):
                     ui.lineEdit_Send_Result.setText('')
                     Send_Result_End = False
                     while self.run_flg:
-                        # if ui.checkBox_result_show.isChecked():
                         self.signal.emit('显示结果对话框')
                         if Send_Result_End:
                             try:
@@ -2163,7 +2161,7 @@ def ScreenShotsignal_accept(msg):
             painter.setPen(QColor(255, 0, 0))  # 设定颜色（红色）
             painter.drawText(10, 60, "1")  # (x, y, "文本")
             painter.end()  # 结束绘制
-            ui.lineEdit_Main_Camera.setText(str(main_Camera))
+            ui.lineEdit_Main_Camera.setText(str(main_Camera[:balls_count]))
             if ui.checkBox_main_camera.isChecked():
                 main_camera_ui.label_picture.setPixmap(pixmap)
             ui.label_main_picture.setPixmap(pixmap)
@@ -2173,7 +2171,7 @@ def ScreenShotsignal_accept(msg):
             painter.setPen(QColor(0, 255, 0))  # 设定颜色（红色）
             painter.drawText(10, 60, "2")  # (x, y, "文本")
             painter.end()  # 结束绘制
-            ui.lineEdit_Backup_Camera.setText(str(monitor_Camera))
+            ui.lineEdit_Backup_Camera.setText(str(monitor_Camera[:balls_count]))
             if ui.checkBox_monitor_cam.isChecked():
                 monitor_camera_ui.label_picture.setPixmap(pixmap)
             ui.label_monitor_picture.setPixmap(pixmap)
@@ -2315,13 +2313,13 @@ class ShootThread(QThread):
 
 
 def shootsignal_accept(msg):
+    global betting_loop_flg
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
     if "弹射上珠不够" in msg:
         BallsNumDialog.show()
-        if ui.radioButton_start_betting.isChecked():
-            ui.radioButton_stop_betting.click()
-        ui.checkBox_restart.setChecked(False)
+        ui.radioButton_stop_betting.click()
+        betting_loop_flg = False
         ReStart_Thread.run_flg = False
 
 
@@ -4884,12 +4882,12 @@ class TestStatusThread(QThread):
                             flg_start['ai'] = True
                 except:
                     flg_start['ai'] = False
-            if ui.checkBox_saveImgs.isChecked():
-                path1 = ui.lineEdit_saidao_Path.text()
-                path2 = ui.lineEdit_upload_Path.text()
-                folder_name = os.path.basename(path1)
-                folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
-                limit_folder_size(folder_path, max_files=5000)  # 限制文件夹数量
+
+            path1 = ui.lineEdit_saidao_Path.text()
+            path2 = ui.lineEdit_upload_Path.text()
+            folder_name = os.path.basename(path1)
+            folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
+            limit_folder_size(folder_path, max_files=5000)  # 限制文件夹数量
 
             self.signal.emit('标志')
 
@@ -5139,7 +5137,8 @@ def cancel_betting():
 
 
 def start_betting():
-    ui.checkBox_restart.setChecked(True)
+    global betting_loop_flg
+    betting_loop_flg = True
     ui.checkBox_test.setChecked(False)
     res_status = post_status(True, Track_number)
     if str(res_status) == 'OK':
@@ -5147,7 +5146,8 @@ def start_betting():
 
 
 def stop_betting():
-    ui.checkBox_restart.setChecked(False)
+    global betting_loop_flg
+    betting_loop_flg = False
     ReStart_Thread.run_flg = False  # 停止循环
     res_status = post_status(False, Track_number)
     if str(res_status) == 'OK':
@@ -5156,7 +5156,8 @@ def stop_betting():
 
 
 def test_betting():
-    ui.checkBox_restart.setChecked(False)
+    global betting_loop_flg
+    betting_loop_flg = True
     ReStart_Thread.run_flg = False  # 停止循环
     res_status = post_status(False, Track_number)
     if str(res_status) == 'OK':
@@ -6227,6 +6228,7 @@ if __name__ == '__main__':
     betting_end_time = 0  # 比赛预定结束时间
     stream_url = ''  # 流链接
     Send_Result_End = False  # 发送结果标志位
+    betting_loop_flg = True   # 比赛循环标志位
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
