@@ -2562,11 +2562,7 @@ class PlanCmdThread(QThread):
                                 if float(plan_list[plan_index][11][0]) > 0:
                                     time.sleep(float(plan_list[plan_index][11][0]))  # 延时，等待镜头缩放完成
                                 # 摄像头缩放
-                                if (0 < int(float(plan_list[plan_index][10][0])) <= 80
-                                        and ((plan_index > 0
-                                              and float(plan_list[plan_index][10][0])
-                                              != float(plan_list[plan_index - 1][10][0]))
-                                             or plan_index == 0)):  # 摄像头缩放
+                                if 0 < int(float(plan_list[plan_index][10][0])) <= 80:  # 摄像头缩放
                                     PlanCam_Thread.camitem = [int(float(plan_list[plan_index][10][0])),
                                                               float(plan_list[plan_index][11][0])]
                                     PlanCam_Thread.run_flg = True  # 摄像头线程
