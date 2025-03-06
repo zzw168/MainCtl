@@ -1,7 +1,7 @@
 {
     "max_area_count": 49,
     "max_lap_count": 1,
-    "reset_time": 10,
-    "time_count_ball": 15,
+    "reset_time": 20,
+    "time_count_ball": 30,
     "time_send_result": 0
 }

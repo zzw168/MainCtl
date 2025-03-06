@@ -2726,6 +2726,12 @@
                    </property>
                    <item row="0" column="0">
                     <widget class="QCheckBox" name="checkBox_key">
+                     <property name="maximumSize">
+                      <size>
+                       <width>75</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
                      <property name="font">
                       <font>
                        <family>微软雅黑</family>
@@ -2738,7 +2744,7 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="1">
+                   <item row="0" column="2">
                     <widget class="QPushButton" name="pushButton_ToTable">
                      <property name="minimumSize">
                       <size>
@@ -2761,6 +2767,26 @@
                      </property>
                      <property name="default">
                       <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QCheckBox" name="checkBox_key_stop">
+                     <property name="maximumSize">
+                      <size>
+                       <width>50</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>急停</string>
                      </property>
                     </widget>
                    </item>
@@ -3323,7 +3349,12 @@
                   </column>
                   <column>
                    <property name="text">
-                    <string>延时</string>
+                    <string>延时(秒)</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>音量(0-1)</string>
                    </property>
                   </column>
                   <column>
@@ -3468,7 +3499,12 @@
                   </column>
                   <column>
                    <property name="text">
-                    <string>延时</string>
+                    <string>延时(秒)</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>音量(0-1)</string>
                    </property>
                   </column>
                   <column>
@@ -4977,6 +5013,12 @@
                         </property>
                         <property name="text">
                          <string>停止</string>
+                        </property>
+                        <property name="checkable">
+                         <bool>false</bool>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
                         </property>
                         <property name="default">
                          <bool>true</bool>

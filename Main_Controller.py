@@ -3,6 +3,7 @@ import re
 import subprocess
 import sys
 import threading
+import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import pynput
@@ -637,7 +638,9 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.handle_stop_command()
 
     def handle_start_command(self):
-        reset_ranking_array()
+        reset_ranking_Thread.run_flg = True
+        while reset_ranking_Thread.run_flg:
+            time.sleep(1)
         print('执行开始')
 
     def handle_stop_command(self):
@@ -1013,7 +1016,7 @@ def tcpsignal_accept(msg):
             else:
                 message = fail('发送图片失败:%s' % msg['post_upload'])
         if term in msg.keys():
-            if 'marble_results' in msg['post_marble_results'] :
+            if term in msg['post_marble_results']:
                 message = succeed('发送备注成功！')
             else:
                 message = fail('发送备注失败:%s' % msg['post_marble_results'])
@@ -1284,15 +1287,19 @@ class ZUi(QMainWindow, Ui_MainWindow):
         tb_audio.horizontalHeader().resizeSection(0, 100)
         tb_audio.horizontalHeader().resizeSection(1, 50)
         tb_audio.horizontalHeader().resizeSection(2, 50)
+        tb_audio.horizontalHeader().resizeSection(3, 50)
         tb_audio.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_audio.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_audio.setColumnHidden(0, True)
 
         tb_ai = self.tableWidget_Ai
         tb_ai.horizontalHeader().resizeSection(0, 100)
         tb_ai.horizontalHeader().resizeSection(1, 50)
         tb_ai.horizontalHeader().resizeSection(2, 50)
+        tb_ai.horizontalHeader().resizeSection(3, 50)
         tb_ai.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_ai.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
+        tb_ai.setColumnHidden(0, True)
 
         tb_step = self.tableWidget_Step
         tb_step.horizontalHeader().resizeSection(0, 30)
@@ -1620,9 +1627,6 @@ class ReStartThread(QThread):
                             continue
                     self.signal.emit('term_ok')
                     term = response['term']
-                    Script_Thread.run_type = 'term'
-                    Script_Thread.run_flg = True  # 发送期号到OBS的python脚本
-                    tcp_result_thread.send_type = 'time'
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
                     countdown = int(betting_start_time) - int(time.time())
@@ -1639,11 +1643,12 @@ class ReStartThread(QThread):
                     continue
             else:
                 term = str(int(term) + 1)
-                Script_Thread.run_type = 'term'
-                Script_Thread.run_flg = True  # 开始OBS的python脚本计时
-                # requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
                 self.signal.emit('测试期号')
                 countdown = ui.lineEdit_Time_Restart_Ranking.text()
+
+            Script_Thread.run_type = 'term'
+            Script_Thread.run_flg = True  # 发送期号到OBS的python脚本
+            tcp_result_thread.send_type = 'time'
 
             lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
             if lottery:
@@ -1654,12 +1659,14 @@ class ReStartThread(QThread):
             else:
                 countdown = 60
             for t in range(countdown, -1, -1):
-                if betting_loop_flg:
+                if not betting_loop_flg:
                     self.run_flg = False
                     break
                 time.sleep(1)
                 self.signal.emit(t)
-            reset_ranking_array()  # 初始化排名，位置变量
+            reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
+            while reset_ranking_Thread.run_flg:
+                time.sleep(1)
             while PlanCmd_Thread.run_flg:
                 time.sleep(1)
             PlanCmd_Thread.run_flg = True
@@ -2486,16 +2493,20 @@ class PlanCmdThread(QThread):
                                     sound_times = int(tb_audio.item(int(plan_list[plan_index][15][0]) - 1, 1).text())
                                     sound_delay = int(
                                         tb_audio.item(int(plan_list[plan_index][15][0]) - 1, 2).text()) * 1000
+                                    sound_volume = float(tb_audio.item(int(plan_list[plan_index][15][0]) - 1, 3).text())
                                     print(sound_file, sound_times, sound_delay)
                                     # 加载音效
                                     sound_effect = pygame.mixer.Sound(sound_file)
+                                    sound_effect.set_volume(sound_volume)  # 设置音量（范围：0.0 到 1.0）
                                     sound_effect.play(loops=sound_times, maxtime=sound_delay)  # 播放音效
 
                             if (not ui.checkBox_test.isChecked()
+                                    and not self.end_state
+                                    and not self.background_state
                                     and (len(plan_list) / 3 * 2 <= plan_index)
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
-                                if len(plan_list) - 2 == plan_index:  # 到达最后两个动作时，触发球计数器启动
+                                if len(plan_list) / 4 * 3 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
                                     PlanBallNum_Thread.run_flg = True  # 终点计数器线程
 
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
@@ -2846,7 +2857,7 @@ def keyboard_press(key):
     global flg_key_run
     try:
         if key == key.enter:
-            if ui.checkBox_test.isChecked():
+            if ui.checkBox_key_stop.isChecked():
                 cmd_stop()
     except:
         pass
@@ -3373,23 +3384,22 @@ def edit_enable():
 
 
 def cmd_run():
-    save_plan_json()
-    plan_refresh()
-    reset_ranking_array()
     if not ui.checkBox_test.isChecked():
-        if not ui.checkBox_all.isChecked():
-            ui.checkBox_all.setChecked(True)
         if not ReStart_Thread.run_flg:
             ReStart_Thread.run_flg = True
         ui.checkBox_saveImgs_auto.setChecked(True)
     else:
+        save_plan_json()
+        plan_refresh()
         PlanCmd_Thread.run_flg = True
 
 
 def cmd_loop():
-    ui.radioButton_start_betting.click()  # 开盘
-    if not ui.checkBox_all.isChecked():
-        ui.checkBox_all.setChecked(True)
+    global betting_loop_flg
+    if ui.radioButton_stop_betting.isChecked():
+        return
+    betting_loop_flg = True
+    ui.checkBox_test.setChecked(False)
     ReStart_Thread.run_flg = True
 
 
@@ -3404,7 +3414,6 @@ def cmd_stop():
     ReStart_Thread.run_flg = False  # 停止循环
     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
     Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-    ui.pushButton_CardStop_2.setChecked(False)
     sc.card_stop()  # 立即停止
 
 
@@ -3448,7 +3457,6 @@ def card_on_off_all():
                 sc.GASetExtDoBit(index, 1)
             else:
                 sc.GASetExtDoBit(index, 0)
-        time.sleep(0.1)
     ui.textBrowser.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_background_data.append(succeed('已经关闭所有机关！'))
@@ -4318,10 +4326,12 @@ class AudioThread(QThread):
                     sound_file = tb_audio.item(index - 1, 0).text()
                     sound_times = int(tb_audio.item(index - 1, 1).text())
                     sound_delay = int(tb_audio.item(index - 1, 2).text())
+                    sound_volume = float(tb_audio.item(index - 1, 3).text())
                     print(sound_file, sound_times, sound_delay)
                     # 加载音效
                     sound_effect = pygame.mixer.Sound(sound_file)
                     sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
+                    sound_effect.set_volume(sound_volume)
                     area_old = copy.deepcopy(action_area)
                     print('Audio~~~~~~~~~~~~~', area_old, audio_points[index][plan_index][0][0], action_area[0])
                     break
@@ -4365,10 +4375,12 @@ class AiThread(QThread):
                     sound_file = tb_ai.item(index - 1, 0).text()
                     sound_times = int(tb_ai.item(index - 1, 1).text())
                     sound_delay = int(tb_ai.item(index - 1, 2).text())
+                    sound_volume = float(tb_ai.item(index - 1, 3).text())
                     print(sound_file, sound_times, sound_delay)
                     # 加载音效
                     sound_effect = pygame.mixer.Sound(sound_file)
                     sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
+                    sound_effect.set_volume(sound_volume)
                     area_old = copy.deepcopy(action_area)
                     print('Ai~~~~~~~~~~~~~', area_old, ai_points[index][plan_index][0][0], action_area[0])
                     break
@@ -4731,7 +4743,7 @@ class ScriptThread(QThread):
 
     def __init__(self):
         super(ScriptThread, self).__init__()
-        self.run_flg = True
+        self.run_flg = False
         self.running = True
         self.run_type = ''
         self.param = ''
@@ -4774,7 +4786,7 @@ class Kaj789Thread(QThread):
 
     def __init__(self):
         super(Kaj789Thread, self).__init__()
-        self.run_flg = True
+        self.run_flg = False
         self.running = True
         self.run_type = ''
         self.param = ''
@@ -4814,6 +4826,83 @@ class Kaj789Thread(QThread):
 
 
 def kaj789_signal_accept(msg):
+    ui.textBrowser.append(msg)
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser)
+    scroll_to_bottom(ui.textBrowser_msg)
+
+
+class ResetRankingThread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(ResetRankingThread, self).__init__()
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        global ranking_array
+        global ball_sort
+        global con_data
+        global action_area
+        global z_ranking_res
+        global z_ranking_time
+        global balls_start
+        # global previous_position
+        while self.running:
+            time.sleep(1)
+            if not self.run_flg:
+                continue
+            ranking_array = []  # 排名数组
+            for row in range(0, len(init_array)):
+                ranking_array.append([])
+                for col in range(0, len(init_array[row])):
+                    ranking_array[row].append(init_array[row][col])
+            ball_sort = []  # 位置寄存器
+            for row in range(0, max_area_count + 1):
+                ball_sort.append([])
+                for col in range(0, max_lap_count):
+                    ball_sort[row].append([])
+            balls_start = 0  # 起点球数
+            for row in range(0, len(init_array)):
+                for col in range(0, 5):
+                    if col == 0:
+                        con_data[row][col] = init_array[row][5]  # con_data 数据表数组
+                    else:
+                        con_data[row][col] = 0
+            action_area = [0, 0, 0]  # 初始化触发区域
+            z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
+            z_ranking_time = [''] * 10  # 初始化网页排名时间
+            tcp_ranking_thread.sleep_time = 0.5  # 重置排名数据包发送时间
+            alarm_worker.toggle_enablesignal.emit(False)
+            if flg_start['card']:
+                for index in range(0, 16):
+                    if index not in [int(ui.lineEdit_shoot.text()) - 1,
+                                     int(ui.lineEdit_start.text()) - 1,
+                                     int(ui.lineEdit_shake.text()) - 1,
+                                     int(ui.lineEdit_end.text()) - 1,
+                                     int(ui.lineEdit_alarm.text()) - 1,
+                                     int(ui.lineEdit_start_count.text()) - 1,
+                                     ]:
+                        sc.GASetExtDoBit(index, 1)
+            if flg_start['obs'] and not ui.checkBox_test.isChecked():
+                try:
+                    Script_Thread.run_type = 'reset'
+                    Script_Thread.run_flg = True
+                except:
+                    print('OBS脚本链接错误！')
+                    flg_start['obs'] = False
+                activate_browser()  # 刷新OBS中排名浏览器
+            self.signal.emit(succeed('初始化完成！'))
+            self.run_flg = False
+
+
+def reset_ranking_signal_accept(msg):
     ui.textBrowser.append(msg)
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser)
@@ -5135,12 +5224,10 @@ def cancel_betting():
 
 
 def start_betting():
-    global betting_loop_flg
-    betting_loop_flg = True
-    ui.checkBox_test.setChecked(False)
     res_status = post_status(True, Track_number)
     if str(res_status) == 'OK':
         ui.textBrowser_msg.append(succeed('开盘成功！'))
+    ui.groupBox_term.setStyleSheet('')
 
 
 def stop_betting():
@@ -5154,12 +5241,7 @@ def stop_betting():
 
 
 def test_betting():
-    global betting_loop_flg
-    betting_loop_flg = True
-    ReStart_Thread.run_flg = False  # 停止循环
-    res_status = post_status(False, Track_number)
-    if str(res_status) == 'OK':
-        ui.textBrowser_msg.append(succeed('封盘成功！'))
+    ui.textBrowser_msg.append(succeed('模拟开盘！'))
     ui.groupBox_term.setStyleSheet('')
 
 
@@ -5379,6 +5461,7 @@ class ZApp(QApplication):
             positions_live_thread.stop()
             Script_Thread.stop()
             Kaj789_Thread.stop()
+            reset_ranking_Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -5386,27 +5469,28 @@ class ZApp(QApplication):
     def join_all_threads(self):
         """等待所有线程退出。"""
         try:
-            PlanCmd_Thread.wait()   # 运动方案线程
-            PlanObs_Thread.wait()   # OBS切换线程
-            PlanCam_Thread.wait()   # 镜头切换线程
-            PlanBallNum_Thread.wait()   # 计球器线程
-            tcp_ranking_thread.wait()   # 前端排名线程
-            tcp_result_thread.wait()    # 前端结果线程
-            udp_thread.wait()           # 处理udp数据线程
-            Update_Thread.wait()        # 更新排名数据表线程
-            TestStatus_Thread.wait()    # 测试各功能状态线程
-            Axis_Thread.wait()          # 五轴复位线程
-            Pos_Thread.wait()           # 龙门架坐标线程
-            ReStart_Thread.wait()       # 重启方案线程
-            Audio_Thread.wait()         # 音效方案线程
-            Ai_Thread.wait()            # AI方案线程
-            listener.join()             # 键盘监听线程
-            ScreenShot_Thread.wait()    # 摄像头排名识别线程
-            ObsEnd_Thread.wait()        # 推送结果到前端线程
-            Shoot_Thread.wait()         # 弹射上珠线程
-            positions_live_thread.wait()    # 发送实时位置到服务器线程
-            Script_Thread.wait()        # OBS计时脚本线程
-            Kaj789_Thread.wait()        # 开奖王线程（补发结果数据）
+            PlanCmd_Thread.wait()  # 运动方案线程
+            PlanObs_Thread.wait()  # OBS切换线程
+            PlanCam_Thread.wait()  # 镜头切换线程
+            PlanBallNum_Thread.wait()  # 计球器线程
+            tcp_ranking_thread.wait()  # 前端排名线程
+            tcp_result_thread.wait()  # 前端结果线程
+            udp_thread.wait()  # 处理udp数据线程
+            Update_Thread.wait()  # 更新排名数据表线程
+            TestStatus_Thread.wait()  # 测试各功能状态线程
+            Axis_Thread.wait()  # 五轴复位线程
+            Pos_Thread.wait()  # 龙门架坐标线程
+            ReStart_Thread.wait()  # 重启方案线程
+            Audio_Thread.wait()  # 音效方案线程
+            Ai_Thread.wait()  # AI方案线程
+            listener.join()  # 键盘监听线程
+            ScreenShot_Thread.wait()  # 摄像头排名识别线程
+            ObsEnd_Thread.wait()  # 推送结果到前端线程
+            Shoot_Thread.wait()  # 弹射上珠线程
+            positions_live_thread.wait()  # 发送实时位置到服务器线程
+            Script_Thread.wait()  # OBS计时脚本线程
+            Kaj789_Thread.wait()  # 开奖王线程（补发结果数据）
+            reset_ranking_Thread.wait()  # 初始化数据线程
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -5639,7 +5723,6 @@ class BallsNumUi(QDialog, Ui_Dialog_BallsNum):
 
 
 def balls_num_btn():
-    # reset_ranking_array()
     global ball_sort
     global balls_start
     global ranking_array
@@ -5853,6 +5936,10 @@ if __name__ == '__main__':
     Kaj789_Thread.signal.connect(kaj789_signal_accept)
     Kaj789_Thread.start()
 
+    reset_ranking_Thread = ResetRankingThread()  # KAJ789发送线程
+    reset_ranking_Thread.signal.connect(reset_ranking_signal_accept)
+    reset_ranking_Thread.start()
+
     ui.pushButton_fsave.clicked.connect(save_plan_json)
     ui.pushButton_rename.clicked.connect(plan_rename)
     ui.pushButton_CardStart.clicked.connect(card_start)
@@ -6042,7 +6129,7 @@ if __name__ == '__main__':
     ui.lineEdit_time_count_ball.editingFinished.connect(save_ballsort_json)
 
     # 初始化球数组，位置寄存器
-    reset_ranking_array()  # 重置排名数组
+    reset_ranking_Thread.run_flg = True  # 重置排名数组
     "**************************图像识别算法_结束*****************************"
 
     "**************************卫星图_开始*****************************"
@@ -6224,7 +6311,7 @@ if __name__ == '__main__':
     betting_end_time = 0  # 比赛预定结束时间
     stream_url = ''  # 流链接
     Send_Result_End = False  # 发送结果标志位
-    betting_loop_flg = True   # 比赛循环标志位
+    betting_loop_flg = True  # 比赛循环标志位
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
