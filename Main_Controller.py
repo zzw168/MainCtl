@@ -2302,13 +2302,13 @@ class ShootThread(QThread):
                 sc.GASetExtDoBit(end_index, 0)
                 time_count = 0
                 while self.run_flg:
-                    time.sleep(1)
+                    time.sleep(2)
                     if ((ui.lineEdit_balls_auto.text().isdigit()
                          and balls_start >= int(ui.lineEdit_balls_auto.text()))
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         break
                     time_count += 1
-                    if time_count >= 20:
+                    if time_count >= 10:
                         self.signal.emit(fail("弹射上珠不够"))
 
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
