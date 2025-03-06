@@ -941,6 +941,7 @@ class TcpResultThread(QThread):
                         try:
                             # 检查是否正在录屏
                             if recording_status.output_active:  # 确保键名正确
+                                time.sleep(3)
                                 video_name = cl_request.stop_record()  # 关闭录像
                                 lottery_term[10] = video_name.output_path  # 视频保存路径
                         except:
@@ -1015,7 +1016,7 @@ def tcpsignal_accept(msg):
                 message = succeed('发送图片成功！')
             else:
                 message = fail('发送图片失败:%s' % msg['post_upload'])
-        if term in msg.keys():
+        if 'post_marble_results' in msg.keys():
             if term in msg['post_marble_results']:
                 message = succeed('发送备注成功！')
             else:
@@ -2639,6 +2640,16 @@ class PlanCmdThread(QThread):
                 if self.end_state:
                     self.end_state = False
                     self.run_flg = False
+                    if flg_start['card']:
+                        for index in range(0, 16):  # 关闭所有机关
+                            if index not in [int(ui.lineEdit_shoot.text()) - 1,
+                                             int(ui.lineEdit_start.text()) - 1,
+                                             int(ui.lineEdit_shake.text()) - 1,
+                                             int(ui.lineEdit_end.text()) - 1,
+                                             int(ui.lineEdit_alarm.text()) - 1,
+                                             int(ui.lineEdit_start_count.text()) - 1,
+                                             ]:
+                                sc.GASetExtDoBit(index, 0)
                     self.signal.emit(succeed("结束模式结束！"))
                     continue
                 # 强制中断情况处理
@@ -3431,11 +3442,14 @@ def card_reset():
 def card_close_all():
     if not flg_start['card']:
         return
-    ui.checkBox_all.setChecked(False)
     for index in range(0, 16):
-        if ui.checkBox_all.isChecked():
-            sc.GASetExtDoBit(index, 1)
-        else:
+        if index not in [int(ui.lineEdit_shoot.text()) - 1,
+                         int(ui.lineEdit_start.text()) - 1,
+                         int(ui.lineEdit_shake.text()) - 1,
+                         int(ui.lineEdit_end.text()) - 1,
+                         int(ui.lineEdit_alarm.text()) - 1,
+                         int(ui.lineEdit_start_count.text()) - 1,
+                         ]:
             sc.GASetExtDoBit(index, 0)
     ui.textBrowser.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
