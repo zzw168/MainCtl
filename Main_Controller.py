@@ -3381,7 +3381,6 @@ def cmd_run():
             ui.checkBox_all.setChecked(True)
         if not ReStart_Thread.run_flg:
             ReStart_Thread.run_flg = True
-        ui.radioButton_test_game.setChecked(True)  # 模拟模式
         ui.checkBox_saveImgs_auto.setChecked(True)
     else:
         PlanCmd_Thread.run_flg = True
@@ -3429,7 +3428,6 @@ def card_close_all():
             sc.GASetExtDoBit(index, 1)
         else:
             sc.GASetExtDoBit(index, 0)
-        time.sleep(0.1)
     ui.textBrowser.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_background_data.append(succeed('已经关闭所有机关！'))
@@ -5374,7 +5372,6 @@ class ZApp(QApplication):
             ReStart_Thread.stop()
             Audio_Thread.stop()
             Ai_Thread.stop()
-            TestStatus_Thread.stop()
             listener.stop()
             ScreenShot_Thread.stop()
             ObsEnd_Thread.stop()
@@ -5389,28 +5386,27 @@ class ZApp(QApplication):
     def join_all_threads(self):
         """等待所有线程退出。"""
         try:
-            PlanCmd_Thread.wait()
-            PlanObs_Thread.wait()
-            PlanCam_Thread.wait()
-            PlanBallNum_Thread.wait()
-            tcp_ranking_thread.wait()
-            tcp_result_thread.wait()
-            udp_thread.wait()
-            Update_Thread.wait()
-            TestStatus_Thread.wait()
-            Axis_Thread.wait()
-            Pos_Thread.wait()
-            ReStart_Thread.wait()
-            Audio_Thread.wait()
-            Ai_Thread.wait()
-            TestStatus_Thread.wait()
-            listener.join()
-            ScreenShot_Thread.wait()
-            ObsEnd_Thread.wait()
-            Shoot_Thread.wait()
-            positions_live_thread.wait()
-            Script_Thread.wait()
-            Kaj789_Thread.wait()
+            PlanCmd_Thread.wait()   # 运动方案线程
+            PlanObs_Thread.wait()   # OBS切换线程
+            PlanCam_Thread.wait()   # 镜头切换线程
+            PlanBallNum_Thread.wait()   # 计球器线程
+            tcp_ranking_thread.wait()   # 前端排名线程
+            tcp_result_thread.wait()    # 前端结果线程
+            udp_thread.wait()           # 处理udp数据线程
+            Update_Thread.wait()        # 更新排名数据表线程
+            TestStatus_Thread.wait()    # 测试各功能状态线程
+            Axis_Thread.wait()          # 五轴复位线程
+            Pos_Thread.wait()           # 龙门架坐标线程
+            ReStart_Thread.wait()       # 重启方案线程
+            Audio_Thread.wait()         # 音效方案线程
+            Ai_Thread.wait()            # AI方案线程
+            listener.join()             # 键盘监听线程
+            ScreenShot_Thread.wait()    # 摄像头排名识别线程
+            ObsEnd_Thread.wait()        # 推送结果到前端线程
+            Shoot_Thread.wait()         # 弹射上珠线程
+            positions_live_thread.wait()    # 发送实时位置到服务器线程
+            Script_Thread.wait()        # OBS计时脚本线程
+            Kaj789_Thread.wait()        # 开奖王线程（补发结果数据）
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
