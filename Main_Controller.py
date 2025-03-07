@@ -89,6 +89,10 @@ def on_stream_state_changed(data):
     print("流状态变化")
     print(data.output_active)
     print(data.output_state)
+    if data.output_active:
+        ui.status_live.setStyleSheet('background:rgb(0, 255, 0)')
+    else:
+        ui.status_live.setStyleSheet('background:rgb(255, 0, 0)')
 
 
 # 来源变化事件
@@ -1712,6 +1716,7 @@ def restartsignal_accept(msg):
             ui.lineEdit_ball_end.setText('0')
             ui.lineEdit_balls_end.setText('0')
         ui.lineEdit_time.setText(str(msg))
+        ui.lineEdit_times_count.setText(str(msg))
         # if ui.radioButton_start_betting.isChecked():  # 开盘模式
         tb_result = ui.tableWidget_Results
         tb_result.item(0, 2).setText(str(msg))
@@ -5013,7 +5018,6 @@ class TestStatusThread(QThread):
                     ui.frame_zzw_1.setEnabled(False)
                     ui.frame_zzw_2.setEnabled(False)
                     ui.groupBox_ranking.setEnabled(False)
-
             self.signal.emit('标志')
 
 
@@ -5814,9 +5818,13 @@ def set_trap_btn():
         if index < balls_count:
             getattr(TrapBall_ui, 'pushButton_TRAP_%s' % (index + 1), None).__class__ = TrapPushButton
             getattr(TrapBall_ui, 'pushButton_OUT_%s' % (index + 1), None).__class__ = TrapPushButton
+            getattr(ui, 'pushButton_TRAP_%s' % (index + 1), None).__class__ = TrapPushButton
+            getattr(ui, 'pushButton_OUT_%s' % (index + 1), None).__class__ = TrapPushButton
         else:
             getattr(TrapBall_ui, 'pushButton_TRAP_%s' % (index + 1), None).hide()
             getattr(TrapBall_ui, 'pushButton_OUT_%s' % (index + 1), None).hide()
+            getattr(ui, 'pushButton_TRAP_%s' % (index + 1), None).hide()
+            getattr(ui, 'pushButton_OUT_%s' % (index + 1), None).hide()
 
 
 def trap_ok():

@@ -135,7 +135,7 @@ class Ui_MainWindow(object):
         self.status_live.setObjectName(u"status_live")
         self.status_live.setFont(font1)
         self.status_live.setAutoFillBackground(False)
-        self.status_live.setStyleSheet(u"background:rgb(0, 255, 0)")
+        self.status_live.setStyleSheet(u"background:rgb(255, 0, 0)")
         self.status_live.setPopupMode(QToolButton.ToolButtonPopupMode.DelayedPopup)
         self.status_live.setAutoRaise(True)
 
@@ -329,6 +329,14 @@ class Ui_MainWindow(object):
         self.groupBox_2.setFont(font1)
         self.gridLayout_8 = QGridLayout(self.groupBox_2)
         self.gridLayout_8.setObjectName(u"gridLayout_8")
+        self.lineEdit_times_count = QLineEdit(self.groupBox_2)
+        self.lineEdit_times_count.setObjectName(u"lineEdit_times_count")
+        self.lineEdit_times_count.setMaximumSize(QSize(30, 16777215))
+        self.lineEdit_times_count.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_times_count.setReadOnly(True)
+
+        self.gridLayout_8.addWidget(self.lineEdit_times_count, 0, 5, 1, 1)
+
         self.label_12 = QLabel(self.groupBox_2)
         self.label_12.setObjectName(u"label_12")
         self.label_12.setMaximumSize(QSize(85, 16777215))
@@ -337,17 +345,25 @@ class Ui_MainWindow(object):
 
         self.gridLayout_8.addWidget(self.label_12, 0, 1, 1, 1)
 
+        self.lineEdit_term = QLineEdit(self.groupBox_2)
+        self.lineEdit_term.setObjectName(u"lineEdit_term")
+        self.lineEdit_term.setMaximumSize(QSize(80, 16777215))
+
+        self.gridLayout_8.addWidget(self.lineEdit_term, 0, 2, 1, 1)
+
         self.checkBox_continue_term = QCheckBox(self.groupBox_2)
         self.checkBox_continue_term.setObjectName(u"checkBox_continue_term")
         self.checkBox_continue_term.setFont(font1)
 
         self.gridLayout_8.addWidget(self.checkBox_continue_term, 0, 3, 1, 1)
 
-        self.lineEdit_term = QLineEdit(self.groupBox_2)
-        self.lineEdit_term.setObjectName(u"lineEdit_term")
-        self.lineEdit_term.setMaximumSize(QSize(80, 16777215))
+        self.label_10 = QLabel(self.groupBox_2)
+        self.label_10.setObjectName(u"label_10")
+        self.label_10.setMaximumSize(QSize(30, 16777215))
+        self.label_10.setFont(font1)
+        self.label_10.setAutoFillBackground(False)
 
-        self.gridLayout_8.addWidget(self.lineEdit_term, 0, 2, 1, 1)
+        self.gridLayout_8.addWidget(self.label_10, 0, 4, 1, 1)
 
 
         self.gridLayout_12.addWidget(self.groupBox_2, 1, 2, 2, 1)
@@ -3430,8 +3446,10 @@ class Ui_MainWindow(object):
         self.lineEdit_balls_auto.setText(QCoreApplication.translate("MainWindow", u"8", None))
         self.label_85.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u9501\u5b9a\u671f\u53f7", None))
+        self.lineEdit_times_count.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.label_12.setText(QCoreApplication.translate("MainWindow", u"\u5f53\u524d\u91cd\u590d\u671f\u53f7\uff1a", None))
         self.checkBox_continue_term.setText(QCoreApplication.translate("MainWindow", u"\u91cd\u590d\u6267\u884c", None))
+        self.label_10.setText(QCoreApplication.translate("MainWindow", u"\u5012\u6570\uff1a", None))
         self.pushButton_start_game.setText(QCoreApplication.translate("MainWindow", u"\u542f\u52a8", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\uff1a", None))

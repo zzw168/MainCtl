@@ -231,7 +231,7 @@
                    <bool>false</bool>
                   </property>
                   <property name="styleSheet">
-                   <string notr="true">background:rgb(0, 255, 0)</string>
+                   <string notr="true">background:rgb(255, 0, 0)</string>
                   </property>
                   <property name="text">
                    <string>直播状态</string>
@@ -740,6 +740,25 @@
                 <string>锁定期号</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_8">
+                <item row="0" column="5">
+                 <widget class="QLineEdit" name="lineEdit_times_count">
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>0</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
                 <item row="0" column="1">
                  <widget class="QLabel" name="label_12">
                   <property name="maximumSize">
@@ -763,6 +782,16 @@
                   </property>
                  </widget>
                 </item>
+                <item row="0" column="2">
+                 <widget class="QLineEdit" name="lineEdit_term">
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
                 <item row="0" column="3">
                  <widget class="QCheckBox" name="checkBox_continue_term">
                   <property name="font">
@@ -777,13 +806,26 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="2">
-                 <widget class="QLineEdit" name="lineEdit_term">
+                <item row="0" column="4">
+                 <widget class="QLabel" name="label_10">
                   <property name="maximumSize">
                    <size>
-                    <width>80</width>
+                    <width>30</width>
                     <height>16777215</height>
                    </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>倒数：</string>
                   </property>
                  </widget>
                 </item>
