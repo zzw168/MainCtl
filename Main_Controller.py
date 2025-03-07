@@ -2397,10 +2397,10 @@ class AxisThread(QThread):
                         sc.card_move(index, 0)
                     sc.card_update()
                     axis_reset = False
-                self.signal.emit(succeed('轴复位完成！'))
-                for index in range(0, 16):
-                    sc.GASetExtDoBit(index, 0)
-                self.signal.emit(succeed('所有机关已关闭！'))
+                    self.signal.emit(succeed('轴复位完成！'))
+                    for index in range(0, 16):
+                        sc.GASetExtDoBit(index, 0)
+                    self.signal.emit(succeed('所有机关已关闭！'))
             except:
                 print("轴复位出错！")
                 flg_start['s485'] = False
