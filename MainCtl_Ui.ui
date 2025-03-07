@@ -136,6 +136,11 @@
             </column>
             <column>
              <property name="text">
+              <string>到达时间</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
               <string>补发状态</string>
              </property>
             </column>

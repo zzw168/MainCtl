@@ -4808,10 +4808,24 @@ class Kaj789Thread(QThread):
         self.run_flg = False
         self.running = True
         self.run_type = ''
-        self.data = ''
+        self.term_status = 1
         self.term = '8000'
         self.betting_end_time = int(time.time())
         self.term_comment = ''
+        self.img_path = ''
+        self.result_data = {"raceTrackID": Track_number, "term": str(term), "actualResultOpeningTime": betting_end_time,
+                            "result": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+                            "timings": json.dumps([
+                                {"pm": 1, "id": 1, "time": 120.11},
+                                {"pm": 2, "id": 2, "time": 122.73},
+                                {"pm": 3, "id": 3, "time": 123.24},
+                                {"pm": 4, "id": 4, "time": 125.89},
+                                {"pm": 5, "id": 5, "time": 126.01},
+                                {"pm": 6, "id": 6, "time": 128.27},
+                                {"pm": 7, "id": 7, "time": 129.35},
+                                {"pm": 8, "id": 8, "time": 130.98},
+                                {"pm": 9, "id": 9, "time": 130.99},
+                                {"pm": 10, "id": 10, "time": 131.22}])}
 
     def stop(self):
         self.run_flg = False
@@ -4825,17 +4839,17 @@ class Kaj789Thread(QThread):
             if not self.run_flg:
                 continue
             if self.run_type == 'post_end':
-                res_end = post_end(term, betting_end_time, self.data,
+                res_end = post_end(term, betting_end_time, self.term_status,
                                    Track_number)  # 发送游戏结束信号给服务器
                 print(res_end, '~~~~~~~~~~~~~post_end')
                 self.signal.emit({'post_end': res_end})
             if self.run_type == 'post_result':
-                res_result = post_result(term, betting_end_time, self.data,
+                res_result = post_result(term, betting_end_time, self.result_data,
                                          Track_number)  # 发送最终排名给服务器
                 print(res_result, '~~~~~~~~~~~~~post_result')
                 self.signal.emit({'post_result': res_result})
-            if self.run_type == 'post_upload' and os.path.exists(self.data):
-                res_upload = post_upload(term, self.data, Track_number)  # 上传结果图片
+            if self.run_type == 'post_upload' and os.path.exists(self.img_path):
+                res_upload = post_upload(term, self.img_path, Track_number)  # 上传结果图片
                 print(res_upload, '~~~~~~~~~~~~~post_upload')
                 self.signal.emit({'post_upload': res_upload})
             if self.run_type == 'post_marble_results' and term_comment != '':
@@ -4843,7 +4857,7 @@ class Kaj789Thread(QThread):
                                                          Track_number)  # 上传备注信息
                 print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
                 self.signal.emit({'post_marble_results': res_marble_results})
-                if 'marble_results' in res_marble_results:
+                if self.term in res_marble_results:
                     lottery_term[8] = term_comment
                 else:
                     lottery_term[8] = "备注失败"
