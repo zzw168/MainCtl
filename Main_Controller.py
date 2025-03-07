@@ -1267,8 +1267,8 @@ class ZUi(QMainWindow, Ui_MainWindow):
         tb_result.horizontalHeader().resizeSection(9, 150)
         tb_result.horizontalHeader().resizeSection(10, 150)
         tb_result.horizontalHeader().resizeSection(11, 150)
-        tb_result.horizontalHeader().resizeSection(12, 50)
-        tb_result.horizontalHeader().resizeSection(13, 50)
+        tb_result.horizontalHeader().resizeSection(12, 80)
+        tb_result.horizontalHeader().resizeSection(13, 80)
 
         tb_result.setColumnHidden(0, True)
         tb_result.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
@@ -5002,6 +5002,17 @@ class TestStatusThread(QThread):
             folder_name = os.path.basename(path1)
             folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
             limit_folder_size(folder_path, max_files=5000)  # 限制文件夹数量
+
+            if ui.lineEdit_login.text() == 'zzw':
+                if not ui.frame_zzw_1.isEnabled():
+                    ui.frame_zzw_1.setEnabled(True)
+                    ui.frame_zzw_2.setEnabled(True)
+                    ui.groupBox_ranking.setEnabled(True)
+            else:
+                if ui.frame_zzw_1.isEnabled():
+                    ui.frame_zzw_1.setEnabled(False)
+                    ui.frame_zzw_2.setEnabled(False)
+                    ui.groupBox_ranking.setEnabled(False)
 
             self.signal.emit('标志')
 

@@ -4648,7 +4648,7 @@
                  <number>0</number>
                 </property>
                 <item row="0" column="0">
-                 <widget class="QGroupBox" name="groupBox_11">
+                 <widget class="QGroupBox" name="groupBox_ranking">
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
@@ -5391,7 +5391,7 @@
            <number>0</number>
           </property>
           <item row="0" column="1" rowspan="2">
-           <widget class="QFrame" name="frame_24">
+           <widget class="QFrame" name="frame_zzw_2">
             <property name="maximumSize">
              <size>
               <width>500</width>
@@ -6649,7 +6649,7 @@
            </widget>
           </item>
           <item row="0" column="0" rowspan="2">
-           <widget class="QFrame" name="frame_20">
+           <widget class="QFrame" name="frame_zzw_1">
             <property name="maximumSize">
              <size>
               <width>600</width>
@@ -6890,7 +6890,7 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QGroupBox" name="groupBox_13">
+              <widget class="QGroupBox" name="groupBox_net">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -7237,7 +7237,7 @@
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QGroupBox" name="groupBox_16">
+              <widget class="QGroupBox" name="groupBox_balls">
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
