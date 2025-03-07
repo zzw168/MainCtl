@@ -404,6 +404,7 @@ class Ui_MainWindow(object):
         self.lineEdit_balls_start = QLineEdit(self.frame)
         self.lineEdit_balls_start.setObjectName(u"lineEdit_balls_start")
         self.lineEdit_balls_start.setMaximumSize(QSize(30, 16777215))
+        self.lineEdit_balls_start.setFont(font1)
         self.lineEdit_balls_start.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lineEdit_balls_start.setReadOnly(True)
 
@@ -412,6 +413,7 @@ class Ui_MainWindow(object):
         self.lineEdit_balls_end = QLineEdit(self.frame)
         self.lineEdit_balls_end.setObjectName(u"lineEdit_balls_end")
         self.lineEdit_balls_end.setMaximumSize(QSize(30, 16777215))
+        self.lineEdit_balls_end.setFont(font1)
         self.lineEdit_balls_end.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lineEdit_balls_end.setReadOnly(True)
 

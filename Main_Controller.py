@@ -486,7 +486,7 @@ def deal_rank(integration_qiu_array):
                             (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                                     # or ranking_array[0][6] - ranking_array[r_index][6] > 5
                             ))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
-                        or (q_item[6] < max_area_count / 3 and
+                        or (q_item[6] < max_area_count / 4 and
                             ranking_array[r_index][6] >= max_area_count / 3 * 2)):  # 跨圈情况
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
