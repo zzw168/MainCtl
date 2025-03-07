@@ -25,7 +25,7 @@ from Speed_Ui import Ui_Dialog_Set_Speed
 from TrapBallDlg_Ui import Ui_Dialog_TrapBall
 from utils import tool_unit
 from utils.SportCard_unit import *
-from kaj789_table import Kaj789Ui
+from kaj789_table import Kaj789Ui, lottery_data2table, kaj789_showEvent
 from utils.tool_unit import *
 from utils.Serial485_unit import *
 from MainCtl_Ui import *
@@ -998,6 +998,9 @@ def tcpsignal_accept(msg):
         tb_result.item(0, 8).setText(lottery_term[8])  # 备注
         tb_result.item(0, 9).setText(lottery_term[9])  # 照片保存路径
         tb_result.item(0, 10).setText(lottery_term[10])  # 视频保存路径
+        tb_result.item(0, 11).setText(lottery_term[11])  # 结束时间戳
+        tb_result.item(0, 12).setText(lottery_term[12])  # 补发状态
+        tb_result.item(0, 13).setText(lottery_term[13])  # 补传状态
     # print(msg)
     elif msg == '黑屏':
         ui.radioButton_stop_betting.click()  # 封盘
@@ -1684,8 +1687,9 @@ class ReStartThread(QThread):
 
 
 def restartsignal_accept(msg):
+    global labels
     if isinstance(msg, bool):
-        lottery_data2table()
+        lottery_data2table(ui.tableWidget_Results, lottery_term, labels)
     elif msg == '过场动画':
         ui.textBrowser_msg.append(succeed('过场动画'))
         scroll_to_bottom(ui.textBrowser_msg)
@@ -1943,9 +1947,9 @@ def PlanBallNumsignal_accept(msg):
             ui.checkBox_saveImgs_main.setChecked(True)
             ui.checkBox_saveImgs_monitor.setChecked(True)
     elif '检查结束' in msg:
-        TrapBallDialog.hide()
+        TrapBall_ui.hide()
     elif '人工检查' in msg:
-        TrapBallDialog.show()
+        TrapBall_ui.show()
         if ui.radioButton_start_betting.isChecked():
             ui.radioButton_stop_betting.click()
     elif '计球倒计时' in msg:
@@ -2200,12 +2204,12 @@ def ScreenShotsignal_accept(msg):
                 getattr(ui, 'lineEdit_result_%s' % index).setText('')
                 getattr(result_ui, 'lineEdit_result_%s' % index).setText('')
     elif msg == '显示结果对话框':
-        ResultDialog.show()
+        result_ui.show()
         play_alarm()  # 警报声
     elif msg == 'send_res':
         ui.lineEdit_Send_Result.setText('')
     elif msg == 'send_ok':
-        ResultDialog.hide()
+        result_ui.hide()
         ui.checkBox_alarm.setChecked(True)
     else:
         ui.textBrowser.append(str(msg))
@@ -2333,7 +2337,7 @@ def shootsignal_accept(msg):
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
     if "弹射上珠不够" in msg:
-        BallsNumDialog.show()
+        BallsNum_ui.show()
         ui.radioButton_stop_betting.click()
         betting_loop_flg = False
         ReStart_Thread.run_flg = False
@@ -3020,7 +3024,7 @@ def load_speed():
     for row in range(len(speed_list)):
         for col in range(len(speed_list[row])):
             tb_speed.item(row, col).setText(speed_list[row][col])
-    SpeedDialog.show()
+    speed_ui.show()
 
 
 # 保存方案
@@ -4586,6 +4590,7 @@ def set_result(msg):
 
 def lottery_sql_init():
     global lottery_term
+    global labels
     try:
         conn = create_connection("127.0.0.1", "root", "root", "lottery")
         if conn:
@@ -4603,7 +4608,7 @@ def lottery_sql_init():
                 for col in range(len(res[row])):
                     lottery_term[col] = res[row][col]
                 # print(lottery_term)
-                lottery_data2table()
+                lottery_data2table(ui.tableWidget_Results, lottery_term, labels)
     except RuntimeError as e:
         print(f"Runtime error occurred: {e}")
     except Exception as e:
@@ -4612,7 +4617,9 @@ def lottery_sql_init():
 
 def lottery_json_init():
     global lottery_term
-    current_date = time.strftime("%Y-%m-%d", time.localtime())
+    global labels
+    # current_date = time.strftime("%Y-%m-%d", time.localtime())
+    current_date = '2025-03-06'
     file = "./terms/%s.json" % current_date
     print(file)
     if os.path.exists(file):
@@ -4624,7 +4631,7 @@ def lottery_json_init():
         for row in range(len(lottery_list)):
             for col in range(len(lottery_list[row])):
                 lottery_term[col] = lottery_list[row][col]
-            lottery_data2table()
+            lottery_data2table(ui.tableWidget_Results, lottery_term, labels)
 
 
 def lottery2json():
@@ -4681,30 +4688,6 @@ def get_lottery_term():  # 创建开奖记录
         print('分机链接错误！')
         flg_start['server'] = False
         return False
-
-
-def lottery_data2table():  # 赛事入表
-    global labels
-    global lottery_term
-    tb_result = ui.tableWidget_Results
-    row_count = tb_result.rowCount()
-    col_count = tb_result.columnCount()
-    tb_result.setRowCount(row_count + 1)
-
-    labels.insert(0, str(lottery_term[0]))
-    tb_result.setVerticalHeaderLabels(labels)
-    tb_result.verticalHeaderItem(len(labels) - 1).setTextAlignment(Qt.AlignCenter)
-
-    for col in range(0, col_count):
-        item = QTableWidgetItem('')
-        item.setTextAlignment(Qt.AlignCenter)
-        tb_result.setItem(row_count, col, item)
-    if row_count > 0:  # 下移表格
-        for row in range(row_count, 0, -1):
-            for col in range(0, col_count):
-                tb_result.item(row, col).setText(tb_result.item(row - 1, col).text())
-    for index, value in enumerate(lottery_term):
-        tb_result.item(0, index).setText(str(value))
 
 
 """
@@ -4822,6 +4805,9 @@ class Kaj789Thread(QThread):
         self.running = True
         self.run_type = ''
         self.data = ''
+        self.term = '8000'
+        self.betting_end_time = int(time.time())
+        self.term_comment = ''
 
     def stop(self):
         self.run_flg = False
@@ -4831,7 +4817,7 @@ class Kaj789Thread(QThread):
     def run(self) -> None:
         global term_comment
         while self.running:
-            time.sleep(0.1)
+            time.sleep(1)
             if not self.run_flg:
                 continue
             if self.run_type == 'post_end':
@@ -5316,7 +5302,7 @@ def auto_shoot():  # 自动上珠
 
 
 def kaj789_table():
-    Kaj789Dialog.show()
+    Kaj789_ui.show()
 
 
 "****************************************直播大厅_结束****************************************************"
@@ -5743,7 +5729,7 @@ def organ_show():
         for i in range(len(data)):
             # organ_ui.lineEdit_organ_1.setText(data[i])
             getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).setText(data[i])
-    OrganDialog.show()
+    organ_ui.show()
 
 
 def organ_ok():
@@ -5788,7 +5774,7 @@ def balls_num_btn():
         for col in range(0, max_lap_count):
             ball_sort[row].append([])
     balls_start = 0
-    BallsNumDialog.hide()
+    BallsNum_ui.hide()
 
 
 class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
@@ -5836,12 +5822,12 @@ def set_trap_btn():
 
 def trap_ok():
     PlanBallNum_Thread.run_flg = False
-    TrapBallDialog.hide()
+    TrapBall_ui.hide()
 
 
 def trap_cancel():
     PlanBallNum_Thread.run_flg = False
-    TrapBallDialog.hide()
+    TrapBall_ui.hide()
 
 
 "************************************ResultDlg_Ui*********************************************"
@@ -5854,35 +5840,29 @@ if __name__ == '__main__':
     ui.setupUi(z_window)
     z_window.show()
 
-    Kaj789Dialog = QDialog(z_window)  #
     Kaj789_ui = Kaj789Ui()
-    Kaj789_ui.setupUi(Kaj789Dialog)
+    Kaj789_ui.setupUi(Kaj789_ui)
 
-    TrapBallDialog = QDialog(z_window)
     TrapBall_ui = TrapBallUi()
-    TrapBall_ui.setupUi(TrapBallDialog)
+    TrapBall_ui.setupUi(TrapBall_ui)
     TrapBall_ui.pushButton_ok.clicked.connect(trap_ok)
     TrapBall_ui.pushButton_cancel.clicked.connect(trap_cancel)
 
-    BallsNumDialog = QDialog(z_window)  #
     BallsNum_ui = BallsNumUi()
-    BallsNum_ui.setupUi(BallsNumDialog)
+    BallsNum_ui.setupUi(BallsNum_ui)
     BallsNum_ui.pushButton_ok.clicked.connect(balls_num_btn)
     # BallsNumDialog.show()
 
-    OrganDialog = QDialog(z_window)
     organ_ui = OrganUi()
-    organ_ui.setupUi(OrganDialog)
+    organ_ui.setupUi(organ_ui)
     organ_ui.pushButton_ok.clicked.connect(organ_ok)
 
-    ResultDialog = QDialog(z_window)
     result_ui = ResultUi()
-    result_ui.setupUi(ResultDialog)
+    result_ui.setupUi(result_ui)
     result_ui.pushButton_Send_Res.clicked.connect(result2end)
 
-    SpeedDialog = QDialog(z_window)
     speed_ui = SpeedUi()
-    speed_ui.setupUi(SpeedDialog)
+    speed_ui.setupUi(speed_ui)
 
     speed_ui.buttonBox.accepted.connect(accept_speed)
     speed_ui.buttonBox.rejected.connect(reject_speed)
@@ -6356,11 +6336,11 @@ if __name__ == '__main__':
 
     "**************************参数设置_结束*****************************"
     "**************************直播大厅_开始*****************************"
-    labels = []
     # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 发送状态,
     #                       图片上传状态, 备注, 图片, 录像, 结束时间, 补发状态, 补传图片]
     lottery_term = ['0'] * 14
     # start_lottery_server_bat()  # 模拟开奖王服务器
+    labels = []
     lottery_json_init()
 
     term = '8000'  # 期号

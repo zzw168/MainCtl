@@ -1,15 +1,24 @@
-import yaml
-import json
+from PySide6.QtWidgets import QDialog, QApplication
+from PySide6.QtGui import QShowEvent
+from kaj789_Ui import Ui_Dialog_Kaj789_Ui
 
-# 读取 YAML 文件
-with open("2025-03-02.yml", "r", encoding="utf-8") as yaml_file:
-    yaml_data = yaml.safe_load(yaml_file)  # 解析 YAML
+class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
+    def __init__(self):
+        super().__init__()
+        self.labels = []  # 可用于存储其他控件
 
-# 将 YAML 转换为 JSON
-json_data = json.dumps(yaml_data, indent=4, ensure_ascii=False)
+    def setupUi(self, z_dialog):
+        super().setupUi(z_dialog)  # 初始化 UI
 
-# 保存 JSON 文件
-with open("terms/2025-03-02.json", "w", encoding="utf-8") as json_file:
-    json_file.write(json_data)
+    def showEvent(self, event: QShowEvent):
+        super().showEvent(event)  # 调用父类的 showEvent
+        print('~~~~~~~~~~~~~~~')  # 窗口显示时触发
 
-print("转换完成！")
+
+# 在主程序中运行
+if __name__ == "__main__":
+    app = QApplication([])
+    Kaj789_ui = Kaj789Ui()  # 创建 UI 实例
+    Kaj789_ui.setupUi(Kaj789_ui)  # 初始化界面
+    Kaj789_ui.show()  # 显示窗口，触发 showEvent
+    app.exec()  # 进入事件循环
