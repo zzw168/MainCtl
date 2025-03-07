@@ -1294,8 +1294,8 @@ class ZUi(QMainWindow, Ui_MainWindow):
         tb_audio = self.tableWidget_Audio
         tb_audio.horizontalHeader().resizeSection(0, 100)
         tb_audio.horizontalHeader().resizeSection(1, 50)
-        tb_audio.horizontalHeader().resizeSection(2, 50)
-        tb_audio.horizontalHeader().resizeSection(3, 50)
+        tb_audio.horizontalHeader().resizeSection(2, 80)
+        tb_audio.horizontalHeader().resizeSection(3, 80)
         tb_audio.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_audio.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_audio.setColumnHidden(0, True)
@@ -1303,8 +1303,8 @@ class ZUi(QMainWindow, Ui_MainWindow):
         tb_ai = self.tableWidget_Ai
         tb_ai.horizontalHeader().resizeSection(0, 100)
         tb_ai.horizontalHeader().resizeSection(1, 50)
-        tb_ai.horizontalHeader().resizeSection(2, 50)
-        tb_ai.horizontalHeader().resizeSection(3, 50)
+        tb_ai.horizontalHeader().resizeSection(2, 80)
+        tb_ai.horizontalHeader().resizeSection(3, 80)
         tb_ai.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_ai.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_ai.setColumnHidden(0, True)
@@ -4821,7 +4821,7 @@ class Kaj789Thread(QThread):
         self.run_flg = False
         self.running = True
         self.run_type = ''
-        self.param = ''
+        self.data = ''
 
     def stop(self):
         self.run_flg = False
@@ -4829,30 +4829,35 @@ class Kaj789Thread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
+        global term_comment
         while self.running:
             time.sleep(0.1)
             if not self.run_flg:
                 continue
-            try:
-                if self.run_type == 'post_status':  # 开盘
-                    res_status = post_status(True, Track_number)
-                    if str(res_status) == 'OK':
-                        self.signal.emit(succeed('开盘成功！'))
-                if self.run_type == 'get_term':  # 取得期号
-                    requests.get(url="%s/reset" % obs_script_addr)
-                elif self.run_type == 'post_start':  # 比赛开始
-                    requests.get(url='%s/period?period=%s' % (obs_script_addr, self.param))
-                elif self.run_type == 'post_end':  # 比赛结束
-                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
-                elif self.run_type == 'post_result':  # 发送结果
-                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
-                elif self.run_type == 'post_upload':  # 上传图片
-                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
-                elif self.run_type == 'post_marble_results':  # 发送备注
-                    requests.get(url="%s/term?term=%s" % (obs_script_addr, term))  # 开始OBS的python脚本期号显示
-            except:
-                print('OBS脚本链接错误！')
-                flg_start['obs'] = False
+            if self.run_type == 'post_end':
+                res_end = post_end(term, betting_end_time, self.data,
+                                   Track_number)  # 发送游戏结束信号给服务器
+                print(res_end, '~~~~~~~~~~~~~post_end')
+                self.signal.emit({'post_end': res_end})
+            if self.run_type == 'post_result':
+                res_result = post_result(term, betting_end_time, self.data,
+                                         Track_number)  # 发送最终排名给服务器
+                print(res_result, '~~~~~~~~~~~~~post_result')
+                self.signal.emit({'post_result': res_result})
+            if self.run_type == 'post_upload' and os.path.exists(self.data):
+                res_upload = post_upload(term, self.data, Track_number)  # 上传结果图片
+                print(res_upload, '~~~~~~~~~~~~~post_upload')
+                self.signal.emit({'post_upload': res_upload})
+            if self.run_type == 'post_marble_results' and term_comment != '':
+                res_marble_results = post_marble_results(term, term_comment,
+                                                         Track_number)  # 上传备注信息
+                print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
+                self.signal.emit({'post_marble_results': res_marble_results})
+                if 'marble_results' in res_marble_results:
+                    lottery_term[8] = term_comment
+                else:
+                    lottery_term[8] = "备注失败"
+                term_comment = ''
 
             self.run_flg = False
 
@@ -5309,8 +5314,10 @@ def auto_shoot():  # 自动上珠
     else:
         Shoot_Thread.run_flg = False
 
+
 def kaj789_table():
     Kaj789Dialog.show()
+
 
 "****************************************直播大厅_结束****************************************************"
 "****************************************参数设置_开始****************************************************"

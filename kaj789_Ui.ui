@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1129</width>
+    <width>1189</width>
     <height>651</height>
    </rect>
   </property>
@@ -110,28 +110,12 @@
           </widget>
          </item>
          <item row="1" column="0" colspan="2">
-          <widget class="QTableWidget" name="tableWidget_kaj789">
-           <property name="minimumSize">
-            <size>
-             <width>280</width>
-             <height>150</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>微软雅黑</family>
-             <pointsize>12</pointsize>
-             <bold>false</bold>
-            </font>
-           </property>
+          <widget class="QTableWidget" name="tableWidget_Results">
            <property name="selectionBehavior">
             <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+           </property>
+           <property name="textElideMode">
+            <enum>Qt::TextElideMode::ElideRight</enum>
            </property>
            <attribute name="horizontalHeaderDefaultSectionSize">
             <number>80</number>
@@ -146,7 +130,27 @@
            </column>
            <column>
             <property name="text">
-             <string>开奖结果</string>
+             <string>开跑时间</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>倒数</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>状态</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>自动赛果</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>手动赛果</string>
             </property>
            </column>
            <column>
@@ -156,7 +160,7 @@
            </column>
            <column>
             <property name="text">
-             <string>补发状态</string>
+             <string>图片上传</string>
             </property>
            </column>
            <column>
@@ -166,17 +170,27 @@
            </column>
            <column>
             <property name="text">
-             <string>图片补发</string>
+             <string>图片</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>图片地址</string>
+             <string>录像</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>时间</string>
+             <string>结束时间戳</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>补发状态</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>补传状态</string>
             </property>
            </column>
           </widget>
