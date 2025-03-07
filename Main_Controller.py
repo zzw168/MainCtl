@@ -1947,9 +1947,9 @@ def PlanBallNumsignal_accept(msg):
             ui.checkBox_saveImgs_main.setChecked(True)
             ui.checkBox_saveImgs_monitor.setChecked(True)
     elif '检查结束' in msg:
-        TrapBall_ui.hide()
+        TrapBallDialog.hide()
     elif '人工检查' in msg:
-        TrapBall_ui.show()
+        TrapBallDialog.show()
         if ui.radioButton_start_betting.isChecked():
             ui.radioButton_stop_betting.click()
     elif '计球倒计时' in msg:
@@ -2204,12 +2204,12 @@ def ScreenShotsignal_accept(msg):
                 getattr(ui, 'lineEdit_result_%s' % index).setText('')
                 getattr(result_ui, 'lineEdit_result_%s' % index).setText('')
     elif msg == '显示结果对话框':
-        result_ui.show()
+        ResultDialog.show()
         play_alarm()  # 警报声
     elif msg == 'send_res':
         ui.lineEdit_Send_Result.setText('')
     elif msg == 'send_ok':
-        result_ui.hide()
+        ResultDialog.hide()
         ui.checkBox_alarm.setChecked(True)
     else:
         ui.textBrowser.append(str(msg))
@@ -2337,7 +2337,7 @@ def shootsignal_accept(msg):
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
     if "弹射上珠不够" in msg:
-        BallsNum_ui.show()
+        BallsNumDialog.show()
         ui.radioButton_stop_betting.click()
         betting_loop_flg = False
         ReStart_Thread.run_flg = False
@@ -3027,7 +3027,7 @@ def load_speed():
     for row in range(len(speed_list)):
         for col in range(len(speed_list[row])):
             tb_speed.item(row, col).setText(speed_list[row][col])
-    speed_ui.show()
+    SpeedDialog.show()
 
 
 # 保存方案
@@ -5653,28 +5653,11 @@ class CameraUi(QDialog, Ui_Camera_Dialog):
     def setupUi(self, z_dialog):
         super(CameraUi, self).setupUi(z_dialog)
 
-    def showEvent(self, event: QShowEvent):
-        super().showEvent(event)  # 调用父类的 showEvent
-        if '主摄像头' in self.windowTitle():
-            pixmap = ui.label_main_picture.pixmap()
-        else:
-            pixmap = ui.label_monitor_picture.pixmap()
-        if pixmap:
-            self.label_picture.setPixmap(pixmap)
 
-    def hideEvent(self, event: QHideEvent):
-        super().hideEvent(event)  # 调用父类的 hideEvent
-        if '主摄像头' in self.windowTitle():
-            ui.checkBox_main_camera.setChecked(False)
-        else:
-            ui.checkBox_monitor_cam.setChecked(False)
+def main_hide_event(event):
+    ui.checkBox_main_camera.setChecked(False)
+    event.accept()
 
-    def mouseDoubleClickEvent(self, event: QMouseEvent):
-        if '主摄像头' in self.windowTitle():
-            set_result(main_Camera)
-        else:
-            set_result(monitor_Camera)
-        super().mouseDoubleClickEvent(event)  # 调用父类的双击事件，保持默认行为
 
 def main_doubleclick_event(event):
     if event.button() == Qt.LeftButton:
@@ -5685,18 +5668,24 @@ def monitor_doubleclick_event(event):
     if event.button() == Qt.LeftButton:
         set_result(monitor_Camera)
 
+
+def monitor_hide_event(event):
+    ui.checkBox_monitor_cam.setChecked(False)
+    event.accept()
+
+
 def main_cam_change():
     if ui.checkBox_main_camera.isChecked():
-        main_camera_ui.show()
+        MainCameraDialog.show()
     else:
-        main_camera_ui.hide()
+        MainCameraDialog.hide()
 
 
 def monitor_cam_change():
     if ui.checkBox_monitor_cam.isChecked():
-        monitor_camera_ui.show()
+        MonitorCameraDialog.show()
     else:
-        monitor_camera_ui.hide()
+        MonitorCameraDialog.hide()
 
 
 "************************************ResultDlg_Ui*********************************************"
@@ -5743,7 +5732,7 @@ def organ_show():
         for i in range(len(data)):
             # organ_ui.lineEdit_organ_1.setText(data[i])
             getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).setText(data[i])
-    organ_ui.show()
+    OrganDialog.show()
 
 
 def organ_ok():
@@ -5788,7 +5777,7 @@ def balls_num_btn():
         for col in range(0, max_lap_count):
             ball_sort[row].append([])
     balls_start = 0
-    BallsNum_ui.hide()
+    BallsNumDialog.hide()
 
 
 class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
@@ -5836,12 +5825,12 @@ def set_trap_btn():
 
 def trap_ok():
     PlanBallNum_Thread.run_flg = False
-    TrapBall_ui.hide()
+    TrapBallDialog.hide()
 
 
 def trap_cancel():
     PlanBallNum_Thread.run_flg = False
-    TrapBall_ui.hide()
+    TrapBallDialog.hide()
 
 
 "************************************ResultDlg_Ui*********************************************"
@@ -5854,29 +5843,35 @@ if __name__ == '__main__':
     ui.setupUi(z_window)
     z_window.show()
 
+    Kaj789Dialog = QDialog(z_window)  #
     Kaj789_ui = Kaj789Ui()
-    Kaj789_ui.setupUi(Kaj789_ui)
+    Kaj789_ui.setupUi(Kaj789Dialog)
 
+    TrapBallDialog = QDialog(z_window)
     TrapBall_ui = TrapBallUi()
-    TrapBall_ui.setupUi(TrapBall_ui)
+    TrapBall_ui.setupUi(TrapBallDialog)
     TrapBall_ui.pushButton_ok.clicked.connect(trap_ok)
     TrapBall_ui.pushButton_cancel.clicked.connect(trap_cancel)
 
+    BallsNumDialog = QDialog(z_window)  #
     BallsNum_ui = BallsNumUi()
-    BallsNum_ui.setupUi(BallsNum_ui)
+    BallsNum_ui.setupUi(BallsNumDialog)
     BallsNum_ui.pushButton_ok.clicked.connect(balls_num_btn)
     # BallsNumDialog.show()
 
+    OrganDialog = QDialog(z_window)
     organ_ui = OrganUi()
-    organ_ui.setupUi(organ_ui)
+    organ_ui.setupUi(OrganDialog)
     organ_ui.pushButton_ok.clicked.connect(organ_ok)
 
+    ResultDialog = QDialog(z_window)
     result_ui = ResultUi()
-    result_ui.setupUi(result_ui)
+    result_ui.setupUi(ResultDialog)
     result_ui.pushButton_Send_Res.clicked.connect(result2end)
 
+    SpeedDialog = QDialog(z_window)
     speed_ui = SpeedUi()
-    speed_ui.setupUi(speed_ui)
+    speed_ui.setupUi(SpeedDialog)
 
     speed_ui.buttonBox.accepted.connect(accept_speed)
     speed_ui.buttonBox.rejected.connect(reject_speed)
@@ -5884,16 +5879,22 @@ if __name__ == '__main__':
     speed_ui.tableWidget_Set_Speed.itemChanged.connect(auto_line)
     speed_ui.lineEdit_time_set.editingFinished.connect(auto_time)
 
+    MainCameraDialog = QDialog(z_window)
+    MainCameraDialog.hideEvent = main_hide_event
+    MainCameraDialog.setWindowTitle('索尼')
     main_camera_ui = CameraUi()
-    main_camera_ui.setupUi(main_camera_ui)
-    main_camera_ui.setWindowTitle('主摄像头')
-    main_camera_ui.groupBox_main_camera.setTitle('主摄像头识别结果')
+    main_camera_ui.setupUi(MainCameraDialog)
+    main_camera_ui.groupBox_main_camera.setTitle('索尼摄像机识别结果')
+    main_camera_ui.label_picture.mouseDoubleClickEvent = main_doubleclick_event
     ui.label_main_picture.mouseDoubleClickEvent = main_doubleclick_event
 
+    MonitorCameraDialog = QDialog(z_window)
+    MonitorCameraDialog.hideEvent = monitor_hide_event
+    MonitorCameraDialog.setWindowTitle('监控')
     monitor_camera_ui = CameraUi()
-    monitor_camera_ui.setupUi(monitor_camera_ui)
-    monitor_camera_ui.setWindowTitle('网络摄像头')
-    monitor_camera_ui.groupBox_main_camera.setTitle('网络摄像头识别结果')
+    monitor_camera_ui.setupUi(MonitorCameraDialog)
+    monitor_camera_ui.groupBox_main_camera.setTitle('监控摄像机识别结果')
+    monitor_camera_ui.label_picture.mouseDoubleClickEvent = monitor_doubleclick_event
     ui.label_monitor_picture.mouseDoubleClickEvent = monitor_doubleclick_event
 
     sc = SportCard()  # 运动卡
@@ -6116,7 +6117,7 @@ if __name__ == '__main__':
     five_key = [1, 1, 1, 1, 1]
     Track_number = "M"  # 轨道直播编号
     term_status = 1  # 赛事状态（丢球）
-    term_comments = ['Invalid Term', 'TRAP', 'OUT']
+    term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
     term_comment = ''
 
     load_main_json()
