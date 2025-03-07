@@ -80,8 +80,8 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         """ 在备注列（第5列）点击后显示 ComboBox """
         if col == 4:  # 备注列索引为 4
             combo = QComboBox()
-            combo.addItems(["无", "待审核", "已确认"])  # 选项
-            combo.setCurrentText(self.tableWidget_kaj789.item(row, col).text() if self.tableWidget_kaj789.item(row, col) else "无")
+            combo.addItems(['Invalid Term', 'TRAP', 'OUT', ''])  # 选项
+            combo.setCurrentText(self.tableWidget_kaj789.item(row, col).text() if self.tableWidget_kaj789.item(row, col) else "")
 
             # 连接 activated 信号，在用户选择后隐藏 ComboBox
             combo.activated.connect(lambda index, r=row, c=col: self.saveComboBoxData(r, c, combo))

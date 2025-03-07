@@ -1266,6 +1266,9 @@ class ZUi(QMainWindow, Ui_MainWindow):
         tb_result.horizontalHeader().resizeSection(8, 80)
         tb_result.horizontalHeader().resizeSection(9, 150)
         tb_result.horizontalHeader().resizeSection(10, 150)
+        tb_result.horizontalHeader().resizeSection(11, 150)
+        tb_result.horizontalHeader().resizeSection(12, 50)
+        tb_result.horizontalHeader().resizeSection(13, 50)
 
         tb_result.setColumnHidden(0, True)
         tb_result.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
@@ -4666,6 +4669,7 @@ def get_lottery_term():  # 创建开奖记录
         lottery_term[10] = ''
         lottery_term[11] = ''
         lottery_term[12] = ''
+        lottery_term[13] = ''
         flg_start['server'] = True
         return True
     except:
@@ -5290,6 +5294,8 @@ def auto_shoot():  # 自动上珠
     else:
         Shoot_Thread.run_flg = False
 
+def kaj789_table():
+    Kaj789Dialog.show()
 
 "****************************************直播大厅_结束****************************************************"
 "****************************************参数设置_开始****************************************************"
@@ -6094,7 +6100,7 @@ if __name__ == '__main__':
     five_key = [1, 1, 1, 1, 1]
     Track_number = "M"  # 轨道直播编号
     term_status = 1  # 赛事状态（丢球）
-    term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
+    term_comments = ['Invalid Term', 'TRAP', 'OUT']
     term_comment = ''
 
     load_main_json()
@@ -6325,8 +6331,9 @@ if __name__ == '__main__':
     "**************************参数设置_结束*****************************"
     "**************************直播大厅_开始*****************************"
     labels = []
-    # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 发送状态, 图片上传状态, 备注, 图片, 录像, 补发状态, 补传图片]
-    lottery_term = ['0'] * 13
+    # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 发送状态,
+    #                       图片上传状态, 备注, 图片, 录像, 结束时间, 补发状态, 补传图片]
+    lottery_term = ['0'] * 14
     # start_lottery_server_bat()  # 模拟开奖王服务器
     lottery_json_init()
 
@@ -6354,6 +6361,7 @@ if __name__ == '__main__':
     ui.pushButton_Cancel_Result.clicked.connect(cancel_betting)
     ui.pushButton_Send_Result.clicked.connect(res2end)
     ui.pushButton_Send_Res.clicked.connect(send_result)
+    ui.pushButton_kaj789.clicked.connect(kaj789_table)
 
     "**************************直播大厅_结束*****************************"
 

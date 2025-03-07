@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>805</width>
+    <width>1129</width>
     <height>651</height>
    </rect>
   </property>
@@ -166,12 +166,12 @@
            </column>
            <column>
             <property name="text">
-             <string>图片地址</string>
+             <string>图片补发</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>图片补发</string>
+             <string>图片地址</string>
             </property>
            </column>
            <column>
