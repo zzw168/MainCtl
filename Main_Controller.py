@@ -676,6 +676,7 @@ def save_ballsort_json():
     global max_lap_count
     global max_area_count
     global ball_sort
+    ballsort_all = {}
     file = "./ballsort_config.json"
     if os.path.exists(file):
         f = open(file, 'r', encoding='utf-8')
@@ -2182,8 +2183,8 @@ def ScreenShotsignal_accept(msg):
             painter.drawText(10, 60, "1")  # (x, y, "文本")
             painter.end()  # 结束绘制
             ui.lineEdit_Main_Camera.setText(str(main_Camera[:balls_count]))
-            if ui.checkBox_main_camera.isChecked():
-                main_camera_ui.label_picture.setPixmap(pixmap)
+            # if ui.checkBox_main_camera.isChecked():
+            main_camera_ui.label_picture.setPixmap(pixmap)
             ui.label_main_picture.setPixmap(pixmap)
         elif msg[2] == 'monitor':
             painter = QPainter(pixmap)
@@ -2192,8 +2193,8 @@ def ScreenShotsignal_accept(msg):
             painter.drawText(10, 60, "2")  # (x, y, "文本")
             painter.end()  # 结束绘制
             ui.lineEdit_Backup_Camera.setText(str(monitor_Camera[:balls_count]))
-            if ui.checkBox_monitor_cam.isChecked():
-                monitor_camera_ui.label_picture.setPixmap(pixmap)
+            # if ui.checkBox_monitor_cam.isChecked():
+            monitor_camera_ui.label_picture.setPixmap(pixmap)
             ui.label_monitor_picture.setPixmap(pixmap)
         for index in range(len(main_Camera)):
             fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
@@ -3217,75 +3218,76 @@ def save_main_json():
     global five_key
 
     file = "main_config.json"
-    if os.path.exists(file):
-        try:
-            with (open(file, "r", encoding="utf-8") as f):
-                main_all = json.load(f)
-                # print(main_all)
-                main_all['cardNo'] = ui.lineEdit_cardNo.text()
-                main_all['s485_Axis_No'] = ui.lineEdit_s485_Axis_No.text()
-                main_all['s485_Cam_No'] = ui.lineEdit_s485_Cam_No.text()
-                main_all['five_axis'] = eval(ui.lineEdit_five_axis.text())
-                main_all['five_key'] = eval(ui.lineEdit_five_key.text())
-                main_all['balls_count'] = ui.lineEdit_balls_count.text()
-                main_all['wakeup_addr'] = eval(ui.lineEdit_wakeup_addr.text())
-                main_all['rtsp_url'] = ui.lineEdit_rtsp_url.text()
-                main_all['recognition_addr'] = ui.lineEdit_recognition_addr.text()
-                main_all['obs_script_addr'] = ui.lineEdit_obs_script_addr.text()
-                main_all['tcpServer_addr'][1] = ui.lineEdit_TcpServer_Port.text()
-                main_all['result_tcpServer_addr'][1] = ui.lineEdit_result_tcpServer_port.text()
-                main_all['udpServer_addr'][1] = ui.lineEdit_UdpServer_Port.text()
-                main_all['map_picture'] = ui.lineEdit_map_picture.text()
-                main_all['map_size'] = ui.lineEdit_map_size.text()
-                main_all['map_line'] = ui.lineEdit_map_line.text()
-                main_all['lineEdit_upload_Path'] = ui.lineEdit_upload_Path.text()
-                main_all['lineEdit_saidao_Path'] = ui.lineEdit_saidao_Path.text()
-                main_all['lineEdit_end1_Path'] = ui.lineEdit_end1_Path.text()
-                main_all['lineEdit_end2_Path'] = ui.lineEdit_end2_Path.text()
-                main_all['scene_name'] = ui.lineEdit_scene_name.text()
-                main_all['source_ranking'] = ui.lineEdit_source_ranking.text()
-                main_all['source_picture'] = ui.lineEdit_source_picture.text()
-                main_all['source_settlement'] = ui.lineEdit_source_settlement.text()
-                main_all['source_end'] = ui.lineEdit_source_end.text()
-                main_all['monitor_sort'] = ui.lineEdit_monitor_sort.text()
-                main_all['sony_sort'] = ui.lineEdit_sony_sort.text()
-                main_all['lineEdit_start'] = ui.lineEdit_start.text()
-                main_all['lineEdit_shoot'] = ui.lineEdit_shoot.text()
-                main_all['lineEdit_shake'] = ui.lineEdit_shake.text()
-                main_all['lineEdit_end'] = ui.lineEdit_end.text()
-                main_all['lineEdit_start_count'] = ui.lineEdit_start_count.text()
-                main_all['lineEdit_alarm'] = ui.lineEdit_alarm.text()
-                main_all['lineEdit_shoot_2'] = ui.lineEdit_shoot_2.text()
-                main_all['lineEdit_shoot_3'] = ui.lineEdit_shoot_3.text()
-                for index in range(1, 4):
-                    main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
-                    main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
-                for index in range(1, 11):
-                    eng = getattr(ui, 'lineEdit_Color_Eng_%s' % index).text()
-                    ch = getattr(ui, 'lineEdit_Color_Ch_%s' % index).text()
-                    main_all['init_array'][index - 1][5] = eng
-                    main_all['color_ch'][eng] = ch
+    if not os.path.exists(file):
+        return
+    try:
+        with (open(file, "r", encoding="utf-8") as f):
+            main_all = json.load(f)
+            # print(main_all)
+            main_all['cardNo'] = ui.lineEdit_cardNo.text()
+            main_all['s485_Axis_No'] = ui.lineEdit_s485_Axis_No.text()
+            main_all['s485_Cam_No'] = ui.lineEdit_s485_Cam_No.text()
+            main_all['five_axis'] = eval(ui.lineEdit_five_axis.text())
+            main_all['five_key'] = eval(ui.lineEdit_five_key.text())
+            main_all['balls_count'] = ui.lineEdit_balls_count.text()
+            main_all['wakeup_addr'] = eval(ui.lineEdit_wakeup_addr.text())
+            main_all['rtsp_url'] = ui.lineEdit_rtsp_url.text()
+            main_all['recognition_addr'] = ui.lineEdit_recognition_addr.text()
+            main_all['obs_script_addr'] = ui.lineEdit_obs_script_addr.text()
+            main_all['tcpServer_addr'][1] = ui.lineEdit_TcpServer_Port.text()
+            main_all['result_tcpServer_addr'][1] = ui.lineEdit_result_tcpServer_port.text()
+            main_all['udpServer_addr'][1] = ui.lineEdit_UdpServer_Port.text()
+            main_all['map_picture'] = ui.lineEdit_map_picture.text()
+            main_all['map_size'] = ui.lineEdit_map_size.text()
+            main_all['map_line'] = ui.lineEdit_map_line.text()
+            main_all['lineEdit_upload_Path'] = ui.lineEdit_upload_Path.text()
+            main_all['lineEdit_saidao_Path'] = ui.lineEdit_saidao_Path.text()
+            main_all['lineEdit_end1_Path'] = ui.lineEdit_end1_Path.text()
+            main_all['lineEdit_end2_Path'] = ui.lineEdit_end2_Path.text()
+            main_all['scene_name'] = ui.lineEdit_scene_name.text()
+            main_all['source_ranking'] = ui.lineEdit_source_ranking.text()
+            main_all['source_picture'] = ui.lineEdit_source_picture.text()
+            main_all['source_settlement'] = ui.lineEdit_source_settlement.text()
+            main_all['source_end'] = ui.lineEdit_source_end.text()
+            main_all['monitor_sort'] = ui.lineEdit_monitor_sort.text()
+            main_all['sony_sort'] = ui.lineEdit_sony_sort.text()
+            main_all['lineEdit_start'] = ui.lineEdit_start.text()
+            main_all['lineEdit_shoot'] = ui.lineEdit_shoot.text()
+            main_all['lineEdit_shake'] = ui.lineEdit_shake.text()
+            main_all['lineEdit_end'] = ui.lineEdit_end.text()
+            main_all['lineEdit_start_count'] = ui.lineEdit_start_count.text()
+            main_all['lineEdit_alarm'] = ui.lineEdit_alarm.text()
+            main_all['lineEdit_shoot_2'] = ui.lineEdit_shoot_2.text()
+            main_all['lineEdit_shoot_3'] = ui.lineEdit_shoot_3.text()
+            for index in range(1, 4):
+                main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
+                main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
+            for index in range(1, 11):
+                eng = getattr(ui, 'lineEdit_Color_Eng_%s' % index).text()
+                ch = getattr(ui, 'lineEdit_Color_Ch_%s' % index).text()
+                main_all['init_array'][index - 1][5] = eng
+                main_all['color_ch'][eng] = ch
 
-                # 赋值变量
-                init_array = main_all['init_array']
-                color_ch = main_all['color_ch']
-                wakeup_addr = main_all['wakeup_addr']
-                balls_count = int(main_all['balls_count'])
-                rtsp_url = main_all['rtsp_url']
-                recognition_addr = main_all['recognition_addr']
-                obs_script_addr = main_all['obs_script_addr']
-                s485.s485_Axis_No = main_all['s485_Axis_No']
-                s485.s485_Cam_No = main_all['s485_Cam_No']
-                five_axis = main_all['five_axis']
-                five_key = main_all['five_key']
-                map_data = [main_all['map_picture'], main_all['map_line'], main_all['map_size']]
-            with open(file, "w", encoding="utf-8") as f:
-                json.dump(main_all, f, indent=4, ensure_ascii=False)
-            f.close()
-            ui.textBrowser_save_msg.append(succeed('方案保存：成功'))
-        except:
-            ui.textBrowser_save_msg.append(fail('方案保存：失败'))
-        print("保存成功~！")
+            # 赋值变量
+            init_array = main_all['init_array']
+            color_ch = main_all['color_ch']
+            wakeup_addr = main_all['wakeup_addr']
+            balls_count = int(main_all['balls_count'])
+            rtsp_url = main_all['rtsp_url']
+            recognition_addr = main_all['recognition_addr']
+            obs_script_addr = main_all['obs_script_addr']
+            s485.s485_Axis_No = main_all['s485_Axis_No']
+            s485.s485_Cam_No = main_all['s485_Cam_No']
+            five_axis = main_all['five_axis']
+            five_key = main_all['five_key']
+            map_data = [main_all['map_picture'], main_all['map_line'], main_all['map_size']]
+        with open(file, "w", encoding="utf-8") as f:
+            json.dump(main_all, f, indent=4, ensure_ascii=False)
+        f.close()
+        ui.textBrowser_save_msg.append(succeed('方案保存：成功'))
+    except:
+        ui.textBrowser_save_msg.append(fail('方案保存：失败'))
+    print("保存成功~！")
 
 
 def load_main_json():
@@ -4621,8 +4623,7 @@ def lottery_sql_init():
 def lottery_json_init():
     global lottery_term
     global labels
-    # current_date = time.strftime("%Y-%m-%d", time.localtime())
-    current_date = '2025-03-06'
+    current_date = time.strftime("%Y-%m-%d", time.localtime())
     file = "./terms/%s.json" % current_date
     print(file)
     if os.path.exists(file):
@@ -5305,7 +5306,7 @@ def auto_shoot():  # 自动上珠
 
 
 def kaj789_table():
-    Kaj789_ui.show()
+    Kaj789Dialog.show()
 
 
 "****************************************直播大厅_结束****************************************************"
@@ -5737,12 +5738,11 @@ def organ_show():
 
 def organ_ok():
     file = "./organ_config.json"
-    if os.path.exists(file):
-        data = []
-        with open(file, "w", encoding="utf-8") as f:
-            for i in range(16):
-                data.append(getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).text())
-            json.dump(data, f, ensure_ascii=False, indent=4)  # `ensure_ascii=False` 支持中文
+    data = []
+    with open(file, "w", encoding="utf-8") as f:
+        for i in range(16):
+            data.append(getattr(organ_ui, 'lineEdit_organ_%s' % (i + 1)).text())
+        json.dump(data, f, ensure_ascii=False, indent=4)  # `ensure_ascii=False` 支持中文
     # OrganDialog.hide()
 
 
@@ -5989,7 +5989,6 @@ if __name__ == '__main__':
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardStop.clicked.connect(cmd_stop)
     ui.pushButton_CardStop_2.clicked.connect(cmd_stop)
-    ui.pushButton_Stop_All.clicked.connect(cmd_stop)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardRun_2.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
@@ -6372,7 +6371,7 @@ if __name__ == '__main__':
     ui.pushButton_collect_ball.clicked.connect(lambda: ui.checkBox_end.setChecked(True))
     ui.pushButton_end_game.clicked.connect(cmd_stop)
     ui.pushButton_Stop_All.clicked.connect(cmd_stop)
-    ui.pushButton_end_all.clicked.connect(stop_server)
+    # ui.pushButton_end_all.clicked.connect(stop_server)
     ui.pushButton_Main_Camera.clicked.connect(main2result)
     ui.pushButton_Backup_Camera.clicked.connect(backup2result)
     ui.pushButton_Cancel_Result.clicked.connect(cancel_betting)
