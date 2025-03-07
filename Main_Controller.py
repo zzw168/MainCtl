@@ -10,7 +10,7 @@ import pynput
 import websocket
 
 from PySide6.QtCore import QThread, Signal, Slot, QTimer, QEvent
-from PySide6.QtGui import QMouseEvent, QPen, QTextCursor
+from PySide6.QtGui import QMouseEvent, QPen, QTextCursor, QShowEvent, QHideEvent
 from PySide6.QtWidgets import QMenu, QMessageBox, QFileDialog, \
     QAbstractButton, QDialog, QSplitter
 
@@ -2398,6 +2398,9 @@ class AxisThread(QThread):
                     sc.card_update()
                     axis_reset = False
                 self.signal.emit(succeed('轴复位完成！'))
+                for index in range(0, 16):
+                    sc.GASetExtDoBit(index, 0)
+                self.signal.emit(succeed('所有机关已关闭！'))
             except:
                 print("轴复位出错！")
                 flg_start['s485'] = False
@@ -5650,11 +5653,28 @@ class CameraUi(QDialog, Ui_Camera_Dialog):
     def setupUi(self, z_dialog):
         super(CameraUi, self).setupUi(z_dialog)
 
+    def showEvent(self, event: QShowEvent):
+        super().showEvent(event)  # 调用父类的 showEvent
+        if '主摄像头' in self.windowTitle():
+            pixmap = ui.label_main_picture.pixmap()
+        else:
+            pixmap = ui.label_monitor_picture.pixmap()
+        if pixmap:
+            self.label_picture.setPixmap(pixmap)
 
-def main_hide_event(event):
-    ui.checkBox_main_camera.setChecked(False)
-    event.accept()
+    def hideEvent(self, event: QHideEvent):
+        super().hideEvent(event)  # 调用父类的 hideEvent
+        if '主摄像头' in self.windowTitle():
+            ui.checkBox_main_camera.setChecked(False)
+        else:
+            ui.checkBox_monitor_cam.setChecked(False)
 
+    def mouseDoubleClickEvent(self, event: QMouseEvent):
+        if '主摄像头' in self.windowTitle():
+            set_result(main_Camera)
+        else:
+            set_result(monitor_Camera)
+        super().mouseDoubleClickEvent(event)  # 调用父类的双击事件，保持默认行为
 
 def main_doubleclick_event(event):
     if event.button() == Qt.LeftButton:
@@ -5665,24 +5685,18 @@ def monitor_doubleclick_event(event):
     if event.button() == Qt.LeftButton:
         set_result(monitor_Camera)
 
-
-def monitor_hide_event(event):
-    ui.checkBox_monitor_cam.setChecked(False)
-    event.accept()
-
-
 def main_cam_change():
     if ui.checkBox_main_camera.isChecked():
-        MainCameraDialog.show()
+        main_camera_ui.show()
     else:
-        MainCameraDialog.hide()
+        main_camera_ui.hide()
 
 
 def monitor_cam_change():
     if ui.checkBox_monitor_cam.isChecked():
-        MonitorCameraDialog.show()
+        monitor_camera_ui.show()
     else:
-        MonitorCameraDialog.hide()
+        monitor_camera_ui.hide()
 
 
 "************************************ResultDlg_Ui*********************************************"
@@ -5870,22 +5884,16 @@ if __name__ == '__main__':
     speed_ui.tableWidget_Set_Speed.itemChanged.connect(auto_line)
     speed_ui.lineEdit_time_set.editingFinished.connect(auto_time)
 
-    MainCameraDialog = QDialog(z_window)
-    MainCameraDialog.hideEvent = main_hide_event
-    MainCameraDialog.setWindowTitle('索尼')
     main_camera_ui = CameraUi()
-    main_camera_ui.setupUi(MainCameraDialog)
-    main_camera_ui.groupBox_main_camera.setTitle('索尼摄像机识别结果')
-    main_camera_ui.label_picture.mouseDoubleClickEvent = main_doubleclick_event
+    main_camera_ui.setupUi(main_camera_ui)
+    main_camera_ui.setWindowTitle('主摄像头')
+    main_camera_ui.groupBox_main_camera.setTitle('主摄像头识别结果')
     ui.label_main_picture.mouseDoubleClickEvent = main_doubleclick_event
 
-    MonitorCameraDialog = QDialog(z_window)
-    MonitorCameraDialog.hideEvent = monitor_hide_event
-    MonitorCameraDialog.setWindowTitle('监控')
     monitor_camera_ui = CameraUi()
-    monitor_camera_ui.setupUi(MonitorCameraDialog)
-    monitor_camera_ui.groupBox_main_camera.setTitle('监控摄像机识别结果')
-    monitor_camera_ui.label_picture.mouseDoubleClickEvent = monitor_doubleclick_event
+    monitor_camera_ui.setupUi(monitor_camera_ui)
+    monitor_camera_ui.setWindowTitle('网络摄像头')
+    monitor_camera_ui.groupBox_main_camera.setTitle('网络摄像头识别结果')
     ui.label_monitor_picture.mouseDoubleClickEvent = monitor_doubleclick_event
 
     sc = SportCard()  # 运动卡
@@ -5980,10 +5988,12 @@ if __name__ == '__main__':
     ui.pushButton_CardStart.clicked.connect(card_start)
     ui.pushButton_CardStop.clicked.connect(cmd_stop)
     ui.pushButton_CardStop_2.clicked.connect(cmd_stop)
+    ui.pushButton_Stop_All.clicked.connect(cmd_stop)
     ui.pushButton_CardRun.clicked.connect(cmd_run)
     ui.pushButton_CardRun_2.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.pushButton_Cardreset.clicked.connect(card_reset)
+    ui.pushButton_end_all.clicked.connect(card_reset)
     ui.pushButton_ToTable.clicked.connect(p_to_table)
     ui.pushButton_Obs2Table.clicked.connect(obs_to_table)
     ui.pushButton_Source2Table.clicked.connect(source_to_table)
