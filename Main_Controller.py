@@ -5341,7 +5341,6 @@ def start_betting():
 def stop_betting():
     global betting_loop_flg
     betting_loop_flg = False    # 关闭循环标志
-    PlanCmd_Thread.run_flg = False  # 停止运动循环
     ReStart_Thread.run_flg = False  # 停止重启循环
     res_status = post_status(False, Track_number)
     if str(res_status) == 'OK':
