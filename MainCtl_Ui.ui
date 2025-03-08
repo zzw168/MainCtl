@@ -573,29 +573,6 @@
                 <string>功能</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_16">
-                <item row="0" column="0" colspan="2">
-                 <widget class="QCheckBox" name="checkBox_Pass_Recognition_Start">
-                  <property name="maximumSize">
-                   <size>
-                    <width>150</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>跳过起点识别</string>
-                  </property>
-                  <property name="checked">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="3" colspan="2">
                  <widget class="QCheckBox" name="checkBox_end_BlackScreen">
                   <property name="font">
@@ -607,6 +584,20 @@
                   </property>
                   <property name="text">
                    <string>本局结束后自动黑屏</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="3">
+                 <widget class="QCheckBox" name="checkBox_alarm">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>关警报</string>
                   </property>
                  </widget>
                 </item>
@@ -639,6 +630,29 @@
                   </property>
                  </widget>
                 </item>
+                <item row="0" column="0" colspan="2">
+                 <widget class="QCheckBox" name="checkBox_Pass_Recognition_Start">
+                  <property name="maximumSize">
+                   <size>
+                    <width>150</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>跳过起点识别</string>
+                  </property>
+                  <property name="checked">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
                 <item row="1" column="3" colspan="2">
                  <widget class="QCheckBox" name="checkBox_end_stop">
                   <property name="font">
@@ -653,21 +667,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="3">
-                 <widget class="QCheckBox" name="checkBox_alarm">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>关警报</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
+                <item row="2" column="4">
                  <widget class="QCheckBox" name="checkBox_shoot_1">
                   <property name="font">
                    <font>
@@ -678,6 +678,62 @@
                   </property>
                   <property name="text">
                    <string>弹射</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QCheckBox" name="checkBox_shoot_0">
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>自动上珠</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="2">
+                 <widget class="QLabel" name="label_85">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>粒</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="lineEdit_balls_auto">
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>8</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
@@ -1389,7 +1445,7 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>补发赛果</string>
+                      <string>正常结束</string>
                      </property>
                      <property name="autoDefault">
                       <bool>false</bool>
