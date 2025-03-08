@@ -1593,12 +1593,13 @@ class ReStartThread(QThread):
     def __init__(self):
         super(ReStartThread, self).__init__()
         self.run_flg = False
-
         self.running = True
+        self.ball_start = False
 
     def stop(self):
         self.run_flg = False
         self.running = False  # 修改标志位，线程优雅退出
+        self.ball_start = False
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
@@ -1615,15 +1616,13 @@ class ReStartThread(QThread):
                 time.sleep(1)
             PlanCmd_Thread.background_state = True  # 运行背景
             PlanCmd_Thread.run_flg = True
-            self.signal.emit('过场动画')
-            if ui.checkBox_shoot_0.isChecked():
-                self.signal.emit('auto_shoot')
-                while ui.checkBox_shoot_0.isChecked():
-                    print('等待上珠结束~~~~~~~')
-                    time.sleep(1)
-                    if (balls_start >= balls_count
-                            or balls_start >= int(ui.lineEdit_balls_auto.text())):
-                        break
+            self.signal.emit('auto_shoot')
+            while (balls_start < balls_count) or (not self.ball_start):
+                print('等待上珠结束~~~~~~~')
+                time.sleep(1)
+                if self.ball_start:
+                    self.ball_start = False
+                    break
             if not self.run_flg:
                 continue
             if ui.radioButton_start_betting.isChecked():  # 非模拟模式
@@ -1685,9 +1684,6 @@ def restartsignal_accept(msg):
     global labels
     if isinstance(msg, bool):
         lottery_data2table(ui.tableWidget_Results, lottery_term, labels)
-    elif msg == '过场动画':
-        ui.textBrowser_msg.append(succeed('过场动画'))
-        scroll_to_bottom(ui.textBrowser_msg)
     elif msg == '测试期号':
         ui.groupBox_term.setStyleSheet("QGroupBox { background-color: yellow; }")  # 让 GroupBox 变黄
         ui.pushButton_term.setText(str(term))
@@ -2284,11 +2280,12 @@ class ShootThread(QThread):
         super(ShootThread, self).__init__()
         self.run_flg = False
         self.running = True
-        self.start = False
+        self.ball_start = False
 
     def stop(self):
         self.run_flg = False
         self.running = False  # 修改标志位，线程优雅退出
+        self.ball_start = False
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
@@ -2307,12 +2304,11 @@ class ShootThread(QThread):
                 time_count = 0
                 while self.run_flg:
                     time.sleep(2)
-                    if ((ui.lineEdit_balls_auto.text().isdigit()
-                         and balls_start >= int(ui.lineEdit_balls_auto.text()))
-                            or ui.checkBox_Pass_Recognition_Start.isChecked()
-                            or self.start):
+                    if (balls_start >= balls_count
+                        or ui.checkBox_Pass_Recognition_Start.isChecked()
+                        or self.ball_start):
                         self.signal.emit(fail("隐藏提示"))
-                        self.start = False
+                        self.ball_start = False
                         break
                     time_count += 1
                     if time_count >= 10:
@@ -3316,7 +3312,6 @@ def load_main_json():
         ui.lineEdit_five_axis.setText(str(main_all['five_axis']))
         ui.lineEdit_five_key.setText(str(main_all['five_key']))
         ui.lineEdit_balls_count.setText(main_all['balls_count'])
-        ui.lineEdit_balls_auto.setText(main_all['balls_count'])
         ui.lineEdit_monitor_sort.setText(main_all['monitor_sort'])
         ui.lineEdit_sony_sort.setText(main_all['sony_sort'])
         ui.lineEdit_wakeup_addr.setText(str(main_all['wakeup_addr']))
@@ -5837,7 +5832,8 @@ class BallsNumUi(QDialog, Ui_Dialog_BallsNum):
         super(BallsNumUi, self).setupUi(z_dialog)
 
 def balls_start_btn():
-    Shoot_Thread.start = True
+    Shoot_Thread.ball_start = True
+    ReStart_Thread.ball_start = True
 
 def balls_refresh_btn():
     global ball_sort
@@ -6006,7 +6002,7 @@ if __name__ == '__main__':
 
     Shoot_Thread = ShootThread()  # 自动上球 3
     Shoot_Thread.signal.connect(shootsignal_accept)
-    Shoot_Thread.start()
+    Shoot_Thread.ball_start()
 
     PlanCam_Thread = CamThread()  # 摄像头运行方案 4
     PlanCam_Thread.signal.connect(signal_accept)
@@ -6034,7 +6030,7 @@ if __name__ == '__main__':
 
     ReStart_Thread = ReStartThread()  # 循环模式 9
     ReStart_Thread.signal.connect(restartsignal_accept)
-    ReStart_Thread.start()
+    ReStart_Thread.ball_start()
 
     Audio_Thread = AudioThread()  # 音频线程 10
     Audio_Thread.signal.connect(audiosignal_accept)

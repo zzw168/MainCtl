@@ -41,7 +41,7 @@ class MyUi(QMainWindow, Ui_MainWindow):
         action = menu.exec(screenPos)
         if action == item1:
             pass
-            Flash_Thead.start()
+            Flash_Thead.ball_start()
         if action == item2:
             # del_host()
             num = tb.rowCount()
