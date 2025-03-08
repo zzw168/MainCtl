@@ -345,9 +345,17 @@ class Ui_MainWindow(object):
 
         self.gridLayout_8.addWidget(self.lineEdit_times_count, 0, 5, 1, 1)
 
+        self.label_10 = QLabel(self.groupBox_2)
+        self.label_10.setObjectName(u"label_10")
+        self.label_10.setMaximumSize(QSize(30, 16777215))
+        self.label_10.setFont(font1)
+        self.label_10.setAutoFillBackground(False)
+
+        self.gridLayout_8.addWidget(self.label_10, 0, 4, 1, 1)
+
         self.label_12 = QLabel(self.groupBox_2)
         self.label_12.setObjectName(u"label_12")
-        self.label_12.setMaximumSize(QSize(85, 16777215))
+        self.label_12.setMaximumSize(QSize(60, 16777215))
         self.label_12.setFont(font1)
         self.label_12.setAutoFillBackground(False)
 
@@ -359,19 +367,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_8.addWidget(self.lineEdit_term, 0, 2, 1, 1)
 
-        self.checkBox_continue_term = QCheckBox(self.groupBox_2)
-        self.checkBox_continue_term.setObjectName(u"checkBox_continue_term")
-        self.checkBox_continue_term.setFont(font1)
+        self.frame_12 = QFrame(self.groupBox_2)
+        self.frame_12.setObjectName(u"frame_12")
+        self.frame_12.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_12.setFrameShadow(QFrame.Shadow.Raised)
 
-        self.gridLayout_8.addWidget(self.checkBox_continue_term, 0, 3, 1, 1)
-
-        self.label_10 = QLabel(self.groupBox_2)
-        self.label_10.setObjectName(u"label_10")
-        self.label_10.setMaximumSize(QSize(30, 16777215))
-        self.label_10.setFont(font1)
-        self.label_10.setAutoFillBackground(False)
-
-        self.gridLayout_8.addWidget(self.label_10, 0, 4, 1, 1)
+        self.gridLayout_8.addWidget(self.frame_12, 0, 3, 1, 1)
 
 
         self.gridLayout_12.addWidget(self.groupBox_2, 1, 2, 2, 1)
@@ -3460,9 +3461,8 @@ class Ui_MainWindow(object):
         self.checkBox_shoot_1.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c04", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u9501\u5b9a\u671f\u53f7", None))
         self.lineEdit_times_count.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        self.label_12.setText(QCoreApplication.translate("MainWindow", u"\u5f53\u524d\u91cd\u590d\u671f\u53f7\uff1a", None))
-        self.checkBox_continue_term.setText(QCoreApplication.translate("MainWindow", u"\u91cd\u590d\u6267\u884c", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"\u5012\u6570\uff1a", None))
+        self.label_12.setText(QCoreApplication.translate("MainWindow", u"\u5f53\u524d\u671f\u53f7\uff1a", None))
         self.pushButton_start_game.setText(QCoreApplication.translate("MainWindow", u"\u542f\u52a8", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\uff1a", None))
@@ -3484,7 +3484,7 @@ class Ui_MainWindow(object):
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u540e\u5907\u6444\u50cf\u673a\uff1a", None))
         self.pushButton_Send_Result.setText(QCoreApplication.translate("MainWindow", u"\u63d0\u4ea4\u8d5b\u679c", None))
         self.pushButton_Cancel_End.setText(QCoreApplication.translate("MainWindow", u"\u53d6\u6d88\u5f53\u5c40", None))
-        self.pushButton_Send_End.setText(QCoreApplication.translate("MainWindow", u"\u6b63\u5e38\u7ed3\u675f", None))
+        self.pushButton_Send_End.setText(QCoreApplication.translate("MainWindow", u"\u8865\u53d1\u8d5b\u679c", None))
         self.pushButton_term.setText(QCoreApplication.translate("MainWindow", u"\u8d5b\u679c\u786e\u8ba4 \u8bc6\u522b\u72b6\u6001", None))
         self.pushButton_TRAP.setText(QCoreApplication.translate("MainWindow", u"\u5361\u73e0", None))
         self.pushButton_TRAP_1.setText(QCoreApplication.translate("MainWindow", u"1", None))

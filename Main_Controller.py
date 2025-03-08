@@ -799,37 +799,27 @@ class TcpRankingThread(QThread):
             try:
                 con, addr = tcp_ranking_socket.accept()
                 print("Accepted. {0}, {1}".format(con, str(addr)))
-                if con:
-                    # self.signal.emit("Accepted. {0}, {1}".format(con, str(addr)))
-                    with WebsocketServer(con) as ws:
-                        # ws.send('pong')
+            except:
+                pass
+            if con:
+                with WebsocketServer(con) as ws:
+                    try:
                         while self.run_flg:
-                            try:
-                                time.sleep(self.sleep_time)
-                                if self.send_time_flg:
-                                    d = {"mc": self.send_time_data[0], 'data': self.send_time_data[1],
-                                         'type': 'time'}
-                                    if self.send_time_data[0] == 1:
-                                        Script_Thread.param = self.send_time_data[1]
-                                        Script_Thread.run_type = 'period'
-                                        Script_Thread.run_flg = True
-                                else:
-                                    d = {'data': z_ranking_res[0: balls_count], 'type': 'pm'}
-                                    # time.sleep(1)
-                                    # d = {"mc": self.send_time_data[0], 'data': '7.98',
-                                    #      'type': 'time'}
-                                    # print(d)
-                                    # d = {'data': np.random.permutation([1, 2, 3, 4, 5, 6, 9, 7, 8, 10]).tolist(),
-                                    #      'type': 'pm'}
-                                ws.send(json.dumps(d))
-                                self.send_time_flg = False
-                            except Exception as e:
-                                print("pingpong_rank_1 错误：", e)
-                                # self.signal.emit("pingpong 错误：%s" % e)
-                                break
-            except Exception as e:
-                print("pingpong_rank_2 错误：", e)
-                # self.signal.emit("pingpong 错误：%s" % e)
+                            time.sleep(self.sleep_time)
+                            if self.send_time_flg:
+                                d = {"mc": self.send_time_data[0], 'data': self.send_time_data[1],
+                                     'type': 'time'}
+                                if self.send_time_data[0] == 1:
+                                    Script_Thread.param = self.send_time_data[1]
+                                    Script_Thread.run_type = 'period'
+                                    Script_Thread.run_flg = True
+                            else:
+                                d = {'data': z_ranking_res[0: balls_count], 'type': 'pm'}
+                            ws.send(json.dumps(d))
+                            self.send_time_flg = False
+                    except Exception as e:
+                        print("pingpong_rank_1 错误：", e)
+                        # self.signal.emit("pingpong 错误：%s" % e)
 
 
 class TcpResultThread(QThread):
@@ -862,138 +852,139 @@ class TcpResultThread(QThread):
             try:
                 con, addr = tcp_result_socket.accept()
                 print("Accepted. {0}, {1}".format(con, str(addr)))
-                if not con:
-                    continue
-                with WebsocketServer(con) as ws:
+            except:
+                pass
+            if not con:
+                continue
+            with WebsocketServer(con) as ws:
+                try:
                     while self.run_flg:
                         time.sleep(1)
                         send_flg = True
-                        try:
-                            if self.send_type == 'updata':
-                                self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
-                                datalist = {'type': 'updata',
-                                            'data': {'qh': str(term), 'rank': []}}
+
+                        if self.send_type == 'updata':
+                            self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
+                            datalist = {'type': 'updata',
+                                        'data': {'qh': str(term), 'rank': []}}
+                            for index in range(balls_count):
+                                if is_natural_num(z_ranking_time[index]):
+                                    datalist["data"]['rank'].append(
+                                        {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
+                                else:
+                                    datalist["data"]['rank'].append(
+                                        {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
+                            # print(datalist)
+                            ws.send(json.dumps(datalist))
+
+                            if ui.radioButton_start_betting.isChecked():  # 开盘模式
+                                result_data = {"raceTrackID": Track_number, "term": str(term),
+                                               "actualResultOpeningTime": betting_end_time,
+                                               "result": z_ranking_end[0:balls_count],
+                                               "timings": "[]"}
+                                data_temp = []
                                 for index in range(balls_count):
                                     if is_natural_num(z_ranking_time[index]):
-                                        datalist["data"]['rank'].append(
-                                            {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
+                                        data_temp.append(
+                                            {"pm": index + 1, "id": z_ranking_end[index],
+                                             "time": float(z_ranking_time[index])})
                                     else:
-                                        datalist["data"]['rank'].append(
-                                            {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
-                                # print(datalist)
-                                ws.send(json.dumps(datalist))
-
-                                if ui.radioButton_start_betting.isChecked():  # 开盘模式
-                                    result_data = {"raceTrackID": Track_number, "term": str(term),
-                                                   "actualResultOpeningTime": betting_end_time,
-                                                   "result": z_ranking_end[0:balls_count],
-                                                   "timings": "[]"}
-                                    data_temp = []
-                                    for index in range(balls_count):
-                                        if is_natural_num(z_ranking_time[index]):
-                                            data_temp.append(
-                                                {"pm": index + 1, "id": z_ranking_end[index],
-                                                 "time": float(z_ranking_time[index])})
-                                        else:
-                                            data_temp.append(
-                                                {"pm": index + 1, "id": z_ranking_end[index],
-                                                 "time": z_ranking_time[index]})
-                                    result_data["timings"] = json.dumps(data_temp)
-                                    lottery_term[12] = json.dumps(result_data)
-                                    try:
-                                        res_end = post_end(term, betting_end_time, term_status,
-                                                           Track_number)  # 发送游戏结束信号给服务器
-                                        self.signal.emit({'post_end': res_end})
-                                        if res_end == 'OK':
-                                            res_result = post_result(term, betting_end_time, result_data,
-                                                                     Track_number)  # 发送最终排名给服务器
-                                            self.signal.emit({'post_result': res_result})
-                                            if res_result == 'OK':
-                                                lottery_term[6] = "发送成功"
-                                            else:
-                                                lottery_term[6] = "发送失败"
-                                            if os.path.exists(lottery_term[9]):
-                                                res_upload = post_upload(term, lottery_term[9], Track_number)  # 上传结果图片
-                                                self.signal.emit({'post_upload': res_upload})
-                                                if res_upload == 'OK':
-                                                    lottery_term[7] = "上传成功"
-                                                else:
-                                                    lottery_term[7] = "上传失败"
-                                            if term_comment != '':
-                                                res_marble_results = post_marble_results(term, term_comment,
-                                                                                         Track_number)  # 上传备注信息
-                                                self.signal.emit({'post_marble_results': res_marble_results})
-                                                if 'marble_results' in res_marble_results:
-                                                    lottery_term[8] = term_comment
-                                                else:
-                                                    lottery_term[8] = "备注失败"
-                                                term_comment = ''
-                                        else:
-                                            send_flg = False
-                                    except:
-                                        self.signal.emit(fail('post_result 上传结果错误！'))
-                                        print('上传结果错误！')
-
-                                self.signal.emit(succeed('第%s期 结束！' % term))
-                                # 获取录屏状态
-                                recording_status = cl_request.get_record_status()
+                                        data_temp.append(
+                                            {"pm": index + 1, "id": z_ranking_end[index],
+                                             "time": z_ranking_time[index]})
+                                result_data["timings"] = json.dumps(data_temp)
+                                lottery_term[12] = json.dumps(result_data)
                                 try:
-                                    # 检查是否正在录屏
-                                    if recording_status.output_active:  # 确保键名正确
-                                        time.sleep(3)
-                                        video_name = cl_request.stop_record()  # 关闭录像
-                                        lottery_term[10] = video_name.output_path  # 视频保存路径
+                                    res_end = post_end(term, betting_end_time, term_status,
+                                                       Track_number)  # 发送游戏结束信号给服务器
+                                    self.signal.emit({'post_end': res_end})
+                                    if res_end == 'OK':
+                                        res_result = post_result(term, betting_end_time, result_data,
+                                                                 Track_number)  # 发送最终排名给服务器
+                                        self.signal.emit({'post_result': res_result})
+                                        if res_result == 'OK':
+                                            lottery_term[6] = "发送成功"
+                                        else:
+                                            lottery_term[6] = "发送失败"
+                                        if os.path.exists(lottery_term[9]):
+                                            res_upload = post_upload(term, lottery_term[9], Track_number)  # 上传结果图片
+                                            self.signal.emit({'post_upload': res_upload})
+                                            if res_upload == 'OK':
+                                                lottery_term[7] = "上传成功"
+                                            else:
+                                                lottery_term[7] = "上传失败"
+                                        if term_comment != '':
+                                            res_marble_results = post_marble_results(term, term_comment,
+                                                                                     Track_number)  # 上传备注信息
+                                            self.signal.emit({'post_marble_results': res_marble_results})
+                                            if 'marble_results' in res_marble_results:
+                                                lottery_term[8] = term_comment
+                                            else:
+                                                lottery_term[8] = "备注失败"
+                                            term_comment = ''
+                                    else:
+                                        send_flg = False
                                 except:
-                                    pass
-                                if send_flg:
-                                    lottery_term[3] = '<font color="green">已结束</font>'  # 新一期比赛的状态（0.已结束）
-                                    # lottery2sql()  # 保存数据库
-                                    lottery2json()  # 保存数据
+                                    self.signal.emit(fail('post_result 上传结果错误！'))
+                                    print('上传结果错误！')
 
-                                else:
-                                    lottery_term[3] = '<font color="red">未结束</font>'
-                                    self.signal.emit('发送比赛结束信号到服务器失败！')
-                                    self.signal.emit('封盘')
-                                    betting_loop_flg = False
-                                self.signal.emit('save_video')
-                                if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
-                                    self.signal.emit('封盘')
-                                    betting_loop_flg = False
+                            self.signal.emit(succeed('第%s期 结束！' % term))
+                            # 获取录屏状态
+                            recording_status = cl_request.get_record_status()
+                            try:
+                                # 检查是否正在录屏
+                                if recording_status.output_active:  # 确保键名正确
+                                    time.sleep(3)
+                                    video_name = cl_request.stop_record()  # 关闭录像
+                                    lottery_term[10] = video_name.output_path  # 视频保存路径
+                            except:
+                                pass
+                            if send_flg:
+                                lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+                                # lottery2sql()  # 保存数据库
+                                lottery2json()  # 保存数据
 
-                                if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
-                                    self.signal.emit('黑屏')
-                                    betting_loop_flg = False
-
-                                if betting_loop_flg:
-                                    self.send_type = ''
-                                    while PlanCmd_Thread.run_flg:
-                                        time.sleep(1)
-                                    ReStart_Thread.run_flg = True  # 1分钟后重启动作
-                                else:
-                                    action_area = [0, 0, 0]  # 初始化触发区域
-                                    PlanCmd_Thread.end_state = True  # 运行背景
-                                    PlanCmd_Thread.run_flg = True
-                                    self.signal.emit('结束动画')
-                                    if ui.checkBox_shoot_0.isChecked():
-                                        self.signal.emit('auto_shoot')
-                                    self.run_flg = False
-                            elif self.send_type == 'time':
-                                datalist = {'type': 'time',
-                                            'data': str(term)}
-                                ws.send(json.dumps(datalist))
-                                self.send_type = ''
-                                self.run_flg = False
                             else:
-                                datalist = {'type': 'pong',
-                                            'data': str(term)}
-                                ws.send(json.dumps(datalist))
-                        except Exception as e:
-                            print("pingpong_result_1 错误：%s" % e)
-                            # self.signal.emit("pingpong 错误：%s" % e)
-                            break
-            except Exception as e:
-                print("pingpong_result_2 错误：%s" % e)
-                self.signal.emit("pingpong_result_2 错误：%s" % e)
+                                lottery_term[3] = '未结束'
+                                self.signal.emit('发送比赛结束信号到服务器失败！')
+                                self.signal.emit('封盘')
+                                betting_loop_flg = False
+
+                            self.signal.emit('save_video')
+
+                            if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
+                                self.signal.emit('封盘')
+                                betting_loop_flg = False
+
+                            if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
+                                self.signal.emit('黑屏')
+                                betting_loop_flg = False
+
+                            if betting_loop_flg:
+                                self.send_type = ''
+                                while PlanCmd_Thread.run_flg:
+                                    time.sleep(1)
+                                ReStart_Thread.run_flg = True  # 1分钟后重启动作
+                            else:
+                                action_area = [0, 0, 0]  # 初始化触发区域
+                                PlanCmd_Thread.end_state = True  # 运行背景
+                                PlanCmd_Thread.run_flg = True
+                                self.signal.emit('结束动画')
+                                if ui.checkBox_shoot_0.isChecked():
+                                    self.signal.emit('auto_shoot')
+                                self.run_flg = False
+                        elif self.send_type == 'time':
+                            datalist = {'type': 'time',
+                                        'data': str(term)}
+                            ws.send(json.dumps(datalist))
+                            self.send_type = ''
+                            self.run_flg = False
+                        else:
+                            datalist = {'type': 'pong',
+                                        'data': str(term)}
+                            ws.send(json.dumps(datalist))
+                except Exception as e:
+                    print("pingpong_result_1 错误：%s" % e)
+                    # self.signal.emit("pingpong 错误：%s" % e)
 
 
 def tcpsignal_accept(msg):
@@ -1003,7 +994,15 @@ def tcpsignal_accept(msg):
         col_count = tb_result.columnCount()
         if row_count > 0:
             for i in range(3, col_count):
-                tb_result.item(0, i).setText(lottery_term[i])  # 新一期比赛的状态（0.已结束）
+                if i == 3 :
+                    item = QTableWidgetItem(lottery_term[i])
+                    if lottery_term[i] == '未结束':
+                        item.setForeground(QColor("red"))
+                    else:
+                        item.setForeground(QColor("green"))
+                    tb_result.setItem(0, i, item)
+                else:
+                    tb_result.item(0, i).setText(lottery_term[i])
     # print(msg)
     elif msg == '黑屏':
         ui.radioButton_stop_betting.click()  # 封盘
@@ -1044,7 +1043,7 @@ def tcpsignal_accept(msg):
         scroll_to_bottom(ui.textBrowser_msg)
     else:
         if '已结束' in msg:
-            ui.groupBox_term.setStyleSheet("")  # 让 GroupBox 变黄
+            ui.groupBox_term.setStyleSheet("")
         ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser_msg)
         ui.textBrowser_background_data.append(msg)
@@ -1629,17 +1628,9 @@ class ReStartThread(QThread):
                         break
             if not self.run_flg:
                 continue
-            while PlanCmd_Thread.run_flg:
-                print('等待背景结束~~~~~~~')
-                time.sleep(1)
             if ui.radioButton_start_betting.isChecked():  # 非模拟模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
-                    if term == response['term']:
-                        self.signal.emit('term_p')
-                        if not ui.checkBox_continue_term.isChecked():
-                            time.sleep(3)
-                            continue
                     self.signal.emit('term_ok')
                     term = response['term']
                     betting_start_time = response['scheduledGameStartTime']
@@ -1684,6 +1675,7 @@ class ReStartThread(QThread):
                 while reset_ranking_Thread.run_flg:
                     time.sleep(1)
                 while PlanCmd_Thread.run_flg:
+                    print('等待背景结束~~~~~~~')
                     time.sleep(1)
                 PlanCmd_Thread.run_flg = True
 
@@ -1702,14 +1694,8 @@ def restartsignal_accept(msg):
         ui.groupBox_term.setStyleSheet("QGroupBox { background-color: yellow; }")  # 让 GroupBox 变黄
         ui.pushButton_term.setText(str(term))
     elif msg == 'term_ok':
-        ui.checkBox_continue_term.setChecked(False)
         ui.groupBox_term.setStyleSheet("QGroupBox { background-color: red; }")  # 让 GroupBox 变红
         ui.pushButton_term.setText(str(term))
-    elif msg == 'term_p':
-        ui.lineEdit_term.setText(str(term))
-        ui.groupBox_term.setStyleSheet("")  # 让 GroupBox 变回原色
-        ui.textBrowser_msg.append(fail('期号重复，3秒后重新获取！'))
-        scroll_to_bottom(ui.textBrowser_msg)
     elif msg == 'auto_shoot':
         ui.lineEdit_ball_end.setText('0')
         ui.lineEdit_balls_end.setText('0')
@@ -1726,7 +1712,6 @@ def restartsignal_accept(msg):
             ui.lineEdit_balls_end.setText('0')
         ui.lineEdit_time.setText(str(msg))
         ui.lineEdit_times_count.setText(str(msg))
-        # if ui.radioButton_start_betting.isChecked():  # 开盘模式
         tb_result = ui.tableWidget_Results
         row_count = tb_result.rowCount()
         if row_count > 0:
@@ -2168,6 +2153,7 @@ class ScreenShotThread(QThread):
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
 
             betting_end_time = int(time.time())
+            lottery_term[11] = str(betting_end_time)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
 
             self.run_flg = False
@@ -2674,7 +2660,7 @@ class PlanCmdThread(QThread):
                                              int(ui.lineEdit_start_count.text()) - 1,
                                              ]:
                                 sc.GASetExtDoBit(index, 0)
-                    self.signal.emit(succeed("结束模式结束！"))
+                    self.signal.emit(succeed("结束模式完成！"))
                     continue
                 # 强制中断情况处理
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断情况下的动作
@@ -4681,7 +4667,7 @@ def get_lottery_term():  # 创建开奖记录
         local_time = time.localtime(betting_start_time)
         start_time = time.strftime("%Y-%m-%d %H:%M:%S", local_time)
         lottery_term[1] = start_time
-        lottery_term[2] = ''  # 倒数
+        lottery_term[2] = '0'  # 倒数
         lottery_term[3] = '未开始'  # 新一期比赛的状态（2.未开始）
         lottery_term[4] = ''  # 自动赛果
         lottery_term[5] = ''  # 手动赛果
@@ -4834,31 +4820,37 @@ class Kaj789Thread(QThread):
                     res_end = post_end(term, betting_end_time, term_status,
                                        Track_number)  # 发送游戏结束信号给服务器
                     if res_end == 'OK':
-                        self.run_type = 'post_result'
-                        lottery_term[3] = '已结束'
-                        self.signal.emit({'post_end': res_end})
+                        if term_status == 1:
+                            self.run_type = 'post_result'
+                            lottery_term[3] = '已结束'
+                            self.signal.emit({'post_end': res_end})
+                        else:
+                            lottery_term[3] = '已取消'
+                            self.signal.emit({'post_end': res_end})
+                            break
                     else:
                         continue
                 if self.run_type == 'post_result':
                     res_result = post_result(term, betting_end_time, result_data,
                                              Track_number)  # 发送最终排名给服务器
                     if res_result == 'OK':
+                        lottery_term[6] = "发送成功"
                         self.run_type = 'post_upload'
                         self.signal.emit({'post_result': res_result})
                     else:
                         continue
                 if self.run_type == 'post_upload' and os.path.exists(lottery_term[9]):
                     res_upload = post_upload(term, lottery_term[9], Track_number)  # 上传结果图片
-                    print(res_upload, '~~~~~~~~~~~~~post_upload')
-                    self.signal.emit({'post_upload': res_upload})
                     if res_upload != 'OK':
                         continue
                     else:
+                        lottery_term[7] = "上传成功"
+                        self.signal.emit({'post_upload': res_upload})
                         break
                 if term_comment != '':
                     res_marble_results = post_marble_results(term, term_comment,
                                                              Track_number)  # 上传备注信息
-                    print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
+                    lottery_term[8] = term_comment
                     self.signal.emit({'post_marble_results': res_marble_results})
                     term_comment = ''
 
@@ -4873,34 +4865,43 @@ def kaj789_signal_accept(msg):
                 message = succeed('发送结束标志成功！')
                 tb_result = ui.tableWidget_Results
                 if tb_result.rowCount() > 0:
-                    tb_result.item(0, 3).setText('已结束')
+                    item = QTableWidgetItem(lottery_term[3])
+                    if term_status == 1:
+                        item.setForeground(QColor("green"))  # 设置字体颜色为红色
+                    else:
+                        item.setForeground(QColor("red"))  # 设置字体颜色为红色
+                    tb_result.setItem(0, 3, item)
             else:
                 message = fail('发送结束标志失败:%s' % msg['post_end'])
         if 'post_result' in msg.keys():
             if msg['post_result'] == 'OK':
-                message = succeed('发送结果成功！')
-                lottery_term[6] = "发送成功"
+                message = succeed(lottery_term[6])
                 tb_result = ui.tableWidget_Results
                 if tb_result.rowCount() > 0:
-                    tb_result.item(0, 4).setText(lottery_term[4])
-                    tb_result.item(0, 5).setText(lottery_term[5])
-                    tb_result.item(0, 6).setText(lottery_term[6])
+                    item = QTableWidgetItem(lottery_term[6])
+                    item.setForeground(QColor("green"))  # 设置字体颜色为红色
+                    tb_result.setItem(0, 6, item)
             else:
                 message = fail('发送结果失败:%s' % msg['post_result'])
         if 'post_upload' in msg.keys():
             if msg['post_upload'] == 'OK':
-                message = succeed('发送图片成功！')
+                message = succeed(lottery_term[7])
+                tb_result = ui.tableWidget_Results
+                if tb_result.rowCount() > 0:
+                    item = QTableWidgetItem(lottery_term[7])
+                    item.setForeground(QColor("green"))  # 设置字体颜色为红色
+                    tb_result.setItem(0, 7, item)
             else:
                 message = fail('发送图片失败:%s' % msg['post_upload'])
         if 'post_marble_results' in msg.keys():
-            if Kaj789_Thread.term in msg['post_marble_results']:
+            if str(term) in msg['post_marble_results']:
                 message = succeed('发送备注成功！')
                 tb_result = ui.tableWidget_Results
                 row_count = tb_result.rowCount()
                 if row_count > 0:
-                    for i in range(row_count):
-                        if Kaj789_Thread.term == tb_result.item(i, 0):
-                            tb_result.item(i, 3).setText('已结束')
+                    item = QTableWidgetItem(lottery_term[8])
+                    item.setForeground(QColor("green"))  # 设置字体颜色为红色
+                    tb_result.setItem(0, 8, item)
             else:
                 message = fail('发送备注失败:%s' % msg['post_marble_results'])
 
@@ -4911,22 +4912,22 @@ def kaj789_signal_accept(msg):
 
 
 def send_end():
-    Kaj789_Thread.betting_end_time = int(time.time())
-    Kaj789_Thread.term = term
-    Kaj789_Thread.term_status = 1
+    global term_status
+    term_status = 1
     Kaj789_Thread.run_type = 'post_end'
     Kaj789_Thread.run_flg = True
 
 
 def cancel_end():
-    Kaj789_Thread.betting_end_time = int(time.time())
-    Kaj789_Thread.term = term
-    Kaj789_Thread.term_status = 0
+    global term_status
+    global term_comment
+    term_status = 0
+    term_comment = term_comments[0]
     Kaj789_Thread.run_type = 'post_end'
     Kaj789_Thread.run_flg = True
-    res = post_marble_results(term, 'Invalid Term', Track_number)
-    if 'Invalid Term' in res:
-        lottery_term[5] = '取消比赛'
+    # res = post_marble_results(term, 'Invalid Term', Track_number)
+    # if 'Invalid Term' in res:
+    #     lottery_term[5] = '取消比赛'
 
 
 class ResetRankingThread(QThread):
@@ -5335,9 +5336,9 @@ def start_betting():
 
 def stop_betting():
     global betting_loop_flg
-    betting_loop_flg = False
-    PlanCmd_Thread.run_flg = False  # 停止循环
-    ReStart_Thread.run_flg = False  # 停止循环
+    betting_loop_flg = False    # 关闭循环标志
+    PlanCmd_Thread.run_flg = False  # 停止运动循环
+    ReStart_Thread.run_flg = False  # 停止重启循环
     res_status = post_status(False, Track_number)
     if str(res_status) == 'OK':
         ui.textBrowser_msg.append(succeed('封盘成功！'))
@@ -6441,6 +6442,7 @@ if __name__ == '__main__':
     Kaj789_Thread.start()
 
     ui.pushButton_Send_End.clicked.connect(send_end)
+    ui.pushButton_Cancel_End.clicked.connect(cancel_end)
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
