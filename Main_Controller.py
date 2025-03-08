@@ -903,12 +903,10 @@ class TcpResultThread(QThread):
                                     try:
                                         res_end = post_end(term, betting_end_time, term_status,
                                                            Track_number)  # 发送游戏结束信号给服务器
-                                        print(res_end, '~~~~~~~~~~~~~post_end')
                                         self.signal.emit({'post_end': res_end})
                                         if res_end == 'OK':
                                             res_result = post_result(term, betting_end_time, result_data,
                                                                      Track_number)  # 发送最终排名给服务器
-                                            print(res_result, '~~~~~~~~~~~~~post_result')
                                             self.signal.emit({'post_result': res_result})
                                             if res_result == 'OK':
                                                 lottery_term[6] = "发送成功"
@@ -916,7 +914,6 @@ class TcpResultThread(QThread):
                                                 lottery_term[6] = "发送失败"
                                             if os.path.exists(lottery_term[9]):
                                                 res_upload = post_upload(term, lottery_term[9], Track_number)  # 上传结果图片
-                                                print(res_upload, '~~~~~~~~~~~~~post_upload')
                                                 self.signal.emit({'post_upload': res_upload})
                                                 if res_upload == 'OK':
                                                     lottery_term[7] = "上传成功"
@@ -925,7 +922,6 @@ class TcpResultThread(QThread):
                                             if term_comment != '':
                                                 res_marble_results = post_marble_results(term, term_comment,
                                                                                          Track_number)  # 上传备注信息
-                                                print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
                                                 self.signal.emit({'post_marble_results': res_marble_results})
                                                 if 'marble_results' in res_marble_results:
                                                     lottery_term[8] = term_comment
@@ -949,9 +945,9 @@ class TcpResultThread(QThread):
                                         lottery_term[10] = video_name.output_path  # 视频保存路径
                                 except:
                                     pass
+                                self.signal.emit('save_video')
                                 if send_flg:
                                     lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-                                    self.signal.emit('save_video')
                                     # lottery2sql()  # 保存数据库
                                     lottery2json()  # 保存数据
                                 else:
@@ -1011,8 +1007,9 @@ def tcpsignal_accept(msg):
         tb_result.item(0, 9).setText(lottery_term[9])  # 照片保存路径
         tb_result.item(0, 10).setText(lottery_term[10])  # 视频保存路径
         tb_result.item(0, 11).setText(lottery_term[11])  # 结束时间戳
-        tb_result.item(0, 12).setText(lottery_term[12])  # 补发状态
+        tb_result.item(0, 12).setText(lottery_term[12])  # 赛果数据包
         tb_result.item(0, 13).setText(lottery_term[13])  # 补传状态
+        tb_result.item(0, 13).setText(lottery_term[14])  # 补传状态
     # print(msg)
     elif msg == '黑屏':
         ui.radioButton_stop_betting.click()  # 封盘
@@ -4588,11 +4585,12 @@ def set_result_class():
 
 def set_result(msg):
     print(msg)
-    for index, item in enumerate(msg):
+    balls = msg[:balls_count]
+    for index, item in enumerate(balls):
         getattr(ui, 'lineEdit_result_%s' % index, None).setText(str(item))
         getattr(result_ui, 'lineEdit_result_%s' % index, None).setText(str(item))
     res = ''
-    for index, item in enumerate(msg):
+    for index, item in enumerate(balls):
         if index == 0:
             res = item
         else:
@@ -4858,6 +4856,8 @@ class Kaj789Thread(QThread):
                     self.signal.emit({'post_upload': res_upload})
                     if res_upload != 'OK':
                         continue
+                    else:
+                        break
                 if term_comment != '':
                     res_marble_results = post_marble_results(term, term_comment,
                                                              Track_number)  # 上传备注信息
