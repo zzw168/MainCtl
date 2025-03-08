@@ -26,6 +26,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
+        MainWindow.setEnabled(True)
         MainWindow.resize(1326, 973)
         MainWindow.setMinimumSize(QSize(100, 0))
         self.centralwidget = QWidget(MainWindow)
@@ -308,6 +309,7 @@ class Ui_MainWindow(object):
 
         self.checkBox_shoot_0 = QCheckBox(self.groupBox_3)
         self.checkBox_shoot_0.setObjectName(u"checkBox_shoot_0")
+        self.checkBox_shoot_0.setEnabled(True)
         self.checkBox_shoot_0.setMaximumSize(QSize(80, 16777215))
         self.checkBox_shoot_0.setFont(font1)
         self.checkBox_shoot_0.setChecked(True)
@@ -316,12 +318,14 @@ class Ui_MainWindow(object):
 
         self.label_85 = QLabel(self.groupBox_3)
         self.label_85.setObjectName(u"label_85")
+        self.label_85.setEnabled(True)
         self.label_85.setFont(font1)
 
         self.gridLayout_16.addWidget(self.label_85, 2, 2, 1, 1)
 
         self.lineEdit_balls_auto = QLineEdit(self.groupBox_3)
         self.lineEdit_balls_auto.setObjectName(u"lineEdit_balls_auto")
+        self.lineEdit_balls_auto.setEnabled(True)
         self.lineEdit_balls_auto.setMaximumSize(QSize(30, 16777215))
         self.lineEdit_balls_auto.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lineEdit_balls_auto.setReadOnly(False)
@@ -568,6 +572,7 @@ class Ui_MainWindow(object):
 
         self.lineEdit_Send_Result = QLineEdit(self.groupBox_term)
         self.lineEdit_Send_Result.setObjectName(u"lineEdit_Send_Result")
+        self.lineEdit_Send_Result.setEnabled(True)
         palette2 = QPalette()
         self.lineEdit_Send_Result.setPalette(palette2)
         font3 = QFont()
@@ -3484,7 +3489,7 @@ class Ui_MainWindow(object):
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u540e\u5907\u6444\u50cf\u673a\uff1a", None))
         self.pushButton_Send_Result.setText(QCoreApplication.translate("MainWindow", u"\u63d0\u4ea4\u8d5b\u679c", None))
         self.pushButton_Cancel_End.setText(QCoreApplication.translate("MainWindow", u"\u53d6\u6d88\u5f53\u5c40", None))
-        self.pushButton_Send_End.setText(QCoreApplication.translate("MainWindow", u"\u6b63\u5e38\u7ed3\u675f", None))
+        self.pushButton_Send_End.setText(QCoreApplication.translate("MainWindow", u"\u8865\u53d1\u8d5b\u679c", None))
         self.pushButton_term.setText(QCoreApplication.translate("MainWindow", u"\u8d5b\u679c\u786e\u8ba4 \u8bc6\u522b\u72b6\u6001", None))
         self.pushButton_TRAP.setText(QCoreApplication.translate("MainWindow", u"\u5361\u73e0", None))
         self.pushButton_TRAP_1.setText(QCoreApplication.translate("MainWindow", u"1", None))

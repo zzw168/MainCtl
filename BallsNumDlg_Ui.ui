@@ -26,7 +26,7 @@
    <string>结果确认</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="5">
+   <item row="0" column="0" colspan="3">
     <widget class="QLabel" name="label_3">
      <property name="maximumSize">
       <size>
@@ -51,7 +51,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="5">
+   <item row="3" column="0" colspan="3">
     <widget class="QLabel" name="label_2">
      <property name="maximumSize">
       <size>
@@ -76,7 +76,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="5">
+   <item row="2" column="0" colspan="3">
     <widget class="QLabel" name="label_4">
      <property name="maximumSize">
       <size>
@@ -101,8 +101,8 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="3">
-    <widget class="QPushButton" name="pushButton_refresh">
+   <item row="4" column="1">
+    <widget class="QPushButton" name="pushButton_ok">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -115,21 +115,12 @@
        <height>16777215</height>
       </size>
      </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background:rgb(0, 245, 0)</string>
-     </property>
      <property name="text">
-      <string>刷新(refresh)</string>
+      <string>确认(confirm)</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="5">
+   <item row="1" column="0" colspan="3">
     <widget class="QLabel" name="label">
      <property name="font">
       <font>
@@ -158,62 +149,12 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="4">
+   <item row="4" column="2">
     <widget class="QFrame" name="frame_2">
      <property name="font">
       <font>
        <pointsize>20</pointsize>
       </font>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::Shape::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Shadow::Raised</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1">
-    <widget class="QPushButton" name="pushButton_start">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>38</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>200</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background:rgb(245, 0, 0)</string>
-     </property>
-     <property name="text">
-      <string>继续开始(start)</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2">
-    <widget class="QFrame" name="frame_3">
-     <property name="minimumSize">
-      <size>
-       <width>20</width>
-       <height>0</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>20</width>
-       <height>16777215</height>
-      </size>
      </property>
      <property name="frameShape">
       <enum>QFrame::Shape::StyledPanel</enum>

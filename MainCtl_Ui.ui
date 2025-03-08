@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -683,6 +686,9 @@
                 </item>
                 <item row="2" column="0">
                  <widget class="QCheckBox" name="checkBox_shoot_0">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
                   <property name="maximumSize">
                    <size>
                     <width>80</width>
@@ -706,6 +712,9 @@
                 </item>
                 <item row="2" column="2">
                  <widget class="QLabel" name="label_85">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -720,6 +729,9 @@
                 </item>
                 <item row="2" column="1">
                  <widget class="QLineEdit" name="lineEdit_balls_auto">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
                   <property name="maximumSize">
                    <size>
                     <width>30</width>
@@ -1331,6 +1343,9 @@
                 </item>
                 <item row="4" column="0" colspan="2">
                  <widget class="QLineEdit" name="lineEdit_Send_Result">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
                   <property name="palette">
                    <palette>
                     <active/>
@@ -1445,7 +1460,7 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>正常结束</string>
+                      <string>补发赛果</string>
                      </property>
                      <property name="autoDefault">
                       <bool>false</bool>
