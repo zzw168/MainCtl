@@ -5927,8 +5927,7 @@ if __name__ == '__main__':
     BallsNumDialog = QDialog(z_window)  #
     BallsNum_ui = BallsNumUi()
     BallsNum_ui.setupUi(BallsNumDialog)
-    BallsNum_ui.pushButton_refresh.clicked.connect(balls_num_btn)
-    BallsNum_ui.pushButton_start.clicked.connect(balls_num_btn)
+    BallsNum_ui.pushButton_ok.clicked.connect(balls_num_btn)
     # BallsNumDialog.show()
 
     OrganDialog = QDialog(z_window)
