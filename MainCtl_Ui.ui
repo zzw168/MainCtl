@@ -573,21 +573,7 @@
                 <string>功能</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_16">
-                <item row="0" column="3">
-                 <widget class="QCheckBox" name="checkBox_end_BlackScreen">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>本局结束后自动黑屏</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0" colspan="3">
+                <item row="0" column="0" colspan="2">
                  <widget class="QCheckBox" name="checkBox_Pass_Recognition_Start">
                   <property name="maximumSize">
                    <size>
@@ -610,14 +596,8 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="0">
-                 <widget class="QCheckBox" name="checkBox_shoot_0">
-                  <property name="maximumSize">
-                   <size>
-                    <width>80</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
+                <item row="0" column="3" colspan="2">
+                 <widget class="QCheckBox" name="checkBox_end_BlackScreen">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -626,10 +606,7 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>自动上珠</string>
-                  </property>
-                  <property name="checked">
-                   <bool>true</bool>
+                   <string>本局结束后自动黑屏</string>
                   </property>
                  </widget>
                 </item>
@@ -662,21 +639,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="3">
-                 <widget class="QCheckBox" name="checkBox_alarm">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>关警报</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="3">
+                <item row="1" column="3" colspan="2">
                  <widget class="QCheckBox" name="checkBox_end_stop">
                   <property name="font">
                    <font>
@@ -687,6 +650,29 @@
                   </property>
                   <property name="text">
                    <string>本局结束后自动封盘</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QCheckBox" name="checkBox_shoot_0">
+                  <property name="maximumSize">
+                   <size>
+                    <width>80</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>自动上珠</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -720,6 +706,34 @@
                   </property>
                   <property name="text">
                    <string>粒</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="3">
+                 <widget class="QCheckBox" name="checkBox_alarm">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>关警报</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="4">
+                 <widget class="QCheckBox" name="checkBox_shoot_1">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>弹射</string>
                   </property>
                  </widget>
                 </item>

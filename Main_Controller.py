@@ -5150,7 +5150,9 @@ def organ_shoot():  # 弹射开关
         return
     try:
         index = int(ui.lineEdit_shoot.text()) - 1
-        if ui.checkBox_shoot.isChecked() or ui.checkBox_shoot1.isChecked():
+        if (ui.checkBox_shoot.isChecked()
+                or ui.checkBox_shoot1.isChecked()
+                or ui.checkBox_shoot_1.isChecked()):
             sc.GASetExtDoBit(index, 1)
         else:
             sc.GASetExtDoBit(index, 0)
@@ -6076,6 +6078,7 @@ if __name__ == '__main__':
 
     ui.checkBox_shoot.checkStateChanged.connect(organ_shoot)
     ui.checkBox_shoot1.checkStateChanged.connect(organ_shoot)
+    ui.checkBox_shoot_1.checkStateChanged.connect(organ_shoot)
     ui.checkBox_shoot2.checkStateChanged.connect(organ_shoot2)
     ui.checkBox_shoot3.checkStateChanged.connect(organ_shoot3)
     ui.checkBox_start.checkStateChanged.connect(organ_start)
