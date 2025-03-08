@@ -4825,7 +4825,6 @@ class Kaj789Thread(QThread):
                         else:
                             lottery_term[3] = '已取消'
                             self.signal.emit({'post_end': res_end})
-                            break
                     else:
                         continue
                 if self.run_type == 'post_result':
@@ -4844,13 +4843,17 @@ class Kaj789Thread(QThread):
                     else:
                         lottery_term[7] = "上传成功"
                         self.signal.emit({'post_upload': res_upload})
+                        lottery2json()  # 保存数据
                         break
                 if term_comment != '':
                     res_marble_results = post_marble_results(term, term_comment,
                                                              Track_number)  # 上传备注信息
                     lottery_term[8] = term_comment
                     self.signal.emit({'post_marble_results': res_marble_results})
+                    if str(term) in res_marble_results:
+                        lottery2json()  # 保存数据
                     term_comment = ''
+                    break
 
             self.run_flg = False
 
