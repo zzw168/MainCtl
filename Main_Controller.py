@@ -1,4 +1,5 @@
 import copy
+import json
 import re
 import subprocess
 import sys
@@ -851,141 +852,151 @@ class TcpResultThread(QThread):
         global tcp_result_socket
         global action_area
         global term_comment
+        global result_data
         global betting_loop_flg
 
         tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcp_result_socket.bind(result_tcpServer_addr)
         tcp_result_socket.listen(5)
         while self.running:
-            # try:
-            con, addr = tcp_result_socket.accept()
-            print("Accepted. {0}, {1}".format(con, str(addr)))
-            if not con:
-                continue
-            with WebsocketServer(con) as ws:
-                while self.run_flg:
-                    time.sleep(1)
-                    # try:
-                    if self.send_type == 'updata':
-                        self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
-                        datalist = {'type': 'updata',
-                                    'data': {'qh': str(term), 'rank': []}}
-                        for index in range(balls_count):
-                            if is_natural_num(z_ranking_time[index]):
-                                datalist["data"]['rank'].append(
-                                    {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
-                            else:
-                                datalist["data"]['rank'].append(
-                                    {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
-                        # print(datalist)
-                        ws.send(json.dumps(datalist))
-
-                        if ui.radioButton_start_betting.isChecked():  # 开盘模式
-                            result_data = {"raceTrackID": Track_number, "term": str(term),
-                                           "actualResultOpeningTime": betting_end_time,
-                                           "result": z_ranking_end[0:balls_count],
-                                           "timings": "[]"}
-                            data_temp = []
-                            for index in range(balls_count):
-                                if is_natural_num(z_ranking_time[index]):
-                                    data_temp.append(
-                                        {"pm": index + 1, "id": z_ranking_end[index],
-                                         "time": float(z_ranking_time[index])})
-                                else:
-                                    data_temp.append(
-                                        {"pm": index + 1, "id": z_ranking_end[index],
-                                         "time": z_ranking_time[index]})
-                            result_data["timings"] = json.dumps(data_temp)
-                            # print(result_data)
-                            try:
-                                res_end = post_end(term, betting_end_time, term_status,
-                                                   Track_number)  # 发送游戏结束信号给服务器
-                                print(res_end, '~~~~~~~~~~~~~post_end')
-                                self.signal.emit({'post_end': res_end})
-                                if res_end == 'OK':
-                                    res_result = post_result(term, betting_end_time, result_data,
-                                                             Track_number)  # 发送最终排名给服务器
-                                    print(res_result, '~~~~~~~~~~~~~post_result')
-                                    self.signal.emit({'post_result': res_result})
-                                    if res_result == 'OK':
-                                        lottery_term[6] = "发送成功"
-                                    else:
-                                        lottery_term[6] = "发送失败"
-                                    if os.path.exists(lottery_term[9]):
-                                        res_upload = post_upload(term, lottery_term[9], Track_number)  # 上传结果图片
-                                        print(res_upload, '~~~~~~~~~~~~~post_upload')
-                                        self.signal.emit({'post_upload': res_upload})
-                                        if res_upload == 'OK':
-                                            lottery_term[7] = "上传成功"
-                                        else:
-                                            lottery_term[7] = "上传失败"
-                                    if term_comment != '':
-                                        res_marble_results = post_marble_results(term, term_comment,
-                                                                                 Track_number)  # 上传备注信息
-                                        print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
-                                        self.signal.emit({'post_marble_results': res_marble_results})
-                                        if 'marble_results' in res_marble_results:
-                                            lottery_term[8] = term_comment
-                                        else:
-                                            lottery_term[8] = "备注失败"
-                                        term_comment = ''
-                            except:
-                                self.signal.emit(fail('post_result 上传结果错误！'))
-                                print('上传结果错误！')
-
-                        if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
-                            self.signal.emit('封盘')
-                            betting_loop_flg = False
-
-                        if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
-                            self.signal.emit('黑屏')
-                            betting_loop_flg = False
-                        self.signal.emit(succeed('第%s期 结束！' % term))
-                        # 获取录屏状态
-                        recording_status = cl_request.get_record_status()
+            try:
+                con, addr = tcp_result_socket.accept()
+                print("Accepted. {0}, {1}".format(con, str(addr)))
+                if not con:
+                    continue
+                with WebsocketServer(con) as ws:
+                    while self.run_flg:
+                        time.sleep(1)
+                        send_flg = True
                         try:
-                            # 检查是否正在录屏
-                            if recording_status.output_active:  # 确保键名正确
-                                time.sleep(3)
-                                video_name = cl_request.stop_record()  # 关闭录像
-                                lottery_term[10] = video_name.output_path  # 视频保存路径
-                        except:
-                            pass
-                        lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-                        self.signal.emit('save_video')
-                        # lottery2sql()  # 保存数据库
-                        lottery2json()  # 保存数据
-                        if betting_loop_flg:
-                            self.send_type = ''
-                            while PlanCmd_Thread.run_flg:
-                                time.sleep(1)
-                            ReStart_Thread.run_flg = True  # 1分钟后重启动作
-                        else:
-                            action_area = [0, 0, 0]  # 初始化触发区域
-                            PlanCmd_Thread.end_state = True  # 运行背景
-                            PlanCmd_Thread.run_flg = True
-                            self.signal.emit('结束动画')
-                            if ui.checkBox_shoot_0.isChecked():
-                                self.signal.emit('auto_shoot')
-                            self.run_flg = False
-                    elif self.send_type == 'time':
-                        datalist = {'type': 'time',
-                                    'data': str(term)}
-                        ws.send(json.dumps(datalist))
-                        self.send_type = ''
-                        self.run_flg = False
-                    else:
-                        datalist = {'type': 'pong',
-                                    'data': str(term)}
-                        ws.send(json.dumps(datalist))
+                            if self.send_type == 'updata':
+                                self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
+                                datalist = {'type': 'updata',
+                                            'data': {'qh': str(term), 'rank': []}}
+                                for index in range(balls_count):
+                                    if is_natural_num(z_ranking_time[index]):
+                                        datalist["data"]['rank'].append(
+                                            {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
+                                    else:
+                                        datalist["data"]['rank'].append(
+                                            {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
+                                # print(datalist)
+                                ws.send(json.dumps(datalist))
 
-                    # except Exception as e:
-                    #     print("pingpong_result_1 错误：%s" % e)
-                    #     # self.signal.emit("pingpong 错误：%s" % e)
-                    #     break
-        # except Exception as e:
-        #     print("pingpong_result_2 错误：%s" % e)
-        #     self.signal.emit("pingpong_result_2 错误：%s" % e)
+                                if ui.radioButton_start_betting.isChecked():  # 开盘模式
+                                    result_data = {"raceTrackID": Track_number, "term": str(term),
+                                                   "actualResultOpeningTime": betting_end_time,
+                                                   "result": z_ranking_end[0:balls_count],
+                                                   "timings": "[]"}
+                                    data_temp = []
+                                    for index in range(balls_count):
+                                        if is_natural_num(z_ranking_time[index]):
+                                            data_temp.append(
+                                                {"pm": index + 1, "id": z_ranking_end[index],
+                                                 "time": float(z_ranking_time[index])})
+                                        else:
+                                            data_temp.append(
+                                                {"pm": index + 1, "id": z_ranking_end[index],
+                                                 "time": z_ranking_time[index]})
+                                    result_data["timings"] = json.dumps(data_temp)
+                                    lottery_term[12] = json.dumps(result_data)
+                                    try:
+                                        res_end = post_end(term, betting_end_time, term_status,
+                                                           Track_number)  # 发送游戏结束信号给服务器
+                                        print(res_end, '~~~~~~~~~~~~~post_end')
+                                        self.signal.emit({'post_end': res_end})
+                                        if res_end == 'OK':
+                                            res_result = post_result(term, betting_end_time, result_data,
+                                                                     Track_number)  # 发送最终排名给服务器
+                                            print(res_result, '~~~~~~~~~~~~~post_result')
+                                            self.signal.emit({'post_result': res_result})
+                                            if res_result == 'OK':
+                                                lottery_term[6] = "发送成功"
+                                            else:
+                                                lottery_term[6] = "发送失败"
+                                            if os.path.exists(lottery_term[9]):
+                                                res_upload = post_upload(term, lottery_term[9], Track_number)  # 上传结果图片
+                                                print(res_upload, '~~~~~~~~~~~~~post_upload')
+                                                self.signal.emit({'post_upload': res_upload})
+                                                if res_upload == 'OK':
+                                                    lottery_term[7] = "上传成功"
+                                                else:
+                                                    lottery_term[7] = "上传失败"
+                                            if term_comment != '':
+                                                res_marble_results = post_marble_results(term, term_comment,
+                                                                                         Track_number)  # 上传备注信息
+                                                print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
+                                                self.signal.emit({'post_marble_results': res_marble_results})
+                                                if 'marble_results' in res_marble_results:
+                                                    lottery_term[8] = term_comment
+                                                else:
+                                                    lottery_term[8] = "备注失败"
+                                                term_comment = ''
+                                        else:
+                                            send_flg = False
+                                    except:
+                                        self.signal.emit(fail('post_result 上传结果错误！'))
+                                        print('上传结果错误！')
+
+                                self.signal.emit(succeed('第%s期 结束！' % term))
+                                # 获取录屏状态
+                                recording_status = cl_request.get_record_status()
+                                try:
+                                    # 检查是否正在录屏
+                                    if recording_status.output_active:  # 确保键名正确
+                                        time.sleep(3)
+                                        video_name = cl_request.stop_record()  # 关闭录像
+                                        lottery_term[10] = video_name.output_path  # 视频保存路径
+                                except:
+                                    pass
+                                if send_flg:
+                                    lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+                                    self.signal.emit('save_video')
+                                    # lottery2sql()  # 保存数据库
+                                    lottery2json()  # 保存数据
+                                else:
+                                    self.signal.emit('发送比赛结束信号到服务器失败！')
+                                    self.signal.emit('封盘')
+                                    betting_loop_flg = False
+
+                                if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
+                                    self.signal.emit('封盘')
+                                    betting_loop_flg = False
+
+                                if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
+                                    self.signal.emit('黑屏')
+                                    betting_loop_flg = False
+
+                                if betting_loop_flg:
+                                    self.send_type = ''
+                                    while PlanCmd_Thread.run_flg:
+                                        time.sleep(1)
+                                    ReStart_Thread.run_flg = True  # 1分钟后重启动作
+                                else:
+                                    action_area = [0, 0, 0]  # 初始化触发区域
+                                    PlanCmd_Thread.end_state = True  # 运行背景
+                                    PlanCmd_Thread.run_flg = True
+                                    self.signal.emit('结束动画')
+                                    if ui.checkBox_shoot_0.isChecked():
+                                        self.signal.emit('auto_shoot')
+                                    self.run_flg = False
+                            elif self.send_type == 'time':
+                                datalist = {'type': 'time',
+                                            'data': str(term)}
+                                ws.send(json.dumps(datalist))
+                                self.send_type = ''
+                                self.run_flg = False
+                            else:
+                                datalist = {'type': 'pong',
+                                            'data': str(term)}
+                                ws.send(json.dumps(datalist))
+                        except Exception as e:
+                            print("pingpong_result_1 错误：%s" % e)
+                            # self.signal.emit("pingpong 错误：%s" % e)
+                            break
+            except Exception as e:
+                print("pingpong_result_2 错误：%s" % e)
+                self.signal.emit("pingpong_result_2 错误：%s" % e)
 
 
 def tcpsignal_accept(msg):
@@ -1009,6 +1020,7 @@ def tcpsignal_accept(msg):
     elif msg == '封盘':
         ui.radioButton_stop_betting.click()  # 封盘
     elif isinstance(msg, dict):
+        message = msg
         if 'post_end' in msg.keys():
             if msg['post_end'] == 'OK':
                 message = succeed('发送结束标志成功！')
@@ -1040,7 +1052,7 @@ def tcpsignal_accept(msg):
         ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser_msg)
     else:
-        if '结束' in msg:
+        if '已结束' in msg:
             ui.groupBox_term.setStyleSheet("")  # 让 GroupBox 变黄
         ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser_msg)
@@ -4674,18 +4686,19 @@ def get_lottery_term():  # 创建开奖记录
         local_time = time.localtime(betting_start_time)
         start_time = time.strftime("%Y-%m-%d %H:%M:%S", local_time)
         lottery_term[1] = start_time
-        lottery_term[2] = ''
+        lottery_term[2] = ''    # 倒数
         lottery_term[3] = '未开始'  # 新一期比赛的状态（2.未开始）
-        lottery_term[4] = ''
-        lottery_term[5] = ''
-        lottery_term[6] = ''
-        lottery_term[7] = ''
-        lottery_term[8] = ''
-        lottery_term[9] = ''
-        lottery_term[10] = ''
-        lottery_term[11] = ''
-        lottery_term[12] = ''
-        lottery_term[13] = ''
+        lottery_term[4] = ''    # 自动赛果
+        lottery_term[5] = ''    # 手动赛果
+        lottery_term[6] = ''    # 发送赛果
+        lottery_term[7] = ''    # 上传图片
+        lottery_term[8] = ''    # 备注
+        lottery_term[9] = ''    # 图片
+        lottery_term[10] = ''   # 录像
+        lottery_term[11] = ''   # 结束时间戳
+        lottery_term[12] = ''   # 赛果数据包
+        lottery_term[13] = ''   # 补发状态
+        lottery_term[14] = ''   # 补传状态
         flg_start['server'] = True
         return True
     except:
@@ -4808,24 +4821,6 @@ class Kaj789Thread(QThread):
         self.run_flg = False
         self.running = True
         self.run_type = ''
-        self.term_status = 1
-        self.term = '8000'
-        self.betting_end_time = int(time.time())
-        self.term_comment = ''
-        self.img_path = ''
-        self.result_data = {"raceTrackID": Track_number, "term": str(term), "actualResultOpeningTime": betting_end_time,
-                            "result": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
-                            "timings": json.dumps([
-                                {"pm": 1, "id": 1, "time": 120.11},
-                                {"pm": 2, "id": 2, "time": 122.73},
-                                {"pm": 3, "id": 3, "time": 123.24},
-                                {"pm": 4, "id": 4, "time": 125.89},
-                                {"pm": 5, "id": 5, "time": 126.01},
-                                {"pm": 6, "id": 6, "time": 128.27},
-                                {"pm": 7, "id": 7, "time": 129.35},
-                                {"pm": 8, "id": 8, "time": 130.98},
-                                {"pm": 9, "id": 9, "time": 130.99},
-                                {"pm": 10, "id": 10, "time": 131.22}])}
 
     def stop(self):
         self.run_flg = False
@@ -4834,43 +4829,107 @@ class Kaj789Thread(QThread):
 
     def run(self) -> None:
         global term_comment
+        global lottery_term
         while self.running:
             time.sleep(1)
             if not self.run_flg:
                 continue
-            if self.run_type == 'post_end':
-                res_end = post_end(term, betting_end_time, self.term_status,
-                                   Track_number)  # 发送游戏结束信号给服务器
-                print(res_end, '~~~~~~~~~~~~~post_end')
-                self.signal.emit({'post_end': res_end})
-            if self.run_type == 'post_result':
-                res_result = post_result(term, betting_end_time, self.result_data,
-                                         Track_number)  # 发送最终排名给服务器
-                print(res_result, '~~~~~~~~~~~~~post_result')
-                self.signal.emit({'post_result': res_result})
-            if self.run_type == 'post_upload' and os.path.exists(self.img_path):
-                res_upload = post_upload(term, self.img_path, Track_number)  # 上传结果图片
-                print(res_upload, '~~~~~~~~~~~~~post_upload')
-                self.signal.emit({'post_upload': res_upload})
-            if self.run_type == 'post_marble_results' and term_comment != '':
-                res_marble_results = post_marble_results(term, term_comment,
-                                                         Track_number)  # 上传备注信息
-                print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
-                self.signal.emit({'post_marble_results': res_marble_results})
-                if self.term in res_marble_results:
-                    lottery_term[8] = term_comment
-                else:
-                    lottery_term[8] = "备注失败"
-                term_comment = ''
+            for i in range(5):
+                if self.run_type == 'post_end':
+                    res_end = post_end(term, betting_end_time, term_status,
+                                       Track_number)  # 发送游戏结束信号给服务器
+                    if res_end == 'OK':
+                        self.run_type = 'post_result'
+                        lottery_term[3] = '已结束'
+                        self.signal.emit({'post_end': res_end})
+                    else:
+                        continue
+                if self.run_type == 'post_result':
+                    res_result = post_result(term, betting_end_time, result_data,
+                                             Track_number)  # 发送最终排名给服务器
+                    if res_result == 'OK':
+                        self.run_type = 'post_upload'
+                        self.signal.emit({'post_result': res_result})
+                    else:
+                        continue
+                if self.run_type == 'post_upload' and os.path.exists(lottery_term[9]):
+                    res_upload = post_upload(term, lottery_term[9], Track_number)  # 上传结果图片
+                    print(res_upload, '~~~~~~~~~~~~~post_upload')
+                    self.signal.emit({'post_upload': res_upload})
+                    if res_upload != 'OK':
+                        continue
+                if term_comment != '':
+                    res_marble_results = post_marble_results(term, term_comment,
+                                                             Track_number)  # 上传备注信息
+                    print(res_marble_results, '~~~~~~~~~~~~~post_marble_results')
+                    self.signal.emit({'post_marble_results': res_marble_results})
+                    term_comment = ''
 
             self.run_flg = False
 
 
 def kaj789_signal_accept(msg):
-    ui.textBrowser.append(msg)
-    ui.textBrowser_msg.append(msg)
+    message = msg
+    if isinstance(msg, dict):
+        if 'post_end' in msg.keys():
+            if msg['post_end'] == 'OK':
+                message = succeed('发送结束标志成功！')
+                tb_result = ui.tableWidget_Results
+                if tb_result.rowCount() > 0:
+                    tb_result.item(0, 3).setText('已结束')
+            else:
+                message = fail('发送结束标志失败:%s' % msg['post_end'])
+        if 'post_result' in msg.keys():
+            if msg['post_result'] == 'OK':
+                message = succeed('发送结果成功！')
+                lottery_term[6] = "发送成功"
+                tb_result = ui.tableWidget_Results
+                if tb_result.rowCount() > 0:
+                    tb_result.item(0, 4).setText(lottery_term[4])
+                    tb_result.item(0, 5).setText(lottery_term[5])
+                    tb_result.item(0, 6).setText(lottery_term[6])
+            else:
+                message = fail('发送结果失败:%s' % msg['post_result'])
+        if 'post_upload' in msg.keys():
+            if msg['post_upload'] == 'OK':
+                message = succeed('发送图片成功！')
+            else:
+                message = fail('发送图片失败:%s' % msg['post_upload'])
+        if 'post_marble_results' in msg.keys():
+            if Kaj789_Thread.term in msg['post_marble_results']:
+                message = succeed('发送备注成功！')
+                tb_result = ui.tableWidget_Results
+                row_count = tb_result.rowCount()
+                if row_count > 0:
+                    for i in range(row_count):
+                        if Kaj789_Thread.term == tb_result.item(i, 0):
+                            tb_result.item(i, 3).setText('已结束')
+            else:
+                message = fail('发送备注失败:%s' % msg['post_marble_results'])
+
+    ui.textBrowser.append(message)
+    ui.textBrowser_msg.append(message)
     scroll_to_bottom(ui.textBrowser)
     scroll_to_bottom(ui.textBrowser_msg)
+
+
+def send_end():
+    Kaj789_Thread.betting_end_time = int(time.time())
+    Kaj789_Thread.term = term
+    Kaj789_Thread.term_status = 1
+    Kaj789_Thread.run_type = 'post_end'
+    Kaj789_Thread.run_flg = True
+
+
+def cancel_end():
+    Kaj789_Thread.betting_end_time = int(time.time())
+    Kaj789_Thread.term = term
+    Kaj789_Thread.term_status = 0
+    Kaj789_Thread.run_type = 'post_end'
+    Kaj789_Thread.run_flg = True
+    res = post_marble_results(term, 'Invalid Term', Track_number)
+    if 'Invalid Term' in res:
+        lottery_term[5] = '取消比赛'
 
 
 class ResetRankingThread(QThread):
@@ -5266,12 +5325,6 @@ def send_result():
     global Send_Result_End
     Send_Result_End = True
     ui.checkBox_alarm.setChecked(False)
-
-
-def cancel_betting():
-    res = post_marble_results(term, 'Invalid Term', Track_number)
-    if 'Invalid Term' in res:
-        lottery_term[5] = '取消比赛'
 
 
 def start_betting():
@@ -5990,10 +6043,6 @@ if __name__ == '__main__':
     Script_Thread.signal.connect(script_signal_accept)
     Script_Thread.start()
 
-    Kaj789_Thread = Kaj789Thread()  # KAJ789发送线程
-    Kaj789_Thread.signal.connect(kaj789_signal_accept)
-    Kaj789_Thread.start()
-
     reset_ranking_Thread = ResetRankingThread()  # KAJ789发送线程
     reset_ranking_Thread.signal.connect(reset_ranking_signal_accept)
     reset_ranking_Thread.start()
@@ -6128,11 +6177,29 @@ if __name__ == '__main__':
     map_data = ['./img/09_沙漠.jpg', './img/09_沙漠.json', '860']  # 卫星地图资料
     five_axis = [1, 1, 1, 1, 1]
     five_key = [1, 1, 1, 1, 1]
+    term = '8000'  # 期号
+    betting_start_time = 0  # 比赛预定开始时间
+    betting_end_time = int(time.time())  # 比赛预定结束时间
+    stream_url = ''  # 流链接
+    Send_Result_End = False  # 发送结果标志位
+    betting_loop_flg = True  # 比赛循环标志位
     Track_number = "M"  # 轨道直播编号
     term_status = 1  # 赛事状态（丢球）
     term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
     term_comment = ''
-
+    result_data = {"raceTrackID": Track_number, "term": str(term), "actualResultOpeningTime": betting_end_time,
+                   "result": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
+                   "timings": json.dumps([
+                       {"pm": 1, "id": 1, "time": 120.11},
+                       {"pm": 2, "id": 2, "time": 122.73},
+                       {"pm": 3, "id": 3, "time": 123.24},
+                       {"pm": 4, "id": 4, "time": 125.89},
+                       {"pm": 5, "id": 5, "time": 126.01},
+                       {"pm": 6, "id": 6, "time": 128.27},
+                       {"pm": 7, "id": 7, "time": 129.35},
+                       {"pm": 8, "id": 8, "time": 130.98},
+                       {"pm": 9, "id": 9, "time": 130.99},
+                       {"pm": 10, "id": 10, "time": 131.22}])}
     load_main_json()
     load_ballsort_json()
 
@@ -6367,12 +6434,11 @@ if __name__ == '__main__':
     labels = []
     lottery_json_init()
 
-    term = '8000'  # 期号
-    betting_start_time = 0  # 比赛预定开始时间
-    betting_end_time = 0  # 比赛预定结束时间
-    stream_url = ''  # 流链接
-    Send_Result_End = False  # 发送结果标志位
-    betting_loop_flg = True  # 比赛循环标志位
+    Kaj789_Thread = Kaj789Thread()  # KAJ789发送线程
+    Kaj789_Thread.signal.connect(kaj789_signal_accept)
+    Kaj789_Thread.start()
+
+    ui.pushButton_Send_End.clicked.connect(send_end)
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
@@ -6388,7 +6454,7 @@ if __name__ == '__main__':
     # ui.pushButton_end_all.clicked.connect(stop_server)
     ui.pushButton_Main_Camera.clicked.connect(main2result)
     ui.pushButton_Backup_Camera.clicked.connect(backup2result)
-    ui.pushButton_Cancel_Result.clicked.connect(cancel_betting)
+    # ui.pushButton_Cancel_Result.clicked.connect(cancel_betting)
     ui.pushButton_Send_Result.clicked.connect(res2end)
     ui.pushButton_Send_Res.clicked.connect(send_result)
     ui.pushButton_kaj789.clicked.connect(kaj789_table)

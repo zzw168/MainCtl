@@ -106,12 +106,12 @@
             </column>
             <column>
              <property name="text">
-              <string>发送状态</string>
+              <string>发送赛果</string>
              </property>
             </column>
             <column>
              <property name="text">
-              <string>图片上传</string>
+              <string>上传图片</string>
              </property>
             </column>
             <column>
@@ -1405,7 +1405,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_Cancel_Result">
+                    <widget class="QPushButton" name="pushButton_Cancel_End">
                      <property name="maximumSize">
                       <size>
                        <width>100</width>
@@ -1427,7 +1427,7 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QPushButton" name="pushButton_update_12">
+                    <widget class="QPushButton" name="pushButton_Send_End">
                      <property name="maximumSize">
                       <size>
                        <width>100</width>
