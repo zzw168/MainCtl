@@ -2284,6 +2284,7 @@ class ShootThread(QThread):
         super(ShootThread, self).__init__()
         self.run_flg = False
         self.running = True
+        self.start = False
 
     def stop(self):
         self.run_flg = False
@@ -2308,7 +2309,10 @@ class ShootThread(QThread):
                     time.sleep(2)
                     if ((ui.lineEdit_balls_auto.text().isdigit()
                          and balls_start >= int(ui.lineEdit_balls_auto.text()))
-                            or ui.checkBox_Pass_Recognition_Start.isChecked()):
+                            or ui.checkBox_Pass_Recognition_Start.isChecked()
+                            or self.start):
+                        self.signal.emit(fail("隐藏提示"))
+                        self.start = False
                         break
                     time_count += 1
                     if time_count >= 10:
@@ -2327,7 +2331,9 @@ def shootsignal_accept(msg):
     global betting_loop_flg
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
-    if "弹射上珠不够" in msg:
+    if "隐藏提示" in msg:
+        BallsNumDialog.hide()
+    elif "弹射上珠不够" in msg:
         BallsNumDialog.show()
         ui.radioButton_stop_betting.click()
         betting_loop_flg = False
@@ -5830,8 +5836,10 @@ class BallsNumUi(QDialog, Ui_Dialog_BallsNum):
     def setupUi(self, z_dialog):
         super(BallsNumUi, self).setupUi(z_dialog)
 
+def balls_start_btn():
+    Shoot_Thread.start = True
 
-def balls_num_btn():
+def balls_refresh_btn():
     global ball_sort
     global balls_start
     global ranking_array
@@ -5925,7 +5933,8 @@ if __name__ == '__main__':
     BallsNumDialog = QDialog(z_window)  #
     BallsNum_ui = BallsNumUi()
     BallsNum_ui.setupUi(BallsNumDialog)
-    BallsNum_ui.pushButton_ok.clicked.connect(balls_num_btn)
+    BallsNum_ui.pushButton_refresh.clicked.connect(balls_refresh_btn)
+    BallsNum_ui.pushButton_start.clicked.connect(balls_start_btn)
     # BallsNumDialog.show()
 
     OrganDialog = QDialog(z_window)
