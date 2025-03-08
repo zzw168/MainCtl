@@ -26,7 +26,7 @@ from Speed_Ui import Ui_Dialog_Set_Speed
 from TrapBallDlg_Ui import Ui_Dialog_TrapBall
 from utils import tool_unit
 from utils.SportCard_unit import *
-from kaj789_table import Kaj789Ui, lottery_data2table, kaj789_showEvent
+from kaj789_table import Kaj789Ui, lottery_data2table
 from utils.tool_unit import *
 from utils.Serial485_unit import *
 from MainCtl_Ui import *
@@ -945,16 +945,17 @@ class TcpResultThread(QThread):
                                         lottery_term[10] = video_name.output_path  # 视频保存路径
                                 except:
                                     pass
-                                self.signal.emit('save_video')
                                 if send_flg:
-                                    lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+                                    lottery_term[3] = '<font color="green">已结束</font>'  # 新一期比赛的状态（0.已结束）
                                     # lottery2sql()  # 保存数据库
                                     lottery2json()  # 保存数据
+
                                 else:
+                                    lottery_term[3] = '<font color="red">未结束</font>'
                                     self.signal.emit('发送比赛结束信号到服务器失败！')
                                     self.signal.emit('封盘')
                                     betting_loop_flg = False
-
+                                self.signal.emit('save_video')
                                 if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
                                     self.signal.emit('封盘')
                                     betting_loop_flg = False
@@ -998,18 +999,11 @@ class TcpResultThread(QThread):
 def tcpsignal_accept(msg):
     if msg == 'save_video':
         tb_result = ui.tableWidget_Results
-        tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（0.已结束）
-        tb_result.item(0, 4).setText(lottery_term[4])  # 自动赛果
-        tb_result.item(0, 5).setText(lottery_term[5])  # 手动赛果
-        tb_result.item(0, 6).setText(lottery_term[6])  # 图片上传状态
-        tb_result.item(0, 7).setText(lottery_term[7])  # 结果上传状态
-        tb_result.item(0, 8).setText(lottery_term[8])  # 备注
-        tb_result.item(0, 9).setText(lottery_term[9])  # 照片保存路径
-        tb_result.item(0, 10).setText(lottery_term[10])  # 视频保存路径
-        tb_result.item(0, 11).setText(lottery_term[11])  # 结束时间戳
-        tb_result.item(0, 12).setText(lottery_term[12])  # 赛果数据包
-        tb_result.item(0, 13).setText(lottery_term[13])  # 补传状态
-        tb_result.item(0, 13).setText(lottery_term[14])  # 补传状态
+        row_count = tb_result.rowCount()
+        col_count = tb_result.columnCount()
+        if row_count > 0:
+            for i in range(3, col_count):
+                tb_result.item(0, i).setText(lottery_term[i])  # 新一期比赛的状态（0.已结束）
     # print(msg)
     elif msg == '黑屏':
         ui.radioButton_stop_betting.click()  # 封盘
@@ -1685,12 +1679,13 @@ class ReStartThread(QThread):
                     break
                 time.sleep(1)
                 self.signal.emit(t)
-            reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
-            while reset_ranking_Thread.run_flg:
-                time.sleep(1)
-            while PlanCmd_Thread.run_flg:
-                time.sleep(1)
-            PlanCmd_Thread.run_flg = True
+            if self.run_flg:
+                reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
+                while reset_ranking_Thread.run_flg:
+                    time.sleep(1)
+                while PlanCmd_Thread.run_flg:
+                    time.sleep(1)
+                PlanCmd_Thread.run_flg = True
 
             print("循环启动！")
             self.run_flg = False
@@ -1733,7 +1728,9 @@ def restartsignal_accept(msg):
         ui.lineEdit_times_count.setText(str(msg))
         # if ui.radioButton_start_betting.isChecked():  # 开盘模式
         tb_result = ui.tableWidget_Results
-        tb_result.item(0, 2).setText(str(msg))
+        row_count = tb_result.rowCount()
+        if row_count > 0:
+            tb_result.item(0, 2).setText(str(msg))
 
 
 '''
@@ -4684,19 +4681,19 @@ def get_lottery_term():  # 创建开奖记录
         local_time = time.localtime(betting_start_time)
         start_time = time.strftime("%Y-%m-%d %H:%M:%S", local_time)
         lottery_term[1] = start_time
-        lottery_term[2] = ''    # 倒数
+        lottery_term[2] = ''  # 倒数
         lottery_term[3] = '未开始'  # 新一期比赛的状态（2.未开始）
-        lottery_term[4] = ''    # 自动赛果
-        lottery_term[5] = ''    # 手动赛果
-        lottery_term[6] = ''    # 发送赛果
-        lottery_term[7] = ''    # 上传图片
-        lottery_term[8] = ''    # 备注
-        lottery_term[9] = ''    # 图片
-        lottery_term[10] = ''   # 录像
-        lottery_term[11] = ''   # 结束时间戳
-        lottery_term[12] = ''   # 赛果数据包
-        lottery_term[13] = ''   # 补发状态
-        lottery_term[14] = ''   # 补传状态
+        lottery_term[4] = ''  # 自动赛果
+        lottery_term[5] = ''  # 手动赛果
+        lottery_term[6] = ''  # 发送赛果
+        lottery_term[7] = ''  # 上传图片
+        lottery_term[8] = ''  # 备注
+        lottery_term[9] = ''  # 图片
+        lottery_term[10] = ''  # 录像
+        lottery_term[11] = ''  # 结束时间戳
+        lottery_term[12] = ''  # 赛果数据包
+        lottery_term[13] = ''  # 补发状态
+        lottery_term[14] = ''  # 补传状态
         flg_start['server'] = True
         return True
     except:
@@ -5339,6 +5336,7 @@ def start_betting():
 def stop_betting():
     global betting_loop_flg
     betting_loop_flg = False
+    PlanCmd_Thread.run_flg = False  # 停止循环
     ReStart_Thread.run_flg = False  # 停止循环
     res_status = post_status(False, Track_number)
     if str(res_status) == 'OK':
@@ -6433,7 +6431,7 @@ if __name__ == '__main__':
     "**************************直播大厅_开始*****************************"
     # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 发送状态,
     #                       图片上传状态, 备注, 图片, 录像, 结束时间, 补发状态, 补传图片]
-    lottery_term = ['0'] * 14
+    lottery_term = ['0'] * 15
     # start_lottery_server_bat()  # 模拟开奖王服务器
     labels = []
     lottery_json_init()
