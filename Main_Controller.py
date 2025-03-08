@@ -91,9 +91,9 @@ def on_stream_state_changed(data):
     print(data.output_active)
     print(data.output_state)
     if data.output_active:
-        ui.status_live.setStyleSheet('background:rgb(0, 255, 0)')
+        flg_start['live'] = True
     else:
-        ui.status_live.setStyleSheet('background:rgb(255, 0, 0)')
+        flg_start['live'] = False
 
 
 # 来源变化事件
@@ -5975,7 +5975,8 @@ if __name__ == '__main__':
     pValue = [0, 0, 0, 0, 0]  # 各轴位置
     flg_key_run = True  # 键盘控制标志
     axis_reset = False  # 轴复位标志
-    flg_start = {'card': False, 's485': False, 'obs': False, 'ai': False, 'ai_end': False, 'server': False}  # 各硬件启动标志
+    flg_start = {'card': False, 's485': False, 'obs': False, 'live': False,
+                 'ai': False, 'ai_end': False, 'server': False}  # 各硬件启动标志
 
     load_plan_json()
 
