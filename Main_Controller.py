@@ -795,8 +795,8 @@ class TcpRankingThread(QThread):
         tcp_ranking_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcp_ranking_socket.bind(tcpServer_addr)
         tcp_ranking_socket.listen(1)
-        try:
-            while self.running:
+        while self.running:
+            try:
                 con, addr = tcp_ranking_socket.accept()
                 print("Accepted. {0}, {1}".format(con, str(addr)))
                 if con:
@@ -818,8 +818,8 @@ class TcpRankingThread(QThread):
                         except Exception as e:
                             print("pingpong_rank_1 错误：", e)
                             # self.signal.emit("pingpong 错误：%s" % e)
-        except Exception as e:
-            print("pingpong_rank_2 错误：", e)
+            except Exception as e:
+                print("pingpong_rank_2 错误：", e)
 
 class TcpResultThread(QThread):
     signal = Signal(object)
@@ -847,8 +847,8 @@ class TcpResultThread(QThread):
         tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcp_result_socket.bind(result_tcpServer_addr)
         tcp_result_socket.listen(5)
-        try:
-            while self.running:
+        while self.running:
+            try:
                 con, addr = tcp_result_socket.accept()
                 print("Accepted. {0}, {1}".format(con, str(addr)))
                 if not con:
@@ -982,8 +982,8 @@ class TcpResultThread(QThread):
                     except Exception as e:
                         print("pingpong_result_1 错误：%s" % e)
                         # self.signal.emit("pingpong 错误：%s" % e)
-        except Exception as e:
-            print("pingpong_result_2 错误：%s" % e)
+            except Exception as e:
+                print("pingpong_result_2 错误：%s" % e)
 
 def tcpsignal_accept(msg):
     if msg == 'save_video':
