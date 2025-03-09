@@ -994,6 +994,7 @@ def tcpsignal_accept(msg):
             for i in range(3, col_count):
                 if i == 3 :
                     item = QTableWidgetItem(lottery_term[i])
+                    item.setTextAlignment(Qt.AlignCenter)
                     if lottery_term[i] == '未结束':
                         item.setForeground(QColor("red"))
                     else:
@@ -4869,6 +4870,7 @@ def kaj789_signal_accept(msg):
                 tb_result = ui.tableWidget_Results
                 if tb_result.rowCount() > 0:
                     item = QTableWidgetItem(lottery_term[3])
+                    item.setTextAlignment(Qt.AlignCenter)
                     if term_status == 1:
                         item.setForeground(QColor("green"))  # 设置字体颜色为红色
                     else:
@@ -4882,6 +4884,7 @@ def kaj789_signal_accept(msg):
                 tb_result = ui.tableWidget_Results
                 if tb_result.rowCount() > 0:
                     item = QTableWidgetItem(lottery_term[6])
+                    item.setTextAlignment(Qt.AlignCenter)
                     item.setForeground(QColor("green"))  # 设置字体颜色为红色
                     tb_result.setItem(0, 6, item)
             else:
@@ -4892,6 +4895,7 @@ def kaj789_signal_accept(msg):
                 tb_result = ui.tableWidget_Results
                 if tb_result.rowCount() > 0:
                     item = QTableWidgetItem(lottery_term[7])
+                    item.setTextAlignment(Qt.AlignCenter)
                     item.setForeground(QColor("green"))  # 设置字体颜色为红色
                     tb_result.setItem(0, 7, item)
             else:
@@ -4903,6 +4907,7 @@ def kaj789_signal_accept(msg):
                 row_count = tb_result.rowCount()
                 if row_count > 0:
                     item = QTableWidgetItem(lottery_term[8])
+                    item.setTextAlignment(Qt.AlignCenter)
                     item.setForeground(QColor("green"))  # 设置字体颜色为红色
                     tb_result.setItem(0, 8, item)
             else:

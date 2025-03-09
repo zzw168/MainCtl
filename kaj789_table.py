@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
 import sys
 
 from kaj789_Ui import Ui_Dialog_Kaj789_Ui
+from utils.kaj789 import post_end, post_result, post_upload, post_marble_results
 
 
 class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
@@ -179,6 +180,48 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         except Exception as e:
             print(f"读取错误: {e}")
 
+    def resend_end(self, Track_number, run_type, term_status):
+        tb_kaj789 = self.tableWidget_Results
+        row = tb_kaj789.currentRow()
+        term = tb_kaj789.item(row, 0)
+        betting_end_time = tb_kaj789.item(row, 11)
+        result_data = json.loads(tb_kaj789.item(row, 12))
+        img_path = tb_kaj789.item(row, 9)
+        term_comment = tb_kaj789.item(row, 8)
+        for i in range(5):
+            if run_type == 'post_end':
+                res_end = post_end(term, betting_end_time, term_status,
+                                   Track_number)  # 发送游戏结束信号给服务器
+                if res_end == 'OK':
+                    if term_status == 1:
+                        run_type = 'post_result'
+                    else:
+                        pass
+                else:
+                    continue
+            if run_type == 'post_result':
+                res_result = post_result(term, betting_end_time, result_data,
+                                         Track_number)  # 发送最终排名给服务器
+                if res_result == 'OK':
+                    run_type = 'post_upload'
+                else:
+                    continue
+            if run_type == 'post_upload' and os.path.exists(img_path):
+                res_upload = post_upload(term, img_path, Track_number)  # 上传结果图片
+                if res_upload != 'OK':
+                    continue
+                else:
+                    lottery_term[7] = "上传成功"
+                    break
+            if term_comment != '':
+                res_marble_results = post_marble_results(term, term_comment,
+                                                         Track_number)  # 上传备注信息
+                lottery_term[8] = term_comment
+                if str(term) in res_marble_results:
+                    lottery2json()  # 保存数据
+                term_comment = ''
+                break
+
 
 def lottery_data2table(tb_result, lottery_t, labels):  # 赛事入表
     row_count = tb_result.rowCount()
@@ -200,8 +243,10 @@ def lottery_data2table(tb_result, lottery_t, labels):  # 赛事入表
     for index, value in enumerate(lottery_t):
         tb_result.item(0, index).setText(str(value))
 
+
 def kaj789_showEvent(kaj789_ui):
     kaj789_ui.load_json_file()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
