@@ -164,7 +164,8 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         try:
             if os.path.exists(file):
                 lottery_list = []
-                lottery_kaj789 = [''] * 14
+                lottery_kaj789 = [''] * 15
+                self.tableWidget_Results.setRowCount(0)
                 with open(file, "r", encoding="utf-8") as f:
                     for line in f:
                         print(json.loads(line))  # 逐行解析 JSON

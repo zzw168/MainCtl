@@ -1406,9 +1406,9 @@ class ZUi(QMainWindow, Ui_MainWindow):
             exe_path = tb_result.item(row_num, 10).text()
             os.startfile(exe_path)
         if action == item2:
-            pass
+            send_end()
         if action == item3:
-            pass
+            cancel_end()
         if action == item4:
             pass
 
