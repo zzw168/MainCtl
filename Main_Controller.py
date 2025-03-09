@@ -454,11 +454,11 @@ def deal_action():
                 continue
             action_area[0] = int(ranking_array[rank_num][6])  # 同圈中寻找合适区域
             break
-        if action_area[1] < int(ranking_array[rank_num][8]) and action_area[2] == 0:  # 不同圈赋值更大圈数
-            action_area[1] = int(ranking_array[rank_num][8])
-            if action_area[0] > int(ranking_array[rank_num][6]):  # 不同圈，跨圈情况
-                action_area[0] = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
-            break
+        # if action_area[1] < int(ranking_array[rank_num][8]) and action_area[2] == 0:  # 不同圈赋值更大圈数
+        #     action_area[1] = int(ranking_array[rank_num][8])
+        #     if action_area[0] > int(ranking_array[rank_num][6]):  # 不同圈，跨圈情况
+        #         action_area[0] = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
+        #     break
 
 
 # 处理排名
@@ -821,6 +821,7 @@ class TcpRankingThread(QThread):
             except Exception as e:
                 print("pingpong_rank_2 错误：", e)
 
+
 class TcpResultThread(QThread):
     signal = Signal(object)
 
@@ -985,6 +986,7 @@ class TcpResultThread(QThread):
             except Exception as e:
                 print("pingpong_result_2 错误：%s" % e)
 
+
 def tcpsignal_accept(msg):
     if msg == 'save_video':
         tb_result = ui.tableWidget_Results
@@ -992,7 +994,7 @@ def tcpsignal_accept(msg):
         col_count = tb_result.columnCount()
         if row_count > 0:
             for i in range(3, col_count):
-                if i == 3 :
+                if i == 3:
                     item = QTableWidgetItem(lottery_term[i])
                     item.setTextAlignment(Qt.AlignCenter)
                     if lottery_term[i] == '未结束':
@@ -1152,8 +1154,6 @@ def udpsignal_accept(msg):
         if int(ui.lineEdit_ball_start.text()) < balls_start or balls_start == 0:  # 更新起点球数
             ui.lineEdit_balls_start.setText(str(balls_start))
             ui.lineEdit_ball_start.setText(str(balls_start))
-        # if int(ui.lineEdit_area.text()) != action_area[0]:  # 更新触发区域
-        #     ui.lineEdit_area.setText(str(action_area[0]))
     else:
         if '错误' in msg:
             ui.textBrowser_msg.append(msg)
@@ -2513,7 +2513,7 @@ class PlanCmdThread(QThread):
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
                                     and not self.background_state
-                                    and (len(plan_list) / 3 * 2 <= plan_index)
+                                    and (len(plan_list) / 3 * 2 <= plan_index < len(plan_list) - 2)
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
                                 if len(plan_list) / 4 * 3 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
@@ -2678,7 +2678,8 @@ class PlanCmdThread(QThread):
                 else:  # 每次循环增加一圈，初始化动作位置为0，初始化地图位置为0
                     action_area[2] = 1  # 写入标志 1 为独占写入
                     action_area[0] = 0
-                    action_area[1] += 1
+                    if action_area[1] < max_lap_count:
+                        action_area[1] += 1
                     action_area[2] = 0  # 写入标志 0 为任意写入
                     if action_area[1] < max_lap_count:
                         map_label_big.map_action = 0
@@ -3911,9 +3912,7 @@ class MapLabel(QLabel):
             if self.picture_size == 860:
                 if self.map_action < self.positions[0][0]:
                     self.map_action = self.positions[0][0]  # 赋值实时位置
-                else:
-                    if self.map_action < len(self.path_points):
-                        self.map_action += 1
+
         res = []
         if self.picture_size == 860:
             for i in range(balls_count):
@@ -4989,6 +4988,7 @@ class ResetRankingThread(QThread):
             z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
             z_ranking_time = [''] * 10  # 初始化网页排名时间
             tcp_ranking_thread.sleep_time = 0.5  # 重置排名数据包发送时间
+            map_label_big.map_action = 0
             alarm_worker.toggle_enablesignal.emit(False)
             if flg_start['card']:
                 for index in range(0, 16):
@@ -5348,7 +5348,7 @@ def start_betting():
 
 def stop_betting():
     global betting_loop_flg
-    betting_loop_flg = False    # 关闭循环标志
+    betting_loop_flg = False  # 关闭循环标志
     ReStart_Thread.run_flg = False  # 停止重启循环
     res_status = post_status(False, Track_number)
     if str(res_status) == 'OK':
