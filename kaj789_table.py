@@ -19,6 +19,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
 
     def setupUi(self, z_dialog):
         super().setupUi(z_dialog)
+        self.pushButton.clicked.connect(self.table2json)
         self.loadFiles()
         self.comboBox_kaj789.currentIndexChanged.connect(self.load_json_file)
         tb_result = self.tableWidget_Results
@@ -180,7 +181,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         except Exception as e:
             print(f"读取错误: {e}")
 
-    def resend_end(self, Track_number, run_type, term_status):
+    def resend_end(self, run_type='post_end', Track_number='M', term_status=1):
         tb_kaj789 = self.tableWidget_Results
         row = tb_kaj789.currentRow()
         term = tb_kaj789.item(row, 0)
@@ -195,6 +196,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                 if res_end == 'OK':
                     if term_status == 1:
                         run_type = 'post_result'
+                        tb_kaj789.item(row, 3).setText('已结束')
                     else:
                         pass
                 else:
@@ -204,6 +206,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                                          Track_number)  # 发送最终排名给服务器
                 if res_result == 'OK':
                     run_type = 'post_upload'
+                    tb_kaj789.item(row, 6).setText('补发成功')
                 else:
                     continue
             if run_type == 'post_upload' and os.path.exists(img_path):
@@ -211,16 +214,37 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                 if res_upload != 'OK':
                     continue
                 else:
-                    lottery_term[7] = "上传成功"
+                    tb_kaj789.item(row, 7).setText('补传成功')
+                    self.table2json()  # 保存数据
                     break
             if term_comment != '':
                 res_marble_results = post_marble_results(term, term_comment,
                                                          Track_number)  # 上传备注信息
-                lottery_term[8] = term_comment
                 if str(term) in res_marble_results:
-                    lottery2json()  # 保存数据
-                term_comment = ''
+                    tb_kaj789.item(row, 8).setText(term_comment)
+                    self.table2json()  # 保存数据
                 break
+
+    def table2json(self):
+        tb_kaj789 = self.tableWidget_Results
+        data = []
+        filename = './terms/%s' % self.comboBox_kaj789.currentText()
+        for row in range(tb_kaj789.rowCount()):
+            row_data = []
+            for col in range(tb_kaj789.columnCount()):
+                item = tb_kaj789.item(row, col)
+                row_data.append(item.text() if item else "")
+            data.append(row_data)
+        print(data)
+        if os.path.exists(filename):
+            os.remove(filename)
+            print(f"{filename} 已删除")
+        else:
+            print(f"{filename} 不存在")
+        with open(filename, "a", encoding="utf-8") as f:
+            for row in range(len(data)-1, -1, -1):
+                f.write(json.dumps(data[row]) + "\n")
+
 
 
 def lottery_data2table(tb_result, lottery_t, labels):  # 赛事入表

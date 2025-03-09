@@ -3909,7 +3909,11 @@ class MapLabel(QLabel):
                                         break
         if self.positions[0][0] - self.map_action < len(self.path_points) / 3:  # 圈数重置后，重新位置更新范围限制300个点位以内
             if self.picture_size == 860:
-                self.map_action = self.positions[0][0]  # 赋值实时位置
+                if self.map_action < self.positions[0][0]:
+                    self.map_action = self.positions[0][0]  # 赋值实时位置
+                else:
+                    if self.map_action < len(self.path_points):
+                        self.map_action += 1
         res = []
         if self.picture_size == 860:
             for i in range(balls_count):

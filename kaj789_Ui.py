@@ -15,10 +15,10 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QComboBox,
-    QDialog, QDialogButtonBox, QFrame, QGridLayout,
-    QGroupBox, QHeaderView, QSizePolicy, QTableWidget,
-    QTableWidgetItem, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QComboBox, QDialog,
+    QFrame, QGridLayout, QGroupBox, QHeaderView,
+    QPushButton, QSizePolicy, QTableWidget, QTableWidgetItem,
+    QWidget)
 
 class Ui_Dialog_Kaj789_Ui(object):
     def setupUi(self, Dialog_Kaj789_Ui):
@@ -30,14 +30,6 @@ class Ui_Dialog_Kaj789_Ui(object):
         self.gridLayout = QGridLayout(Dialog_Kaj789_Ui)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(-1, 0, -1, -1)
-        self.buttonBox = QDialogButtonBox(Dialog_Kaj789_Ui)
-        self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setMinimumSize(QSize(0, 0))
-        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel|QDialogButtonBox.StandardButton.Save)
-
-        self.gridLayout.addWidget(self.buttonBox, 1, 1, 1, 1)
-
         self.frame = QFrame(Dialog_Kaj789_Ui)
         self.frame.setObjectName(u"frame")
         self.frame.setMinimumSize(QSize(0, 200))
@@ -118,12 +110,24 @@ class Ui_Dialog_Kaj789_Ui(object):
         self.gridLayout_2.addWidget(self.groupBox, 0, 0, 1, 3)
 
 
-        self.gridLayout.addWidget(self.frame, 0, 0, 1, 2)
+        self.gridLayout.addWidget(self.frame, 0, 0, 1, 3)
+
+        self.frame_3 = QFrame(Dialog_Kaj789_Ui)
+        self.frame_3.setObjectName(u"frame_3")
+        self.frame_3.setMinimumSize(QSize(800, 30))
+        self.frame_3.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_3.setFrameShadow(QFrame.Shadow.Raised)
+
+        self.gridLayout.addWidget(self.frame_3, 1, 0, 1, 1)
+
+        self.pushButton = QPushButton(Dialog_Kaj789_Ui)
+        self.pushButton.setObjectName(u"pushButton")
+        self.pushButton.setMinimumSize(QSize(0, 30))
+
+        self.gridLayout.addWidget(self.pushButton, 1, 2, 1, 1)
 
 
         self.retranslateUi(Dialog_Kaj789_Ui)
-        self.buttonBox.accepted.connect(Dialog_Kaj789_Ui.accept)
-        self.buttonBox.rejected.connect(Dialog_Kaj789_Ui.reject)
 
         QMetaObject.connectSlotsByName(Dialog_Kaj789_Ui)
     # setupUi
@@ -161,5 +165,6 @@ class Ui_Dialog_Kaj789_Ui(object):
         ___qtablewidgetitem13.setText(QCoreApplication.translate("Dialog_Kaj789_Ui", u"\u8865\u53d1\u72b6\u6001", None));
         ___qtablewidgetitem14 = self.tableWidget_Results.horizontalHeaderItem(14)
         ___qtablewidgetitem14.setText(QCoreApplication.translate("Dialog_Kaj789_Ui", u"\u8865\u4f20\u72b6\u6001", None));
+        self.pushButton.setText(QCoreApplication.translate("Dialog_Kaj789_Ui", u"PushButton", None))
     # retranslateUi
 
