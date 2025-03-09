@@ -70,8 +70,8 @@ class Ui_Dialog_Kaj789_Ui(object):
         self.gridLayout_3.addWidget(self.frame_2, 0, 1, 1, 1)
 
         self.tableWidget_Results = QTableWidget(self.groupBox)
-        if (self.tableWidget_Results.columnCount() < 14):
-            self.tableWidget_Results.setColumnCount(14)
+        if (self.tableWidget_Results.columnCount() < 15):
+            self.tableWidget_Results.setColumnCount(15)
         __qtablewidgetitem = QTableWidgetItem()
         self.tableWidget_Results.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -100,6 +100,8 @@ class Ui_Dialog_Kaj789_Ui(object):
         self.tableWidget_Results.setHorizontalHeaderItem(12, __qtablewidgetitem12)
         __qtablewidgetitem13 = QTableWidgetItem()
         self.tableWidget_Results.setHorizontalHeaderItem(13, __qtablewidgetitem13)
+        __qtablewidgetitem14 = QTableWidgetItem()
+        self.tableWidget_Results.setHorizontalHeaderItem(14, __qtablewidgetitem14)
         self.tableWidget_Results.setObjectName(u"tableWidget_Results")
         font1 = QFont()
         font1.setPointSize(10)
@@ -154,8 +156,10 @@ class Ui_Dialog_Kaj789_Ui(object):
         ___qtablewidgetitem11 = self.tableWidget_Results.horizontalHeaderItem(11)
         ___qtablewidgetitem11.setText(QCoreApplication.translate("Dialog_Kaj789_Ui", u"\u7ed3\u675f\u65f6\u95f4\u6233", None));
         ___qtablewidgetitem12 = self.tableWidget_Results.horizontalHeaderItem(12)
-        ___qtablewidgetitem12.setText(QCoreApplication.translate("Dialog_Kaj789_Ui", u"\u8865\u53d1\u72b6\u6001", None));
+        ___qtablewidgetitem12.setText(QCoreApplication.translate("Dialog_Kaj789_Ui", u"\u6570\u636e\u5305", None));
         ___qtablewidgetitem13 = self.tableWidget_Results.horizontalHeaderItem(13)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate("Dialog_Kaj789_Ui", u"\u8865\u4f20\u72b6\u6001", None));
+        ___qtablewidgetitem13.setText(QCoreApplication.translate("Dialog_Kaj789_Ui", u"\u8865\u53d1\u72b6\u6001", None));
+        ___qtablewidgetitem14 = self.tableWidget_Results.horizontalHeaderItem(14)
+        ___qtablewidgetitem14.setText(QCoreApplication.translate("Dialog_Kaj789_Ui", u"\u8865\u4f20\u72b6\u6001", None));
     # retranslateUi
 

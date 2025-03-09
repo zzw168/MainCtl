@@ -35,6 +35,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         tb_result.horizontalHeader().resizeSection(11, 150)
         tb_result.horizontalHeader().resizeSection(12, 80)
         tb_result.horizontalHeader().resizeSection(13, 80)
+        tb_result.horizontalHeader().resizeSection(13, 80)
 
         tb_result.setColumnHidden(0, True)
         tb_result.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
@@ -165,6 +166,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             if os.path.exists(file):
                 lottery_list = []
                 lottery_kaj789 = [''] * 15
+                self.labels = []
                 self.tableWidget_Results.setRowCount(0)
                 with open(file, "r", encoding="utf-8") as f:
                     for line in f:

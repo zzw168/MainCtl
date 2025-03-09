@@ -191,6 +191,11 @@
            </column>
            <column>
             <property name="text">
+             <string>数据包</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
              <string>补发状态</string>
             </property>
            </column>
