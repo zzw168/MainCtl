@@ -2314,6 +2314,7 @@ class ShootThread(QThread):
                     time_count += 1
                     if time_count >= 10:
                         self.signal.emit(fail("弹射上珠不够"))
+                        break
 
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
                 sc.GASetExtDoBit(shoot_index, 0)
@@ -2333,8 +2334,6 @@ def shootsignal_accept(msg):
     if "弹射上珠不够" in msg:
         BallsNumDialog.show()
         ui.radioButton_stop_betting.click()
-        betting_loop_flg = False
-        ReStart_Thread.run_flg = False
 
 
 '''
