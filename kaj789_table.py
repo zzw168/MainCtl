@@ -120,9 +120,9 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             exe_path = tb_kaj789.item(row_num, 10).text()
             os.startfile(exe_path)
         if action == item2:
-            pass
+            self.resend_end(term_status=1)
         if action == item3:
-            pass
+            self.resend_end(term_status=0)
         if action == item4:
             pass
 
@@ -184,11 +184,13 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
     def resend_end(self, run_type='post_end', Track_number='M', term_status=1):
         tb_kaj789 = self.tableWidget_Results
         row = tb_kaj789.currentRow()
-        term = tb_kaj789.item(row, 0)
-        betting_end_time = tb_kaj789.item(row, 11)
-        result_data = json.loads(tb_kaj789.item(row, 12))
-        img_path = tb_kaj789.item(row, 9)
-        term_comment = tb_kaj789.item(row, 8)
+        term = tb_kaj789.item(row, 0).text()
+        betting_end_time = tb_kaj789.item(row, 11).text()
+        result_data = json.loads(tb_kaj789.item(row, 12).text())
+        # result_data = 'json.loads(tb_kaj789.item(row, 12))'
+        img_path = tb_kaj789.item(row, 9).text()
+        term_comment = tb_kaj789.item(row, 8).text()
+        print(term, betting_end_time, result_data, img_path, term_comment)
         for i in range(5):
             if run_type == 'post_end':
                 res_end = post_end(term, betting_end_time, term_status,
