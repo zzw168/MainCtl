@@ -3882,8 +3882,9 @@ class MapLabel(QLabel):
                                 self.speed = 3
                             elif 30 >= p - self.positions[p_num][0] >= 25:
                                 self.speed = 2
-                            elif p < self.positions[p_num][0] and (
-                                    self.positions[p_num][0] < len(self.path_points) / 2):
+                            elif (p < self.positions[p_num][0]
+                                  and (self.positions[p_num][0] < len(self.path_points) / 2)
+                                  and ranking_array[num][9] == 1):
                                 self.speed = 0
                             elif p < self.positions[p_num][0] and (
                                     self.positions[p_num][0] > len(self.path_points) / 2):
@@ -3907,7 +3908,7 @@ class MapLabel(QLabel):
                                 self.speed = 3
                             elif 30 >= p - self.positions[p_num][0] >= 25:
                                 self.speed = 2
-                            elif p < self.positions[p_num][0]:
+                            elif p < self.positions[p_num][0] and ranking_array[num][9] == 1:
                                 self.speed = 0
                             else:
                                 self.speed = 1
