@@ -1917,12 +1917,6 @@ class PlanBallNumThread(QThread):
                         tcp_ranking_thread.send_time_data = [index + 1, s]
                         tcp_ranking_thread.send_time_flg = True
                     time.sleep(0.5)
-                save_path = '%s' % ui.lineEdit_upload_Path.text()
-                if os.path.exists(save_path):
-                    lottery_term[9] = '%s/%s.jpg' % (save_path, term)
-                    resp = cl_request.save_source_screenshot(ui.lineEdit_scene_name.text(), "jpg",
-                                                             lottery_term[9], 1920,
-                                                             1080, 100)
             else:
                 print("次数归0 失败！")
                 flg_start['card'] = False
@@ -2010,6 +2004,12 @@ class ObsEndThread(QThread):
                     num += 1
                     time.sleep(1)
             try:
+                save_path = '%s' % ui.lineEdit_upload_Path.text()
+                if os.path.exists(save_path):
+                    lottery_term[9] = '%s/%s.jpg' % (save_path, term)
+                    cl_request.save_source_screenshot(ui.lineEdit_scene_name.text(), "jpg",
+                                                      lottery_term[9], 1920,
+                                                      1080, 100)
                 tcp_result_thread.send_type = 'updata'
                 tcp_result_thread.run_flg = True
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
