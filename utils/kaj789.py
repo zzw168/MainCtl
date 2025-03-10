@@ -54,9 +54,11 @@ def get_term(Track_number='M'):  # 取期号
         return None
 
 
-def post_start(term, betting_start_time, Track_number='I'):  # 开始比赛
+def post_start(term, betting_start_time, starting_Position='8,7,6,5,4,3,2,1', Track_number='I'):  # 开始比赛
     POST_start_url = '/start'  # 比赛开始信号
-    POST_start_data = {"raceTrackID": Track_number, "term": str(term), "actualStartTime": betting_start_time}
+    POST_start_data = {"raceTrackID": Track_number, "term": str(term),
+                       "actualStartTime": betting_start_time,
+                       "startingPosition": starting_Position, }
     print(POST_start_data)
     response = requests.post('%s%s' % (url, POST_start_url), headers=headers, json=POST_start_data)
     print('start:', response.text)
@@ -66,7 +68,7 @@ def post_start(term, betting_start_time, Track_number='I'):  # 开始比赛
 def post_end(term, betting_end_time, status=1, Track_number='I'):  # 结束比赛
     POST_end_url = '/end'
     POST_end_data = {"raceTrackID": Track_number, "term": str(term), "actualEndTime": betting_end_time,
-                     "status": status}  # 1: 正常, 0: 不正常(只有一种情况:前三名检测不到)
+                     "status": status}  # 0: 不正常(卡珠,飞珠), 1: 正常, 2: 完全流局(只有一种情况:前三名检测不到)
     print(POST_end_data)
     response = requests.post('%s%s' % (url, POST_end_url), headers=headers, json=POST_end_data)
     print('end:', response.text)

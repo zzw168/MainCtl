@@ -447,18 +447,7 @@ def rtsp_save_thread():
 # 处理触发点位
 def deal_action():
     global action_area
-    for rank_num in range(0, len(ranking_array)):  # 循环寻找合适的球位置，镜头追踪
-        if action_area[1] == int(ranking_array[rank_num][8]) and action_area[2] == 0:  # 写入标志 0 为任意写入
-            if (int(ranking_array[rank_num][6]) > action_area[0] + 3
-                    or (int(ranking_array[rank_num][6]) < action_area[0])):
-                continue
-            action_area[0] = int(ranking_array[rank_num][6])  # 同圈中寻找合适区域
-            break
-        # if action_area[1] < int(ranking_array[rank_num][8]) and action_area[2] == 0:  # 不同圈赋值更大圈数
-        #     action_area[1] = int(ranking_array[rank_num][8])
-        #     if action_area[0] > int(ranking_array[rank_num][6]):  # 不同圈，跨圈情况
-        #         action_area[0] = int(ranking_array[rank_num][6])  # 排第一位的球所在区域
-        #     break
+    action_area[0] = int(ranking_array[0][6])  # 触发区域
 
 
 # 处理排名
@@ -474,7 +463,7 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][8] += 1
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = max_lap_count - 1
-                if (action_area[0] >= max_area_count / 2
+                if (map_label_big.map_action >= len(map_label_big.path_points) / 2
                         and action_area[1] >= max_lap_count - 1):
                     area_limit = max_area_count
                     for i in range(len(ranking_array)):
@@ -914,7 +903,7 @@ class TcpResultThread(QThread):
                                                 res_marble_results = post_marble_results(term, term_comment,
                                                                                          Track_number)  # 上传备注信息
                                                 self.signal.emit({'post_marble_results': res_marble_results})
-                                                if 'marble_results' in res_marble_results:
+                                                if str(term) in res_marble_results:
                                                     lottery_term[8] = term_comment
                                                 else:
                                                     lottery_term[8] = "备注失败"
@@ -1028,7 +1017,7 @@ def tcpsignal_accept(msg):
             else:
                 message = fail('发送图片失败:%s' % msg['post_upload'])
         if 'post_marble_results' in msg.keys():
-            if term in msg['post_marble_results']:
+            if str(term) in msg['post_marble_results']:
                 message = succeed('发送备注成功！')
             else:
                 message = fail('发送备注失败:%s' % msg['post_marble_results'])
@@ -1630,6 +1619,13 @@ class ReStartThread(QThread):
             if ui.radioButton_start_betting.isChecked():  # 非模拟模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
+                    res_start = post_start(term=term, betting_start_time=betting_start_time,
+                                           starting_Position= str(z_ranking_res[:balls_count]),
+                                           Track_number=Track_number)  # 发送开始信号给服务器
+                    if str(res_start) != 'OK':
+                        self.signal.emit(fail('比赛开始失败:%s' % res_start))
+                        self.run_flg = False
+                        break
                     self.signal.emit('term_ok')
                     term = response['term']
                     betting_start_time = response['scheduledGameStartTime']
@@ -1686,6 +1682,10 @@ def restartsignal_accept(msg):
     global labels
     if isinstance(msg, bool):
         lottery_data2table(ui.tableWidget_Results, lottery_term, labels)
+    elif '比赛开始失败' in msg:
+        ui.radioButton_stop_betting.click()
+        ui.textBrowser_msg.append(msg)
+        scroll_to_bottom(ui.textBrowser_msg)
     elif msg == '过场动画':
         ui.textBrowser_msg.append(succeed('过场动画'))
         scroll_to_bottom(ui.textBrowser_msg)
@@ -1900,6 +1900,8 @@ class PlanBallNumThread(QThread):
                             s = '%s"' % z_ranking_time[index]
                         else:
                             s = z_ranking_time[index]
+                            term_comment = s
+                            term_status = 0
                         tcp_ranking_thread.send_time_data = [index + 1, s]
                         tcp_ranking_thread.send_time_flg = True
                     time.sleep(0.5)
@@ -2087,6 +2089,7 @@ class ScreenShotThread(QThread):
             if ((obs_res[1] != '[1]' and main_Camera == monitor_Camera)
                     or (not (ui.checkBox_main_camera_set.isChecked()) and z_ranking_res == main_Camera)):
                 if len(main_Camera) == len(z_ranking_res):
+                    term_status = 1
                     print('主镜头识别正确:', main_Camera)
                     if len(obs_list) > 2 and not ui.checkBox_main_camera_set.isChecked():
                         for i in range(0, len(obs_list)):
@@ -2101,6 +2104,7 @@ class ScreenShotThread(QThread):
                     z_ranking_end = copy.deepcopy(main_Camera)
                     lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             elif z_ranking_res == monitor_Camera:
+                term_status = 1
                 print('网络识别正确:', monitor_Camera)
                 if len(rtsp_list) > 2:
                     print(rtsp_list)
@@ -2133,7 +2137,7 @@ class ScreenShotThread(QThread):
                                         num = int(getattr(ui, 'lineEdit_result_%s' % i).text())
                                         if num not in send_list:
                                             send_list.append(num)
-                                if len(send_list) == len(z_ranking_end):
+                                if len(send_list) >= balls_count:
                                     for i in range(0, len(send_list)):
                                         for j in range(0, len(z_ranking_end)):
                                             if send_list[i] == z_ranking_end[j]:
@@ -2470,18 +2474,8 @@ class PlanCmdThread(QThread):
                                 else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start_count.text():  # '9'倒数机关打开
-                                    if ui.radioButton_start_betting.isChecked():  # 开盘模式
-                                        res_start = post_start(term, betting_start_time, Track_number)  # 发送开始信号给服务器
-                                        if str(res_start) == 'OK':
-                                            lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
-                                            self.signal.emit('进行中')  # 修改结果列表中的赛事状态
-                                        else:
-                                            self.signal.emit('开始信号发送失败,进行封盘操作')  # 修改结果列表中的赛事状态
-                                            self.run_flg = False
-                                            break
-                                    else:
-                                        lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
-                                        self.signal.emit('进行中')  # 修改结果列表中的赛事状态
+                                    lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
+                                    self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
                                         try:
                                             cl_request.start_record()  # 开启OBS录像
@@ -2710,12 +2704,6 @@ def signal_accept(msg):
             if msg == '进行中':
                 tb_result = ui.tableWidget_Results
                 tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
-            elif msg == '开始信号发送失败,进行封盘操作':
-                ui.radioButton_stop_betting.click()
-            ui.textBrowser.append(str(msg))
-            ui.textBrowser_msg.append(str(msg))
-            scroll_to_bottom(ui.textBrowser)
-            scroll_to_bottom(ui.textBrowser_msg)
     except:
         print("运行数据处理出错！")
 
@@ -3666,7 +3654,9 @@ class PositionsLiveThread(QThread):
                     z_ws.close()
                     break
                 try:
-                    if data != positions_live and ui.radioButton_start_betting.isChecked():
+                    if (data != positions_live
+                            and lottery_term[3] == '进行中'
+                            and ui.radioButton_start_betting.isChecked()):
                         data = positions_live
                         z_ws.send(json.dumps(data))
                         print(f"已发送数据: {data}")
@@ -3922,6 +3912,7 @@ class MapLabel(QLabel):
             positions_live = {
                 "raceTrackID": Track_number,
                 "term": term,
+                "timestampMs": int(time.time() * 1000),
                 "result": res
             }
         # 触发重绘
@@ -4824,13 +4815,14 @@ class Kaj789Thread(QThread):
                     res_end = post_end(term, betting_end_time, term_status,
                                        Track_number)  # 发送游戏结束信号给服务器
                     if res_end == 'OK':
-                        if term_status == 1:
+                        if term_status == 2:
+                            lottery_term[3] = '已取消'
+                            self.signal.emit({'post_end': res_end})
+                        else:
                             self.run_type = 'post_result'
                             lottery_term[3] = '已结束'
                             self.signal.emit({'post_end': res_end})
-                        else:
-                            lottery_term[3] = '已取消'
-                            self.signal.emit({'post_end': res_end})
+
                     else:
                         continue
                 if self.run_type == 'post_result':
@@ -4924,7 +4916,6 @@ def kaj789_signal_accept(msg):
 
 def send_end():
     global term_status
-    term_status = 1
     Kaj789_Thread.run_type = 'post_end'
     Kaj789_Thread.run_flg = True
 
@@ -4932,7 +4923,7 @@ def send_end():
 def cancel_end():
     global term_status
     global term_comment
-    term_status = 0
+    term_status = 2
     term_comment = term_comments[0]
     Kaj789_Thread.run_type = 'post_end'
     Kaj789_Thread.run_flg = True
@@ -6284,6 +6275,7 @@ if __name__ == '__main__':
     positions_live = {
         "raceTrackID": "D",
         "term": "5712844",
+        "timestampMs": int(time.time() * 1000),
         "result": [
             {"pm": 1, "id": 8, "x": 104, "y": 645, "b": 15},
             {"pm": 2, "id": 3, "x": 101, "y": 355, "b": 13},
