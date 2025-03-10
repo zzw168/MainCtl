@@ -1988,6 +1988,7 @@ class ObsEndThread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
+        global lottery_term
         while self.running:
             time.sleep(1)
             if not (self.screen_flg and self.ball_flg):
