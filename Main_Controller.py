@@ -465,7 +465,7 @@ def deal_rank(integration_qiu_array):
                             ranking_array[r_index][8] = max_lap_count - 1
                 if (map_label_big.map_action >= len(map_label_big.path_points) / 2
                         and action_area[1] >= max_lap_count - 1):
-                    area_limit = max_area_count
+                    area_limit = max_area_count / 2
                     for i in range(len(ranking_array)):
                         ranking_array[i][8] = max_lap_count - 1
                 else:
