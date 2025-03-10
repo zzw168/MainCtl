@@ -880,28 +880,33 @@ class TcpResultThread(QThread):
                                                  "time": z_ranking_time[index]})
                                     result_data["timings"] = json.dumps(data_temp)
                                     lottery_term[12] = json.dumps(result_data)
+                                    print(lottery_term[12])
                                     try:
-                                        res_end = post_end(term, betting_end_time, term_status,
-                                                           Track_number)  # 发送游戏结束信号给服务器
+                                        res_end = post_end(term=term, betting_end_time=betting_end_time,
+                                                           status=term_status,
+                                                           Track_number=Track_number)  # 发送游戏结束信号给服务器
                                         self.signal.emit({'post_end': res_end})
                                         if res_end == 'OK':
-                                            res_result = post_result(term, betting_end_time, result_data,
-                                                                     Track_number)  # 发送最终排名给服务器
+                                            res_result = post_result(term=term, betting_end_time=betting_end_time,
+                                                                     result_data=result_data,
+                                                                     Track_number=Track_number)  # 发送最终排名给服务器
                                             self.signal.emit({'post_result': res_result})
                                             if res_result == 'OK':
                                                 lottery_term[6] = "发送成功"
                                             else:
                                                 lottery_term[6] = "发送失败"
                                             if os.path.exists(lottery_term[9]):
-                                                res_upload = post_upload(term, lottery_term[9], Track_number)  # 上传结果图片
+                                                res_upload = post_upload(term=term, img_path=lottery_term[9],
+                                                                         Track_number=Track_number)  # 上传结果图片
                                                 self.signal.emit({'post_upload': res_upload})
                                                 if res_upload == 'OK':
                                                     lottery_term[7] = "上传成功"
                                                 else:
                                                     lottery_term[7] = "上传失败"
                                             if term_comment != '':
-                                                res_marble_results = post_marble_results(term, term_comment,
-                                                                                         Track_number)  # 上传备注信息
+                                                res_marble_results = post_marble_results(term=term,
+                                                                                         comments=term_comment,
+                                                                                         Track_number=Track_number)  # 上传备注信息
                                                 self.signal.emit({'post_marble_results': res_marble_results})
                                                 if str(term) in res_marble_results:
                                                     lottery_term[8] = term_comment
@@ -1544,7 +1549,7 @@ class ZUi(QMainWindow, Ui_MainWindow):
                 cb = QCheckBox()
                 cb.setStyleSheet("""
                                     QCheckBox{margin:6px;padding-left: 1px;padding-top: 1px;}
-                                    
+
                                     QCheckBox::indicator:checked {
                                     background-color: lightgreen;
                                     border: 2px solid green;
@@ -1717,7 +1722,6 @@ def restartsignal_accept(msg):
         scroll_to_bottom(ui.textBrowser_msg)
 
 
-
 '''
     PosThread(QThread) 检测各轴位置
 '''
@@ -1806,11 +1810,13 @@ class CamThread(QThread):
                     self.signal.emit(fail("s485通信出错！"))
             self.run_flg = False
 
+
 def cam_signal_accept(msg):
     ui.textBrowser.append(msg)
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser)
     scroll_to_bottom(ui.textBrowser_msg)
+
 
 '''
     PlanBallNumThread(QThread) 摄像头运动方案线程
@@ -1949,8 +1955,6 @@ def PlanBallNumsignal_accept(msg):
         TrapBallDialog.hide()
     elif '人工检查' in msg:
         TrapBallDialog.show()
-        if ui.radioButton_start_betting.isChecked():
-            ui.radioButton_stop_betting.click()
     elif '计球倒计时' in msg:
         text_lines = ui.textBrowser_msg.toHtml().splitlines()
         if len(text_lines) >= 1:
@@ -2413,9 +2417,11 @@ class AxisThread(QThread):
                 self.signal.emit(fail('轴复位出错！'))
             self.run_flg = False
 
+
 def axis_signal_accept(msg):
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
+
 
 '''
     CmdThread(QThread) 执行运动方案线程
@@ -3126,7 +3132,7 @@ def plan_refresh():  # 刷新方案列表
         cb = QCheckBox()
         cb.setStyleSheet("""
             QCheckBox{margin:6px;padding-left: 1px;padding-top: 1px;}
-            
+
             QCheckBox::indicator:checked {
                 background-color: lightgreen;
                 border: 2px solid green;
@@ -4825,8 +4831,9 @@ class Kaj789Thread(QThread):
                 continue
             for i in range(5):
                 if self.run_type == 'post_end':
-                    res_end = post_end(term, betting_end_time, term_status,
-                                       Track_number)  # 发送游戏结束信号给服务器
+                    res_end = post_end(term=term, betting_end_time=betting_end_time,
+                                       status=term_status,
+                                       Track_number=Track_number)  # 发送游戏结束信号给服务器
                     if res_end == 'OK':
                         if term_status == 2:
                             lottery_term[3] = '已取消'
@@ -4839,8 +4846,9 @@ class Kaj789Thread(QThread):
                     else:
                         continue
                 if self.run_type == 'post_result':
-                    res_result = post_result(term, betting_end_time, result_data,
-                                             Track_number)  # 发送最终排名给服务器
+                    res_result = post_result(term=term, betting_end_time=betting_end_time,
+                                             result_data=result_data,
+                                             Track_number=Track_number)  # 发送最终排名给服务器
                     if res_result == 'OK':
                         lottery_term[6] = "发送成功"
                         self.run_type = 'post_upload'
@@ -4848,7 +4856,8 @@ class Kaj789Thread(QThread):
                     else:
                         continue
                 if self.run_type == 'post_upload' and os.path.exists(lottery_term[9]):
-                    res_upload = post_upload(term, lottery_term[9], Track_number)  # 上传结果图片
+                    res_upload = post_upload(term=term, img_path=lottery_term[9],
+                                             Track_number=Track_number)  # 上传结果图片
                     if res_upload != 'OK':
                         continue
                     else:
@@ -4857,8 +4866,9 @@ class Kaj789Thread(QThread):
                         lottery2json()  # 保存数据
                         break
                 if term_comment != '':
-                    res_marble_results = post_marble_results(term, term_comment,
-                                                             Track_number)  # 上传备注信息
+                    res_marble_results = post_marble_results(term=term,
+                                                             comments=term_comment,
+                                                             Track_number=Track_number)  # 上传备注信息
                     lottery_term[8] = term_comment
                     self.signal.emit({'post_marble_results': res_marble_results})
                     if str(term) in res_marble_results:
@@ -5930,10 +5940,6 @@ if __name__ == '__main__':
     ui.setupUi(z_window)
     z_window.show()
 
-    Kaj789Dialog = QDialog(z_window)  #
-    Kaj789_ui = Kaj789Ui()
-    Kaj789_ui.setupUi(Kaj789Dialog)
-
     TrapBallDialog = QDialog(z_window)
     TrapBall_ui = TrapBallUi()
     TrapBall_ui.setupUi(TrapBallDialog)
@@ -6205,7 +6211,7 @@ if __name__ == '__main__':
     stream_url = ''  # 流链接
     Send_Result_End = False  # 发送结果标志位
     betting_loop_flg = True  # 比赛循环标志位
-    Track_number = "M"  # 轨道直播编号
+    Track_number = "L"  # 轨道直播编号
     term_status = 1  # 赛事状态（丢球）
     term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
     term_comment = ''
@@ -6278,6 +6284,11 @@ if __name__ == '__main__':
 
     # 初始化球数组，位置寄存器
     reset_ranking_Thread.run_flg = True  # 重置排名数组
+
+    Kaj789Dialog = QDialog(z_window)  #
+    Kaj789_ui = Kaj789Ui()
+    Kaj789_ui.Track_number = Track_number
+    Kaj789_ui.setupUi(Kaj789Dialog)
     "**************************图像识别算法_结束*****************************"
 
     "**************************卫星图_开始*****************************"
