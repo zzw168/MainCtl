@@ -2156,6 +2156,8 @@ class ScreenShotThread(QThread):
                             except:
                                 self.signal.emit('send_res')
                                 Send_Result_End = False
+                        if ui.checkBox_Pass_Ranking_Twice.isChecked():
+                            break
                         time.sleep(1)
                     Send_Result_End = False
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
