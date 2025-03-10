@@ -19,7 +19,6 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
 
     def setupUi(self, z_dialog):
         super().setupUi(z_dialog)
-        self.pushButton.clicked.connect(self.table2json)
         self.loadFiles()
         self.comboBox_kaj789.currentIndexChanged.connect(self.load_json_file)
         tb_result = self.tableWidget_Results

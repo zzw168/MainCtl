@@ -1805,6 +1805,11 @@ class CamThread(QThread):
                     self.signal.emit(fail("s485通信出错！"))
             self.run_flg = False
 
+def cam_signal_accept(msg):
+    ui.textBrowser.append(msg)
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 '''
     PlanBallNumThread(QThread) 摄像头运动方案线程
@@ -2405,6 +2410,9 @@ class AxisThread(QThread):
                 self.signal.emit(fail('轴复位出错！'))
             self.run_flg = False
 
+def axis_signal_accept(msg):
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 '''
     CmdThread(QThread) 执行运动方案线程
@@ -2689,7 +2697,7 @@ class PlanCmdThread(QThread):
                 self.run_flg = False
 
 
-def signal_accept(msg):
+def cmd_signal_accept(msg):
     # print(message)
     try:
         if isinstance(msg, int):
@@ -2704,6 +2712,8 @@ def signal_accept(msg):
             if msg == '进行中':
                 tb_result = ui.tableWidget_Results
                 tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
+            ui.textBrowser_msg.append(msg)
+            scroll_to_bottom(ui.textBrowser_msg)
     except:
         print("运行数据处理出错！")
 
@@ -5993,7 +6003,7 @@ if __name__ == '__main__':
     listener.start()  # 键盘监听线程 1
 
     PlanCmd_Thread = PlanCmdThread()  # 总运行方案 2
-    PlanCmd_Thread.signal.connect(signal_accept)
+    PlanCmd_Thread.signal.connect(cmd_signal_accept)
     PlanCmd_Thread.start()
 
     PlanObs_Thread = PlanObsThread()  # OBS场景切换方案 3
@@ -6005,7 +6015,7 @@ if __name__ == '__main__':
     Shoot_Thread.start()
 
     PlanCam_Thread = CamThread()  # 摄像头运行方案 4
-    PlanCam_Thread.signal.connect(signal_accept)
+    PlanCam_Thread.signal.connect(cam_signal_accept)
     PlanCam_Thread.start()
 
     PlanBallNum_Thread = PlanBallNumThread()  # 统计过终点的球数 5
@@ -6021,7 +6031,7 @@ if __name__ == '__main__':
     ObsEnd_Thread.start()
 
     Axis_Thread = AxisThread()  # 轴复位 7
-    Axis_Thread.signal.connect(signal_accept)
+    Axis_Thread.signal.connect(axis_signal_accept)
     Axis_Thread.start()
 
     Pos_Thread = PosThread()  # 实时监控各轴位置 8
@@ -6268,6 +6278,9 @@ if __name__ == '__main__':
     "**************************图像识别算法_结束*****************************"
 
     "**************************卫星图_开始*****************************"
+    # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 发送状态,
+    #                       图片上传状态, 备注, 图片, 录像, 结束时间, 补发状态, 补传图片]
+    lottery_term = ['0'] * 15
     camera_points = []  # 摄像机移动点位 camera_points[[label内存],[区域号],[卫星图坐标]]
     audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
     ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
@@ -6437,9 +6450,6 @@ if __name__ == '__main__':
 
     "**************************参数设置_结束*****************************"
     "**************************直播大厅_开始*****************************"
-    # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 发送状态,
-    #                       图片上传状态, 备注, 图片, 录像, 结束时间, 补发状态, 补传图片]
-    lottery_term = ['0'] * 15
     # start_lottery_server_bat()  # 模拟开奖王服务器
     labels = []
     lottery_json_init()
