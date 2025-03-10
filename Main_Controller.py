@@ -3886,6 +3886,7 @@ class MapLabel(QLabel):
                                   and (self.positions[p_num][0] < len(self.path_points) / 2)
                                   and ranking_array[num][9] == 1):
                                 self.speed = 0
+                                self.positions[p_num][0] = p
                             elif p < self.positions[p_num][0] and (
                                     self.positions[p_num][0] > len(self.path_points) / 2):
                                 self.speed = 0
