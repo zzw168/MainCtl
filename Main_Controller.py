@@ -2525,10 +2525,10 @@ class PlanCmdThread(QThread):
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
                                     and not self.background_state
-                                    and (len(plan_list) / 3 * 2 <= plan_index)
+                                    and (len(plan_list) / 10 * 7 <= plan_index)
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
-                                if len(plan_list) / 4 * 3 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
+                                if len(plan_list) / 10 * 8 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
                                     PlanBallNum_Thread.run_flg = True  # 终点计数器线程
 
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
