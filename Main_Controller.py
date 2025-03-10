@@ -911,7 +911,7 @@ class TcpResultThread(QThread):
                                         else:
                                             send_flg = False
                                     except:
-                                        self.signal.emit(fail('post_result 上传结果错误！'))
+                                        self.signal.emit(fail('上传结果错误！'))
                                         print('上传结果错误！')
 
                                 self.signal.emit(succeed('第%s期 结束！' % term))
@@ -1682,6 +1682,17 @@ def restartsignal_accept(msg):
     global labels
     if isinstance(msg, bool):
         lottery_data2table(ui.tableWidget_Results, lottery_term, labels)
+    elif isinstance(msg, int):
+        if int(msg) == 1:
+            plan_refresh()
+            ui.lineEdit_ball_end.setText('0')
+            ui.lineEdit_balls_end.setText('0')
+        ui.lineEdit_time.setText(str(msg))
+        ui.lineEdit_times_count.setText(str(msg))
+        tb_result = ui.tableWidget_Results
+        row_count = tb_result.rowCount()
+        if row_count > 0:
+            tb_result.item(0, 2).setText(str(msg))
     elif '比赛开始失败' in msg:
         ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(msg)
@@ -1704,17 +1715,7 @@ def restartsignal_accept(msg):
         ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
         scroll_to_bottom(ui.textBrowser_msg)
-    elif isinstance(msg, int):
-        if int(msg) == 1:
-            plan_refresh()
-            ui.lineEdit_ball_end.setText('0')
-            ui.lineEdit_balls_end.setText('0')
-        ui.lineEdit_time.setText(str(msg))
-        ui.lineEdit_times_count.setText(str(msg))
-        tb_result = ui.tableWidget_Results
-        row_count = tb_result.rowCount()
-        if row_count > 0:
-            tb_result.item(0, 2).setText(str(msg))
+
 
 
 '''
