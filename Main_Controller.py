@@ -1619,18 +1619,18 @@ class ReStartThread(QThread):
             if ui.radioButton_start_betting.isChecked():  # 非模拟模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
+                    term = response['term']
+                    betting_start_time = response['scheduledGameStartTime']
+                    betting_end_time = response['scheduledResultOpeningTime']
+                    countdown = int(betting_start_time) - int(time.time())
+                    self.signal.emit('term_ok')
                     res_start = post_start(term=term, betting_start_time=betting_start_time,
-                                           starting_Position= str(z_ranking_res[:balls_count]),
+                                           starting_Position=str(z_ranking_res[:balls_count]),
                                            Track_number=Track_number)  # 发送开始信号给服务器
                     if str(res_start) != 'OK':
                         self.signal.emit(fail('比赛开始失败:%s' % res_start))
                         self.run_flg = False
                         break
-                    self.signal.emit('term_ok')
-                    term = response['term']
-                    betting_start_time = response['scheduledGameStartTime']
-                    betting_end_time = response['scheduledResultOpeningTime']
-                    countdown = int(betting_start_time) - int(time.time())
                     if countdown < 0:  # 时间错误，30秒后开赛
                         betting_start_time = int(time.time())
                         betting_end_time = int(time.time()) + 30
