@@ -474,7 +474,7 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][8] += 1
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = max_lap_count - 1
-                if (action_area[0] >= max_area_count / 3 * 2
+                if (action_area[0] >= max_area_count / 2
                         and action_area[1] >= max_lap_count - 1):
                     area_limit = max_area_count
                     for i in range(len(ranking_array)):
@@ -2513,7 +2513,7 @@ class PlanCmdThread(QThread):
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
                                     and not self.background_state
-                                    and (len(plan_list) / 3 * 2 <= plan_index < len(plan_list) - 2)
+                                    and (len(plan_list) / 3 * 2 <= plan_index)
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
                                 if len(plan_list) / 4 * 3 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
@@ -5091,11 +5091,15 @@ class TestStatusThread(QThread):
                     ui.frame_zzw_1.setEnabled(True)
                     ui.frame_zzw_2.setEnabled(True)
                     ui.groupBox_ranking.setEnabled(True)
+                    ui.checkBox_shoot_0.setEnabled(True)
+                    ui.lineEdit_balls_auto.setEnabled(True)
             else:
                 if ui.frame_zzw_1.isEnabled():
                     ui.frame_zzw_1.setEnabled(False)
                     ui.frame_zzw_2.setEnabled(False)
                     ui.groupBox_ranking.setEnabled(False)
+                    ui.checkBox_shoot_0.setEnabled(False)
+                    ui.lineEdit_balls_auto.setEnabled(False)
             self.signal.emit('标志')
 
 
@@ -6460,11 +6464,7 @@ if __name__ == '__main__':
     ui.radioButton_test_game.clicked.connect(test_betting)  # 模拟
     ui.checkBox_black_screen.checkStateChanged.connect(black_screen)
 
-    ui.pushButton_ready.clicked.connect(card_start)
-    ui.pushButton_start_game_2.clicked.connect(cmd_run)
     ui.pushButton_close_all.clicked.connect(card_close_all)
-    ui.pushButton_collect_ball.clicked.connect(lambda: ui.checkBox_end.setChecked(True))
-    ui.pushButton_end_game.clicked.connect(cmd_stop)
     ui.pushButton_Stop_All.clicked.connect(cmd_stop)
     # ui.pushButton_end_all.clicked.connect(stop_server)
     ui.pushButton_Main_Camera.clicked.connect(main2result)
