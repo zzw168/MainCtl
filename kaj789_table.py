@@ -1,5 +1,7 @@
 import json
 import os
+import threading
+from tkinter import messagebox
 
 from PySide6.QtCore import Qt, QEvent
 from PySide6.QtGui import QPainter, QBrush, QColor, QPen, QShowEvent
@@ -16,6 +18,14 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
     def __init__(self):
         super().__init__()
         self.labels = []
+        self.Track_number = 'L'
+        self.kaj789_thread = threading.Thread(target=self.resend_end, args=(self.Track_number, 'post_end', 1),
+                                              daemon=True)
+        """global rtsp_save_t
+    if not self.kaj789_thread.is_alive():
+        self.kaj789_thread = threading.Thread(target=self.resend_end, args=(self.Track_number, 'post_end', 1),
+                                              daemon=True)
+        self.kaj789_thread.start()"""
 
     def setupUi(self, z_dialog):
         super().setupUi(z_dialog)
@@ -119,9 +129,26 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             exe_path = tb_kaj789.item(row_num, 10).text()
             os.startfile(exe_path)
         if action == item2:
-            self.resend_end(term_status=1)
+            row = tb_kaj789.currentRow()
+            if tb_kaj789.item(row, 8).text() == '':
+                # self.resend_end(term_status=1, Track_number=self.Track_number)
+                if not self.kaj789_thread.is_alive():
+                    self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                          args=(self.Track_number, 'post_end', 1),
+                                                          daemon=True)
+                    self.kaj789_thread.start()
+            else:
+                if not self.kaj789_thread.is_alive():
+                    self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                          args=(self.Track_number, 'post_end', 0),
+                                                          daemon=True)
+                    self.kaj789_thread.start()
         if action == item3:
-            self.resend_end(term_status=0)
+            if not self.kaj789_thread.is_alive():
+                self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                      args=(self.Track_number, 'post_end', 2),
+                                                      daemon=True)
+                self.kaj789_thread.start()
         if action == item4:
             pass
 
@@ -180,7 +207,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         except Exception as e:
             print(f"读取错误: {e}")
 
-    def resend_end(self, run_type='post_end', Track_number='M', term_status=1):
+    def resend_end(self, Track_number, run_type='post_end', term_status=1):
         tb_kaj789 = self.tableWidget_Results
         row = tb_kaj789.currentRow()
         term = tb_kaj789.item(row, 0).text()
@@ -195,11 +222,13 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                 res_end = post_end(term, betting_end_time, term_status,
                                    Track_number)  # 发送游戏结束信号给服务器
                 if res_end == 'OK':
-                    if term_status == 1:
+                    if term_status in [0, 1]:
                         run_type = 'post_result'
                         tb_kaj789.item(row, 3).setText('已结束')
                     else:
-                        pass
+                        term_comment = 'Invalid Term'
+                        tb_kaj789.item(row, 8).setText(term_comment)
+                        tb_kaj789.item(row, 3).setText('已取消')
                 else:
                     continue
             if run_type == 'post_result':
@@ -212,19 +241,30 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                     continue
             if run_type == 'post_upload' and os.path.exists(img_path):
                 res_upload = post_upload(term, img_path, Track_number)  # 上传结果图片
-                if res_upload != 'OK':
-                    continue
-                else:
+                if res_upload == 'OK':
                     tb_kaj789.item(row, 7).setText('补传成功')
-                    self.table2json()  # 保存数据
-                    break
+                else:
+                    continue
             if term_comment != '':
                 res_marble_results = post_marble_results(term, term_comment,
                                                          Track_number)  # 上传备注信息
                 if str(term) in res_marble_results:
                     tb_kaj789.item(row, 8).setText(term_comment)
                     self.table2json()  # 保存数据
-                break
+                    if term_comment == 'Invalid Term':
+                        msg = '比赛取消成功！'
+                    else:
+                        msg = '比赛备注成功！'
+                    messagebox.showinfo("提示", msg)
+                    break
+            else:
+                term_comment = ' '
+                res_marble_results = post_marble_results(term, term_comment,
+                                                         Track_number)  # 上传备注信息
+                if str(term) in res_marble_results:
+                    self.table2json()  # 保存数据
+                    messagebox.showinfo("提示", "赛果上传成功！")
+                    break
 
     def table2json(self):
         tb_kaj789 = self.tableWidget_Results
@@ -243,9 +283,8 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         else:
             print(f"{filename} 不存在")
         with open(filename, "a", encoding="utf-8") as f:
-            for row in range(len(data)-1, -1, -1):
+            for row in range(len(data) - 1, -1, -1):
                 f.write(json.dumps(data[row]) + "\n")
-
 
 
 def lottery_data2table(tb_result, lottery_t, labels):  # 赛事入表

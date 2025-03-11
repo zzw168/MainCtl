@@ -491,9 +491,8 @@ class Ui_MainWindow(object):
         self.frame_6.setMaximumSize(QSize(16777215, 16777215))
         self.frame_6.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
-        self.gridLayout_70 = QGridLayout(self.frame_6)
-        self.gridLayout_70.setObjectName(u"gridLayout_70")
-        self.gridLayout_70.setContentsMargins(0, 0, -1, 0)
+        self.gridLayout_71 = QGridLayout(self.frame_6)
+        self.gridLayout_71.setObjectName(u"gridLayout_71")
         self.groupBox_10 = QGroupBox(self.frame_6)
         self.groupBox_10.setObjectName(u"groupBox_10")
         self.groupBox_10.setMinimumSize(QSize(0, 50))
@@ -525,14 +524,36 @@ class Ui_MainWindow(object):
         self.gridLayout_18.addWidget(self.checkBox_saveImgs_auto, 1, 1, 1, 1)
 
 
-        self.gridLayout_70.addWidget(self.groupBox_10, 0, 0, 1, 1)
+        self.gridLayout_71.addWidget(self.groupBox_10, 0, 0, 2, 1)
+
+        self.groupBox_11 = QGroupBox(self.frame_6)
+        self.groupBox_11.setObjectName(u"groupBox_11")
+        self.groupBox_11.setMinimumSize(QSize(0, 50))
+        self.groupBox_11.setMaximumSize(QSize(180, 100))
+        self.groupBox_11.setFont(font1)
+        self.gridLayout_70 = QGridLayout(self.groupBox_11)
+        self.gridLayout_70.setObjectName(u"gridLayout_70")
+        self.checkBox_main_camera = QCheckBox(self.groupBox_11)
+        self.checkBox_main_camera.setObjectName(u"checkBox_main_camera")
+        self.checkBox_main_camera.setMaximumSize(QSize(100, 16777215))
+
+        self.gridLayout_70.addWidget(self.checkBox_main_camera, 0, 0, 1, 1)
+
+        self.checkBox_monitor_cam = QCheckBox(self.groupBox_11)
+        self.checkBox_monitor_cam.setObjectName(u"checkBox_monitor_cam")
+        self.checkBox_monitor_cam.setMaximumSize(QSize(100, 16777215))
+
+        self.gridLayout_70.addWidget(self.checkBox_monitor_cam, 0, 1, 1, 1)
+
+
+        self.gridLayout_71.addWidget(self.groupBox_11, 0, 1, 1, 1)
 
         self.pushButton_close_all = QPushButton(self.frame_6)
         self.pushButton_close_all.setObjectName(u"pushButton_close_all")
-        self.pushButton_close_all.setMinimumSize(QSize(0, 50))
-        self.pushButton_close_all.setMaximumSize(QSize(100, 16777215))
+        self.pushButton_close_all.setMinimumSize(QSize(0, 20))
+        self.pushButton_close_all.setMaximumSize(QSize(130, 16777215))
 
-        self.gridLayout_70.addWidget(self.pushButton_close_all, 0, 1, 1, 1)
+        self.gridLayout_71.addWidget(self.pushButton_close_all, 1, 1, 1, 1)
 
 
         self.gridLayout_10.addWidget(self.frame_6, 1, 0, 1, 1)
@@ -1826,12 +1847,6 @@ class Ui_MainWindow(object):
         self.groupBox_monitor_cam.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.gridLayout_33 = QGridLayout(self.groupBox_monitor_cam)
         self.gridLayout_33.setObjectName(u"gridLayout_33")
-        self.checkBox_monitor_cam = QCheckBox(self.groupBox_monitor_cam)
-        self.checkBox_monitor_cam.setObjectName(u"checkBox_monitor_cam")
-        self.checkBox_monitor_cam.setMaximumSize(QSize(100, 16777215))
-
-        self.gridLayout_33.addWidget(self.checkBox_monitor_cam, 0, 0, 1, 1)
-
         self.label_monitor_picture = QLabel(self.groupBox_monitor_cam)
         self.label_monitor_picture.setObjectName(u"label_monitor_picture")
         self.label_monitor_picture.setMinimumSize(QSize(300, 10))
@@ -1842,7 +1857,7 @@ class Ui_MainWindow(object):
         self.pushButton_NetCamera.setObjectName(u"pushButton_NetCamera")
         self.pushButton_NetCamera.setMinimumSize(QSize(150, 0))
 
-        self.gridLayout_33.addWidget(self.pushButton_NetCamera, 0, 1, 1, 1)
+        self.gridLayout_33.addWidget(self.pushButton_NetCamera, 0, 0, 1, 1)
 
         self.groupBox_main_camera = QGroupBox(self.widget_camera)
         self.groupBox_main_camera.setObjectName(u"groupBox_main_camera")
@@ -1852,22 +1867,16 @@ class Ui_MainWindow(object):
         self.groupBox_main_camera.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.gridLayout_15 = QGridLayout(self.groupBox_main_camera)
         self.gridLayout_15.setObjectName(u"gridLayout_15")
-        self.checkBox_main_camera = QCheckBox(self.groupBox_main_camera)
-        self.checkBox_main_camera.setObjectName(u"checkBox_main_camera")
-        self.checkBox_main_camera.setMaximumSize(QSize(100, 16777215))
-
-        self.gridLayout_15.addWidget(self.checkBox_main_camera, 0, 0, 1, 1)
-
-        self.checkBox_main_camera_set = QCheckBox(self.groupBox_main_camera)
-        self.checkBox_main_camera_set.setObjectName(u"checkBox_main_camera_set")
-
-        self.gridLayout_15.addWidget(self.checkBox_main_camera_set, 0, 1, 1, 1)
-
         self.label_main_picture = QLabel(self.groupBox_main_camera)
         self.label_main_picture.setObjectName(u"label_main_picture")
         self.label_main_picture.setMinimumSize(QSize(300, 10))
 
         self.gridLayout_15.addWidget(self.label_main_picture, 1, 0, 1, 2)
+
+        self.checkBox_main_camera_set = QCheckBox(self.groupBox_main_camera)
+        self.checkBox_main_camera_set.setObjectName(u"checkBox_main_camera_set")
+
+        self.gridLayout_15.addWidget(self.checkBox_main_camera_set, 0, 0, 1, 1)
 
 
         self.gridLayout_40.addWidget(self.widget_camera, 0, 1, 1, 1)
@@ -2011,28 +2020,12 @@ class Ui_MainWindow(object):
         self.groupBox_25.setMinimumSize(QSize(0, 10))
         self.gridLayout_41 = QGridLayout(self.groupBox_25)
         self.gridLayout_41.setObjectName(u"gridLayout_41")
-        self.gridLayout_41.setContentsMargins(-1, 0, -1, 0)
         self.label_42 = QLabel(self.groupBox_25)
         self.label_42.setObjectName(u"label_42")
         self.label_42.setMinimumSize(QSize(0, 10))
         self.label_42.setFont(font1)
 
         self.gridLayout_41.addWidget(self.label_42, 0, 5, 1, 1)
-
-        self.label_27 = QLabel(self.groupBox_25)
-        self.label_27.setObjectName(u"label_27")
-        self.label_27.setMinimumSize(QSize(0, 10))
-        self.label_27.setMaximumSize(QSize(120, 16777215))
-        self.label_27.setFont(font1)
-
-        self.gridLayout_41.addWidget(self.label_27, 0, 2, 1, 1)
-
-        self.checkBox_restart = QCheckBox(self.groupBox_25)
-        self.checkBox_restart.setObjectName(u"checkBox_restart")
-        self.checkBox_restart.setMinimumSize(QSize(80, 10))
-        self.checkBox_restart.setFont(font1)
-
-        self.gridLayout_41.addWidget(self.checkBox_restart, 0, 0, 1, 1)
 
         self.lineEdit_time = QLineEdit(self.groupBox_25)
         self.lineEdit_time.setObjectName(u"lineEdit_time")
@@ -2042,15 +2035,37 @@ class Ui_MainWindow(object):
         self.lineEdit_time.setStyleSheet(u"background:rgb(238, 238, 238)")
         self.lineEdit_time.setReadOnly(True)
 
-        self.gridLayout_41.addWidget(self.lineEdit_time, 0, 3, 1, 1)
+        self.gridLayout_41.addWidget(self.lineEdit_time, 0, 4, 1, 1)
 
-        self.frame_30 = QFrame(self.groupBox_25)
-        self.frame_30.setObjectName(u"frame_30")
-        self.frame_30.setMinimumSize(QSize(20, 10))
-        self.frame_30.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_30.setFrameShadow(QFrame.Shadow.Raised)
+        self.label_97 = QLabel(self.groupBox_25)
+        self.label_97.setObjectName(u"label_97")
+        self.label_97.setMinimumSize(QSize(60, 0))
+        self.label_97.setFont(font1)
 
-        self.gridLayout_41.addWidget(self.frame_30, 0, 1, 1, 1)
+        self.gridLayout_41.addWidget(self.label_97, 0, 0, 1, 1)
+
+        self.label_27 = QLabel(self.groupBox_25)
+        self.label_27.setObjectName(u"label_27")
+        self.label_27.setMinimumSize(QSize(0, 10))
+        self.label_27.setMaximumSize(QSize(120, 16777215))
+        self.label_27.setFont(font1)
+
+        self.gridLayout_41.addWidget(self.label_27, 0, 3, 1, 1)
+
+        self.lineEdit_area_2 = QLineEdit(self.groupBox_25)
+        self.lineEdit_area_2.setObjectName(u"lineEdit_area_2")
+        self.lineEdit_area_2.setMaximumSize(QSize(50, 16777215))
+        self.lineEdit_area_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_area_2.setReadOnly(True)
+
+        self.gridLayout_41.addWidget(self.lineEdit_area_2, 0, 1, 1, 1)
+
+        self.frame_14 = QFrame(self.groupBox_25)
+        self.frame_14.setObjectName(u"frame_14")
+        self.frame_14.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_14.setFrameShadow(QFrame.Shadow.Raised)
+
+        self.gridLayout_41.addWidget(self.frame_14, 0, 2, 1, 1)
 
 
         self.gridLayout_67.addWidget(self.groupBox_25, 0, 0, 1, 2)
@@ -3455,6 +3470,9 @@ class Ui_MainWindow(object):
         self.checkBox_saveImgs.setText(QCoreApplication.translate("MainWindow", u"GPS\u5f55\u56fe", None))
         self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
         self.checkBox_saveImgs_auto.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u5f55\u56fe", None))
+        self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u6444\u50cf\u5934", None))
+        self.checkBox_main_camera.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444", None))
+        self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc", None))
         self.pushButton_close_all.setText(QCoreApplication.translate("MainWindow", u"\u5168\u90e8\u5173", None))
         self.pushButton_Backup_Camera.setText(QCoreApplication.translate("MainWindow", u"\u9009", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u673a\uff1a  ", None))
@@ -3658,13 +3676,11 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_result_0.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.groupBox_monitor_cam.setTitle(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc\u6444\u50cf\u5934\u8bc6\u522b\u7ed3\u679c", None))
-        self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u53e3\u663e\u793a", None))
         self.label_monitor_picture.setText("")
         self.pushButton_NetCamera.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc\u6444\u50cf\u5934\u8bbe\u7f6e", None))
         self.groupBox_main_camera.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u5934\u8bc6\u522b\u7ed3\u679c", None))
-        self.checkBox_main_camera.setText(QCoreApplication.translate("MainWindow", u"\u7a97\u53e3\u663e\u793a", None))
-        self.checkBox_main_camera_set.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5339\u914d\u7ec8\u70b9\u955c\u5934\u8d5b\u679c", None))
         self.label_main_picture.setText("")
+        self.checkBox_main_camera_set.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u5339\u914d\u7ec8\u70b9\u955c\u5934\u8d5b\u679c", None))
         self.groupBox_14.setTitle(QCoreApplication.translate("MainWindow", u"\u536b\u661f\u56fe", None))
         self.groupBox_7.setTitle(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u6392\u540d", None))
         ___qtablewidgetitem44 = self.tableWidget_Ranking.horizontalHeaderItem(0)
@@ -3694,8 +3710,9 @@ class Ui_MainWindow(object):
         self.pushButton_udp_time.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u50cf\u8bc6\u522b\u72b6\u6001\u6b63\u5e38", None))
         self.groupBox_18.setTitle(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u8bbe\u7f6e", None))
         self.label_42.setText(QCoreApplication.translate("MainWindow", u"\u79d2", None))
+        self.label_97.setText(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u533a\u57df\uff1a", None))
         self.label_27.setText(QCoreApplication.translate("MainWindow", u"\u5faa\u73af\u5012\u8ba1\u65f6\uff1a", None))
-        self.checkBox_restart.setText(QCoreApplication.translate("MainWindow", u"\u5faa\u73af\u6a21\u5f0f", None))
+        self.lineEdit_area_2.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.label_41.setText(QCoreApplication.translate("MainWindow", u"\u7edf\u8ba1\u7403\u65f6\u95f4\uff1a", None))
         self.lineEdit_time_count_ball.setText(QCoreApplication.translate("MainWindow", u"30", None))
         self.label_28.setText(QCoreApplication.translate("MainWindow", u"\u53d1\u9001\u7ed3\u679c\u65f6\u95f4\uff1a", None))

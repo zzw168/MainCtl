@@ -128,8 +128,8 @@ def post_result(term, betting_end_time, result_data='', Track_number='I'):  # å
                                     {"pm": 8, "id": 8, "time": 130.98},
                                     {"pm": 9, "id": 9, "time": 130.99},
                                     {"pm": 10, "id": 10, "time": 131.22}])}
-        response = requests.post('%s%s' % (url, POST_result_url), headers=headers, json=POST_result_data, timeout=10)
         print(POST_result_data)
+        response = requests.post('%s%s' % (url, POST_result_url), headers=headers, json=POST_result_data, timeout=10)
         print('result:', response.text)
         return response.text
     except requests.exceptions.Timeout:
