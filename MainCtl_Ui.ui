@@ -4518,7 +4518,7 @@
                    </property>
                   </widget>
                  </item>
-                 <item row="0" column="1">
+                 <item row="0" column="0">
                   <widget class="QPushButton" name="pushButton_NetCamera">
                    <property name="minimumSize">
                     <size>
@@ -4562,13 +4562,6 @@
                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_15">
-                 <item row="0" column="1">
-                  <widget class="QCheckBox" name="checkBox_main_camera_set">
-                   <property name="text">
-                    <string>自动匹配终点镜头赛果</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="1" column="0" colspan="2">
                   <widget class="QLabel" name="label_main_picture">
                    <property name="minimumSize">
@@ -4579,6 +4572,13 @@
                    </property>
                    <property name="text">
                     <string/>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QCheckBox" name="checkBox_main_camera_set">
+                   <property name="text">
+                    <string>自动匹配终点镜头赛果</string>
                    </property>
                   </widget>
                  </item>
