@@ -1,5 +1,7 @@
 import json
 import os
+import threading
+from tkinter import messagebox
 
 from PySide6.QtCore import Qt, QEvent
 from PySide6.QtGui import QPainter, QBrush, QColor, QPen, QShowEvent
@@ -17,6 +19,13 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         super().__init__()
         self.labels = []
         self.Track_number = 'L'
+        self.kaj789_thread = threading.Thread(target=self.resend_end, args=(self.Track_number, 'post_end', 1),
+                                              daemon=True)
+        """global rtsp_save_t
+    if not self.kaj789_thread.is_alive():
+        self.kaj789_thread = threading.Thread(target=self.resend_end, args=(self.Track_number, 'post_end', 1),
+                                              daemon=True)
+        self.kaj789_thread.start()"""
 
     def setupUi(self, z_dialog):
         super().setupUi(z_dialog)
@@ -122,11 +131,24 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         if action == item2:
             row = tb_kaj789.currentRow()
             if tb_kaj789.item(row, 8).text() == '':
-                self.resend_end(term_status=1, Track_number=self.Track_number)
+                # self.resend_end(term_status=1, Track_number=self.Track_number)
+                if not self.kaj789_thread.is_alive():
+                    self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                          args=(self.Track_number, 'post_end', 1),
+                                                          daemon=True)
+                    self.kaj789_thread.start()
             else:
-                self.resend_end(term_status=0, Track_number=self.Track_number)
+                if not self.kaj789_thread.is_alive():
+                    self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                          args=(self.Track_number, 'post_end', 0),
+                                                          daemon=True)
+                    self.kaj789_thread.start()
         if action == item3:
-            self.resend_end(term_status=2, Track_number=self.Track_number)
+            if not self.kaj789_thread.is_alive():
+                self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                      args=(self.Track_number, 'post_end', 2),
+                                                      daemon=True)
+                self.kaj789_thread.start()
         if action == item4:
             pass
 
@@ -200,11 +222,13 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                 res_end = post_end(term, betting_end_time, term_status,
                                    Track_number)  # 发送游戏结束信号给服务器
                 if res_end == 'OK':
-                    if term_status == 1:
+                    if term_status in [0, 1]:
                         run_type = 'post_result'
                         tb_kaj789.item(row, 3).setText('已结束')
                     else:
-                        pass
+                        term_comment = 'Invalid Term'
+                        tb_kaj789.item(row, 8).setText(term_comment)
+                        tb_kaj789.item(row, 3).setText('已取消')
                 else:
                     continue
             if run_type == 'post_result':
@@ -222,6 +246,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                 else:
                     tb_kaj789.item(row, 7).setText('补传成功')
                     self.table2json()  # 保存数据
+                    messagebox.showinfo("提示", "赛果上传成功！")
                     break
             if term_comment != '':
                 res_marble_results = post_marble_results(term, term_comment,
@@ -229,6 +254,11 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                 if str(term) in res_marble_results:
                     tb_kaj789.item(row, 8).setText(term_comment)
                     self.table2json()  # 保存数据
+                    if term_comment == 'Invalid Term':
+                        msg = '比赛取消成功！'
+                    else:
+                        msg = '比赛备注成功！'
+                    messagebox.showinfo("提示", msg)
                 break
 
     def table2json(self):
