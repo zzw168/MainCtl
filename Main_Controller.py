@@ -5949,19 +5949,17 @@ if __name__ == '__main__':
 
     MainCameraDialog = QDialog(z_window)
     MainCameraDialog.hideEvent = main_hide_event
-    MainCameraDialog.setWindowTitle('索尼')
     main_camera_ui = CameraUi()
     main_camera_ui.setupUi(MainCameraDialog)
-    main_camera_ui.groupBox_main_camera.setTitle('索尼摄像机识别结果')
+    main_camera_ui.groupBox_main_camera.setTitle('主摄像头')
     main_camera_ui.label_picture.mouseDoubleClickEvent = main_doubleclick_event
     ui.label_main_picture.mouseDoubleClickEvent = main_doubleclick_event
 
     MonitorCameraDialog = QDialog(z_window)
     MonitorCameraDialog.hideEvent = monitor_hide_event
-    MonitorCameraDialog.setWindowTitle('监控')
     monitor_camera_ui = CameraUi()
     monitor_camera_ui.setupUi(MonitorCameraDialog)
-    monitor_camera_ui.groupBox_main_camera.setTitle('监控摄像机识别结果')
+    monitor_camera_ui.groupBox_main_camera.setTitle('网络摄像头')
     monitor_camera_ui.label_picture.mouseDoubleClickEvent = monitor_doubleclick_event
     ui.label_monitor_picture.mouseDoubleClickEvent = monitor_doubleclick_event
 

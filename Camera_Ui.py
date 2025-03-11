@@ -52,8 +52,8 @@ class Ui_Camera_Dialog(object):
     # setupUi
 
     def retranslateUi(self, Camera_Dialog):
-        Camera_Dialog.setWindowTitle(QCoreApplication.translate("Camera_Dialog", u"\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
-        self.groupBox_main_camera.setTitle(QCoreApplication.translate("Camera_Dialog", u"\u6444\u50cf\u673a\u8bc6\u522b\u7ed3\u679c", None))
+        Camera_Dialog.setWindowTitle(QCoreApplication.translate("Camera_Dialog", u"\u7ec8\u70b9\u8bc6\u522b", None))
+        self.groupBox_main_camera.setTitle(QCoreApplication.translate("Camera_Dialog", u"\u7ec8\u70b9\u8bc6\u522b", None))
         self.label_picture.setText("")
     # retranslateUi
 
