@@ -3539,7 +3539,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem24 = self.tableWidget_Step.horizontalHeaderItem(10)
         ___qtablewidgetitem24.setText(QCoreApplication.translate("MainWindow", u"\u955c\u5934(1-80)", None));
         ___qtablewidgetitem25 = self.tableWidget_Step.horizontalHeaderItem(11)
-        ___qtablewidgetitem25.setText(QCoreApplication.translate("MainWindow", u"\u5ef6\u65f6", None));
+        ___qtablewidgetitem25.setText(QCoreApplication.translate("MainWindow", u"\u955c\u5934\u5ef6\u65f6", None));
         ___qtablewidgetitem26 = self.tableWidget_Step.horizontalHeaderItem(12)
         ___qtablewidgetitem26.setText(QCoreApplication.translate("MainWindow", u"\u673a\u5173", None));
         ___qtablewidgetitem27 = self.tableWidget_Step.horizontalHeaderItem(13)
