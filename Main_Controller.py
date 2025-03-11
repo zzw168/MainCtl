@@ -463,7 +463,7 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][8] += 1
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = max_lap_count - 1
-                if (map_label_big.map_action >= len(map_label_big.path_points) / 5
+                if (map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9
                         and action_area[1] >= max_lap_count - 1):
                     area_limit = max_area_count / 2
                     for i in range(len(ranking_array)):
@@ -1607,7 +1607,7 @@ class ReStartThread(QThread):
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
             while PlanCmd_Thread.run_flg:
-                print('PlanCmd_Thread.run_flg','~~~~~~~~~~~')
+                print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                 time.sleep(1)
             PlanCmd_Thread.background_state = True  # 运行背景
             PlanCmd_Thread.run_flg = True
