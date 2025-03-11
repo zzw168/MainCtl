@@ -1607,17 +1607,20 @@ class ReStartThread(QThread):
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
             while PlanCmd_Thread.run_flg:
+                print('PlanCmd_Thread.run_flg','~~~~~~~~~~~')
                 time.sleep(1)
             PlanCmd_Thread.background_state = True  # 运行背景
             PlanCmd_Thread.run_flg = True
             self.signal.emit('过场动画')
             if ui.checkBox_shoot_0.isChecked():
                 self.signal.emit('auto_shoot')
-                while ui.checkBox_shoot_0.isChecked():
+                while Shoot_Thread.run_flg:
                     print('等待上珠结束~~~~~~~')
                     time.sleep(1)
                     if (balls_start >= balls_count
                             or balls_start >= int(ui.lineEdit_balls_auto.text())):
+                        break
+                    if not ui.checkBox_shoot_0.isChecked():
                         break
             if not self.run_flg:
                 continue
@@ -1635,7 +1638,7 @@ class ReStartThread(QThread):
                     if str(res_start) != 'OK':
                         self.signal.emit(fail('比赛开始失败:%s' % res_start))
                         self.run_flg = False
-                        break
+                        continue
                     if countdown < 0:  # 时间错误，30秒后开赛
                         betting_start_time = int(time.time())
                         betting_end_time = int(time.time()) + 30
@@ -1673,6 +1676,7 @@ class ReStartThread(QThread):
             if self.run_flg:
                 reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                 while reset_ranking_Thread.run_flg:
+                    print('reset_ranking_Thread.run_flg', '~~~~~~~~~~~')
                     time.sleep(1)
                 while PlanCmd_Thread.run_flg:
                     print('等待背景结束~~~~~~~')
