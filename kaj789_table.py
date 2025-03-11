@@ -243,7 +243,6 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                 res_upload = post_upload(term, img_path, Track_number)  # 上传结果图片
                 if res_upload == 'OK':
                     tb_kaj789.item(row, 7).setText('补传成功')
-                    break
                 else:
                     continue
             if term_comment != '':
@@ -259,6 +258,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                     messagebox.showinfo("提示", msg)
                     break
             else:
+                term_comment = ' '
                 res_marble_results = post_marble_results(term, term_comment,
                                                          Track_number)  # 上传备注信息
                 if str(term) in res_marble_results:
