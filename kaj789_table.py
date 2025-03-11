@@ -257,13 +257,14 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                     else:
                         msg = '比赛备注成功！'
                     messagebox.showinfo("提示", msg)
-                break
+                    break
             else:
                 res_marble_results = post_marble_results(term, term_comment,
                                                          Track_number)  # 上传备注信息
                 if str(term) in res_marble_results:
                     self.table2json()  # 保存数据
                     messagebox.showinfo("提示", "赛果上传成功！")
+                    break
 
     def table2json(self):
         tb_kaj789 = self.tableWidget_Results
