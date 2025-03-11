@@ -1,28 +1,28 @@
 {
-    "Track_number": "M",
-    "balls_count": "10",
-    "cardNo": "15",
+    "Track_number": "L",
+    "balls_count": "8",
+    "cardNo": "13",
     "color_ch": {
-        "Brown": "棕 ⑦",
-        "White": "白 ⑩",
+        "Brown": "棕 ⑩",
+        "White": "白 ⑦",
         "black": "黑 ⑧",
         "blue": "蓝 ②",
         "green": "绿 ⑥",
-        "orange": "橙 ⑤",
-        "pink": "粉 ⑨",
+        "orange": "橙 ⑨",
+        "pink": "粉 ⑤",
         "purple": "紫 ④",
         "red": "红 ③",
         "yellow": "黄 ①"
     },
     "five_axis": [
+        -1,
         1,
         1,
         1,
-        1,
-        -1
+        1
     ],
     "five_key": [
-        1,
+        -1,
         1,
         1,
         1,
@@ -83,7 +83,7 @@
             0,
             0,
             0,
-            "orange",
+            "pink",
             0,
             0,
             0,
@@ -107,7 +107,7 @@
             0,
             0,
             0,
-            "Brown",
+            "White",
             0,
             0,
             0,
@@ -131,7 +131,7 @@
             0,
             0,
             0,
-            "pink",
+            "orange",
             0,
             0,
             0,
@@ -143,40 +143,40 @@
             0,
             0,
             0,
-            "White",
+            "Brown",
             0,
             0,
             0,
             0
         ]
     ],
-    "lineEdit_alarm": "14",
-    "lineEdit_end": "4",
-    "lineEdit_end1_Path": "D:/数据/14_黄山_终点/obs",
+    "lineEdit_alarm": "10",
+    "lineEdit_end": "5",
+    "lineEdit_end1_Path": "D:/数据/瀑布_终点/obs",
     "lineEdit_end2_Path": "D:/rtsp",
-    "lineEdit_saidao_Path": "Z:/14_黄山_赛道",
-    "lineEdit_shake": "3",
+    "lineEdit_saidao_Path": "Z:/瀑布_赛道",
+    "lineEdit_shake": "11",
     "lineEdit_shoot": "1",
-    "lineEdit_shoot_2": "5",
-    "lineEdit_shoot_3": "6",
-    "lineEdit_start": "2",
-    "lineEdit_start_count": "9",
+    "lineEdit_shoot_2": "2",
+    "lineEdit_shoot_3": "4",
+    "lineEdit_start": "3",
+    "lineEdit_start_count": "13",
     "lineEdit_upload_Path": "D:/数据/上报",
-    "map_line": "./img/13_华山.json",
-    "map_picture": "./img/13_华山.jpg",
+    "map_line": "./img/12_瀑布.json",
+    "map_picture": "./img/12_瀑布.jpg",
     "map_size": "680",
-    "monitor_sort": "1",
+    "monitor_sort": "0",
     "music_1": [
         false,
-        "./mp3/07_冰原背景音乐1.mp3"
+        "C:\\Users\\sss\\Desktop\\控制平台\\音效\\12_瀑布\\12_瀑布-背景音樂1.wav"
     ],
     "music_2": [
         true,
-        "./mp3/07_冰原背景音乐2.mp3"
+        "C:\\Users\\sss\\Desktop\\控制平台\\音效\\12_瀑布\\12_瀑布-背景音樂2.wav"
     ],
     "music_3": [
         false,
-        "./mp3/07_冰原背景音乐3.mp3"
+        "C:\\Users\\sss\\Desktop\\控制平台\\音效\\12_瀑布\\12_瀑布-背景音樂3.wav"
     ],
     "obs_script_addr": "http://127.0.0.1:8899",
     "pushButton_start_game": true,
@@ -185,11 +185,11 @@
         "0.0.0.0",
         "8888"
     ],
-    "rtsp_url": "rtsp://admin:123456@192.168.0.34:554/Streaming/Channels/101",
-    "s485_Axis_No": "COM22",
-    "s485_Cam_No": "COM23",
+    "rtsp_url": "rtsp://admin:123456@192.168.0.32:554/Streaming/Channels/101",
+    "s485_Axis_No": "COM24",
+    "s485_Cam_No": "COM28",
     "scene_name": "现场",
-    "sony_sort": "0",
+    "sony_sort": "1",
     "source_end": "终点1",
     "source_picture": "画中画",
     "source_ranking": "排名时间组件",
@@ -203,6 +203,7 @@
         "19734"
     ],
     "wakeup_addr": [
-        "http://192.168.0.115:8080"
+        "http://192.168.0.113:8080",
+        "http://192.168.0.127:8080"
     ]
 }

@@ -16,6 +16,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
     def __init__(self):
         super().__init__()
         self.labels = []
+        self.Track_number = 'L'
 
     def setupUi(self, z_dialog):
         super().setupUi(z_dialog)
@@ -119,9 +120,13 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             exe_path = tb_kaj789.item(row_num, 10).text()
             os.startfile(exe_path)
         if action == item2:
-            self.resend_end(term_status=1)
+            row = tb_kaj789.currentRow()
+            if tb_kaj789.item(row, 8).text() == '':
+                self.resend_end(term_status=1, Track_number=self.Track_number)
+            else:
+                self.resend_end(term_status=0, Track_number=self.Track_number)
         if action == item3:
-            self.resend_end(term_status=0)
+            self.resend_end(term_status=2, Track_number=self.Track_number)
         if action == item4:
             pass
 
@@ -180,7 +185,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         except Exception as e:
             print(f"读取错误: {e}")
 
-    def resend_end(self, run_type='post_end', Track_number='M', term_status=1):
+    def resend_end(self, Track_number, run_type='post_end', term_status=1):
         tb_kaj789 = self.tableWidget_Results
         row = tb_kaj789.currentRow()
         term = tb_kaj789.item(row, 0).text()
@@ -243,9 +248,8 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         else:
             print(f"{filename} 不存在")
         with open(filename, "a", encoding="utf-8") as f:
-            for row in range(len(data)-1, -1, -1):
+            for row in range(len(data) - 1, -1, -1):
                 f.write(json.dumps(data[row]) + "\n")
-
 
 
 def lottery_data2table(tb_result, lottery_t, labels):  # 赛事入表
