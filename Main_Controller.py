@@ -2722,6 +2722,7 @@ def cmd_signal_accept(msg):
         elif isinstance(msg, dict):
             if 'map_action' in msg.keys():
                 ui.lineEdit_area.setText(str(msg['map_action']))
+                ui.lineEdit_area_2.setText(str(msg['map_action']))
         else:
             if msg == '进行中':
                 tb_result = ui.tableWidget_Results

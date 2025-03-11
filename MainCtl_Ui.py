@@ -2011,28 +2011,12 @@ class Ui_MainWindow(object):
         self.groupBox_25.setMinimumSize(QSize(0, 10))
         self.gridLayout_41 = QGridLayout(self.groupBox_25)
         self.gridLayout_41.setObjectName(u"gridLayout_41")
-        self.gridLayout_41.setContentsMargins(-1, 0, -1, 0)
         self.label_42 = QLabel(self.groupBox_25)
         self.label_42.setObjectName(u"label_42")
         self.label_42.setMinimumSize(QSize(0, 10))
         self.label_42.setFont(font1)
 
         self.gridLayout_41.addWidget(self.label_42, 0, 5, 1, 1)
-
-        self.label_27 = QLabel(self.groupBox_25)
-        self.label_27.setObjectName(u"label_27")
-        self.label_27.setMinimumSize(QSize(0, 10))
-        self.label_27.setMaximumSize(QSize(120, 16777215))
-        self.label_27.setFont(font1)
-
-        self.gridLayout_41.addWidget(self.label_27, 0, 2, 1, 1)
-
-        self.checkBox_restart = QCheckBox(self.groupBox_25)
-        self.checkBox_restart.setObjectName(u"checkBox_restart")
-        self.checkBox_restart.setMinimumSize(QSize(80, 10))
-        self.checkBox_restart.setFont(font1)
-
-        self.gridLayout_41.addWidget(self.checkBox_restart, 0, 0, 1, 1)
 
         self.lineEdit_time = QLineEdit(self.groupBox_25)
         self.lineEdit_time.setObjectName(u"lineEdit_time")
@@ -2042,15 +2026,37 @@ class Ui_MainWindow(object):
         self.lineEdit_time.setStyleSheet(u"background:rgb(238, 238, 238)")
         self.lineEdit_time.setReadOnly(True)
 
-        self.gridLayout_41.addWidget(self.lineEdit_time, 0, 3, 1, 1)
+        self.gridLayout_41.addWidget(self.lineEdit_time, 0, 4, 1, 1)
 
-        self.frame_30 = QFrame(self.groupBox_25)
-        self.frame_30.setObjectName(u"frame_30")
-        self.frame_30.setMinimumSize(QSize(20, 10))
-        self.frame_30.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_30.setFrameShadow(QFrame.Shadow.Raised)
+        self.label_97 = QLabel(self.groupBox_25)
+        self.label_97.setObjectName(u"label_97")
+        self.label_97.setMinimumSize(QSize(60, 0))
+        self.label_97.setFont(font1)
 
-        self.gridLayout_41.addWidget(self.frame_30, 0, 1, 1, 1)
+        self.gridLayout_41.addWidget(self.label_97, 0, 0, 1, 1)
+
+        self.label_27 = QLabel(self.groupBox_25)
+        self.label_27.setObjectName(u"label_27")
+        self.label_27.setMinimumSize(QSize(0, 10))
+        self.label_27.setMaximumSize(QSize(120, 16777215))
+        self.label_27.setFont(font1)
+
+        self.gridLayout_41.addWidget(self.label_27, 0, 3, 1, 1)
+
+        self.lineEdit_area_2 = QLineEdit(self.groupBox_25)
+        self.lineEdit_area_2.setObjectName(u"lineEdit_area_2")
+        self.lineEdit_area_2.setMaximumSize(QSize(50, 16777215))
+        self.lineEdit_area_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_area_2.setReadOnly(True)
+
+        self.gridLayout_41.addWidget(self.lineEdit_area_2, 0, 1, 1, 1)
+
+        self.frame_14 = QFrame(self.groupBox_25)
+        self.frame_14.setObjectName(u"frame_14")
+        self.frame_14.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_14.setFrameShadow(QFrame.Shadow.Raised)
+
+        self.gridLayout_41.addWidget(self.frame_14, 0, 2, 1, 1)
 
 
         self.gridLayout_67.addWidget(self.groupBox_25, 0, 0, 1, 2)
@@ -3694,8 +3700,9 @@ class Ui_MainWindow(object):
         self.pushButton_udp_time.setText(QCoreApplication.translate("MainWindow", u"\u56fe\u50cf\u8bc6\u522b\u72b6\u6001\u6b63\u5e38", None))
         self.groupBox_18.setTitle(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u8bbe\u7f6e", None))
         self.label_42.setText(QCoreApplication.translate("MainWindow", u"\u79d2", None))
+        self.label_97.setText(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u533a\u57df\uff1a", None))
         self.label_27.setText(QCoreApplication.translate("MainWindow", u"\u5faa\u73af\u5012\u8ba1\u65f6\uff1a", None))
-        self.checkBox_restart.setText(QCoreApplication.translate("MainWindow", u"\u5faa\u73af\u6a21\u5f0f", None))
+        self.lineEdit_area_2.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.label_41.setText(QCoreApplication.translate("MainWindow", u"\u7edf\u8ba1\u7403\u65f6\u95f4\uff1a", None))
         self.lineEdit_time_count_ball.setText(QCoreApplication.translate("MainWindow", u"30", None))
         self.label_28.setText(QCoreApplication.translate("MainWindow", u"\u53d1\u9001\u7ed3\u679c\u65f6\u95f4\uff1a", None))
