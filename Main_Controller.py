@@ -3683,7 +3683,7 @@ class PositionsLiveThread(QThread):
                             and ui.radioButton_start_betting.isChecked()):
                         data = positions_live
                         z_ws.send(json.dumps(data))
-                        print(f"已发送数据: {data}")
+                        # print(f"已发送数据: {data}")
                     time.sleep(0.05)  # 每 2 秒发送一次
                 except Exception as e:
                     print(f"发送数据时出错: {e}")
