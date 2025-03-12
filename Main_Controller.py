@@ -496,7 +496,7 @@ def deal_rank(integration_qiu_array):
                     for i in range(len(ranking_array)):
                         ranking_array[i][8] = max_lap_count - 1
                 else:
-                    area_limit = max_area_count / 5
+                    area_limit = max_area_count / 3
                 # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < max_area_count / 4)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
@@ -860,6 +860,7 @@ class TcpResultThread(QThread):
         global term_comment
         global result_data
         global betting_loop_flg
+        global balls_start
 
         tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcp_result_socket.bind(result_tcpServer_addr)
@@ -1063,6 +1064,8 @@ def tcpsignal_accept(msg):
         scroll_to_bottom(ui.textBrowser_msg)
     else:
         if '已结束' in msg:
+            ui.lineEdit_balls_start.setText('0')
+            ui.lineEdit_ball_start.setText('0')
             ui.groupBox_term.setStyleSheet("")
         ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser_msg)
@@ -2333,6 +2336,9 @@ class ShootThread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
+        global ranking_array
+        global ball_sort
+        global balls_start
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -2340,6 +2346,17 @@ class ShootThread(QThread):
             print('弹射上珠线程！')
             self.signal.emit(succeed("正在弹射上珠。。。"))
             try:
+                ranking_array = []  # 排名数组
+                for row in range(0, len(init_array)):
+                    ranking_array.append([])
+                    for col in range(0, len(init_array[row])):
+                        ranking_array[row].append(init_array[row][col])
+                ball_sort = []  # 位置寄存器
+                for row in range(0, max_area_count + 1):
+                    ball_sort.append([])
+                    for col in range(0, max_lap_count):
+                        ball_sort[row].append([])
+                balls_start = 0  # 起点球数
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
                 sc.GASetExtDoBit(shoot_index, 1)
                 time.sleep(2)
@@ -2567,7 +2584,7 @@ class PlanCmdThread(QThread):
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
                                 sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
                                 sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
-                                sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
+                                # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                             # 轴运动
                             axis_bit = 0  # 非延迟轴统计
                             max_delay_time = 0  # 记录最大延迟时间
@@ -2720,7 +2737,7 @@ class PlanCmdThread(QThread):
                     print('另外开关~~~~~~~~~')
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
                     sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
-                    sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
+                    # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                     main_music_worker.toggle_enablesignal.emit(False)
                     self.signal.emit(succeed("运动流程：中断！"))
                 if ui.checkBox_test.isChecked():
@@ -2738,7 +2755,7 @@ class PlanCmdThread(QThread):
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
                     sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
-                    sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
+                    # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                 self.signal.emit(succeed("运动流程：完成！"))
                 print('动作已完成！')
                 if not flg_start['card']:
@@ -3927,10 +3944,10 @@ class MapLabel(QLabel):
                         for color_index in range(len(init_array)):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
-        if self.positions[0][0] - self.map_action < len(self.path_points) / 3:  # 圈数重置后，重新位置更新范围限制300个点位以内
-            if self.picture_size == 860:
-                if self.map_action < self.positions[0][0]:
-                    self.map_action = self.positions[0][0]  # 赋值实时位置
+        # if self.positions[0][0] - self.map_action < len(self.path_points) / 2:  # 圈数重置后，重新位置更新范围限制300个点位以内
+        if self.picture_size == 860:
+            if self.map_action < self.positions[0][0]:
+                self.map_action = self.positions[0][0]  # 赋值实时位置
 
         res = []
         if self.picture_size == 860:
@@ -4956,7 +4973,7 @@ def send_end():
 def cancel_end():
     global term_status
     global term_comment
-    response = messagebox.askquestion("确认", "你确定要退出吗？")
+    response = messagebox.askquestion("取消当局", "取消当局，你确定吗？")
     print(response)  # "yes" / "no"
     if "yes" in response:
         term_status = 2
