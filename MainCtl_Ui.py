@@ -493,6 +493,13 @@ class Ui_MainWindow(object):
         self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_71 = QGridLayout(self.frame_6)
         self.gridLayout_71.setObjectName(u"gridLayout_71")
+        self.pushButton_close_all = QPushButton(self.frame_6)
+        self.pushButton_close_all.setObjectName(u"pushButton_close_all")
+        self.pushButton_close_all.setMinimumSize(QSize(0, 20))
+        self.pushButton_close_all.setMaximumSize(QSize(130, 16777215))
+
+        self.gridLayout_71.addWidget(self.pushButton_close_all, 1, 2, 1, 1)
+
         self.groupBox_10 = QGroupBox(self.frame_6)
         self.groupBox_10.setObjectName(u"groupBox_10")
         self.groupBox_10.setMinimumSize(QSize(0, 50))
@@ -526,6 +533,13 @@ class Ui_MainWindow(object):
 
         self.gridLayout_71.addWidget(self.groupBox_10, 0, 0, 2, 1)
 
+        self.pushButton_ready = QPushButton(self.frame_6)
+        self.pushButton_ready.setObjectName(u"pushButton_ready")
+        self.pushButton_ready.setMinimumSize(QSize(0, 20))
+        self.pushButton_ready.setMaximumSize(QSize(130, 16777215))
+
+        self.gridLayout_71.addWidget(self.pushButton_ready, 1, 1, 1, 1)
+
         self.groupBox_11 = QGroupBox(self.frame_6)
         self.groupBox_11.setObjectName(u"groupBox_11")
         self.groupBox_11.setMinimumSize(QSize(0, 50))
@@ -546,14 +560,7 @@ class Ui_MainWindow(object):
         self.gridLayout_70.addWidget(self.checkBox_monitor_cam, 0, 1, 1, 1)
 
 
-        self.gridLayout_71.addWidget(self.groupBox_11, 0, 1, 1, 1)
-
-        self.pushButton_close_all = QPushButton(self.frame_6)
-        self.pushButton_close_all.setObjectName(u"pushButton_close_all")
-        self.pushButton_close_all.setMinimumSize(QSize(0, 20))
-        self.pushButton_close_all.setMaximumSize(QSize(130, 16777215))
-
-        self.gridLayout_71.addWidget(self.pushButton_close_all, 1, 1, 1, 1)
+        self.gridLayout_71.addWidget(self.groupBox_11, 0, 1, 1, 2)
 
 
         self.gridLayout_10.addWidget(self.frame_6, 1, 0, 1, 1)
@@ -3364,6 +3371,7 @@ class Ui_MainWindow(object):
         self.tabWidget_Ranking.setCurrentIndex(0)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_close_all.setDefault(True)
+        self.pushButton_ready.setDefault(True)
         self.pushButton_Backup_Camera.setDefault(True)
         self.pushButton_Main_Camera.setDefault(True)
         self.pushButton_Send_Result.setDefault(True)
@@ -3465,15 +3473,16 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
         self.pushButton_Stop_All.setText(QCoreApplication.translate("MainWindow", u"\u8f68\u9053\u505c\u6b62", None))
         self.pushButton_end_all.setText(QCoreApplication.translate("MainWindow", u"\u6536\u5de5", None))
+        self.pushButton_close_all.setText(QCoreApplication.translate("MainWindow", u"\u5168\u90e8\u5173", None))
         self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u4e3b\u673a\u5f55\u56fe\u64cd\u4f5c", None))
         self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
         self.checkBox_saveImgs.setText(QCoreApplication.translate("MainWindow", u"GPS\u5f55\u56fe", None))
         self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
         self.checkBox_saveImgs_auto.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u5f55\u56fe", None))
+        self.pushButton_ready.setText(QCoreApplication.translate("MainWindow", u"\u51c6\u5907", None))
         self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u6444\u50cf\u5934", None))
         self.checkBox_main_camera.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444", None))
         self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc", None))
-        self.pushButton_close_all.setText(QCoreApplication.translate("MainWindow", u"\u5168\u90e8\u5173", None))
         self.pushButton_Backup_Camera.setText(QCoreApplication.translate("MainWindow", u"\u9009", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u673a\uff1a  ", None))
         self.checkBox_Auto_Send.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8", None))

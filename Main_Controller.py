@@ -2443,6 +2443,7 @@ class PlanCmdThread(QThread):
         self.running = True
         self.background_state = False
         self.end_state = False
+        self.ready_state = False
 
     def stop(self):
         self.run_flg = False
@@ -2481,8 +2482,11 @@ class PlanCmdThread(QThread):
                     if (((((action_area[1] < int(float(plan_list[plan_index][1][0]))  # 运行圈数在设定圈数范围内
                             and (float(plan_list[plan_index][1][0]) >= 0))  # 或者设定圈数的值为 0 时，最后一圈执行
                            or float(plan_list[plan_index][1][0]) == 0)
-                          and not self.background_state and not self.end_state))
+                          and not self.background_state
+                          and not self.ready_state
+                          and not self.end_state))
                             or (float(plan_list[plan_index][1][0]) == -1 and self.background_state)  # 背景动作
+                            or (float(plan_list[plan_index][1][0]) == -3 and self.ready_state)  # 准备动作
                             or (float(plan_list[plan_index][1][0]) == -2 and self.end_state)):  # 结束动作动作
                         self.signal.emit(plan_index)  # 控制列表跟踪变色的信号
                         if (int(float(plan_list[plan_index][1][0])) == 0
@@ -2528,6 +2532,7 @@ class PlanCmdThread(QThread):
 
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
+                                    and not self.ready_state
                                     and not self.background_state
                                     and (len(plan_list) / 10 * 7 <= plan_index)
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
@@ -2660,6 +2665,12 @@ class PlanCmdThread(QThread):
                     self.background_state = False
                     self.run_flg = False
                     self.signal.emit(succeed("背景模式结束！"))
+                    continue
+                # 准备模式不循环
+                if self.ready_state:
+                    self.ready_state = False
+                    self.run_flg = False
+                    self.signal.emit(succeed("准备模式结束！"))
                     continue
                 # 结束模式不循环
                 if self.end_state:
@@ -5376,6 +5387,9 @@ def auto_shoot():  # 自动上珠
     else:
         Shoot_Thread.run_flg = False
 
+def ready_btn():
+    PlanCmd_Thread.ready_state = True  # 运行背景
+    PlanCmd_Thread.run_flg = True
 
 def kaj789_table():
     Kaj789Dialog.show()
@@ -6447,6 +6461,7 @@ if __name__ == '__main__':
 
     ui.pushButton_Send_End.clicked.connect(send_end)
     ui.pushButton_Cancel_End.clicked.connect(cancel_end)
+    ui.pushButton_ready.clicked.connect(ready_btn)
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
