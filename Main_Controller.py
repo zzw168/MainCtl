@@ -469,7 +469,7 @@ def deal_rank(integration_qiu_array):
                     for i in range(len(ranking_array)):
                         ranking_array[i][8] = max_lap_count - 1
                 else:
-                    area_limit = max_area_count / 3
+                    area_limit = max_area_count / 5
                 # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < max_area_count / 4)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
@@ -1633,7 +1633,7 @@ class ReStartThread(QThread):
                     countdown = int(betting_start_time) - int(time.time())
                     self.signal.emit('term_ok')
                     res_start = post_start(term=term, betting_start_time=betting_start_time,
-                                           starting_Position=str(z_ranking_res[:balls_count]),
+                                           starting_Position=str(z_ranking_res[:balls_count])[1:-1],
                                            Track_number=Track_number)  # 发送开始信号给服务器
                     if str(res_start) != 'OK':
                         self.signal.emit(fail('比赛开始失败:%s' % res_start))
