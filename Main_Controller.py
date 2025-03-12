@@ -1064,8 +1064,6 @@ def tcpsignal_accept(msg):
         ui.textBrowser_msg.append(message)
         scroll_to_bottom(ui.textBrowser_msg)
     elif msg == 'auto_shoot':
-        ui.lineEdit_ball_end.setText('0')
-        ui.lineEdit_balls_end.setText('0')
         ui.checkBox_shoot_0.setChecked(True)
         auto_shoot()  # 自动上珠
         ui.textBrowser_msg.append(msg)
@@ -1647,7 +1645,7 @@ class ReStartThread(QThread):
             PlanCmd_Thread.run_flg = True
             self.signal.emit('过场动画')
             if ui.checkBox_shoot_0.isChecked():
-                self.signal.emit('auto_shoot')
+                Shoot_Thread.run_flg = True
                 while Shoot_Thread.run_flg:
                     print('等待上珠结束~~~~~~~')
                     time.sleep(1)
@@ -1749,11 +1747,6 @@ def restartsignal_accept(msg):
     elif msg == 'term_ok':
         ui.groupBox_term.setStyleSheet("QGroupBox { background-color: red; }")  # 让 GroupBox 变红
         ui.pushButton_term.setText(str(term))
-    elif msg == 'auto_shoot':
-        ui.lineEdit_ball_end.setText('0')
-        ui.lineEdit_balls_end.setText('0')
-        ui.checkBox_shoot_0.setChecked(True)
-        auto_shoot()  # 自动上珠
     elif msg == 'error':
         ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
@@ -2373,7 +2366,8 @@ class ShootThread(QThread):
                     time_count += 1
                     if time_count >= 10:
                         self.signal.emit(fail("弹射上珠不够"))
-                        # break
+                        if ui.radioButton_stop_betting.isChecked():
+                            break
 
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
                 sc.GASetExtDoBit(shoot_index, 0)
@@ -2391,7 +2385,8 @@ def shootsignal_accept(msg):
     if "隐藏提示" in msg:
         BallsNumDialog.hide()
     if "弹射上珠不够" in msg:
-        BallsNumDialog.show()
+        if Shoot_Thread.run_flg :
+            BallsNumDialog.show()
 
 
 '''
@@ -5910,23 +5905,9 @@ class BallsNumUi(QDialog, Ui_Dialog_BallsNum):
 
 
 def balls_close_btn():
-    global ball_sort
-    global balls_start
-    global ranking_array
-    ranking_array = []  # 排名数组
-    for row in range(0, len(init_array)):
-        ranking_array.append([])
-        for col in range(0, len(init_array[row])):
-            ranking_array[row].append(init_array[row][col])
-    ball_sort = []  # 位置寄存器
-    for row in range(0, max_area_count + 1):
-        ball_sort.append([])
-        for col in range(0, max_lap_count):
-            ball_sort[row].append([])
-    balls_start = 0
-    ui.radioButton_stop_betting.click()
-    Shoot_Thread.run_flg = False
     ReStart_Thread.run_flg = False
+    Shoot_Thread.run_flg = False
+    ui.radioButton_stop_betting.click()
     BallsNumDialog.hide()
 
 def balls_continue_btn():
@@ -6007,7 +5988,7 @@ if __name__ == '__main__':
     BallsNum_ui = BallsNumUi()
     BallsNum_ui.setupUi(BallsNumDialog)
     BallsNum_ui.pushButton_close.clicked.connect(balls_close_btn)
-    BallsNum_ui.pushButton_continue.clicked.connect(balls_close_btn)
+    BallsNum_ui.pushButton_continue.clicked.connect(balls_continue_btn)
     # BallsNumDialog.show()
 
     OrganDialog = QDialog(z_window)
