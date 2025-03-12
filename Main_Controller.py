@@ -6,6 +6,7 @@ import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from tkinter import messagebox
 
 import pynput
 import websocket
@@ -4955,10 +4956,14 @@ def send_end():
 def cancel_end():
     global term_status
     global term_comment
-    term_status = 2
-    term_comment = term_comments[0]
-    Kaj789_Thread.run_type = 'post_end'
-    Kaj789_Thread.run_flg = True
+    response = messagebox.askquestion("确认", "你确定要退出吗？")
+    print(response)  # "yes" / "no"
+    if "yes" in response:
+        term_status = 2
+        term_comment = term_comments[0]
+        Kaj789_Thread.run_type = 'post_end'
+        Kaj789_Thread.run_flg = True
+        ui.radioButton_stop_betting.click()
     # res = post_marble_results(term, 'Invalid Term', Track_number)
     # if 'Invalid Term' in res:
     #     lottery_term[5] = '取消比赛'
