@@ -2322,7 +2322,7 @@ class ShootThread(QThread):
             try:
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
                 sc.GASetExtDoBit(shoot_index, 1)
-                time.sleep(0.5)
+                time.sleep(2)
                 end_index = int(ui.lineEdit_end.text()) - 1
                 sc.GASetExtDoBit(end_index, 0)
                 time_count = 0
@@ -5388,6 +5388,8 @@ def auto_shoot():  # 自动上珠
         Shoot_Thread.run_flg = False
 
 def ready_btn():
+    while PlanCmd_Thread.run_flg:
+        time.sleep(1)
     PlanCmd_Thread.ready_state = True  # 运行背景
     PlanCmd_Thread.run_flg = True
 
