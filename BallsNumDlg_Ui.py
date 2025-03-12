@@ -27,26 +27,24 @@ class Ui_Dialog_BallsNum(object):
         Dialog_BallsNum.setMaximumSize(QSize(500, 230))
         self.gridLayout = QGridLayout(Dialog_BallsNum)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.label_3 = QLabel(Dialog_BallsNum)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setMaximumSize(QSize(16777215, 20))
+        self.label = QLabel(Dialog_BallsNum)
+        self.label.setObjectName(u"label")
         font = QFont()
-        font.setPointSize(12)
+        font.setPointSize(36)
         font.setBold(False)
-        self.label_3.setFont(font)
-        self.label_3.setStyleSheet(u"color: rgb(255, 0, 0);")
-        self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label.setFont(font)
+        self.label.setStyleSheet(u"color: rgb(255, 0, 0);")
+        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.gridLayout.addWidget(self.label_3, 0, 0, 1, 3)
+        self.gridLayout.addWidget(self.label, 1, 0, 1, 5)
 
-        self.label_2 = QLabel(Dialog_BallsNum)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setMaximumSize(QSize(16777215, 30))
-        self.label_2.setFont(font)
-        self.label_2.setStyleSheet(u"color: rgb(255, 0, 0);")
-        self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.pushButton_close = QPushButton(Dialog_BallsNum)
+        self.pushButton_close.setObjectName(u"pushButton_close")
+        self.pushButton_close.setMinimumSize(QSize(150, 38))
+        self.pushButton_close.setMaximumSize(QSize(200, 16777215))
+        self.pushButton_close.setStyleSheet(u"background:rgb(0,240,0)")
 
-        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 3)
+        self.gridLayout.addWidget(self.pushButton_close, 4, 3, 1, 1)
 
         self.label_4 = QLabel(Dialog_BallsNum)
         self.label_4.setObjectName(u"label_4")
@@ -58,25 +56,27 @@ class Ui_Dialog_BallsNum(object):
         self.label_4.setStyleSheet(u"color: rgb(0, 200, 0);")
         self.label_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.gridLayout.addWidget(self.label_4, 2, 0, 1, 3)
+        self.gridLayout.addWidget(self.label_4, 2, 0, 1, 5)
 
-        self.pushButton_ok = QPushButton(Dialog_BallsNum)
-        self.pushButton_ok.setObjectName(u"pushButton_ok")
-        self.pushButton_ok.setMinimumSize(QSize(0, 38))
-        self.pushButton_ok.setMaximumSize(QSize(200, 16777215))
-
-        self.gridLayout.addWidget(self.pushButton_ok, 4, 1, 1, 1)
-
-        self.label = QLabel(Dialog_BallsNum)
-        self.label.setObjectName(u"label")
+        self.label_2 = QLabel(Dialog_BallsNum)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setMaximumSize(QSize(16777215, 30))
         font2 = QFont()
-        font2.setPointSize(36)
+        font2.setPointSize(12)
         font2.setBold(False)
-        self.label.setFont(font2)
-        self.label.setStyleSheet(u"color: rgb(255, 0, 0);")
-        self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label_2.setFont(font2)
+        self.label_2.setStyleSheet(u"color: rgb(255, 0, 0);")
+        self.label_2.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.gridLayout.addWidget(self.label, 1, 0, 1, 3)
+        self.gridLayout.addWidget(self.label_2, 3, 0, 1, 5)
+
+        self.pushButton_continue = QPushButton(Dialog_BallsNum)
+        self.pushButton_continue.setObjectName(u"pushButton_continue")
+        self.pushButton_continue.setMinimumSize(QSize(150, 38))
+        self.pushButton_continue.setMaximumSize(QSize(200, 16777215))
+        self.pushButton_continue.setStyleSheet(u"background:rgb(240,0,0)")
+
+        self.gridLayout.addWidget(self.pushButton_continue, 4, 1, 1, 1)
 
         self.frame = QFrame(Dialog_BallsNum)
         self.frame.setObjectName(u"frame")
@@ -93,7 +93,23 @@ class Ui_Dialog_BallsNum(object):
         self.frame_2.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
 
-        self.gridLayout.addWidget(self.frame_2, 4, 2, 1, 1)
+        self.gridLayout.addWidget(self.frame_2, 4, 4, 1, 1)
+
+        self.label_3 = QLabel(Dialog_BallsNum)
+        self.label_3.setObjectName(u"label_3")
+        self.label_3.setMaximumSize(QSize(16777215, 20))
+        self.label_3.setFont(font2)
+        self.label_3.setStyleSheet(u"color: rgb(255, 0, 0);")
+        self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.gridLayout.addWidget(self.label_3, 0, 0, 1, 5)
+
+        self.frame_3 = QFrame(Dialog_BallsNum)
+        self.frame_3.setObjectName(u"frame_3")
+        self.frame_3.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_3.setFrameShadow(QFrame.Shadow.Raised)
+
+        self.gridLayout.addWidget(self.frame_3, 4, 2, 1, 1)
 
 
         self.retranslateUi(Dialog_BallsNum)
@@ -103,10 +119,11 @@ class Ui_Dialog_BallsNum(object):
 
     def retranslateUi(self, Dialog_BallsNum):
         Dialog_BallsNum.setWindowTitle(QCoreApplication.translate("Dialog_BallsNum", u"\u7ed3\u679c\u786e\u8ba4", None))
-        self.label_3.setText("")
-        self.label_2.setText(QCoreApplication.translate("Dialog_BallsNum", u"Please confirm that there are 8 balls at the starting point", None))
-        self.label_4.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u81ea\u52a8\u5c01\u76d8\uff0c\u5f00\u8d5b\u8bf7\u91cd\u65b0\u5f00\u76d8", None))
-        self.pushButton_ok.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u786e\u8ba4(confirm)", None))
         self.label.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u8bf7\u786e\u8ba4\u8d77\u70b9\u67098\u9897\u7403", None))
+        self.pushButton_close.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u5c01\u76d8(Closing)", None))
+        self.label_4.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u8bf7\u9009\u62e9\u662f\u5426\u5c01\u76d8", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog_BallsNum", u"Please confirm that there are 8 balls at the starting point", None))
+        self.pushButton_continue.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u7ee7\u7eed\u5f00\u8d5b(Continue)", None))
+        self.label_3.setText("")
     # retranslateUi
 

@@ -155,6 +155,18 @@ def obs_open():
     if not Obs_Thread.isRunning():
         Obs_Thread.start()
 
+def obs_stream():
+    print(ui.status_live.styleSheet())
+    try:
+        if '(255, 0, 0)' in ui.status_live.styleSheet():
+            cl_request.start_stream()
+        else:
+            cl_request.stop_stream()
+    except:
+        print('obs 直播 错误！')
+        ui.textBrowser_msg.append(fail('obs 直播 错误！'))
+        flg_start['obs'] = False
+
 
 class SourceThread(QObject):
     sourcesignal = Signal(object)
@@ -2333,10 +2345,13 @@ class ShootThread(QThread):
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         self.signal.emit(succeed("隐藏提示"))
                         break
+                    if BallsNum_ui.go_flg:
+                        BallsNum_ui.go_flg = False
+                        break
                     time_count += 1
                     if time_count >= 10:
                         self.signal.emit(fail("弹射上珠不够"))
-                        break
+                        # break
 
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
                 sc.GASetExtDoBit(shoot_index, 0)
@@ -2355,7 +2370,6 @@ def shootsignal_accept(msg):
         BallsNumDialog.hide()
     if "弹射上珠不够" in msg:
         BallsNumDialog.show()
-        ui.radioButton_stop_betting.click()
 
 
 '''
@@ -5142,6 +5156,23 @@ def test_ai_end():
         flg_start['ai_end'] = False
 
 
+def maintain_screen():  # OBS维护
+    if ui.checkBox_maintain.isChecked() and flg_start['obs']:
+        try:
+            cl_request.set_current_program_scene('维护')
+        except:
+            print('obs 维护 错误！')
+            ui.textBrowser_msg.append(fail('obs 维护 错误！'))
+            flg_start['obs'] = False
+    else:
+        try:
+            cl_request.set_current_program_scene(obs_data['obs_scene'])
+        except:
+            print('obs %s 错误！' % obs_data['obs_scene'])
+            ui.textBrowser_msg.append(fail('obs %s 错误！' % obs_data['obs_scene']))
+            flg_start['obs'] = False
+
+
 def black_screen():  # OBS黑屏
     if ui.checkBox_black_screen.isChecked() and flg_start['obs']:
         try:
@@ -5388,10 +5419,12 @@ def auto_shoot():  # 自动上珠
         Shoot_Thread.run_flg = False
 
 def ready_btn():
-    while PlanCmd_Thread.run_flg:
-        time.sleep(1)
-    PlanCmd_Thread.ready_state = True  # 运行背景
-    PlanCmd_Thread.run_flg = True
+    if ui.radioButton_stop_betting.isChecked():
+        while PlanCmd_Thread.run_flg:
+            print('等待动作结束~~~~~~~~')
+            time.sleep(1)
+        PlanCmd_Thread.ready_state = True  # 运行准备
+        PlanCmd_Thread.run_flg = True
 
 def kaj789_table():
     Kaj789Dialog.show()
@@ -5845,12 +5878,13 @@ class ResultUi(QDialog, Ui_Dialog_Result):
 class BallsNumUi(QDialog, Ui_Dialog_BallsNum):
     def __init__(self):
         super().__init__()
+        self.go_flg = False
 
     def setupUi(self, z_dialog):
         super(BallsNumUi, self).setupUi(z_dialog)
 
 
-def balls_num_btn():
+def balls_close_btn():
     global ball_sort
     global balls_start
     global ranking_array
@@ -5865,6 +5899,12 @@ def balls_num_btn():
         for col in range(0, max_lap_count):
             ball_sort[row].append([])
     balls_start = 0
+    ui.radioButton_stop_betting.click()
+    Shoot_Thread.run_flg = False
+    BallsNumDialog.hide()
+
+def balls_continue_btn():
+    BallsNum_ui.go_flg = True
     BallsNumDialog.hide()
 
 
@@ -5940,7 +5980,8 @@ if __name__ == '__main__':
     BallsNumDialog = QDialog(z_window)  #
     BallsNum_ui = BallsNumUi()
     BallsNum_ui.setupUi(BallsNumDialog)
-    BallsNum_ui.pushButton_ok.clicked.connect(balls_num_btn)
+    BallsNum_ui.pushButton_close.clicked.connect(balls_close_btn)
+    BallsNum_ui.pushButton_continue.clicked.connect(balls_close_btn)
     # BallsNumDialog.show()
 
     OrganDialog = QDialog(z_window)
@@ -6128,6 +6169,7 @@ if __name__ == '__main__':
     Source_Thread = SourceThread()  # OBS来源入表 13
     Source_Thread.sourcesignal.connect(sourcesignal_accept)
 
+    ui.status_live.clicked.connect(obs_stream)
     ui.pushButton_ObsConnect.clicked.connect(obs_open)
     ui.comboBox_Scenes.activated.connect(scenes_change)
 
@@ -6469,6 +6511,7 @@ if __name__ == '__main__':
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
     ui.radioButton_test_game.clicked.connect(test_betting)  # 模拟
     ui.checkBox_black_screen.checkStateChanged.connect(black_screen)
+    ui.checkBox_maintain.checkStateChanged.connect(maintain_screen)
 
     ui.pushButton_close_all.clicked.connect(card_close_all)
     ui.pushButton_Stop_All.clicked.connect(cmd_stop)
