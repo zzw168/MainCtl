@@ -307,25 +307,19 @@ def get_picture(scence_current):
     except:
         flg_start['obs'] = False
         return ['', '[1]', 'obs']
-    base64_string = resp.image_data[22:]
-    # 1. 解码 Base64 字符串为二进制数据
-    image_data = base64.b64decode(base64_string)
-
-    # 2. 转换为 NumPy 数组
-    nparr = np.frombuffer(image_data, np.uint8)
-
-    # 3. 使用 OpenCV 读取图片
-    image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-    # 4. 定义裁剪区域 (y1:y2, x1:x2)
-    area = area_Code['main'][0]['coordinates']
-    x1, x2 = area[0][0], area[1][0]
-    y1, y2 = area[1][1], area[2][1]
-    cropped_image = image[y1:y2, x1:x2]
-
-    # 5. 可选：转换裁剪后的图片回 Base64
-    _, buffer = cv2.imencode('.jpg', cropped_image)
-    img = base64.b64encode(buffer).decode("utf-8")
+    if len(area_Code['main']) > 0:
+        base64_string = resp.image_data[22:]
+        image_data = base64.b64decode(base64_string)    # 1. 解码 Base64 字符串为二进制数据
+        nparr = np.frombuffer(image_data, np.uint8)     # 2. 转换为 NumPy 数组
+        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)   # 3. 使用 OpenCV 读取图片
+        area = area_Code['main'][0]['coordinates']      # 4. 定义裁剪区域 (y1:y2, x1:x2)
+        x1, x2 = area[0][0], area[1][0]
+        y1, y2 = area[1][1], area[2][1]
+        cropped_image = image[y1:y2, x1:x2]
+        _, buffer = cv2.imencode('.jpg', cropped_image) # 5. 可选：转换裁剪后的图片回 Base64
+        img = base64.b64encode(buffer).decode("utf-8")
+    else:
+        img = resp.image_data[22:]
     # if os.path.exists(ui.lineEdit_upload_Path.text()):
     #     img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_upload_Path.text(), lottery_term[0], int(time.time()))
     #     str2image_file(img, img_file)  # 保存图片
@@ -394,15 +388,13 @@ def get_rtsp(rtsp_url):
         ret, frame = cap.read()
         cap.release()
         if ret:
-            # 获取裁剪区域坐标
-            area = area_Code['net'][0]['coordinates']
-            x1, x2 = area[0][0], area[1][0]
-            y1, y2 = area[1][1], area[2][1]
-            # x1, x2 = 100, 1000
-            # y1, y2 = 100, 1000
-            #
-            cropped_image = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
-            success, jpeg_data = cv2.imencode('.jpg', cropped_image)
+            if len(area_Code['main']) > 0:
+                # 获取裁剪区域坐标
+                area = area_Code['net'][0]['coordinates']
+                x1, x2 = area[0][0], area[1][0]
+                y1, y2 = area[1][1], area[2][1]
+                frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
+            success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
                 # 将 JPEG 数据转换为 Base64 字符串
                 jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
