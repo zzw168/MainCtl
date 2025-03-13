@@ -1026,12 +1026,14 @@ def tcpsignal_accept(msg):
                     tb_result.setItem(0, i, item)
                 else:
                     tb_result.item(0, i).setText(lottery_term[i])
+        ui.radioButton_music_2.click()
     # print(msg)
     elif msg == '黑屏':
         ui.radioButton_stop_betting.click()  # 封盘
         ui.checkBox_black_screen.click()
     elif msg == '封盘':
         ui.radioButton_stop_betting.click()  # 封盘
+        ui.radioButton_music_3.click()
     elif isinstance(msg, dict):
         message = msg
         if 'post_end' in msg.keys():
@@ -2799,6 +2801,7 @@ def cmd_signal_accept(msg):
             if msg == '进行中':
                 tb_result = ui.tableWidget_Results
                 tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
+                ui.radioButton_music_1.click()
             ui.textBrowser_msg.append(msg)
             scroll_to_bottom(ui.textBrowser_msg)
     except:

@@ -1543,7 +1543,7 @@ class Ui_MainWindow(object):
         self.tableWidget_Audio.horizontalHeader().setDefaultSectionSize(80)
         self.tableWidget_Audio.horizontalHeader().setStretchLastSection(True)
 
-        self.gridLayout_46.addWidget(self.tableWidget_Audio, 3, 0, 1, 4)
+        self.gridLayout_46.addWidget(self.tableWidget_Audio, 3, 0, 1, 3)
 
         self.checkBox_main_music = QCheckBox(self.groupBox_22)
         self.checkBox_main_music.setObjectName(u"checkBox_main_music")
@@ -1554,12 +1554,17 @@ class Ui_MainWindow(object):
         self.pushButton_del_Audio = QPushButton(self.groupBox_22)
         self.pushButton_del_Audio.setObjectName(u"pushButton_del_Audio")
 
-        self.gridLayout_46.addWidget(self.pushButton_del_Audio, 2, 2, 1, 1)
+        self.gridLayout_46.addWidget(self.pushButton_del_Audio, 2, 1, 1, 1)
 
         self.pushButton_save_Audio = QPushButton(self.groupBox_22)
         self.pushButton_save_Audio.setObjectName(u"pushButton_save_Audio")
 
-        self.gridLayout_46.addWidget(self.pushButton_save_Audio, 2, 3, 1, 1)
+        self.gridLayout_46.addWidget(self.pushButton_save_Audio, 2, 2, 1, 1)
+
+        self.pushButton_add_Audio = QPushButton(self.groupBox_22)
+        self.pushButton_add_Audio.setObjectName(u"pushButton_add_Audio")
+
+        self.gridLayout_46.addWidget(self.pushButton_add_Audio, 2, 0, 1, 1)
 
         self.frame_162 = QFrame(self.groupBox_22)
         self.frame_162.setObjectName(u"frame_162")
@@ -1584,17 +1589,7 @@ class Ui_MainWindow(object):
         self.gridLayout_50.addWidget(self.radioButton_music_3, 0, 2, 1, 1)
 
 
-        self.gridLayout_46.addWidget(self.frame_162, 1, 2, 1, 2)
-
-        self.lineEdit_music = QLineEdit(self.groupBox_22)
-        self.lineEdit_music.setObjectName(u"lineEdit_music")
-
-        self.gridLayout_46.addWidget(self.lineEdit_music, 1, 1, 1, 1)
-
-        self.pushButton_add_Audio = QPushButton(self.groupBox_22)
-        self.pushButton_add_Audio.setObjectName(u"pushButton_add_Audio")
-
-        self.gridLayout_46.addWidget(self.pushButton_add_Audio, 2, 0, 1, 2)
+        self.gridLayout_46.addWidget(self.frame_162, 1, 1, 1, 2)
 
 
         self.gridLayout_42.addWidget(self.groupBox_22, 2, 0, 1, 1)
@@ -2420,48 +2415,90 @@ class Ui_MainWindow(object):
         self.groupBox_26.setFont(font1)
         self.gridLayout_53 = QGridLayout(self.groupBox_26)
         self.gridLayout_53.setObjectName(u"gridLayout_53")
-        self.lineEdit_music_3 = QLineEdit(self.groupBox_26)
-        self.lineEdit_music_3.setObjectName(u"lineEdit_music_3")
-        self.lineEdit_music_3.setMinimumSize(QSize(300, 0))
-        self.lineEdit_music_3.setFont(font5)
-        self.lineEdit_music_3.setReadOnly(False)
+        self.radioButton_music_background_1 = QRadioButton(self.groupBox_26)
+        self.radioButton_music_background_1.setObjectName(u"radioButton_music_background_1")
+        self.radioButton_music_background_1.setFont(font6)
 
-        self.gridLayout_53.addWidget(self.lineEdit_music_3, 4, 1, 1, 2)
+        self.gridLayout_53.addWidget(self.radioButton_music_background_1, 0, 0, 1, 1)
+
+        self.lineEdit_music_1 = QLineEdit(self.groupBox_26)
+        self.lineEdit_music_1.setObjectName(u"lineEdit_music_1")
+        self.lineEdit_music_1.setMinimumSize(QSize(200, 0))
+        self.lineEdit_music_1.setFont(font5)
+        self.lineEdit_music_1.setReadOnly(False)
+
+        self.gridLayout_53.addWidget(self.lineEdit_music_1, 0, 1, 1, 1)
+
+        self.label_98 = QLabel(self.groupBox_26)
+        self.label_98.setObjectName(u"label_98")
+        self.label_98.setFont(font6)
+
+        self.gridLayout_53.addWidget(self.label_98, 0, 2, 1, 1)
+
+        self.lineEdit_volume_1 = QLineEdit(self.groupBox_26)
+        self.lineEdit_volume_1.setObjectName(u"lineEdit_volume_1")
+        self.lineEdit_volume_1.setMinimumSize(QSize(30, 0))
+        self.lineEdit_volume_1.setFont(font5)
+        self.lineEdit_volume_1.setReadOnly(False)
+
+        self.gridLayout_53.addWidget(self.lineEdit_volume_1, 0, 3, 1, 1)
 
         self.radioButton_music_background_2 = QRadioButton(self.groupBox_26)
         self.radioButton_music_background_2.setObjectName(u"radioButton_music_background_2")
         self.radioButton_music_background_2.setFont(font6)
         self.radioButton_music_background_2.setChecked(True)
 
-        self.gridLayout_53.addWidget(self.radioButton_music_background_2, 3, 0, 1, 1)
+        self.gridLayout_53.addWidget(self.radioButton_music_background_2, 1, 0, 1, 1)
 
         self.lineEdit_music_2 = QLineEdit(self.groupBox_26)
         self.lineEdit_music_2.setObjectName(u"lineEdit_music_2")
-        self.lineEdit_music_2.setMinimumSize(QSize(300, 0))
+        self.lineEdit_music_2.setMinimumSize(QSize(200, 0))
         self.lineEdit_music_2.setFont(font5)
         self.lineEdit_music_2.setReadOnly(False)
 
-        self.gridLayout_53.addWidget(self.lineEdit_music_2, 3, 1, 1, 2)
+        self.gridLayout_53.addWidget(self.lineEdit_music_2, 1, 1, 1, 1)
 
-        self.radioButton_music_background_1 = QRadioButton(self.groupBox_26)
-        self.radioButton_music_background_1.setObjectName(u"radioButton_music_background_1")
-        self.radioButton_music_background_1.setFont(font6)
+        self.label_99 = QLabel(self.groupBox_26)
+        self.label_99.setObjectName(u"label_99")
+        self.label_99.setFont(font6)
 
-        self.gridLayout_53.addWidget(self.radioButton_music_background_1, 2, 0, 1, 1)
+        self.gridLayout_53.addWidget(self.label_99, 1, 2, 1, 1)
 
-        self.lineEdit_music_1 = QLineEdit(self.groupBox_26)
-        self.lineEdit_music_1.setObjectName(u"lineEdit_music_1")
-        self.lineEdit_music_1.setMinimumSize(QSize(300, 0))
-        self.lineEdit_music_1.setFont(font5)
-        self.lineEdit_music_1.setReadOnly(False)
+        self.lineEdit_volume_2 = QLineEdit(self.groupBox_26)
+        self.lineEdit_volume_2.setObjectName(u"lineEdit_volume_2")
+        self.lineEdit_volume_2.setMinimumSize(QSize(30, 0))
+        self.lineEdit_volume_2.setFont(font5)
+        self.lineEdit_volume_2.setReadOnly(False)
 
-        self.gridLayout_53.addWidget(self.lineEdit_music_1, 2, 1, 1, 2)
+        self.gridLayout_53.addWidget(self.lineEdit_volume_2, 1, 3, 1, 1)
 
         self.radioButton_music_background_3 = QRadioButton(self.groupBox_26)
         self.radioButton_music_background_3.setObjectName(u"radioButton_music_background_3")
         self.radioButton_music_background_3.setFont(font6)
 
-        self.gridLayout_53.addWidget(self.radioButton_music_background_3, 4, 0, 1, 1)
+        self.gridLayout_53.addWidget(self.radioButton_music_background_3, 2, 0, 1, 1)
+
+        self.lineEdit_music_3 = QLineEdit(self.groupBox_26)
+        self.lineEdit_music_3.setObjectName(u"lineEdit_music_3")
+        self.lineEdit_music_3.setMinimumSize(QSize(200, 0))
+        self.lineEdit_music_3.setFont(font5)
+        self.lineEdit_music_3.setReadOnly(False)
+
+        self.gridLayout_53.addWidget(self.lineEdit_music_3, 2, 1, 1, 1)
+
+        self.label_100 = QLabel(self.groupBox_26)
+        self.label_100.setObjectName(u"label_100")
+        self.label_100.setFont(font6)
+
+        self.gridLayout_53.addWidget(self.label_100, 2, 2, 1, 1)
+
+        self.lineEdit_volume_3 = QLineEdit(self.groupBox_26)
+        self.lineEdit_volume_3.setObjectName(u"lineEdit_volume_3")
+        self.lineEdit_volume_3.setMinimumSize(QSize(30, 0))
+        self.lineEdit_volume_3.setFont(font5)
+        self.lineEdit_volume_3.setReadOnly(False)
+
+        self.gridLayout_53.addWidget(self.lineEdit_volume_3, 2, 3, 1, 1)
 
 
         self.gridLayout_54.addWidget(self.groupBox_26, 0, 0, 1, 1)
@@ -3402,7 +3439,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(2)
+        self.tabWidget_Ranking.setCurrentIndex(0)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_close_all.setDefault(True)
         self.pushButton_ready.setDefault(True)
@@ -3645,13 +3682,13 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem37.setText(QCoreApplication.translate("MainWindow", u"\u97f3\u91cf(0-1)", None));
         ___qtablewidgetitem38 = self.tableWidget_Audio.horizontalHeaderItem(4)
         ___qtablewidgetitem38.setText(QCoreApplication.translate("MainWindow", u"\u9009\u62e9\u6587\u4ef6", None));
-        self.checkBox_main_music.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3    \u97f3\u91cf:", None))
+        self.checkBox_main_music.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3", None))
         self.pushButton_del_Audio.setText(QCoreApplication.translate("MainWindow", u"\u51cf\u5c11\u70b9\u4f4d", None))
         self.pushButton_save_Audio.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u70b9\u4f4d", None))
+        self.pushButton_add_Audio.setText(QCoreApplication.translate("MainWindow", u"\u589e\u52a0\u70b9\u4f4d", None))
         self.radioButton_music_1.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f31", None))
         self.radioButton_music_2.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f32", None))
         self.radioButton_music_3.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f33", None))
-        self.pushButton_add_Audio.setText(QCoreApplication.translate("MainWindow", u"\u589e\u52a0\u70b9\u4f4d", None))
         self.groupBox_19.setTitle(QCoreApplication.translate("MainWindow", u"AI\u8bed\u97f3\u70b9\u4f4d\u8bbe\u7f6e", None))
         self.pushButton_add_Ai.setText(QCoreApplication.translate("MainWindow", u"\u589e\u52a0\u70b9\u4f4d", None))
         self.pushButton_del_Ai.setText(QCoreApplication.translate("MainWindow", u"\u51cf\u5c11\u70b9\u4f4d", None))
@@ -3821,21 +3858,36 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_shake.setText(QCoreApplication.translate("MainWindow", u"3", None))
         self.groupBox_26.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3\u8bbe\u7f6e", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_music_3.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_music_3.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e503.mp3", None))
-        self.radioButton_music_background_2.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e502\uff1a", None))
-#if QT_CONFIG(tooltip)
-        self.lineEdit_music_2.setToolTip("")
-#endif // QT_CONFIG(tooltip)
-        self.lineEdit_music_2.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e502.mp3", None))
         self.radioButton_music_background_1.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e501\uff1a", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_music_1.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_music_1.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e501.mp3", None))
+        self.label_98.setText(QCoreApplication.translate("MainWindow", u"\u97f3\u91cf1:", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_volume_1.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_volume_1.setText(QCoreApplication.translate("MainWindow", u"0.5", None))
+        self.radioButton_music_background_2.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e502\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_music_2.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_music_2.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e502.mp3", None))
+        self.label_99.setText(QCoreApplication.translate("MainWindow", u"\u97f3\u91cf2:", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_volume_2.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_volume_2.setText(QCoreApplication.translate("MainWindow", u"0.5", None))
         self.radioButton_music_background_3.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e503\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_music_3.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_music_3.setText(QCoreApplication.translate("MainWindow", u"./mp3/07_\u51b0\u539f\u80cc\u666f\u97f3\u4e503.mp3", None))
+        self.label_100.setText(QCoreApplication.translate("MainWindow", u"\u97f3\u91cf3:", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_volume_3.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_volume_3.setText(QCoreApplication.translate("MainWindow", u"0.5", None))
         self.groupBox_30.setTitle(QCoreApplication.translate("MainWindow", u"OBS\u573a\u666f\u8bbe\u7f6e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_scene_name.setToolTip("")
