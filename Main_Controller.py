@@ -156,6 +156,7 @@ def obs_open():
     if not Obs_Thread.isRunning():
         Obs_Thread.start()
 
+
 def obs_stream():
     print(ui.status_live.styleSheet())
     try:
@@ -310,14 +311,14 @@ def get_picture(scence_current):
         return ['', '[1]', 'obs']
     if len(area_Code['main']) > 0:
         base64_string = resp.image_data[22:]
-        image_data = base64.b64decode(base64_string)    # 1. 解码 Base64 字符串为二进制数据
-        nparr = np.frombuffer(image_data, np.uint8)     # 2. 转换为 NumPy 数组
-        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)   # 3. 使用 OpenCV 读取图片
-        area = area_Code['main'][0]['coordinates']      # 4. 定义裁剪区域 (y1:y2, x1:x2)
+        image_data = base64.b64decode(base64_string)  # 1. 解码 Base64 字符串为二进制数据
+        nparr = np.frombuffer(image_data, np.uint8)  # 2. 转换为 NumPy 数组
+        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)  # 3. 使用 OpenCV 读取图片
+        area = area_Code['main'][0]['coordinates']  # 4. 定义裁剪区域 (y1:y2, x1:x2)
         x1, x2 = area[0][0], area[1][0]
         y1, y2 = area[1][1], area[2][1]
         cropped_image = image[y1:y2, x1:x2]
-        _, buffer = cv2.imencode('.jpg', cropped_image) # 5. 可选：转换裁剪后的图片回 Base64
+        _, buffer = cv2.imencode('.jpg', cropped_image)  # 5. 可选：转换裁剪后的图片回 Base64
         img = base64.b64encode(buffer).decode("utf-8")
     else:
         img = resp.image_data[22:]
@@ -496,7 +497,7 @@ def deal_rank(integration_qiu_array):
                     result_count = ranking_array[r_index][6] - q_item[6]
                     if result_count >= max_area_count - area_limit:
                         ranking_array[r_index][8] += 1
-                        ranking_array[r_index][6] = 0   # 每增加一圈，重置区域
+                        ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = max_lap_count - 1
 
@@ -1958,7 +1959,7 @@ class PlanBallNumThread(QThread):
                 term_comment = term_comments[1]
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
             ObsEnd_Thread.ball_flg = True  # 结算页标志2
-            print('ObsEnd_Thread.ball_flg:%s'%ObsEnd_Thread.ball_flg,'~~~~~~~~~~~~~~~~~~~~~~')
+            print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
             Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
             main_music_worker.toggle_enablesignal.emit(False)
@@ -2392,10 +2393,11 @@ class ShootThread(QThread):
                     if int(time_count % 3) == 0:
                         self.signal.emit(fail("弹射上珠不够"))
                         if ui.radioButton_stop_betting.isChecked():
-                            break   # 封盘时不持续弹窗
+                            break  # 封盘时不持续弹窗
 
-                shoot_index = int(ui.lineEdit_shoot.text()) - 1
-                sc.GASetExtDoBit(shoot_index, 0)
+                sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)
+                sc.GASetExtDoBit(int(ui.lineEdit_shoot_2.text()) - 1, 0)
+                sc.GASetExtDoBit(int(ui.lineEdit_shoot_3.text()) - 1, 0)
                 self.run_flg = False
             except:
                 print("弹射上珠参数出错！")
@@ -2413,7 +2415,7 @@ def shootsignal_accept(msg):
     elif "隐藏提示" in msg:
         BallsNumDialog.hide()
     elif "弹射上珠不够" in msg:
-        if Shoot_Thread.run_flg :
+        if Shoot_Thread.run_flg:
             BallsNumDialog.show()
 
 
@@ -5087,12 +5089,12 @@ class ResetRankingThread(QThread):
             if flg_start['card']:
                 for index in range(0, 16):
                     if index not in [
-                                     int(ui.lineEdit_start.text()) - 1,
-                                     int(ui.lineEdit_shake.text()) - 1,
-                                     int(ui.lineEdit_end.text()) - 1,
-                                     int(ui.lineEdit_alarm.text()) - 1,
-                                     int(ui.lineEdit_start_count.text()) - 1,
-                                     ]:
+                        int(ui.lineEdit_start.text()) - 1,
+                        int(ui.lineEdit_shake.text()) - 1,
+                        int(ui.lineEdit_end.text()) - 1,
+                        int(ui.lineEdit_alarm.text()) - 1,
+                        int(ui.lineEdit_start_count.text()) - 1,
+                    ]:
                         sc.GASetExtDoBit(index, 1)
             if flg_start['obs'] and not ui.checkBox_test.isChecked():
                 try:
@@ -5493,6 +5495,7 @@ def auto_shoot():  # 自动上珠
     else:
         Shoot_Thread.run_flg = False
 
+
 def ready_btn():
     if ui.radioButton_stop_betting.isChecked():
         while PlanCmd_Thread.run_flg:
@@ -5500,6 +5503,7 @@ def ready_btn():
             time.sleep(1)
         PlanCmd_Thread.ready_state = True  # 运行准备
         PlanCmd_Thread.run_flg = True
+
 
 def kaj789_table():
     Kaj789Dialog.show()
@@ -5967,6 +5971,7 @@ def balls_close_btn():
     Shoot_Thread.run_flg = False
     ui.radioButton_stop_betting.click()
     BallsNumDialog.hide()
+
 
 def balls_continue_btn():
     BallsNum_ui.go_flg = True
