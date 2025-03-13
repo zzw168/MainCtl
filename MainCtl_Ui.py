@@ -1518,21 +1518,6 @@ class Ui_MainWindow(object):
         self.gridLayout_46 = QGridLayout(self.groupBox_22)
         self.gridLayout_46.setObjectName(u"gridLayout_46")
         self.gridLayout_46.setContentsMargins(-1, 0, -1, -1)
-        self.pushButton_add_Audio = QPushButton(self.groupBox_22)
-        self.pushButton_add_Audio.setObjectName(u"pushButton_add_Audio")
-
-        self.gridLayout_46.addWidget(self.pushButton_add_Audio, 2, 0, 1, 1)
-
-        self.pushButton_del_Audio = QPushButton(self.groupBox_22)
-        self.pushButton_del_Audio.setObjectName(u"pushButton_del_Audio")
-
-        self.gridLayout_46.addWidget(self.pushButton_del_Audio, 2, 1, 1, 1)
-
-        self.pushButton_save_Audio = QPushButton(self.groupBox_22)
-        self.pushButton_save_Audio.setObjectName(u"pushButton_save_Audio")
-
-        self.gridLayout_46.addWidget(self.pushButton_save_Audio, 2, 2, 1, 1)
-
         self.tableWidget_Audio = QTableWidget(self.groupBox_22)
         if (self.tableWidget_Audio.columnCount() < 5):
             self.tableWidget_Audio.setColumnCount(5)
@@ -1558,13 +1543,23 @@ class Ui_MainWindow(object):
         self.tableWidget_Audio.horizontalHeader().setDefaultSectionSize(80)
         self.tableWidget_Audio.horizontalHeader().setStretchLastSection(True)
 
-        self.gridLayout_46.addWidget(self.tableWidget_Audio, 3, 0, 1, 3)
+        self.gridLayout_46.addWidget(self.tableWidget_Audio, 3, 0, 1, 4)
 
         self.checkBox_main_music = QCheckBox(self.groupBox_22)
         self.checkBox_main_music.setObjectName(u"checkBox_main_music")
         self.checkBox_main_music.setFont(font1)
 
         self.gridLayout_46.addWidget(self.checkBox_main_music, 1, 0, 1, 1)
+
+        self.pushButton_del_Audio = QPushButton(self.groupBox_22)
+        self.pushButton_del_Audio.setObjectName(u"pushButton_del_Audio")
+
+        self.gridLayout_46.addWidget(self.pushButton_del_Audio, 2, 2, 1, 1)
+
+        self.pushButton_save_Audio = QPushButton(self.groupBox_22)
+        self.pushButton_save_Audio.setObjectName(u"pushButton_save_Audio")
+
+        self.gridLayout_46.addWidget(self.pushButton_save_Audio, 2, 3, 1, 1)
 
         self.frame_162 = QFrame(self.groupBox_22)
         self.frame_162.setObjectName(u"frame_162")
@@ -1589,7 +1584,17 @@ class Ui_MainWindow(object):
         self.gridLayout_50.addWidget(self.radioButton_music_3, 0, 2, 1, 1)
 
 
-        self.gridLayout_46.addWidget(self.frame_162, 1, 1, 1, 2)
+        self.gridLayout_46.addWidget(self.frame_162, 1, 2, 1, 2)
+
+        self.lineEdit_music = QLineEdit(self.groupBox_22)
+        self.lineEdit_music.setObjectName(u"lineEdit_music")
+
+        self.gridLayout_46.addWidget(self.lineEdit_music, 1, 1, 1, 1)
+
+        self.pushButton_add_Audio = QPushButton(self.groupBox_22)
+        self.pushButton_add_Audio.setObjectName(u"pushButton_add_Audio")
+
+        self.gridLayout_46.addWidget(self.pushButton_add_Audio, 2, 0, 1, 2)
 
 
         self.gridLayout_42.addWidget(self.groupBox_22, 2, 0, 1, 1)
@@ -3397,7 +3402,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(0)
+        self.tabWidget_Ranking.setCurrentIndex(2)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_close_all.setDefault(True)
         self.pushButton_ready.setDefault(True)
@@ -3630,9 +3635,6 @@ class Ui_MainWindow(object):
         self.pushButton_add_camera.setText(QCoreApplication.translate("MainWindow", u"\u589e\u52a0\u70b9\u4f4d", None))
         self.pushButton_save_camera.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u70b9\u4f4d", None))
         self.groupBox_22.setTitle(QCoreApplication.translate("MainWindow", u"\u97f3\u6548\u70b9\u4f4d\u8bbe\u7f6e", None))
-        self.pushButton_add_Audio.setText(QCoreApplication.translate("MainWindow", u"\u589e\u52a0\u70b9\u4f4d", None))
-        self.pushButton_del_Audio.setText(QCoreApplication.translate("MainWindow", u"\u51cf\u5c11\u70b9\u4f4d", None))
-        self.pushButton_save_Audio.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u70b9\u4f4d", None))
         ___qtablewidgetitem34 = self.tableWidget_Audio.horizontalHeaderItem(0)
         ___qtablewidgetitem34.setText(QCoreApplication.translate("MainWindow", u"\u97f3\u6548", None));
         ___qtablewidgetitem35 = self.tableWidget_Audio.horizontalHeaderItem(1)
@@ -3643,10 +3645,13 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem37.setText(QCoreApplication.translate("MainWindow", u"\u97f3\u91cf(0-1)", None));
         ___qtablewidgetitem38 = self.tableWidget_Audio.horizontalHeaderItem(4)
         ___qtablewidgetitem38.setText(QCoreApplication.translate("MainWindow", u"\u9009\u62e9\u6587\u4ef6", None));
-        self.checkBox_main_music.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3", None))
+        self.checkBox_main_music.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3    \u97f3\u91cf:", None))
+        self.pushButton_del_Audio.setText(QCoreApplication.translate("MainWindow", u"\u51cf\u5c11\u70b9\u4f4d", None))
+        self.pushButton_save_Audio.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u70b9\u4f4d", None))
         self.radioButton_music_1.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f31", None))
         self.radioButton_music_2.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f32", None))
         self.radioButton_music_3.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f33", None))
+        self.pushButton_add_Audio.setText(QCoreApplication.translate("MainWindow", u"\u589e\u52a0\u70b9\u4f4d", None))
         self.groupBox_19.setTitle(QCoreApplication.translate("MainWindow", u"AI\u8bed\u97f3\u70b9\u4f4d\u8bbe\u7f6e", None))
         self.pushButton_add_Ai.setText(QCoreApplication.translate("MainWindow", u"\u589e\u52a0\u70b9\u4f4d", None))
         self.pushButton_del_Ai.setText(QCoreApplication.translate("MainWindow", u"\u51cf\u5c11\u70b9\u4f4d", None))

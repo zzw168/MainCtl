@@ -4497,6 +4497,7 @@ def music_ctl():
                 mp3_name = getattr(ui, 'lineEdit_music_%s' % index).text()
                 # 加载并播放背景音乐
                 pygame.mixer.music.load(mp3_name)
+                pygame.mixer.music.set_volume(float(getattr(ui, 'lineEdit_volume_%s' % index).text()))
                 pygame.mixer.music.play(-1)  # 循环播放背景音乐
                 break
     else:
@@ -5166,6 +5167,17 @@ class TestStatusThread(QThread):
             if not flg_start['obs']:
                 if not Obs_Thread.isRunning():
                     Obs_Thread.start()
+            else:
+                try:
+                    res = cl_request.get_stream_status()
+                    if res.output_active:
+                        flg_start['live'] = True
+                    else:
+                        flg_start['live'] = False
+                except:
+                    flg_start['obs'] = False
+                    print('OBS脚本开始错误！')
+
 
             if not flg_start['ai']:  # 识别服务器
                 try:
