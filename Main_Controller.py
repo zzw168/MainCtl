@@ -1911,8 +1911,7 @@ class PlanBallNumThread(QThread):
                             # 超时则跳出循环计球
                             if ui.checkBox_Pass_Ranking_Twice.isChecked():
                                 self.run_flg = False
-                            elif sec_ % 5 == 0:
-                                self.signal.emit('人工检查')
+                            self.signal.emit('人工检查')
                             time.sleep(1)
                             if not self.run_flg:
                                 break
@@ -1953,6 +1952,7 @@ class PlanBallNumThread(QThread):
                 term_comment = term_comments[1]
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
             ObsEnd_Thread.ball_flg = True  # 结算页标志2
+            print('ObsEnd_Thread.ball_flg:%s'%ObsEnd_Thread.ball_flg,'~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
             Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
             main_music_worker.toggle_enablesignal.emit(False)
@@ -2167,9 +2167,7 @@ class ScreenShotThread(QThread):
                     ui.lineEdit_Send_Result.setText('')
                     Send_Result_End = False
                     while self.run_flg:
-                        if sec_ % 5 == 0:
-                            self.signal.emit('显示结果对话框')
-                        sec_ +=1
+                        self.signal.emit('显示结果对话框')
                         if Send_Result_End:
                             try:
                                 send_list = []
@@ -2201,6 +2199,7 @@ class ScreenShotThread(QThread):
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
+            print('ObsEnd_Thread.screen_flg:%s' % ObsEnd_Thread.screen_flg, '~~~~~~~~~~~~~~~~~~~~~~')
 
             self.run_flg = False
 
@@ -2378,13 +2377,13 @@ class ShootThread(QThread):
                         BallsNum_ui.go_flg = False
                         break
                     time_count += 1
-                    if time_count % 3 == 0:
+                    if int(time_count % 3) == 0:
                         self.signal.emit(fail("弹射上珠不够"))
                         if ui.radioButton_stop_betting.isChecked():
                             break   # 封盘时不持续弹窗
 
-                shoot_index = int(ui.lineEdit_shoot.text()) - 1
-                sc.GASetExtDoBit(shoot_index, 0)
+                # shoot_index = int(ui.lineEdit_shoot.text()) - 1
+                # sc.GASetExtDoBit(shoot_index, 0)
                 self.run_flg = False
             except:
                 print("弹射上珠参数出错！")
@@ -6539,6 +6538,7 @@ if __name__ == '__main__':
     ui.lineEdit_alarm.editingFinished.connect(save_main_json)
     ui.lineEdit_shoot_2.editingFinished.connect(save_main_json)
     ui.lineEdit_shoot_3.editingFinished.connect(save_main_json)
+    ui.lineEdit_area_limit.editingFinished.connect(save_main_json)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)
     ui.radioButton_music_background_2.clicked.connect(save_main_json)

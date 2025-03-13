@@ -151,7 +151,7 @@
         ]
     ],
     "lineEdit_alarm": "14",
-    "lineEdit_area_limit": "3",
+    "lineEdit_area_limit": "5",
     "lineEdit_end": "4",
     "lineEdit_end1_Path": "D:/数据/14_黄山_终点/obs",
     "lineEdit_end2_Path": "D:/rtsp",
