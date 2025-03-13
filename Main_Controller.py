@@ -1927,6 +1927,12 @@ class PlanBallNumThread(QThread):
                         flg_start['card'] = False
                         self.signal.emit(fail("运动板x输入通信出错！"))
                     time.sleep(0.01)
+                try:
+                    index = int(ui.lineEdit_alarm.text()) - 1
+                    sc.GASetExtDoBit(index, 0)
+                except:
+                    print('警报电压输出错误！')
+                    flg_start['card'] = False
                 self.signal.emit('检查结束')
                 for index in range(balls_count):
                     if z_ranking_time[index] == '':
@@ -2183,6 +2189,12 @@ class ScreenShotThread(QThread):
                                                 z_ranking_end[i], z_ranking_end[j] = z_ranking_end[j], z_ranking_end[i]
                                     self.signal.emit('send_ok')
                                     Send_Result_End = False
+                                    try:
+                                        index = int(ui.lineEdit_alarm.text()) - 1
+                                        sc.GASetExtDoBit(index, 0)
+                                    except:
+                                        print('警报电压输出错误！')
+                                        flg_start['card'] = False
                                     break
                                 else:
                                     Send_Result_End = False
@@ -4501,14 +4513,13 @@ def play_alarm():  # 报警音
 
 
 def stop_alarm():
-    if ui.checkBox_alarm.isChecked():
-        try:
-            index = int(ui.lineEdit_alarm.text()) - 1
-            sc.GASetExtDoBit(index, 0)
-        except:
-            print('警报电压输出错误！')
-            ui.textBrowser_msg.append(fail('警报电压输出错误！'))
-            flg_start['card'] = False
+    try:
+        index = int(ui.lineEdit_alarm.text()) - 1
+        sc.GASetExtDoBit(index, 0)
+    except:
+        print('警报电压输出错误！')
+        ui.textBrowser_msg.append(fail('警报电压输出错误！'))
+        flg_start['card'] = False
 
 
 "****************************************卫星图_结束***********************************************"
