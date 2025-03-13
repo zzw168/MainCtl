@@ -2394,8 +2394,8 @@ class ShootThread(QThread):
                         if ui.radioButton_stop_betting.isChecked():
                             break   # 封盘时不持续弹窗
 
-                # shoot_index = int(ui.lineEdit_shoot.text()) - 1
-                # sc.GASetExtDoBit(shoot_index, 0)
+                shoot_index = int(ui.lineEdit_shoot.text()) - 1
+                sc.GASetExtDoBit(shoot_index, 0)
                 self.run_flg = False
             except:
                 print("弹射上珠参数出错！")
@@ -5086,7 +5086,7 @@ class ResetRankingThread(QThread):
             alarm_worker.toggle_enablesignal.emit(False)
             if flg_start['card']:
                 for index in range(0, 16):
-                    if index not in [int(ui.lineEdit_shoot.text()) - 1,
+                    if index not in [
                                      int(ui.lineEdit_start.text()) - 1,
                                      int(ui.lineEdit_shake.text()) - 1,
                                      int(ui.lineEdit_end.text()) - 1,
