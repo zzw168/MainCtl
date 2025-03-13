@@ -3397,7 +3397,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget_Ranking.setCurrentIndex(3)
+        self.tabWidget_Ranking.setCurrentIndex(0)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_close_all.setDefault(True)
         self.pushButton_ready.setDefault(True)
@@ -3742,6 +3742,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.lineEdit_area_limit.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>\u8bbe\u7f6e\u6700\u5927\u533a\u57df\u6570</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
+        self.lineEdit_area_limit.setText(QCoreApplication.translate("MainWindow", u"5", None))
         self.label_71.setText(QCoreApplication.translate("MainWindow", u"\u5206\u4e4b\u4e00\u5168\u533a\u57df", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"\u5faa\u73af\u65f6\u95f4:", None))
 #if QT_CONFIG(tooltip)
