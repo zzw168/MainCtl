@@ -16,7 +16,7 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QDialog, QGridLayout, QGroupBox,
-    QLabel, QSizePolicy, QWidget)
+    QLabel, QPushButton, QSizePolicy, QWidget)
 
 class Ui_Camera_Dialog(object):
     def setupUi(self, Camera_Dialog):
@@ -40,7 +40,12 @@ class Ui_Camera_Dialog(object):
         self.label_picture.setObjectName(u"label_picture")
         self.label_picture.setMinimumSize(QSize(300, 10))
 
-        self.gridLayout_15.addWidget(self.label_picture, 0, 0, 1, 1)
+        self.gridLayout_15.addWidget(self.label_picture, 1, 0, 1, 1)
+
+        self.pushButton_net = QPushButton(self.groupBox_main_camera)
+        self.pushButton_net.setObjectName(u"pushButton_net")
+
+        self.gridLayout_15.addWidget(self.pushButton_net, 0, 0, 1, 1)
 
 
         self.gridLayout.addWidget(self.groupBox_main_camera, 0, 0, 1, 1)
@@ -55,5 +60,6 @@ class Ui_Camera_Dialog(object):
         Camera_Dialog.setWindowTitle(QCoreApplication.translate("Camera_Dialog", u"\u7ec8\u70b9\u8bc6\u522b", None))
         self.groupBox_main_camera.setTitle(QCoreApplication.translate("Camera_Dialog", u"\u7ec8\u70b9\u8bc6\u522b", None))
         self.label_picture.setText("")
+        self.pushButton_net.setText(QCoreApplication.translate("Camera_Dialog", u"\u7f51\u7edc\u6444\u50cf\u5934\u8bbe\u7f6e", None))
     # retranslateUi
 

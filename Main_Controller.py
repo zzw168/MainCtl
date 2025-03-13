@@ -484,27 +484,26 @@ def deal_rank(integration_qiu_array):
         replaced = False
         for q_item in integration_qiu_array:
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
-                if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
-                    result_count = ranking_array[r_index][6] - q_item[6]
-                    if result_count >= max_area_count / 2:
-                        ranking_array[r_index][8] += 1
-                        if ranking_array[r_index][8] > max_lap_count - 1:
-                            ranking_array[r_index][8] = max_lap_count - 1
                 if (map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9
                         and action_area[1] >= max_lap_count - 1):
-                    area_limit = max_area_count / 2
+                    area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
                     for i in range(len(ranking_array)):
                         ranking_array[i][8] = max_lap_count - 1
                 else:
-                    area_limit = max_area_count / 3
-                # if ((ranking_array[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
-                if ((ranking_array[r_index][6] == 0 and q_item[6] < max_area_count / 4)  # 等于0 刚初始化，未检测区域
+                    area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
+
+                if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
+                    result_count = ranking_array[r_index][6] - q_item[6]
+                    if result_count >= max_area_count - area_limit:
+                        ranking_array[r_index][8] += 1
+                        ranking_array[r_index][6] = 0   # 每增加一圈，重置区域
+                        if ranking_array[r_index][8] > max_lap_count - 1:
+                            ranking_array[r_index][8] = max_lap_count - 1
+
+                if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
                             (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
-                                    # or ranking_array[0][6] - ranking_array[r_index][6] > 5
-                            ))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
-                        or (q_item[6] < max_area_count / 4 and
-                            ranking_array[r_index][6] >= max_area_count / 3 * 2)):  # 跨圈情况
+                            ))):
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_array[r_index][9] = 1
@@ -1912,7 +1911,7 @@ class PlanBallNumThread(QThread):
                             # 超时则跳出循环计球
                             if ui.checkBox_Pass_Ranking_Twice.isChecked():
                                 self.run_flg = False
-                            else:
+                            elif sec_ % 5 == 0:
                                 self.signal.emit('人工检查')
                             time.sleep(1)
                             if not self.run_flg:
@@ -1975,7 +1974,9 @@ def PlanBallNumsignal_accept(msg):
     elif '检查结束' in msg:
         TrapBallDialog.hide()
     elif '人工检查' in msg:
-        TrapBallDialog.show()
+        if not TrapBallDialog.isVisible():
+            TrapBallDialog.show()
+            play_alarm()
     elif '计球倒计时' in msg:
         text_lines = ui.textBrowser_msg.toHtml().splitlines()
         if len(text_lines) >= 1:
@@ -2098,10 +2099,9 @@ class ScreenShotThread(QThread):
                 continue
             print('截图结果识别运行！')
             self.signal.emit(succeed('截图结果识别运行！'))
-
-            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
             obs_list = []
             rtsp_list = []
+            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])
                 main_Camera = camera_to_num(obs_list)
@@ -2159,6 +2159,7 @@ class ScreenShotThread(QThread):
                 z_ranking_end = copy.deepcopy(monitor_Camera)
                 lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             else:
+                sec_ = 0
                 term_status = 0
                 term_comment = term_comments[3]
                 z_ranking_end = copy.deepcopy(z_ranking_res)
@@ -2166,7 +2167,9 @@ class ScreenShotThread(QThread):
                     ui.lineEdit_Send_Result.setText('')
                     Send_Result_End = False
                     while self.run_flg:
-                        self.signal.emit('显示结果对话框')
+                        if sec_ % 5 == 0:
+                            self.signal.emit('显示结果对话框')
+                        sec_ +=1
                         if Send_Result_End:
                             try:
                                 send_list = []
@@ -2240,13 +2243,14 @@ def ScreenShotsignal_accept(msg):
                 getattr(ui, 'lineEdit_result_%s' % index).setText('')
                 getattr(result_ui, 'lineEdit_result_%s' % index).setText('')
     elif msg == '显示结果对话框':
-        ResultDialog.show()
-        play_alarm()  # 警报声
+        if not ResultDialog.isVisible():
+            ResultDialog.show()
+            play_alarm()  # 警报声
     elif msg == 'send_res':
         ui.lineEdit_Send_Result.setText('')
     elif msg == 'send_ok':
         ResultDialog.hide()
-        ui.checkBox_alarm.setChecked(True)
+        ui.checkBox_alarm.click()
     else:
         ui.textBrowser.append(str(msg))
         ui.textBrowser_msg.append(str(msg))
@@ -2374,10 +2378,10 @@ class ShootThread(QThread):
                         BallsNum_ui.go_flg = False
                         break
                     time_count += 1
-                    if time_count >= 10:
+                    if time_count % 3 == 0:
                         self.signal.emit(fail("弹射上珠不够"))
                         if ui.radioButton_stop_betting.isChecked():
-                            break
+                            break   # 封盘时不持续弹窗
 
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
                 sc.GASetExtDoBit(shoot_index, 0)
@@ -2392,9 +2396,12 @@ def shootsignal_accept(msg):
     global betting_loop_flg
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
-    if "隐藏提示" in msg:
+    if "正在弹射上珠" in msg:
+        ui.lineEdit_balls_start.setText('0')
+        ui.lineEdit_ball_start.setText('0')
+    elif "隐藏提示" in msg:
         BallsNumDialog.hide()
-    if "弹射上珠不够" in msg:
+    elif "弹射上珠不够" in msg:
         if Shoot_Thread.run_flg :
             BallsNumDialog.show()
 
@@ -3318,6 +3325,7 @@ def save_main_json():
             main_all['lineEdit_alarm'] = ui.lineEdit_alarm.text()
             main_all['lineEdit_shoot_2'] = ui.lineEdit_shoot_2.text()
             main_all['lineEdit_shoot_3'] = ui.lineEdit_shoot_3.text()
+            main_all['lineEdit_area_limit'] = ui.lineEdit_area_limit.text()
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                 main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -3411,6 +3419,7 @@ def load_main_json():
         ui.lineEdit_shoot_3.setText(main_all['lineEdit_shoot_3'])
         ui.lineEdit_Track_number.setText(main_all['Track_number'])
         ui.pushButton_start_game.setEnabled(main_all['pushButton_start_game'])
+        ui.lineEdit_area_limit.setText(main_all['lineEdit_area_limit'])
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -3944,10 +3953,12 @@ class MapLabel(QLabel):
                         for color_index in range(len(init_array)):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
-        # if self.positions[0][0] - self.map_action < len(self.path_points) / 2:  # 圈数重置后，重新位置更新范围限制300个点位以内
-        if self.picture_size == 860:
-            if self.map_action < self.positions[0][0]:
-                self.map_action = self.positions[0][0]  # 赋值实时位置
+        for i in range(len(self.positions)):
+            if self.positions[i][0] - self.map_action < len(self.path_points) / 2:  # 圈数重置后，重新位置更新范围限制300个点位以内
+                if self.picture_size == 860:
+                    if self.map_action < self.positions[i][0]:
+                        self.map_action = self.positions[i][0]  # 赋值实时位置
+                        break
 
         res = []
         if self.picture_size == 860:
@@ -4495,7 +4506,6 @@ def stop_alarm():
         try:
             index = int(ui.lineEdit_alarm.text()) - 1
             sc.GASetExtDoBit(index, 0)
-            ui.checkBox_alarm.setChecked(False)
         except:
             print('警报电压输出错误！')
             ui.textBrowser_msg.append(fail('警报电压输出错误！'))
@@ -4852,11 +4862,28 @@ class Kaj789Thread(QThread):
     def run(self) -> None:
         global term_comment
         global lottery_term
+        global betting_loop_flg
         while self.running:
             time.sleep(1)
             if not self.run_flg:
                 continue
             for i in range(5):
+                if self.run_type == 'post_start':
+                    res_status = post_status(True, Track_number)
+                    if 'OK' in res_status:
+                        self.signal.emit({'post_start': res_status})
+                        break
+                    else:
+                        continue
+                if self.run_type == 'post_stop':
+                    betting_loop_flg = False  # 关闭循环标志
+                    ReStart_Thread.run_flg = False  # 停止重启循环
+                    res_status = post_status(False, Track_number)
+                    if 'OK' in res_status:
+                        self.signal.emit({'post_stop': res_status})
+                        break
+                    else:
+                        continue
                 if self.run_type == 'post_end':
                     res_end = post_end(term=term, betting_end_time=betting_end_time,
                                        status=term_status,
@@ -4909,6 +4936,18 @@ class Kaj789Thread(QThread):
 def kaj789_signal_accept(msg):
     message = msg
     if isinstance(msg, dict):
+        if 'post_start' in msg.keys():
+            if msg['post_start'] == 'OK':
+                ui.textBrowser_msg.append(succeed('开盘成功！'))
+            else:
+                ui.textBrowser_msg.append(succeed('开盘失败！服务器链接错误！'))
+            ui.groupBox_term.setStyleSheet('')
+        if 'post_stop' in msg.keys():
+            if msg['post_stop'] == 'OK':
+                ui.textBrowser_msg.append(succeed('封盘成功！'))
+            else:
+                ui.textBrowser_msg.append(succeed('封盘失败！服务器链接错误！'))
+            ui.groupBox_term.setStyleSheet('')
         if 'post_end' in msg.keys():
             if msg['post_end'] == 'OK':
                 message = succeed('发送结束标志成功！')
@@ -4957,11 +4996,11 @@ def kaj789_signal_accept(msg):
                     tb_result.setItem(0, 8, item)
             else:
                 message = fail('发送备注失败:%s' % msg['post_marble_results'])
-
-    ui.textBrowser.append(message)
-    ui.textBrowser_msg.append(message)
-    scroll_to_bottom(ui.textBrowser)
-    scroll_to_bottom(ui.textBrowser_msg)
+    else:
+        ui.textBrowser.append(message)
+        ui.textBrowser_msg.append(message)
+        scroll_to_bottom(ui.textBrowser)
+        scroll_to_bottom(ui.textBrowser_msg)
 
 
 def send_end():
@@ -5406,20 +5445,15 @@ def send_result():
 
 
 def start_betting():
-    res_status = post_status(True, Track_number)
-    if str(res_status) == 'OK':
-        ui.textBrowser_msg.append(succeed('开盘成功！'))
-    ui.groupBox_term.setStyleSheet('')
+    if not Kaj789_Thread.run_flg:
+        Kaj789_Thread.run_type = 'post_start'
+        Kaj789_Thread.run_flg = True
 
 
 def stop_betting():
-    global betting_loop_flg
-    betting_loop_flg = False  # 关闭循环标志
-    ReStart_Thread.run_flg = False  # 停止重启循环
-    res_status = post_status(False, Track_number)
-    if str(res_status) == 'OK':
-        ui.textBrowser_msg.append(succeed('封盘成功！'))
-    ui.groupBox_term.setStyleSheet('')
+    if not Kaj789_Thread.run_flg:
+        Kaj789_Thread.run_type = 'post_stop'
+        Kaj789_Thread.run_flg = True
 
 
 def test_betting():
