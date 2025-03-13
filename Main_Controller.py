@@ -3910,8 +3910,8 @@ class MapLabel(QLabel):
         self.flash_time = flash_time
         self.positions = []  # 每个球的当前位置索引
         for num in range(balls_count):
-            self.positions.append([num * self.ball_space, init_array[num][5], 0])
-
+            self.positions.append([num * self.ball_space, init_array[num][5], 0, 0])
+                                    # [位置索引, 顔色, 號碼, 圈數]
         # 创建定时器，用于定时更新球的位置
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_positions)  # 定时触发更新
@@ -3921,14 +3921,15 @@ class MapLabel(QLabel):
         global positions_live
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
-            self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码]
+            self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數]
             for num in range(balls_count):
-                self.positions.append([num * self.ball_space, init_array[num][5], 0])
+                self.positions.append([num * self.ball_space, init_array[num][5], 0, 0])
         for num in range(0, balls_count):
             if ranking_array[num][5] in self.color_names.keys():
                 for i in range(len(self.positions)):  # 排序
                     if self.positions[i][1] == ranking_array[num][5]:
                         self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
+                        self.positions[num][3] = ranking_array[num][8]
                         # break
                 if ranking_array[num][6] <= 1:  # 起点
                     if num == 0:
@@ -3970,7 +3971,8 @@ class MapLabel(QLabel):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
         for i in range(len(self.positions)):
-            if self.positions[i][0] - self.map_action < len(self.path_points) / 2:  # 圈数重置后，重新位置更新范围限制300个点位以内
+            if ((self.positions[i][0] - self.map_action < len(self.path_points) / 3)
+                    and (self.positions[i][3]) == action_area[1]):  # 圈数重置后，重新位置更新范围限制300个点位以内
                 if self.picture_size == 860:
                     if self.map_action < self.positions[i][0]:
                         self.map_action = self.positions[i][0]  # 赋值实时位置
