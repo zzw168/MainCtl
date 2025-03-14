@@ -2387,6 +2387,11 @@ class ShootThread(QThread):
                          and balls_start >= int(ui.lineEdit_balls_auto.text()))
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         self.signal.emit(succeed("隐藏提示"))
+                        while PlanCmd_Thread.run_flg:
+                            print('等待动作结束~~~~~~~~')
+                            time.sleep(1)
+                        PlanCmd_Thread.ready_state = True  # 运行准备
+                        PlanCmd_Thread.run_flg = True
                         break
                     if BallsNum_ui.go_flg:
                         BallsNum_ui.go_flg = False
@@ -2395,6 +2400,12 @@ class ShootThread(QThread):
                     if int(time_count % 3) == 0:
                         self.signal.emit(fail("弹射上珠不够"))
                         if ui.radioButton_stop_betting.isChecked():
+                            self.signal.emit(succeed("隐藏提示"))
+                            while PlanCmd_Thread.run_flg:
+                                print('等待动作结束~~~~~~~~')
+                                time.sleep(1)
+                            PlanCmd_Thread.ready_state = True  # 运行准备
+                            PlanCmd_Thread.run_flg = True
                             break  # 封盘时不持续弹窗
 
                 sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)
@@ -3342,6 +3353,9 @@ def save_main_json():
             main_all['lineEdit_shoot_2'] = ui.lineEdit_shoot_2.text()
             main_all['lineEdit_shoot_3'] = ui.lineEdit_shoot_3.text()
             main_all['lineEdit_area_limit'] = ui.lineEdit_area_limit.text()
+            main_all['lineEdit_volume_1'] = ui.lineEdit_volume_1.text()
+            main_all['lineEdit_volume_2'] = ui.lineEdit_volume_2.text()
+            main_all['lineEdit_volume_3'] = ui.lineEdit_volume_3.text()
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                 main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -3436,6 +3450,9 @@ def load_main_json():
         ui.lineEdit_Track_number.setText(main_all['Track_number'])
         ui.pushButton_start_game.setEnabled(main_all['pushButton_start_game'])
         ui.lineEdit_area_limit.setText(main_all['lineEdit_area_limit'])
+        ui.lineEdit_volume_1.setText( main_all['lineEdit_volume_1'])
+        ui.lineEdit_volume_2.setText(main_all['lineEdit_volume_2'])
+        ui.lineEdit_volume_3.setText(main_all['lineEdit_volume_3'])
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -6597,6 +6614,9 @@ if __name__ == '__main__':
     ui.lineEdit_shoot_2.editingFinished.connect(save_main_json)
     ui.lineEdit_shoot_3.editingFinished.connect(save_main_json)
     ui.lineEdit_area_limit.editingFinished.connect(save_main_json)
+    ui.lineEdit_volume_1.editingFinished.connect(save_main_json)
+    ui.lineEdit_volume_2.editingFinished.connect(save_main_json)
+    ui.lineEdit_volume_3.editingFinished.connect(save_main_json)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)
     ui.radioButton_music_background_2.clicked.connect(save_main_json)

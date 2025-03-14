@@ -768,39 +768,60 @@
                 </font>
                </property>
                <property name="title">
-                <string>锁定期号</string>
+                <string>维护功能</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_8">
-                <item row="0" column="2">
-                 <widget class="QLineEdit" name="lineEdit_term">
+                <item row="0" column="7">
+                 <widget class="QLineEdit" name="lineEdit_times_count">
                   <property name="maximumSize">
                    <size>
-                    <width>80</width>
+                    <width>30</width>
                     <height>16777215</height>
                    </size>
+                  </property>
+                  <property name="text">
+                   <string>0</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QLabel" name="label_12">
+                <item row="0" column="3">
+                 <widget class="QPushButton" name="pushButton_ready">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>20</height>
+                   </size>
+                  </property>
                   <property name="maximumSize">
                    <size>
-                    <width>60</width>
+                    <width>130</width>
                     <height>16777215</height>
                    </size>
                   </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
+                  <property name="text">
+                   <string>准备</string>
                   </property>
-                  <property name="autoFillBackground">
-                   <bool>false</bool>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="4">
+                 <widget class="QCheckBox" name="checkBox_maintain">
+                  <property name="maximumSize">
+                   <size>
+                    <width>50</width>
+                    <height>16777215</height>
+                   </size>
                   </property>
                   <property name="text">
-                   <string>当前期号：</string>
+                   <string>维护</string>
                   </property>
                  </widget>
                 </item>
@@ -827,49 +848,25 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="4">
-                 <widget class="QCheckBox" name="checkBox_maintain">
-                  <property name="text">
-                   <string>维护</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="5">
-                 <widget class="QFrame" name="frame_12">
-                  <property name="frameShape">
-                   <enum>QFrame::Shape::StyledPanel</enum>
+                 <widget class="QPushButton" name="pushButton_close_all">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>20</height>
+                   </size>
                   </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Shadow::Raised</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="7">
-                 <widget class="QLineEdit" name="lineEdit_times_count">
                   <property name="maximumSize">
                    <size>
-                    <width>30</width>
+                    <width>130</width>
                     <height>16777215</height>
                    </size>
                   </property>
                   <property name="text">
-                   <string>0</string>
+                   <string>全部关</string>
                   </property>
-                  <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
-                  </property>
-                  <property name="readOnly">
+                  <property name="default">
                    <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
-                 <widget class="QFrame" name="frame_19">
-                  <property name="frameShape">
-                   <enum>QFrame::Shape::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Shadow::Raised</enum>
                   </property>
                  </widget>
                 </item>
@@ -1028,6 +1025,18 @@
                 </item>
                 <item row="0" column="3">
                  <widget class="QLabel" name="label_2">
+                  <property name="minimumSize">
+                   <size>
+                    <width>40</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>40</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -1146,28 +1155,6 @@
                 <enum>QFrame::Shadow::Raised</enum>
                </property>
                <layout class="QGridLayout" name="gridLayout_71">
-                <item row="1" column="2">
-                 <widget class="QPushButton" name="pushButton_close_all">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>130</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>全部关</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
                 <item row="0" column="0" rowspan="2">
                  <widget class="QGroupBox" name="groupBox_10">
                   <property name="minimumSize">
@@ -1241,29 +1228,7 @@
                   </layout>
                  </widget>
                 </item>
-                <item row="1" column="1">
-                 <widget class="QPushButton" name="pushButton_ready">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                  <property name="maximumSize">
-                   <size>
-                    <width>130</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>准备</string>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1" colspan="2">
+                <item row="0" column="1">
                  <widget class="QGroupBox" name="groupBox_11">
                   <property name="minimumSize">
                    <size>
@@ -1315,6 +1280,35 @@
                     </widget>
                    </item>
                   </layout>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QPushButton" name="pushButton_Cardreset">
+                  <property name="minimumSize">
+                   <size>
+                    <width>80</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true">background:rgb(0,255,220)</string>
+                  </property>
+                  <property name="text">
+                   <string>复位</string>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -5323,35 +5317,6 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="1">
-                       <widget class="QPushButton" name="pushButton_CardClose">
-                        <property name="minimumSize">
-                         <size>
-                          <width>80</width>
-                          <height>0</height>
-                         </size>
-                        </property>
-                        <property name="font">
-                         <font>
-                          <family>微软雅黑</family>
-                          <pointsize>10</pointsize>
-                          <bold>true</bold>
-                         </font>
-                        </property>
-                        <property name="focusPolicy">
-                         <enum>Qt::FocusPolicy::NoFocus</enum>
-                        </property>
-                        <property name="styleSheet">
-                         <string notr="true">background:rgb(255,240,0)</string>
-                        </property>
-                        <property name="text">
-                         <string>关闭机关</string>
-                        </property>
-                        <property name="default">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="0" column="1">
                        <widget class="QPushButton" name="pushButton_CardRun_2">
                         <property name="minimumSize">
@@ -5381,8 +5346,8 @@
                         </property>
                        </widget>
                       </item>
-                      <item row="3" column="1">
-                       <widget class="QPushButton" name="pushButton_Cardreset">
+                      <item row="2" column="1">
+                       <widget class="QPushButton" name="pushButton_CardClose">
                         <property name="minimumSize">
                          <size>
                           <width>80</width>
@@ -5400,10 +5365,10 @@
                          <enum>Qt::FocusPolicy::NoFocus</enum>
                         </property>
                         <property name="styleSheet">
-                         <string notr="true">background:rgb(0,255,220)</string>
+                         <string notr="true">background:rgb(255,240,0)</string>
                         </property>
                         <property name="text">
-                         <string>复位</string>
+                         <string>关闭机关</string>
                         </property>
                         <property name="default">
                          <bool>true</bool>
