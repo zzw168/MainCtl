@@ -3909,9 +3909,10 @@ class MapLabel(QLabel):
         self.speed = 1  # 小球每次前进的步数（可以根据需要调整）
         self.flash_time = flash_time
         self.positions = []  # 每个球的当前位置索引
+        self.pos_stop = []  # 每个球的停止位置索引
         for num in range(balls_count):
             self.positions.append([num * self.ball_space, init_array[num][5], 0, 0])
-                                    # [位置索引, 顔色, 號碼, 圈數]
+            # [位置索引, 顔色, 號碼, 圈數]
         # 创建定时器，用于定时更新球的位置
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_positions)  # 定时触发更新
@@ -3970,6 +3971,7 @@ class MapLabel(QLabel):
                         for color_index in range(len(init_array)):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
+        # 更新实时触发位置
         for i in range(len(self.positions)):
             if ((self.positions[i][0] - self.map_action < len(self.path_points) / 3)
                     and (self.positions[i][3]) == action_area[1]):  # 圈数重置后，重新位置更新范围限制300个点位以内
@@ -3978,18 +3980,35 @@ class MapLabel(QLabel):
                         self.map_action = self.positions[i][0]  # 赋值实时位置
                         break
 
+        # 实时位置数据包处理
         res = []
         if self.picture_size == 860:
             for i in range(balls_count):
                 x, y = self.path_points[self.positions[i][0]]
                 b = round(self.positions[i][0] / len(self.path_points), 2)
-                res.append({"pm": i + 1, "id": self.positions[i][2], "x": round(x, 2), "y": round(y, 2), "b": b})
+                res.append(
+                    {"pm": i + 1, "id": self.positions[i][2], "x": round(x, 2), "y": round(y, 2), "b": b})
             positions_live = {
                 "raceTrackID": Track_number,
                 "term": term,
                 "timestampMs": int(time.time() * 1000),
                 "result": res
             }
+
+        # 保留卡珠位置
+        if TrapBallDialog.isVisible():
+            self.pos_stop = copy.deepcopy(self.positions)
+            for num in range(0, balls_count):
+                for i in range(len(self.pos_stop)):  # 排序
+                    if self.pos_stop[i][1] == ranking_array[num][5]:
+                        self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
+                        area_num = max_area_count - balls_count  # 跟踪区域数量
+                        p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
+                        if p < len(self.path_points):
+                            self.pos_stop[num][0] = p
+        if BallsNumDialog.isVisible():
+            self.positions = copy.deepcopy(self.pos_stop)
+
         # 触发重绘
         self.update()
 
@@ -5182,7 +5201,6 @@ class TestStatusThread(QThread):
                 except:
                     flg_start['obs'] = False
                     print('OBS脚本开始错误！')
-
 
             if not flg_start['ai']:  # 识别服务器
                 try:
@@ -6455,6 +6473,13 @@ if __name__ == '__main__':
     map_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
     # 添加自定义的 QLabel 到布局中
     map_layout.addWidget(map_label)
+
+    map_label1 = MapLabel(picture_size=350, ball_space=11, ball_radius=5, step_length=1.03)
+    map_layout1 = QVBoxLayout(BallsNum_ui.widget_map)
+    map_layout1.setContentsMargins(0, 0, 0, 0)
+    map_layout1.setAlignment(Qt.AlignmentFlag.AlignCenter)
+    # 添加自定义的 QLabel 到布局中
+    map_layout1.addWidget(map_label1)
 
     # 初始化混音器
     pygame.mixer.init()
