@@ -600,7 +600,7 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>关警报</string>
+                   <string>关警报(-)</string>
                   </property>
                  </widget>
                 </item>

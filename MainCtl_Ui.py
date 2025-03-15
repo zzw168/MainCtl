@@ -3498,7 +3498,7 @@ class Ui_MainWindow(object):
         self.status_obs.setText(QCoreApplication.translate("MainWindow", u"OBS\u72b6\u6001", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"\u529f\u80fd", None))
         self.checkBox_end_BlackScreen.setText(QCoreApplication.translate("MainWindow", u"\u672c\u5c40\u7ed3\u675f\u540e\u81ea\u52a8\u9ed1\u5c4f", None))
-        self.checkBox_alarm.setText(QCoreApplication.translate("MainWindow", u"\u5173\u8b66\u62a5", None))
+        self.checkBox_alarm.setText(QCoreApplication.translate("MainWindow", u"\u5173\u8b66\u62a5(-)", None))
         self.checkBox_Pass_Ranking_Twice.setText(QCoreApplication.translate("MainWindow", u"\u8df3\u8fc7\u4e8c\u6b21\u6392\u540d", None))
         self.checkBox_Pass_Recognition_Start.setText(QCoreApplication.translate("MainWindow", u"\u8df3\u8fc7\u8d77\u70b9\u8bc6\u522b", None))
         self.checkBox_end_stop.setText(QCoreApplication.translate("MainWindow", u"\u672c\u5c40\u7ed3\u675f\u540e\u81ea\u52a8\u5c01\u76d8", None))
