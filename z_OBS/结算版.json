@@ -6,10 +6,10 @@
             "name": "现场"
         },
         {
-            "name": "终点"
+            "name": "倒计场景"
         },
         {
-            "name": "结算"
+            "name": "终点"
         },
         {
             "name": "黑屏"
@@ -22,12 +22,9 @@
         },
         {
             "name": "等待"
-        },
-        {
-            "name": "场景 2"
         }
     ],
-    "name": "new",
+    "name": "未命名 3 2",
     "groups": [
         {
             "prev_ver": 503382018,
@@ -37,23 +34,62 @@
             "versioned_id": "group",
             "settings": {
                 "custom_size": true,
-                "cx": 644,
-                "cy": 365,
+                "cx": 659,
+                "cy": 381,
                 "id_counter": 0,
                 "items": [
                     {
-                        "name": "终点1",
-                        "source_uuid": "8a1f6159-b1d9-4777-a8eb-5eca6ccec788",
-                        "visible": false,
-                        "locked": false,
+                        "name": "色源",
+                        "source_uuid": "0fae4260-d2b5-48c7-892a-fb4a90272294",
+                        "visible": true,
+                        "locked": true,
                         "rot": 0.0,
                         "pos": {
-                            "x": 643.89825439453125,
-                            "y": 364.18109130859375
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "scale": {
-                            "x": -0.33536368608474731,
-                            "y": -0.33720472455024719
+                            "x": 1.0981073379516602,
+                            "y": 0.76188915967941284
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 11,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "终点1",
+                        "source_uuid": "8a1f6159-b1d9-4777-a8eb-5eca6ccec788",
+                        "visible": true,
+                        "locked": true,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 651.931640625,
+                            "y": 372.9617919921875
+                        },
+                        "scale": {
+                            "x": -0.33644029498100281,
+                            "y": -0.33612856268882751
                         },
                         "align": 5,
                         "bounds_type": 0,
@@ -94,245 +130,10 @@
             "push-to-talk": false,
             "push-to-talk-delay": 0,
             "hotkeys": {
+                "libobs.show_scene_item.11": [],
+                "libobs.hide_scene_item.11": [],
                 "libobs.show_scene_item.12": [],
                 "libobs.hide_scene_item.12": []
-            },
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 503382018,
-            "name": "排名时间组件",
-            "uuid": "0b653d8a-b5a8-4470-8156-adb7265e0516",
-            "id": "group",
-            "versioned_id": "group",
-            "settings": {
-                "custom_size": true,
-                "cx": 110,
-                "cy": 62,
-                "id_counter": 0,
-                "items": [
-                    {
-                        "name": "浏览器",
-                        "source_uuid": "596d0853-5eb0-4ff6-aeb0-0618061ae5fc",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 0.0,
-                            "y": 1.0
-                        },
-                        "scale": {
-                            "x": 0.085000000894069672,
-                            "y": 0.086666665971279144
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 9,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "图像",
-                        "source_uuid": "a35e6ab9-b7a7-4ef7-8221-9ba393f54508",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 91.354110717773438,
-                            "y": 0.88981479406356812
-                        },
-                        "scale": {
-                            "x": 0.015877453610301018,
-                            "y": 0.01484374888241291
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 39,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "计时器",
-                        "source_uuid": "f9e255fe-103b-4909-b9ab-75b627a4ca34",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 96.901504516601562,
-                            "y": 1.5231475830078125
-                        },
-                        "scale": {
-                            "x": 0.057291664183139801,
-                            "y": 0.054629623889923096
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 38,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "GMT",
-                        "source_uuid": "a32c86c5-9aa1-4f3a-b72b-09aeea1940ae",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 97.746658325195312,
-                            "y": 58.001781463623047
-                        },
-                        "scale": {
-                            "x": 0.0073796543292701244,
-                            "y": 0.0071969693526625633
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 33,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "期号",
-                        "source_uuid": "ac4fc2aa-f971-4a5f-9364-cfd72b595f45",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 0.11250004172325134,
-                            "y": 0.0
-                        },
-                        "scale": {
-                            "x": 0.01003534160554409,
-                            "y": 0.0097958752885460854
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 896.0,
-                            "y": 264.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 43,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    }
-                ]
-            },
-            "mixers": 0,
-            "sync": 0,
-            "flags": 0,
-            "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {
-                "libobs.show_scene_item.9": [],
-                "libobs.hide_scene_item.9": [],
-                "libobs.show_scene_item.39": [],
-                "libobs.hide_scene_item.39": [],
-                "libobs.show_scene_item.38": [],
-                "libobs.hide_scene_item.38": [],
-                "libobs.show_scene_item.33": [],
-                "libobs.hide_scene_item.33": [],
-                "libobs.show_scene_item.43": [],
-                "libobs.hide_scene_item.43": []
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
@@ -364,7 +165,15 @@
         }
     ],
     "transitions": [],
-    "saved_projectors": [],
+    "saved_projectors": [
+        {
+            "name": "倒计时",
+            "monitor": 2,
+            "type": 0,
+            "geometry": "AdnQywADAAAAAA8IAAAAAAAAEhcAAAHXAAAPAAAAAAAAABIfAAAB3wAAAAIABAAAAyAAAA8AAAAAAAAAEh8AAAHf",
+            "alwaysOnTopOverridden": false
+        }
+    ],
     "current_transition": "淡入淡出",
     "transition_duration": 300,
     "preview_locked": false,
@@ -376,14 +185,7 @@
         "type2": 3
     },
     "modules": {
-        "scripts-tool": [
-            {
-                "path": "C:/Users/sss/Desktop/Main_Ctrl/OBS_z/obs_script_time.py",
-                "settings": {
-                    "source_name": "计时器"
-                }
-            }
-        ],
+        "scripts-tool": [],
         "output-timer": {
             "streamTimerHours": 0,
             "streamTimerMinutes": 0,
@@ -488,66 +290,54 @@
         },
         {
             "prev_ver": 503382018,
-            "name": "图像",
-            "uuid": "a35e6ab9-b7a7-4ef7-8221-9ba393f54508",
-            "id": "image_source",
-            "versioned_id": "image_source",
-            "settings": {
-                "file": "C:/Users/sss/Desktop/Main_Ctrl/OBS_z/801.png"
-            },
-            "mixers": 0,
-            "sync": 0,
-            "flags": 0,
-            "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {},
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 503382018,
-            "name": "图像 2",
-            "uuid": "ec53270f-c321-447d-9901-db5b1274f7f5",
-            "id": "image_source",
-            "versioned_id": "image_source",
-            "settings": {
-                "file": "C:/Users/sss/Desktop/Main_Ctrl/OBS_z/维护页.png"
-            },
-            "mixers": 0,
-            "sync": 0,
-            "flags": 0,
-            "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {},
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 503382018,
-            "name": "场景 2",
-            "uuid": "4dbf84a0-fde0-4c7a-934f-cf6e02dceefb",
+            "name": "倒计场景",
+            "uuid": "4d31ac84-d1fc-4d8e-bfff-fc1d042e9f35",
             "id": "scene",
             "versioned_id": "scene",
             "settings": {
+                "id_counter": 2,
                 "custom_size": false,
-                "id_counter": 0,
-                "items": []
+                "items": [
+                    {
+                        "name": "倒计时",
+                        "source_uuid": "5ff2eb78-8d9c-4b63-a376-b52859d16617",
+                        "visible": true,
+                        "locked": false,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale": {
+                            "x": 2.2387499809265137,
+                            "y": 2.2395832538604736
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 1,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    }
+                ]
             },
             "mixers": 0,
             "sync": 0,
@@ -561,33 +351,26 @@
             "push-to-talk": false,
             "push-to-talk-delay": 0,
             "hotkeys": {
-                "OBSBasic.SelectScene": []
+                "OBSBasic.SelectScene": [],
+                "libobs.show_scene_item.1": [],
+                "libobs.hide_scene_item.1": []
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
             "monitoring_type": 0,
-            "private_settings": {
-                "transition": "直接切换"
-            }
+            "private_settings": {}
         },
         {
             "prev_ver": 503382018,
-            "name": "期号",
-            "uuid": "ac4fc2aa-f971-4a5f-9364-cfd72b595f45",
-            "id": "text_gdiplus",
-            "versioned_id": "text_gdiplus_v2",
+            "name": "倒计时",
+            "uuid": "5ff2eb78-8d9c-4b63-a376-b52859d16617",
+            "id": "ffmpeg_source",
+            "versioned_id": "ffmpeg_source",
             "settings": {
-                "extents": false,
-                "gradient": false,
-                "text": "9676788",
-                "font": {
-                    "face": "Arial",
-                    "flags": 0,
-                    "size": 256,
-                    "style": "Regular"
-                }
+                "local_file": "C:/Users/Administrator/Desktop/480X800/2.mp4",
+                "restart_on_activate": false
             },
-            "mixers": 0,
+            "mixers": 255,
             "sync": 0,
             "flags": 0,
             "volume": 1.0,
@@ -598,7 +381,16 @@
             "push-to-mute-delay": 0,
             "push-to-talk": false,
             "push-to-talk-delay": 0,
-            "hotkeys": {},
+            "hotkeys": {
+                "libobs.mute": [],
+                "libobs.unmute": [],
+                "libobs.push-to-mute": [],
+                "libobs.push-to-talk": [],
+                "MediaSource.Restart": [],
+                "MediaSource.Play": [],
+                "MediaSource.Pause": [],
+                "MediaSource.Stop": []
+            },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
             "monitoring_type": 0,
@@ -612,10 +404,45 @@
             "versioned_id": "browser_source",
             "settings": {
                 "is_local_file": true,
-                "local_file": "C:/Users/sss/Desktop/Main_Ctrl/z_OBS/rank_8/index.html",
-                "url": "file:///C:/Users/sss/Desktop/Main_Ctrl%20-%20%E5%89%AF%E6%9C%AC/z_OBS/rankTopBtm0527/index.html?ip=192.168.0.61&qiu=8",
-                "width": 500,
-                "height": 700,
+                "local_file": "C:/Users/Administrator/Desktop/OBS/rankTopBtm0527/index.html",
+                "width": 1920,
+                "height": 1080,
+                "restart_when_active": true
+            },
+            "mixers": 255,
+            "sync": 0,
+            "flags": 0,
+            "volume": 1.0,
+            "balance": 0.5,
+            "enabled": true,
+            "muted": false,
+            "push-to-mute": false,
+            "push-to-mute-delay": 0,
+            "push-to-talk": false,
+            "push-to-talk-delay": 0,
+            "hotkeys": {
+                "libobs.mute": [],
+                "libobs.unmute": [],
+                "libobs.push-to-mute": [],
+                "libobs.push-to-talk": [],
+                "ObsBrowser.Refresh": []
+            },
+            "deinterlace_mode": 0,
+            "deinterlace_field_order": 0,
+            "monitoring_type": 0,
+            "private_settings": {}
+        },
+        {
+            "prev_ver": 503382018,
+            "name": "浏览器-期号",
+            "uuid": "32084872-069e-4683-a5a0-42f3a4a27cef",
+            "id": "browser_source",
+            "versioned_id": "browser_source",
+            "settings": {
+                "is_local_file": true,
+                "local_file": "C:/Users/Administrator/Desktop/OBS/倒计时/number.html",
+                "width": 1920,
+                "height": 1080,
                 "restart_when_active": true
             },
             "mixers": 255,
@@ -649,7 +476,7 @@
             "versioned_id": "browser_source",
             "settings": {
                 "is_local_file": true,
-                "local_file": "",
+                "local_file": "C:/Users/Administrator/Desktop/OBS/倒计时/countdown.html",
                 "width": 1920,
                 "height": 1080,
                 "restart_when_active": true
@@ -685,13 +512,52 @@
             "versioned_id": "scene",
             "settings": {
                 "custom_size": false,
-                "id_counter": 47,
+                "id_counter": 23,
                 "items": [
+                    {
+                        "name": "倒计时",
+                        "source_uuid": "5ff2eb78-8d9c-4b63-a376-b52859d16617",
+                        "visible": true,
+                        "locked": true,
+                        "rot": 0.0,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 20,
+                        "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
                     {
                         "name": "视频采集设备",
                         "source_uuid": "0afabf1b-d8c6-4d9c-8aa8-ae22628710cc",
                         "visible": true,
-                        "locked": true,
+                        "locked": false,
                         "rot": 0.0,
                         "pos": {
                             "x": 0.0,
@@ -727,14 +593,14 @@
                         "private_settings": {}
                     },
                     {
-                        "name": "结算页",
-                        "source_uuid": "8a90d5d6-e952-4dfc-a267-48d6519af644",
-                        "visible": true,
+                        "name": "浏览器",
+                        "source_uuid": "596d0853-5eb0-4ff6-aeb0-0618061ae5fc",
+                        "visible": false,
                         "locked": true,
                         "rot": 0.0,
                         "pos": {
                             "x": 0.0,
-                            "y": 0.0
+                            "y": 35.0
                         },
                         "scale": {
                             "x": 1.0,
@@ -752,8 +618,47 @@
                         "crop_top": 0,
                         "crop_right": 0,
                         "crop_bottom": 0,
-                        "id": 26,
+                        "id": 9,
                         "group_item_backup": false,
+                        "scale_filter": "disable",
+                        "blend_method": "default",
+                        "blend_type": "normal",
+                        "show_transition": {
+                            "duration": 0
+                        },
+                        "hide_transition": {
+                            "duration": 0
+                        },
+                        "private_settings": {}
+                    },
+                    {
+                        "name": "色源",
+                        "source_uuid": "0fae4260-d2b5-48c7-892a-fb4a90272294",
+                        "visible": true,
+                        "locked": true,
+                        "rot": 270.0,
+                        "pos": {
+                            "x": 0.0,
+                            "y": 1080.0
+                        },
+                        "scale": {
+                            "x": 0.67152845859527588,
+                            "y": 0.4659322202205658
+                        },
+                        "align": 5,
+                        "bounds_type": 0,
+                        "bounds_align": 0,
+                        "bounds_crop": false,
+                        "bounds": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "crop_left": 0,
+                        "crop_top": 0,
+                        "crop_right": 0,
+                        "crop_bottom": 0,
+                        "id": 11,
+                        "group_item_backup": true,
                         "scale_filter": "disable",
                         "blend_method": "default",
                         "blend_type": "normal",
@@ -768,16 +673,16 @@
                     {
                         "name": "终点1",
                         "source_uuid": "8a1f6159-b1d9-4777-a8eb-5eca6ccec788",
-                        "visible": false,
-                        "locked": false,
+                        "visible": true,
+                        "locked": true,
                         "rot": 270.0,
                         "pos": {
-                            "x": 1914.52587890625,
-                            "y": 681.4246826171875
+                            "x": 228.08424377441406,
+                            "y": 681.322509765625
                         },
                         "scale": {
-                            "x": -0.20508584380149841,
-                            "y": -0.20621705055236816
+                            "x": -0.20574422180652618,
+                            "y": -0.20555892586708069
                         },
                         "align": 5,
                         "bounds_type": 0,
@@ -811,8 +716,8 @@
                         "locked": true,
                         "rot": 270.0,
                         "pos": {
-                            "x": 1691.8115234375,
-                            "y": 1075.189453125
+                            "x": 0.0,
+                            "y": 1080.0
                         },
                         "scale": {
                             "x": 0.61153262853622437,
@@ -846,204 +751,9 @@
                         }
                     },
                     {
-                        "name": "浏览器",
-                        "source_uuid": "596d0853-5eb0-4ff6-aeb0-0618061ae5fc",
+                        "name": "浏览器-期号",
+                        "source_uuid": "32084872-069e-4683-a5a0-42f3a4a27cef",
                         "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 0.0,
-                            "y": 17.419355392456055
-                        },
-                        "scale": {
-                            "x": 1.4836363792419434,
-                            "y": 1.5096774101257324
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 9,
-                        "group_item_backup": true,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "图像",
-                        "source_uuid": "a35e6ab9-b7a7-4ef7-8221-9ba393f54508",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 1594.5445556640625,
-                            "y": 15.5
-                        },
-                        "scale": {
-                            "x": 0.27713373303413391,
-                            "y": 0.25856852531433105
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 39,
-                        "group_item_backup": true,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "计时器",
-                        "source_uuid": "f9e255fe-103b-4909-b9ab-75b627a4ca34",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 1691.371826171875,
-                            "y": 26.532249450683594
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 0.95161283016204834
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 38,
-                        "group_item_backup": true,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "GMT",
-                        "source_uuid": "a32c86c5-9aa1-4f3a-b72b-09aeea1940ae",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 1706.12353515625,
-                            "y": 1010.3536376953125
-                        },
-                        "scale": {
-                            "x": 0.12880851328372955,
-                            "y": 0.12536656856536865
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 33,
-                        "group_item_backup": true,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "期号",
-                        "source_uuid": "ac4fc2aa-f971-4a5f-9364-cfd72b595f45",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 1.963637113571167,
-                            "y": 0.0
-                        },
-                        "scale": {
-                            "x": 0.17516233026981354,
-                            "y": 0.1706378310918808
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 896.0,
-                            "y": 264.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 43,
-                        "group_item_backup": true,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "排名时间组件",
-                        "source_uuid": "0b653d8a-b5a8-4470-8156-adb7265e0516",
-                        "visible": false,
                         "locked": true,
                         "rot": 0.0,
                         "pos": {
@@ -1055,47 +765,6 @@
                             "y": 1.0
                         },
                         "align": 5,
-                        "bounds_type": 1,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 1920.0,
-                            "y": 1080.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 36,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {
-                            "collapsed": true
-                        }
-                    },
-                    {
-                        "name": "音频输出采集",
-                        "source_uuid": "3fe39473-ddfd-4c48-bada-c6d3d60e6b37",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "scale": {
-                            "x": 11.699251174926758,
-                            "y": 22.585359573364258
-                        },
-                        "align": 5,
                         "bounds_type": 0,
                         "bounds_align": 0,
                         "bounds_crop": false,
@@ -1107,7 +776,7 @@
                         "crop_top": 0,
                         "crop_right": 0,
                         "crop_bottom": 0,
-                        "id": 40,
+                        "id": 14,
                         "group_item_backup": false,
                         "scale_filter": "disable",
                         "blend_method": "default",
@@ -1121,18 +790,18 @@
                         "private_settings": {}
                     },
                     {
-                        "name": "图像 2",
-                        "source_uuid": "ec53270f-c321-447d-9901-db5b1274f7f5",
-                        "visible": false,
+                        "name": "结算页",
+                        "source_uuid": "069b81d6-e73b-40bb-b590-fc94403a8af9",
+                        "visible": true,
                         "locked": true,
                         "rot": 0.0,
                         "pos": {
-                            "x": 0.0,
-                            "y": 347.0
+                            "x": -379.0,
+                            "y": -261.0
                         },
                         "scale": {
-                            "x": 0.31851360201835632,
-                            "y": 0.31832796335220337
+                            "x": 1.4171874523162842,
+                            "y": 1.4175926446914673
                         },
                         "align": 5,
                         "bounds_type": 0,
@@ -1146,7 +815,7 @@
                         "crop_top": 0,
                         "crop_right": 0,
                         "crop_bottom": 0,
-                        "id": 47,
+                        "id": 21,
                         "group_item_backup": false,
                         "scale_filter": "disable",
                         "blend_method": "default",
@@ -1174,26 +843,23 @@
             "push-to-talk-delay": 0,
             "hotkeys": {
                 "OBSBasic.SelectScene": [],
+                "libobs.show_scene_item.20": [],
+                "libobs.hide_scene_item.20": [],
                 "libobs.show_scene_item.8": [],
                 "libobs.hide_scene_item.8": [],
-                "libobs.show_scene_item.26": [],
-                "libobs.hide_scene_item.26": [],
+                "libobs.show_scene_item.9": [],
+                "libobs.hide_scene_item.9": [],
                 "libobs.show_scene_item.13": [],
                 "libobs.hide_scene_item.13": [],
-                "libobs.show_scene_item.36": [],
-                "libobs.hide_scene_item.36": [],
-                "libobs.show_scene_item.40": [],
-                "libobs.hide_scene_item.40": [],
-                "libobs.show_scene_item.47": [],
-                "libobs.hide_scene_item.47": []
+                "libobs.show_scene_item.14": [],
+                "libobs.hide_scene_item.14": [],
+                "libobs.show_scene_item.21": [],
+                "libobs.hide_scene_item.21": []
             },
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
             "monitoring_type": 0,
-            "private_settings": {
-                "show_in_multiview": false,
-                "transition": "淡入淡出"
-            }
+            "private_settings": {}
         },
         {
             "prev_ver": 503382018,
@@ -1275,7 +941,7 @@
             "versioned_id": "scene",
             "settings": {
                 "custom_size": false,
-                "id_counter": 5,
+                "id_counter": 3,
                 "items": [
                     {
                         "name": "终点1",
@@ -1346,8 +1012,8 @@
             "id": "dshow_input",
             "versioned_id": "dshow_input",
             "settings": {
-                "video_device_id": "YSYS 60FPS Camera:\\\\?\\usb#22vid_27c2&pid_0530&mi_00#228&33c1515&0&0000#22{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
-                "last_video_device_id": "YSYS 60FPS Camera:\\\\?\\usb#22vid_27c2&pid_0530&mi_00#228&33c1515&0&0000#22{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+                "video_device_id": "UGREEN 25854:\\\\?\\usb#22vid_1de1&pid_f105&mi_00#226&3b1180c0&0&0000#22{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+                "last_video_device_id": "UGREEN 25854:\\\\?\\usb#22vid_1de1&pid_f105&mi_00#226&3b1180c0&0&0000#22{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
                 "active": true
             },
             "mixers": 255,
@@ -1375,19 +1041,20 @@
         {
             "prev_ver": 503382018,
             "name": "结算页",
-            "uuid": "8a90d5d6-e952-4dfc-a267-48d6519af644",
+            "uuid": "069b81d6-e73b-40bb-b590-fc94403a8af9",
             "id": "browser_source",
             "versioned_id": "browser_source",
             "settings": {
-                "is_local_file": false,
-                "local_file": "C:/Users/sss/Desktop/Main_Ctrl - 副本/z_OBS/staticsPageWeb-8/index.html",
-                "url": "C:/Users/sss/Desktop/Main_Ctrl/OBS_z/staticsPageWeb-8/index.html?sd=11&laps=2&qiu=8&len=3150CM&turns=14&ip=192.168.0.61",
+                "is_local_file": true,
+                "url": "192.168.50.45",
                 "width": 1920,
                 "height": 1080,
-                "shutdown": false,
-                "restart_when_active": true,
-                "webpage_control_level": 5,
-                "css": ""
+                "fps": 60,
+                "fps_custom": true,
+                "shutdown": true,
+                "webpage_control_level": 0,
+                "css": "",
+                "local_file": "C:/Users/Administrator/Desktop/OBS/staticsPageWeb-0611/index.html"
             },
             "mixers": 255,
             "sync": 0,
@@ -1414,27 +1081,27 @@
         },
         {
             "prev_ver": 503382018,
-            "name": "结算",
-            "uuid": "46eab2b5-9a34-4cf2-a56b-be2a6b09d5a0",
+            "name": "维护",
+            "uuid": "1cb9ef58-afb2-4f41-9d13-716f6b535b18",
             "id": "scene",
             "versioned_id": "scene",
             "settings": {
                 "custom_size": false,
-                "id_counter": 1,
+                "id_counter": 2,
                 "items": [
                     {
-                        "name": "结算页",
-                        "source_uuid": "8a90d5d6-e952-4dfc-a267-48d6519af644",
+                        "name": "浏览器2",
+                        "source_uuid": "b001d6de-4d6f-46d6-b354-883baa20ff22",
                         "visible": true,
-                        "locked": true,
+                        "locked": false,
                         "rot": 0.0,
                         "pos": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "scale": {
-                            "x": 1.0,
-                            "y": 1.0
+                            "x": 1.0151041746139526,
+                            "y": 1.0148148536682129
                         },
                         "align": 5,
                         "bounds_type": 0,
@@ -1486,93 +1153,14 @@
         },
         {
             "prev_ver": 503382018,
-            "name": "维护",
-            "uuid": "1cb9ef58-afb2-4f41-9d13-716f6b535b18",
-            "id": "scene",
-            "versioned_id": "scene",
+            "name": "色源",
+            "uuid": "0fae4260-d2b5-48c7-892a-fb4a90272294",
+            "id": "color_source",
+            "versioned_id": "color_source_v3",
             "settings": {
-                "custom_size": false,
-                "id_counter": 4,
-                "items": [
-                    {
-                        "name": "视频采集设备",
-                        "source_uuid": "0afabf1b-d8c6-4d9c-8aa8-ae22628710cc",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "align": 5,
-                        "bounds_type": 0,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 4,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    },
-                    {
-                        "name": "图像 2",
-                        "source_uuid": "ec53270f-c321-447d-9901-db5b1274f7f5",
-                        "visible": true,
-                        "locked": true,
-                        "rot": 0.0,
-                        "pos": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0
-                        },
-                        "align": 5,
-                        "bounds_type": 2,
-                        "bounds_align": 0,
-                        "bounds_crop": false,
-                        "bounds": {
-                            "x": 1920.0,
-                            "y": 1080.0
-                        },
-                        "crop_left": 0,
-                        "crop_top": 0,
-                        "crop_right": 0,
-                        "crop_bottom": 0,
-                        "id": 3,
-                        "group_item_backup": false,
-                        "scale_filter": "disable",
-                        "blend_method": "default",
-                        "blend_type": "normal",
-                        "show_transition": {
-                            "duration": 0
-                        },
-                        "hide_transition": {
-                            "duration": 0
-                        },
-                        "private_settings": {}
-                    }
-                ]
+                "color": 4278190080,
+                "width": 600,
+                "height": 500
             },
             "mixers": 0,
             "sync": 0,
@@ -1585,13 +1173,7 @@
             "push-to-mute-delay": 0,
             "push-to-talk": false,
             "push-to-talk-delay": 0,
-            "hotkeys": {
-                "OBSBasic.SelectScene": [],
-                "libobs.show_scene_item.4": [],
-                "libobs.hide_scene_item.4": [],
-                "libobs.show_scene_item.3": [],
-                "libobs.hide_scene_item.3": []
-            },
+            "hotkeys": {},
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
             "monitoring_type": 0,
@@ -1605,10 +1187,9 @@
             "versioned_id": "dshow_input",
             "settings": {
                 "last_resolution": "1920x1080",
-                "last_video_device_id": "USB Capture HDMI:\\\\?\\usb#22vid_2935&pid_0006&mi_00#227&51739c9&0&0000#22{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
+                "last_video_device_id": "SOULMATE VC03P:\\\\?\\usb#22vid_32ed&pid_3710&mi_00#226&1dd0dfa7&0&0000#22{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
                 "resolution": "1920x1080",
-                "video_device_id": "USB Capture HDMI:\\\\?\\usb#22vid_2935&pid_0006&mi_00#227&51739c9&0&0000#22{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
-                "undo_uuid": "0afabf1b-d8c6-4d9c-8aa8-ae22628710cc",
+                "video_device_id": "SOULMATE VC03P:\\\\?\\usb#22vid_32ed&pid_3710&mi_00#226&1dd0dfa7&0&0000#22{65e8773d-8f56-11d0-a3b9-00a0c9223196}\\global",
                 "frame_interval": -1,
                 "res_type": 1,
                 "active": true
@@ -1616,10 +1197,10 @@
             "mixers": 255,
             "sync": 0,
             "flags": 0,
-            "volume": 0.26738902926445007,
+            "volume": 1.0,
             "balance": 0.5,
             "enabled": true,
-            "muted": true,
+            "muted": false,
             "push-to-mute": false,
             "push-to-mute-delay": 0,
             "push-to-talk": false,
@@ -1649,70 +1230,6 @@
             "sync": 0,
             "flags": 0,
             "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {
-                "libobs.mute": [],
-                "libobs.unmute": [],
-                "libobs.push-to-mute": [],
-                "libobs.push-to-talk": []
-            },
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 503382018,
-            "name": "计时器",
-            "uuid": "f9e255fe-103b-4909-b9ab-75b627a4ca34",
-            "id": "text_gdiplus",
-            "versioned_id": "text_gdiplus_v2",
-            "settings": {
-                "font": {
-                    "face": "D-DIN",
-                    "flags": 1,
-                    "size": 72,
-                    "style": "DIN-Bold"
-                },
-                "color": 4294967295,
-                "transform": 0,
-                "antialiasing": true,
-                "text": "149.06"
-            },
-            "mixers": 0,
-            "sync": 0,
-            "flags": 0,
-            "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {},
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 503382018,
-            "name": "音频输出采集",
-            "uuid": "3fe39473-ddfd-4c48-bada-c6d3d60e6b37",
-            "id": "wasapi_output_capture",
-            "versioned_id": "wasapi_output_capture",
-            "settings": {},
-            "mixers": 255,
-            "sync": 0,
-            "flags": 0,
-            "volume": 0.39100584387779236,
             "balance": 0.5,
             "enabled": true,
             "muted": false,
@@ -1798,33 +1315,6 @@
                 "libobs.show_scene_item.3": [],
                 "libobs.hide_scene_item.3": []
             },
-            "deinterlace_mode": 0,
-            "deinterlace_field_order": 0,
-            "monitoring_type": 0,
-            "private_settings": {}
-        },
-        {
-            "prev_ver": 503382018,
-            "name": "GMT",
-            "uuid": "a32c86c5-9aa1-4f3a-b72b-09aeea1940ae",
-            "id": "text_gdiplus",
-            "versioned_id": "text_gdiplus_v2",
-            "settings": {
-                "text": "GMT 11:26:03",
-                "antialiasing": true
-            },
-            "mixers": 0,
-            "sync": 0,
-            "flags": 0,
-            "volume": 1.0,
-            "balance": 0.5,
-            "enabled": true,
-            "muted": false,
-            "push-to-mute": false,
-            "push-to-mute-delay": 0,
-            "push-to-talk": false,
-            "push-to-talk-delay": 0,
-            "hotkeys": {},
             "deinterlace_mode": 0,
             "deinterlace_field_order": 0,
             "monitoring_type": 0,
