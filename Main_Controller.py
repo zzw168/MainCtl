@@ -6470,6 +6470,9 @@ if __name__ == '__main__':
     pygame.mixer.init()
 
     ui.checkBox_alarm.checkStateChanged.connect(stop_alarm)
+    BallsNum_ui.checkBox_stop.checkStateChanged.connect(stop_alarm)
+    result_ui.checkBox_stop.checkStateChanged.connect(stop_alarm)
+    TrapBall_ui.checkBox_stop.checkStateChanged.connect(stop_alarm)
     ui.checkBox_main_music.checkStateChanged.connect(music_ctl)
     ui.radioButton_music_1.clicked.connect(music_ctl)
     ui.radioButton_music_2.clicked.connect(music_ctl)

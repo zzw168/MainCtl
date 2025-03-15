@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>结果确认</string>
+   <string>机关设置</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="3">

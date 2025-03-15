@@ -15,17 +15,17 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QDialog, QFrame, QGridLayout,
-    QGroupBox, QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QDialog, QFrame,
+    QGridLayout, QGroupBox, QLabel, QLineEdit,
+    QPushButton, QSizePolicy, QWidget)
 
 class Ui_Dialog_Result(object):
     def setupUi(self, Dialog_Result):
         if not Dialog_Result.objectName():
             Dialog_Result.setObjectName(u"Dialog_Result")
-        Dialog_Result.resize(346, 286)
-        Dialog_Result.setMinimumSize(QSize(346, 286))
-        Dialog_Result.setMaximumSize(QSize(346, 286))
+        Dialog_Result.resize(346, 320)
+        Dialog_Result.setMinimumSize(QSize(346, 320))
+        Dialog_Result.setMaximumSize(QSize(346, 320))
         self.gridLayout = QGridLayout(Dialog_Result)
         self.gridLayout.setObjectName(u"gridLayout")
         self.groupBox_8 = QGroupBox(Dialog_Result)
@@ -172,7 +172,16 @@ class Ui_Dialog_Result(object):
         self.gridLayout_28.addWidget(self.widget_camera_fit, 2, 1, 1, 2)
 
 
-        self.gridLayout.addWidget(self.groupBox_8, 0, 0, 1, 1)
+        self.gridLayout.addWidget(self.groupBox_8, 1, 0, 1, 1)
+
+        self.checkBox_stop = QCheckBox(Dialog_Result)
+        self.checkBox_stop.setObjectName(u"checkBox_stop")
+        font2 = QFont()
+        font2.setPointSize(10)
+        font2.setBold(True)
+        self.checkBox_stop.setFont(font2)
+
+        self.gridLayout.addWidget(self.checkBox_stop, 0, 0, 1, 1)
 
 
         self.retranslateUi(Dialog_Result)
@@ -228,5 +237,6 @@ class Ui_Dialog_Result(object):
         self.lineEdit_result_0.setToolTip(QCoreApplication.translate("Dialog_Result", u"<html><head/><body><p><span style=\" font-weight:700;\">\u7a7a\u683c\u952e_\u4e0b\u4e00\u4e2a</span></p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_result_0.setText(QCoreApplication.translate("Dialog_Result", u"0", None))
+        self.checkBox_stop.setText(QCoreApplication.translate("Dialog_Result", u"STOP Alarm ", None))
     # retranslateUi
 

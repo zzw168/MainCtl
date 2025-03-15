@@ -242,7 +242,7 @@ class Ui_Dialog_Organ(object):
     # setupUi
 
     def retranslateUi(self, Dialog_Organ):
-        Dialog_Organ.setWindowTitle(QCoreApplication.translate("Dialog_Organ", u"\u7ed3\u679c\u786e\u8ba4", None))
+        Dialog_Organ.setWindowTitle(QCoreApplication.translate("Dialog_Organ", u"\u673a\u5173\u8bbe\u7f6e", None))
         self.groupBox.setTitle(QCoreApplication.translate("Dialog_Organ", u"\u673a\u5173\u63a7\u5236", None))
         self.checkBox_organ_4.setText(QCoreApplication.translate("Dialog_Organ", u"Y4", None))
         self.checkBox_organ_12.setText(QCoreApplication.translate("Dialog_Organ", u"Y12", None))
