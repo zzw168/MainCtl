@@ -2356,6 +2356,15 @@ class ShootThread(QThread):
                          and balls_start >= int(ui.lineEdit_balls_auto.text()))
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         self.signal.emit(succeed("隐藏提示"))
+                        for index in range(0, 16):
+                            if index not in [
+                                int(ui.lineEdit_start.text()) - 1,
+                                int(ui.lineEdit_shake.text()) - 1,
+                                int(ui.lineEdit_end.text()) - 1,
+                                int(ui.lineEdit_alarm.text()) - 1,
+                                int(ui.lineEdit_start_count.text()) - 1,
+                            ]:
+                                sc.GASetExtDoBit(index, 0)
                         while PlanCmd_Thread.run_flg:
                             print('等待动作结束~~~~~~~~')
                             time.sleep(1)
@@ -2377,7 +2386,6 @@ class ShootThread(QThread):
                                 PlanCmd_Thread.ready_state = True  # 运行准备
                                 PlanCmd_Thread.run_flg = True
                                 break  # 封盘时不持续弹窗
-
                 for index in range(0, 16):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
@@ -3758,7 +3766,7 @@ class PositionsLiveThread(QThread):
                             and ui.radioButton_start_betting.isChecked()):
                         data = positions_live
                         z_ws.send(json.dumps(data))
-                        print(f"已发送数据: {data}")
+                        # print(f"已发送数据: {data}")
                     time.sleep(0.05)  # 每 2 秒发送一次
                 except Exception as e:
                     print(f"发送数据时出错: {e}")
