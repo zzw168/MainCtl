@@ -316,10 +316,12 @@ def get_picture(scence_current):
             image_data = base64.b64decode(base64_string)  # 1. 解码 Base64 字符串为二进制数据
             nparr = np.frombuffer(image_data, np.uint8)  # 2. 转换为 NumPy 数组
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)  # 3. 使用 OpenCV 读取图片
+
             area = area_Code['main'][0]['coordinates']  # 4. 定义裁剪区域 (y1:y2, x1:x2)
             x1, x2 = area[0][0], area[1][0]
             y1, y2 = area[1][1], area[2][1]
             cropped_image = image[y1:y2, x1:x2]
+
             _, buffer = cv2.imencode('.jpg', cropped_image)  # 5. 可选：转换裁剪后的图片回 Base64
             img = base64.b64encode(buffer).decode("utf-8")
         else:
@@ -5118,13 +5120,15 @@ class ResetRankingThread(QThread):
             map_label_big.map_action = 0
             alarm_worker.toggle_enablesignal.emit(False)
             if flg_start['obs'] and not ui.checkBox_test.isChecked():
+                activate_browser()  # 刷新OBS中排名浏览器
                 try:
+                    while Script_Thread.run_flg:
+                        time.sleep(1)
                     Script_Thread.run_type = 'reset'
                     Script_Thread.run_flg = True
                 except:
                     print('OBS脚本链接错误！')
                     flg_start['obs'] = False
-                activate_browser()  # 刷新OBS中排名浏览器
             self.signal.emit(succeed('初始化完成！'))
             self.run_flg = False
 
@@ -5609,9 +5613,8 @@ def flip_vertica():  # 主镜头垂直翻转
 def my_test():
     global term
     global z_ranking_res
-    area = area_Code['net'][0]['coordinates']
-    print(area)
-    get_rtsp(rtsp_url)
+    Script_Thread.run_type = 'reset'
+    Script_Thread.run_flg = True  # 开始OBS的python脚本计时
     # play_alarm()
     # PlanCmd_Thread.background_state = True
     # PlanCmd_Thread.run_flg = True
