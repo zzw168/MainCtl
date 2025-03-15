@@ -2973,6 +2973,11 @@ def keyboard_press(key):
                 cmd_stop()
     except:
         pass
+    try:
+        if key.char == '-':
+            stop_alarm()
+    except:
+        pass
     if ui.checkBox_key.isChecked() and flg_start['card']:
         try:
             Pos_Thread.run_flg = True
@@ -5540,7 +5545,7 @@ def ready_btn():
 
 
 def kaj789_table():
-    Kaj789Dialog.show()
+    Kaj789_ui.show()
 
 
 "****************************************直播大厅_结束****************************************************"
@@ -6419,10 +6424,9 @@ if __name__ == '__main__':
     # 初始化球数组，位置寄存器
     reset_ranking_Thread.run_flg = True  # 重置排名数组
 
-    Kaj789Dialog = QDialog(z_window)  #
-    Kaj789_ui = Kaj789Ui()
+    Kaj789_ui = Kaj789Ui(parent=z_window)
     Kaj789_ui.Track_number = Track_number
-    Kaj789_ui.setupUi(Kaj789Dialog)
+    Kaj789_ui.setupUi(Kaj789_ui)
     "**************************图像识别算法_结束*****************************"
 
     "**************************卫星图_开始*****************************"

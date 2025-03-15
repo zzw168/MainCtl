@@ -15,8 +15,8 @@ from utils.kaj789 import post_end, post_result, post_upload, post_marble_results
 
 
 class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.labels = []
         self.Track_number = 'L'
         self.kaj789_thread = threading.Thread(target=self.resend_end, args=(self.Track_number, 'post_end', 1),
@@ -182,6 +182,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             files = [f for f in files if
                      (os.path.isfile(os.path.join(folder_path, f)) and f.endswith(".json"))]  # 过滤出文件（排除文件夹）
             if files:
+                files.sort(key=lambda f: os.path.getctime(os.path.join(folder_path, f)), reverse=True)
                 self.comboBox_kaj789.addItems(files)  # 添加文件名到 ComboBox
 
     def load_json_file(self):
