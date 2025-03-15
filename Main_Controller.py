@@ -781,14 +781,14 @@ class TcpRankingThread(QThread):
                                 if z_ranking_time != self.time_list:
                                     for i in range(len(z_ranking_time)):
                                         if self.time_list[i] != z_ranking_time[i]:
-                                            self.time_list[i] = copy.deepcopy(z_ranking_time[i])
-                                            if is_natural_num(self.time_list[i]):
-                                                d = {"mc": i + 1, 'data': '%s"' % self.time_list[i],
+                                            if is_natural_num(z_ranking_time[i]):
+                                                d = {"mc": i + 1, 'data': '%s"' % z_ranking_time[i],
                                                      'type': 'time'}
                                             else:
-                                                d = {"mc": i + 1, 'data': self.time_list[i],
+                                                d = {"mc": i + 1, 'data': z_ranking_time[i],
                                                      'type': 'time'}
                                             ws.send(json.dumps(d))
+                                            self.time_list[i] = copy.deepcopy(z_ranking_time[i])
                                             if i == 0:
                                                 Script_Thread.param = self.time_list[i]
                                                 Script_Thread.run_type = 'period'
@@ -1858,7 +1858,6 @@ class PlanBallNumThread(QThread):
             time_old = time.time()
             sec_ = 0
             num_old = 0
-            num_send = 0
             term_status = 1
             screen_sort = True
             if res == 0:
@@ -1867,19 +1866,19 @@ class PlanBallNumThread(QThread):
                     # print(res, value)
                     if res == 0:
                         num = int(value[0] / 2)
-                        if num != num_old:
-                            t = time.time()
-                            if num_send < len(z_ranking_time):  # 保存每个球到达终点的时间
-                                z_ranking_time[num_send] = '%.2f' % (t - ranking_time_start)
-                            if num_send == 0:
+                        if (num != num_old) and (num <= len(z_ranking_time)):
+                            for i in range(num):
+                                if z_ranking_time[i] == '':
+                                    t = time.time()
+                                    z_ranking_time[i] = '%.2f' % (t - ranking_time_start)
+                            if num == 1:
                                 self.signal.emit('录终点图')
                             self.signal.emit(num)
-                            num_send += 1
                             num_old = num
-                        if num_send > balls_count - 2 and screen_sort:
+                        if num > balls_count - 2 and screen_sort:
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
-                        if num_send >= balls_count:
+                        if num >= balls_count:
                             break
                         # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
                         #     break
@@ -1947,7 +1946,7 @@ def PlanBallNumsignal_accept(msg):
         ui.lineEdit_ball_end.setText(str(msg))
         ui.lineEdit_balls_end.setText(str(msg))
     elif '录终点图' in msg:
-        if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():  # 非测试模式:
+        if (not ui.checkBox_test.isChecked()) and ui.checkBox_saveImgs_auto.isChecked():  # 非测试模式:
             ui.checkBox_saveImgs_main.setChecked(True)
             ui.checkBox_saveImgs_monitor.setChecked(True)
     elif '检查结束' in msg:
@@ -3924,7 +3923,7 @@ class MapLabel(QLabel):
             for num in range(balls_count):
                 self.positions.append([num * self.ball_space, init_array[num][5], 0, 0])
         for num in range(0, balls_count):
-            if ranking_array[num][5] in self.color_names.keys():
+            if len(ranking_array) >= balls_count and ranking_array[num][5] in self.color_names.keys():
                 for i in range(len(self.positions)):  # 排序
                     if self.positions[i][1] == ranking_array[num][5]:
                         self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
