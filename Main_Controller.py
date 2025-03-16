@@ -518,9 +518,11 @@ def deal_rank(integration_qiu_array):
                 replaced = True
                 break
         if not replaced:
-            ranking_array[r_index][9] = 0
-    # print(ranking_array)
-    # print('到这里~~~~')
+            if (map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9
+                    and action_area[1] >= max_lap_count - 1):
+                ranking_array[r_index][9] = 1
+            else:
+                ranking_array[r_index][9] = 0
     sort_ranking()
 
 
