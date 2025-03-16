@@ -231,16 +231,10 @@ def activate_browser():  # 程序开始，刷新浏览器
     item_settlement = obs_data['source_settlement']
     if flg_start['obs']:
         try:
-            cl_request.set_scene_item_enabled(obs_scene, item_ranking, False)  # 关闭排位组件
-            time.sleep(0.5)
-            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
-            time.sleep(1)
-            cl_request.set_scene_item_enabled(obs_scene, item_settlement, True)  # 打开结算页
-            time.sleep(1)
             tcp_ranking_thread.run_flg = True  # 打开排名线程
+            # 刷新 "浏览器来源"（Browser Source）
+            cl_request.press_input_properties_button("结算页", "refreshnocache")
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
-            time.sleep(1)
-            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
         except:
             print("OBS 开关浏览器出错！")
             flg_start['obs'] = False
@@ -2033,10 +2027,9 @@ class ObsEndThread(QThread):
                 tcp_result_thread.run_flg = True
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
                                                   True)  # 打开视频来源
-                time.sleep(0.1)
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
                                                   False)  # 打开视频来源
-                time.sleep(0.1)
+                cl_request.press_input_properties_button("浏览器", "refreshnocache")
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                   False)  # 打开视频来源
             except:
@@ -5627,8 +5620,7 @@ def flip_vertica():  # 主镜头垂直翻转
 def my_test():
     global term
     global z_ranking_res
-    Script_Thread.run_type = 'reset'
-    Script_Thread.run_flg = True  # 开始OBS的python脚本计时
+    cl_request.press_input_properties_button("结算页", "refreshnocache")
     # play_alarm()
     # PlanCmd_Thread.background_state = True
     # PlanCmd_Thread.run_flg = True
