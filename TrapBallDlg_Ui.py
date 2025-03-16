@@ -23,12 +23,19 @@ class Ui_Dialog_TrapBall(object):
     def setupUi(self, Dialog_TrapBall):
         if not Dialog_TrapBall.objectName():
             Dialog_TrapBall.setObjectName(u"Dialog_TrapBall")
-        Dialog_TrapBall.resize(493, 600)
-        Dialog_TrapBall.setMinimumSize(QSize(493, 600))
-        Dialog_TrapBall.setMaximumSize(QSize(493, 600))
+        Dialog_TrapBall.resize(518, 248)
+        Dialog_TrapBall.setMinimumSize(QSize(0, 0))
+        Dialog_TrapBall.setMaximumSize(QSize(864, 600))
+        Dialog_TrapBall.setSizeGripEnabled(True)
         self.gridLayout = QGridLayout(Dialog_TrapBall)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.frame = QFrame(Dialog_TrapBall)
+        self.groupBox_trap = QGroupBox(Dialog_TrapBall)
+        self.groupBox_trap.setObjectName(u"groupBox_trap")
+        self.groupBox_trap.setMinimumSize(QSize(500, 200))
+        self.groupBox_trap.setMaximumSize(QSize(500, 200))
+        self.gridLayout_4 = QGridLayout(self.groupBox_trap)
+        self.gridLayout_4.setObjectName(u"gridLayout_4")
+        self.frame = QFrame(self.groupBox_trap)
         self.frame.setObjectName(u"frame")
         self.frame.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame.setFrameShadow(QFrame.Shadow.Raised)
@@ -40,15 +47,24 @@ class Ui_Dialog_TrapBall(object):
         font.setPointSize(10)
         font.setBold(True)
         self.label_state.setFont(font)
-        self.label_state.setStyleSheet(u"color: rgb(255, 0, 0);")
+        self.label_state.setStyleSheet(u"color: rgb(255, 0, 0)")
 
         self.gridLayout_3.addWidget(self.label_state, 0, 0, 1, 1)
 
 
-        self.gridLayout.addWidget(self.frame, 2, 0, 1, 2)
+        self.gridLayout_4.addWidget(self.frame, 1, 0, 1, 1)
 
-        self.groupBox_7 = QGroupBox(Dialog_TrapBall)
+        self.pushButton_cancel = QPushButton(self.groupBox_trap)
+        self.pushButton_cancel.setObjectName(u"pushButton_cancel")
+        self.pushButton_cancel.setMinimumSize(QSize(150, 38))
+        self.pushButton_cancel.setMaximumSize(QSize(150, 16777215))
+        self.pushButton_cancel.setStyleSheet(u"background:rgb(230,0,0)")
+
+        self.gridLayout_4.addWidget(self.pushButton_cancel, 1, 1, 1, 1)
+
+        self.groupBox_7 = QGroupBox(self.groupBox_trap)
         self.groupBox_7.setObjectName(u"groupBox_7")
+        self.groupBox_7.setMinimumSize(QSize(350, 0))
         self.groupBox_7.setFont(font)
         self.gridLayout_2 = QGridLayout(self.groupBox_7)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
@@ -233,17 +249,9 @@ class Ui_Dialog_TrapBall(object):
         self.gridLayout_2.addWidget(self.pushButton_TRAP_2, 0, 2, 1, 1)
 
 
-        self.gridLayout.addWidget(self.groupBox_7, 1, 0, 1, 5)
+        self.gridLayout_4.addWidget(self.groupBox_7, 0, 0, 1, 4)
 
-        self.pushButton_ok = QPushButton(Dialog_TrapBall)
-        self.pushButton_ok.setObjectName(u"pushButton_ok")
-        self.pushButton_ok.setMinimumSize(QSize(150, 38))
-        self.pushButton_ok.setMaximumSize(QSize(150, 16777215))
-        self.pushButton_ok.setStyleSheet(u"background:rgb(0,245,0)")
-
-        self.gridLayout.addWidget(self.pushButton_ok, 2, 4, 1, 1)
-
-        self.frame_2 = QFrame(Dialog_TrapBall)
+        self.frame_2 = QFrame(self.groupBox_trap)
         self.frame_2.setObjectName(u"frame_2")
         self.frame_2.setMinimumSize(QSize(10, 0))
         self.frame_2.setMaximumSize(QSize(10, 16777215))
@@ -253,37 +261,18 @@ class Ui_Dialog_TrapBall(object):
         self.frame_2.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
 
-        self.gridLayout.addWidget(self.frame_2, 2, 3, 1, 1)
+        self.gridLayout_4.addWidget(self.frame_2, 1, 2, 1, 1)
 
-        self.pushButton_cancel = QPushButton(Dialog_TrapBall)
-        self.pushButton_cancel.setObjectName(u"pushButton_cancel")
-        self.pushButton_cancel.setMinimumSize(QSize(150, 38))
-        self.pushButton_cancel.setMaximumSize(QSize(150, 16777215))
-        self.pushButton_cancel.setStyleSheet(u"background:rgb(230,0,0)")
+        self.pushButton_ok = QPushButton(self.groupBox_trap)
+        self.pushButton_ok.setObjectName(u"pushButton_ok")
+        self.pushButton_ok.setMinimumSize(QSize(150, 38))
+        self.pushButton_ok.setMaximumSize(QSize(150, 16777215))
+        self.pushButton_ok.setStyleSheet(u"background:rgb(0,245,0)")
 
-        self.gridLayout.addWidget(self.pushButton_cancel, 2, 2, 1, 1)
-
-        self.groupBox_14 = QGroupBox(Dialog_TrapBall)
-        self.groupBox_14.setObjectName(u"groupBox_14")
-        self.groupBox_14.setMinimumSize(QSize(350, 350))
-        self.groupBox_14.setMaximumSize(QSize(600, 380))
-        font4 = QFont()
-        font4.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
-        font4.setPointSize(10)
-        font4.setBold(True)
-        self.groupBox_14.setFont(font4)
-        self.gridLayout_37 = QGridLayout(self.groupBox_14)
-        self.gridLayout_37.setObjectName(u"gridLayout_37")
-        self.gridLayout_37.setContentsMargins(0, -1, 0, -1)
-        self.widget_map = QWidget(self.groupBox_14)
-        self.widget_map.setObjectName(u"widget_map")
-        self.widget_map.setMinimumSize(QSize(350, 350))
-        self.widget_map.setMaximumSize(QSize(350, 350))
-
-        self.gridLayout_37.addWidget(self.widget_map, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.pushButton_ok, 1, 3, 1, 1)
 
 
-        self.gridLayout.addWidget(self.groupBox_14, 3, 0, 1, 5)
+        self.gridLayout.addWidget(self.groupBox_trap, 1, 0, 1, 1)
 
         self.checkBox_stop = QCheckBox(Dialog_TrapBall)
         self.checkBox_stop.setObjectName(u"checkBox_stop")
@@ -300,6 +289,7 @@ class Ui_Dialog_TrapBall(object):
     def retranslateUi(self, Dialog_TrapBall):
         Dialog_TrapBall.setWindowTitle(QCoreApplication.translate("Dialog_TrapBall", u"\u7ed3\u679c\u786e\u8ba4", None))
         self.label_state.setText(QCoreApplication.translate("Dialog_TrapBall", u"\u8bf7\u786e\u8ba4\u5361\u73e0\u60c5\u51b5", None))
+        self.pushButton_cancel.setText(QCoreApplication.translate("Dialog_TrapBall", u"\u53d6\u6d88(Cancel)", None))
         self.groupBox_7.setTitle(QCoreApplication.translate("Dialog_TrapBall", u"\u9009\u62e9\u4f4d\u7f6e", None))
         self.pushButton_TRAP.setText(QCoreApplication.translate("Dialog_TrapBall", u"\u5361\u73e0(TRAP)", None))
         self.pushButton_TRAP_7.setText(QCoreApplication.translate("Dialog_TrapBall", u"7", None))
@@ -324,8 +314,6 @@ class Ui_Dialog_TrapBall(object):
         self.pushButton_OUT_7.setText(QCoreApplication.translate("Dialog_TrapBall", u"7", None))
         self.pushButton_TRAP_2.setText(QCoreApplication.translate("Dialog_TrapBall", u"2", None))
         self.pushButton_ok.setText(QCoreApplication.translate("Dialog_TrapBall", u"\u786e\u8ba4(confirm)", None))
-        self.pushButton_cancel.setText(QCoreApplication.translate("Dialog_TrapBall", u"\u53d6\u6d88(Cancel)", None))
-        self.groupBox_14.setTitle(QCoreApplication.translate("Dialog_TrapBall", u"\u536b\u661f\u56fe", None))
         self.checkBox_stop.setText(QCoreApplication.translate("Dialog_TrapBall", u"STOP Alarm", None))
     # retranslateUi
 

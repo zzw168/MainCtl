@@ -22,6 +22,7 @@ import pygame
 
 from BallsNumDlg_Ui import Ui_Dialog_BallsNum
 from Camera_Ui import Ui_Camera_Dialog
+from Map_Ui import Ui_Dialog_Map
 from OrganDlg_Ui import Ui_Dialog_Organ
 from ResultDlg_Ui import Ui_Dialog_Result
 from Speed_Ui import Ui_Dialog_Set_Speed
@@ -234,7 +235,11 @@ def activate_browser():  # 程序开始，刷新浏览器
             tcp_ranking_thread.run_flg = True  # 打开排名线程
             # 刷新 "浏览器来源"（Browser Source）
             cl_request.press_input_properties_button("结算页", "refreshnocache")
+            time.sleep(1)
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
+            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 打开排位组件
+            time.sleep(1)
+            cl_request.press_input_properties_button("浏览器", "refreshnocache")
         except:
             print("OBS 开关浏览器出错！")
             flg_start['obs'] = False
@@ -879,12 +884,10 @@ class TcpResultThread(QThread):
                                         res_end = post_end(term=term, betting_end_time=betting_end_time,
                                                            status=term_status,
                                                            Track_number=Track_number)  # 发送游戏结束信号给服务器
-                                        self.signal.emit({'post_end': res_end})
                                         if res_end == 'OK':
                                             res_result = post_result(term=term, betting_end_time=betting_end_time,
                                                                      result_data=result_data,
                                                                      Track_number=Track_number)  # 发送最终排名给服务器
-                                            self.signal.emit({'post_result': res_result})
                                             if res_result == 'OK':
                                                 lottery_term[6] = "发送成功"
                                             else:
@@ -892,7 +895,6 @@ class TcpResultThread(QThread):
                                             if os.path.exists(lottery_term[9]):
                                                 res_upload = post_upload(term=term, img_path=lottery_term[9],
                                                                          Track_number=Track_number)  # 上传结果图片
-                                                self.signal.emit({'post_upload': res_upload})
                                                 if res_upload == 'OK':
                                                     lottery_term[7] = "上传成功"
                                                 else:
@@ -901,7 +903,6 @@ class TcpResultThread(QThread):
                                                 res_marble_results = post_marble_results(term=term,
                                                                                          comments=term_comment,
                                                                                          Track_number=Track_number)  # 上传备注信息
-                                                self.signal.emit({'post_marble_results': res_marble_results})
                                                 if str(term) in res_marble_results:
                                                     lottery_term[8] = term_comment
                                                 else:
@@ -910,10 +911,10 @@ class TcpResultThread(QThread):
                                         else:
                                             send_flg = False
                                     except:
+                                        send_flg = False
                                         self.signal.emit(fail('上传结果错误！'))
                                         print('上传结果错误！')
 
-                                self.signal.emit(succeed('第%s期 结束！' % term))
                                 # 获取录屏状态
                                 recording_status = cl_request.get_record_status()
                                 try:
@@ -931,18 +932,12 @@ class TcpResultThread(QThread):
 
                                 else:
                                     lottery_term[3] = '未结束'
-                                    self.signal.emit('发送比赛结束信号到服务器失败！')
-                                    self.signal.emit('封盘')
                                     betting_loop_flg = False
 
-                                self.signal.emit('save_video')
-
                                 if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
-                                    self.signal.emit('封盘')
                                     betting_loop_flg = False
 
                                 if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
-                                    self.signal.emit('黑屏')
                                     betting_loop_flg = False
 
                                 if betting_loop_flg:
@@ -951,13 +946,16 @@ class TcpResultThread(QThread):
                                         time.sleep(1)
                                     ReStart_Thread.run_flg = True  # 1分钟后重启动作
                                 else:
+                                    while PlanCmd_Thread.run_flg:
+                                        time.sleep(1)
                                     action_area = [0, 0, 0]  # 初始化触发区域
                                     PlanCmd_Thread.end_state = True  # 运行背景
                                     PlanCmd_Thread.run_flg = True
-                                    self.signal.emit('结束动画')
-                                    if ui.checkBox_shoot_0.isChecked():
-                                        self.signal.emit('auto_shoot')
+                                    auto_shoot()  # 自动上珠
                                     self.run_flg = False
+
+                                self.signal.emit(succeed('第%s期 结束！' % term))
+
                             elif self.send_type == 'time':
                                 datalist = {'type': 'time',
                                             'data': str(term)}
@@ -976,7 +974,8 @@ class TcpResultThread(QThread):
 
 
 def tcpsignal_accept(msg):
-    if msg == 'save_video':
+    # print(msg)
+    if '期 结束！' in msg:
         tb_result = ui.tableWidget_Results
         row_count = tb_result.rowCount()
         col_count = tb_result.columnCount()
@@ -992,52 +991,18 @@ def tcpsignal_accept(msg):
                     tb_result.setItem(0, i, item)
                 else:
                     tb_result.item(0, i).setText(lottery_term[i])
-    # print(msg)
-    elif msg == '黑屏':
-        ui.radioButton_stop_betting.click()  # 封盘
-        ui.checkBox_black_screen.click()
-    elif msg == '封盘':
-        ui.radioButton_stop_betting.click()  # 封盘
-    elif isinstance(msg, dict):
-        message = msg
-        if 'post_end' in msg.keys():
-            if msg['post_end'] == 'OK':
-                message = succeed('发送结束标志成功！')
-            else:
-                message = fail('发送结束标志失败:%s' % msg['post_end'])
-        if 'post_result' in msg.keys():
-            if msg['post_result'] == 'OK':
-                message = succeed('发送结果成功！')
-            else:
-                message = fail('发送结果失败:%s' % msg['post_result'])
-        if 'post_upload' in msg.keys():
-            if msg['post_upload'] == 'OK':
-                message = succeed('发送图片成功！')
-            else:
-                message = fail('发送图片失败:%s' % msg['post_upload'])
-        if 'post_marble_results' in msg.keys():
-            if str(term) in msg['post_marble_results']:
-                message = succeed('发送备注成功！')
-            else:
-                message = fail('发送备注失败:%s' % msg['post_marble_results'])
-
-        ui.textBrowser_msg.append(message)
-        scroll_to_bottom(ui.textBrowser_msg)
-    elif msg == 'auto_shoot':
-        ui.checkBox_shoot_0.setChecked(True)
-        auto_shoot()  # 自动上珠
-        ui.textBrowser_msg.append(msg)
-        scroll_to_bottom(ui.textBrowser_msg)
-    else:
-        if '期 结束！' in msg:
-            ui.checkBox_main_music.setChecked(False)
-            ui.lineEdit_balls_start.setText('0')
-            ui.lineEdit_ball_start.setText('0')
-            ui.groupBox_term.setStyleSheet("")
-        ui.textBrowser_msg.append(msg)
-        scroll_to_bottom(ui.textBrowser_msg)
-        ui.textBrowser_background_data.append(msg)
-        scroll_to_bottom(ui.textBrowser_background_data)
+        if not betting_loop_flg:
+            ui.radioButton_stop_betting.click()  # 封盘
+            if ui.checkBox_end_BlackScreen.isChecked():
+                ui.checkBox_black_screen.click()
+        ui.checkBox_main_music.setChecked(False)
+        ui.lineEdit_balls_start.setText('0')
+        ui.lineEdit_ball_start.setText('0')
+        ui.groupBox_term.setStyleSheet("")
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser_msg)
+    ui.textBrowser_background_data.append(msg)
+    scroll_to_bottom(ui.textBrowser_background_data)
 
 
 class UdpThread(QThread):
@@ -1909,18 +1874,16 @@ class PlanBallNumThread(QThread):
                 except:
                     print('警报电压输出错误！')
                     flg_start['card'] = False
-                self.signal.emit('检查结束')
                 for index in range(balls_count):
                     if z_ranking_time[index] == '':
                         t = time.time()
                         z_ranking_time[index] = '%.2f' % (t - ranking_time_start)
-                    if z_ranking_time[index] not in ['TRAP', 'OUT']:
-                        s = '%s"' % z_ranking_time[index]
-                    else:
+                    if z_ranking_time[index] in ['TRAP', 'OUT']:
                         s = z_ranking_time[index]
                         term_comment = s
                         term_status = 0
                     time.sleep(0.5)
+                self.signal.emit('检查结束')
             else:
                 print("次数归0 失败！")
                 flg_start['card'] = False
@@ -1951,15 +1914,16 @@ def PlanBallNumsignal_accept(msg):
             ui.checkBox_saveImgs_main.setChecked(True)
             ui.checkBox_saveImgs_monitor.setChecked(True)
     elif '检查结束' in msg:
+        if term_comment in ['TRAP', 'OUT']:
+            ui.checkBox_end_stop.setChecked(True)
         TrapBall_ui.label_state.setText('确认成功！')
         TrapBall_ui.label_state.setStyleSheet('color: rgb(0, 255, 0)')
-        # TrapBallDialog.hide()
+        TrapBall_ui.hide()
     elif '人工检查' in msg:
-        if not TrapBallDialog.isVisible():
-            ui.checkBox_end_stop.setChecked(True)
+        if not TrapBall_ui.isVisible():
             TrapBall_ui.label_state.setText('请确认卡珠情况')
             TrapBall_ui.label_state.setStyleSheet('color: rgb(255, 0, 0)')
-            TrapBallDialog.show()
+            TrapBall_ui.show()
             play_alarm()
     elif '计球倒计时' in msg:
         text_lines = ui.textBrowser_msg.toHtml().splitlines()
@@ -2025,13 +1989,12 @@ class ObsEndThread(QThread):
                                                       1080, 100)
                 tcp_result_thread.send_type = 'updata'
                 tcp_result_thread.run_flg = True
-                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
-                                                  True)  # 打开视频来源
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
                                                   False)  # 打开视频来源
-                cl_request.press_input_properties_button("浏览器", "refreshnocache")
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                   False)  # 打开视频来源
+                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
+                                                  True)  # 打开视频来源
             except:
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
@@ -2043,6 +2006,8 @@ class ObsEndThread(QThread):
 def ObsEndsignal_accept(msg):
     print(msg)
     if '录图结束' in msg:
+        if term_comment in ['TRAP', 'OUT']:
+            Map_ui.show()
         if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():
             ui.checkBox_saveImgs_main.setChecked(False)
             ui.checkBox_saveImgs_monitor.setChecked(False)
@@ -2164,6 +2129,15 @@ class ScreenShotThread(QThread):
                                         for j in range(0, len(z_ranking_end)):
                                             if send_list[i] == z_ranking_end[j]:
                                                 z_ranking_end[i], z_ranking_end[j] = z_ranking_end[j], z_ranking_end[i]
+                                    for i in range(0, len(send_list)):
+                                        for j in range(0, len(ranking_array)):
+                                            if ranking_array[j][5] == rtsp_list[i]:
+                                                ranking_array[j][6] = max_area_count
+                                                ranking_array[j][8] = max_lap_count - 1
+                                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                                        ball_sort[max_area_count][max_lap_count - 1].append('')
+                                        ball_sort[max_area_count][max_lap_count - 1][i] = rtsp_list[i]
+                                    color_to_num(ranking_array)
                                     self.signal.emit('send_ok')
                                     Send_Result_End = False
                                     try:
@@ -2232,13 +2206,13 @@ def ScreenShotsignal_accept(msg):
                 getattr(ui, 'lineEdit_result_%s' % index).setText('')
                 getattr(result_ui, 'lineEdit_result_%s' % index).setText('')
     elif msg == '显示结果对话框':
-        if not ResultDialog.isVisible():
-            ResultDialog.show()
+        if not result_ui.isVisible():
+            result_ui.show()
             play_alarm()  # 警报声
     elif msg == 'send_res':
         ui.lineEdit_Send_Result.setText('')
     elif msg == 'send_ok':
-        ResultDialog.hide()
+        result_ui.hide()
         ui.checkBox_alarm.click()
     else:
         ui.textBrowser.append(str(msg))
@@ -2372,11 +2346,6 @@ class ShootThread(QThread):
                                 int(ui.lineEdit_start_count.text()) - 1,
                             ]:
                                 sc.GASetExtDoBit(index, 0)
-                        while PlanCmd_Thread.run_flg:
-                            print('等待动作结束~~~~~~~~')
-                            time.sleep(1)
-                        PlanCmd_Thread.ready_state = True  # 运行准备
-                        PlanCmd_Thread.run_flg = True
                         if BallsNum_ui.go_flg:
                             BallsNum_ui.go_flg = False
                         break
@@ -4008,8 +3977,7 @@ class MapLabel(QLabel):
             }
 
         # 保留卡珠位置
-        if (TrapBallDialog.isVisible()
-                and TrapBall_ui.label_state.styleSheet() == 'color: rgb(255, 0, 0)'):
+        if TrapBall_ui.isVisible():
             self.pos_stop = copy.deepcopy(self.positions)
             for num in range(0, balls_count):
                 for i in range(len(self.pos_stop)):  # 排序
@@ -4019,8 +3987,7 @@ class MapLabel(QLabel):
                         p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
                         if p < len(self.path_points):
                             self.pos_stop[num][0] = p
-        if (TrapBallDialog.isVisible()
-                and TrapBall_ui.label_state.styleSheet() == 'color: rgb(0, 255, 0)'):
+        if Map_ui.isVisible():
             if len(self.pos_stop) == len(self.positions):
                 self.positions = copy.deepcopy(self.pos_stop)
 
@@ -4969,8 +4936,9 @@ class Kaj789Thread(QThread):
                     else:
                         lottery_term[7] = "上传成功"
                         self.signal.emit({'post_upload': res_upload})
-                        lottery2json()  # 保存数据
-                        break
+                        if term_comment == '':
+                            lottery2json()  # 保存数据
+                            break
                 if term_comment != '':
                     res_marble_results = post_marble_results(term=term,
                                                              comments=term_comment,
@@ -5531,8 +5499,6 @@ def auto_shoot():  # 自动上珠
             for col in range(0, max_lap_count):
                 ball_sort[row].append([])
         balls_start = 0
-        ui.lineEdit_balls_start.setText('0')
-        ui.lineEdit_ball_start.setText('0')
         Shoot_Thread.run_flg = True
     else:
         Shoot_Thread.run_flg = False
@@ -5989,8 +5955,8 @@ def organ_ok():
 
 
 class ResultUi(QDialog, Ui_Dialog_Result):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
     def setupUi(self, z_dialog):
         super(ResultUi, self).setupUi(z_dialog)
@@ -6017,9 +5983,17 @@ def balls_continue_btn():
     BallsNumDialog.hide()
 
 
+class MapUi(QDialog, Ui_Dialog_Map):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def setupUi(self, z_dialog):
+        super(self).setupUi(z_dialog)
+
+
 class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
     def setupUi(self, z_dialog):
         super(TrapBallUi, self).setupUi(z_dialog)
@@ -6060,10 +6034,12 @@ def set_trap_btn():
 
 def trap_ok():
     PlanBallNum_Thread.run_flg = False
+    TrapBall_ui.hide()
 
 
 def trap_cancel():
     PlanBallNum_Thread.run_flg = False
+    TrapBall_ui.hide()
 
 
 "************************************ResultDlg_Ui*********************************************"
@@ -6076,11 +6052,18 @@ if __name__ == '__main__':
     ui.setupUi(z_window)
     z_window.show()
 
-    TrapBallDialog = QDialog(z_window)
-    TrapBall_ui = TrapBallUi()
-    TrapBall_ui.setupUi(TrapBallDialog)
+    Map_ui = MapUi(z_window)
+    Map_ui.setupUi(Map_ui)
+
+    TrapBall_ui = TrapBallUi(z_window)
+    TrapBall_ui.setupUi(TrapBall_ui)
     TrapBall_ui.pushButton_ok.clicked.connect(trap_ok)
     TrapBall_ui.pushButton_cancel.clicked.connect(trap_cancel)
+
+    result_ui = ResultUi(parent=z_window)
+    result_ui.setupUi(result_ui)
+    result_ui.pushButton_Send_Res.clicked.connect(result2end)
+    result_ui.checkBox_stop.checkStateChanged.connect(stop_alarm)
 
     BallsNumDialog = QDialog(z_window)  #
     BallsNum_ui = BallsNumUi()
@@ -6093,11 +6076,6 @@ if __name__ == '__main__':
     organ_ui = OrganUi()
     organ_ui.setupUi(OrganDialog)
     organ_ui.pushButton_ok.clicked.connect(organ_ok)
-
-    ResultDialog = QDialog(z_window)
-    result_ui = ResultUi()
-    result_ui.setupUi(ResultDialog)
-    result_ui.pushButton_Send_Res.clicked.connect(result2end)
 
     SpeedDialog = QDialog(z_window)
     speed_ui = SpeedUi()
@@ -6474,7 +6452,7 @@ if __name__ == '__main__':
     map_layout.addWidget(map_label)
 
     map_label1 = MapLabel(picture_size=350, ball_space=11, ball_radius=5, step_length=1.03)
-    map_layout1 = QVBoxLayout(TrapBall_ui.widget_map)
+    map_layout1 = QVBoxLayout(Map_ui.widget_map)
     map_layout1.setContentsMargins(0, 0, 0, 0)
     map_layout1.setAlignment(Qt.AlignmentFlag.AlignCenter)
     # 添加自定义的 QLabel 到布局中
@@ -6484,7 +6462,6 @@ if __name__ == '__main__':
     pygame.mixer.init()
 
     ui.checkBox_alarm.checkStateChanged.connect(stop_alarm)
-    result_ui.checkBox_stop.checkStateChanged.connect(stop_alarm)
     TrapBall_ui.checkBox_stop.checkStateChanged.connect(stop_alarm)
     ui.checkBox_main_music.checkStateChanged.connect(music_ctl)
     ui.radioButton_music_1.clicked.connect(music_ctl)
