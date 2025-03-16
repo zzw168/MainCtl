@@ -397,12 +397,15 @@ def get_rtsp(rtsp_url):
         ret, frame = cap.read()
         cap.release()
         if ret:
-            if len(area_Code['main']) > 0:
-                # 获取裁剪区域坐标
-                area = area_Code['net'][0]['coordinates']
-                x1, x2 = area[0][0], area[1][0]
-                y1, y2 = area[1][1], area[2][1]
-                frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
+            try:
+                if len(area_Code['net']) > 0:
+                    # 获取裁剪区域坐标
+                    area = area_Code['net'][0]['coordinates']
+                    x1, x2 = area[0][0], area[1][0]
+                    y1, y2 = area[1][1], area[2][1]
+                    frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
+            except:
+                pass
             success, jpeg_data = cv2.imencode('.jpg', frame)
             if success:
                 # 将 JPEG 数据转换为 Base64 字符串
@@ -1954,9 +1957,14 @@ def PlanBallNumsignal_accept(msg):
             ui.checkBox_saveImgs_main.setChecked(True)
             ui.checkBox_saveImgs_monitor.setChecked(True)
     elif '检查结束' in msg:
-        TrapBallDialog.hide()
+        TrapBall_ui.label_state.setText('确认成功！')
+        TrapBall_ui.label_state.setStyleSheet('color: rgb(0, 255, 0)')
+        # TrapBallDialog.hide()
     elif '人工检查' in msg:
         if not TrapBallDialog.isVisible():
+            ui.checkBox_end_stop.setChecked(True)
+            TrapBall_ui.label_state.setText('请确认卡珠情况')
+            TrapBall_ui.label_state.setStyleSheet('color: rgb(255, 0, 0)')
             TrapBallDialog.show()
             play_alarm()
     elif '计球倒计时' in msg:
@@ -2200,7 +2208,8 @@ def ScreenShotsignal_accept(msg):
         img = msg[0]
         pixmap = QPixmap()
         pixmap.loadFromData(img)
-        pixmap = pixmap.scaled(int(400 * 1.8), int(225 * 1.8))
+        pixmap = pixmap.scaled(pixmap.width() / 2, pixmap.height() / 2, Qt.KeepAspectRatio, Qt.SmoothTransformation);
+
         if msg[2] == 'obs':
             painter = QPainter(pixmap)
             painter.setFont(QFont("Arial", 50, QFont.Bold))  # 设置字体
@@ -2358,6 +2367,7 @@ class ShootThread(QThread):
                     time.sleep(2)
                     if ((ui.lineEdit_balls_auto.text().isdigit()
                          and balls_start >= int(ui.lineEdit_balls_auto.text()))
+                            or BallsNum_ui.go_flg
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         self.signal.emit(succeed("隐藏提示"))
                         for index in range(0, 16):
@@ -2374,22 +2384,17 @@ class ShootThread(QThread):
                             time.sleep(1)
                         PlanCmd_Thread.ready_state = True  # 运行准备
                         PlanCmd_Thread.run_flg = True
+                        if BallsNum_ui.go_flg:
+                            BallsNum_ui.go_flg = False
                         break
-                    if BallsNum_ui.go_flg:
-                        BallsNum_ui.go_flg = False
-                        break
+
                     time_count += 1
                     if time_count > 5:
                         if int(time_count % 3) == 0:
-                            self.signal.emit(fail("弹射上珠不够"))
                             if ui.radioButton_stop_betting.isChecked():
                                 self.signal.emit(succeed("隐藏提示"))
-                                while PlanCmd_Thread.run_flg:
-                                    print('等待动作结束~~~~~~~~')
-                                    time.sleep(1)
-                                PlanCmd_Thread.ready_state = True  # 运行准备
-                                PlanCmd_Thread.run_flg = True
                                 break  # 封盘时不持续弹窗
+                            self.signal.emit(fail("弹射上珠不够"))
                 for index in range(0, 16):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
@@ -4010,7 +4015,8 @@ class MapLabel(QLabel):
             }
 
         # 保留卡珠位置
-        if TrapBallDialog.isVisible():
+        if (TrapBallDialog.isVisible()
+                and TrapBall_ui.label_state.styleSheet() == 'color: rgb(255, 0, 0)'):
             self.pos_stop = copy.deepcopy(self.positions)
             for num in range(0, balls_count):
                 for i in range(len(self.pos_stop)):  # 排序
@@ -4020,7 +4026,8 @@ class MapLabel(QLabel):
                         p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
                         if p < len(self.path_points):
                             self.pos_stop[num][0] = p
-        if BallsNumDialog.isVisible():
+        if (TrapBallDialog.isVisible()
+                and TrapBall_ui.label_state.styleSheet() == 'color: rgb(0, 255, 0)'):
             if len(self.pos_stop) == len(self.positions):
                 self.positions = copy.deepcopy(self.pos_stop)
 
@@ -6061,12 +6068,10 @@ def set_trap_btn():
 
 def trap_ok():
     PlanBallNum_Thread.run_flg = False
-    TrapBallDialog.hide()
 
 
 def trap_cancel():
     PlanBallNum_Thread.run_flg = False
-    TrapBallDialog.hide()
 
 
 "************************************ResultDlg_Ui*********************************************"
@@ -6477,7 +6482,7 @@ if __name__ == '__main__':
     map_layout.addWidget(map_label)
 
     map_label1 = MapLabel(picture_size=350, ball_space=11, ball_radius=5, step_length=1.03)
-    map_layout1 = QVBoxLayout(BallsNum_ui.widget_map)
+    map_layout1 = QVBoxLayout(TrapBall_ui.widget_map)
     map_layout1.setContentsMargins(0, 0, 0, 0)
     map_layout1.setAlignment(Qt.AlignmentFlag.AlignCenter)
     # 添加自定义的 QLabel 到布局中
@@ -6487,7 +6492,6 @@ if __name__ == '__main__':
     pygame.mixer.init()
 
     ui.checkBox_alarm.checkStateChanged.connect(stop_alarm)
-    BallsNum_ui.checkBox_stop.checkStateChanged.connect(stop_alarm)
     result_ui.checkBox_stop.checkStateChanged.connect(stop_alarm)
     TrapBall_ui.checkBox_stop.checkStateChanged.connect(stop_alarm)
     ui.checkBox_main_music.checkStateChanged.connect(music_ctl)
