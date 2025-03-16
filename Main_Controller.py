@@ -2107,7 +2107,6 @@ class ScreenShotThread(QThread):
                 z_ranking_end = copy.deepcopy(monitor_Camera)
                 lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             else:
-                sec_ = 0
                 term_status = 0
                 term_comment = term_comments[3]
                 z_ranking_end = copy.deepcopy(z_ranking_res)
