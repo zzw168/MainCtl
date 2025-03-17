@@ -862,7 +862,7 @@ class TcpResultThread(QThread):
                                             {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
                                 # print(datalist)
                                 ws.send(json.dumps(datalist))
-
+                                lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
                                 if ui.radioButton_start_betting.isChecked():  # 开盘模式
                                     result_data = {"raceTrackID": Track_number, "term": str(term),
                                                    "actualResultOpeningTime": betting_end_time,
@@ -983,15 +983,13 @@ def tcpsignal_accept(msg):
         if row_count > 0:
             for i in range(3, col_count):
                 if i == 3:
-                    item = QTableWidgetItem(lottery_term[i])
+                    item = tb_result.item(0, i)
                     item.setTextAlignment(Qt.AlignCenter)
                     if lottery_term[i] == '未结束':
                         item.setForeground(QColor("red"))
                     else:
                         item.setForeground(QColor("green"))
-                    tb_result.setItem(0, i, item)
-                else:
-                    tb_result.item(0, i).setText(lottery_term[i])
+                tb_result.item(0, i).setText(lottery_term[i])
         if not betting_loop_flg:
             ui.radioButton_stop_betting.click()  # 封盘
             if ui.checkBox_end_BlackScreen.isChecked():
