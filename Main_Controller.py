@@ -915,7 +915,7 @@ class TcpResultThread(QThread):
                                         send_flg = False
                                         self.signal.emit(fail('上传结果错误！'))
                                         print('上传结果错误！')
-
+                                    ReStart_Thread.start_flg = False
                                 # 获取录屏状态
                                 recording_status = cl_request.get_record_status()
                                 try:
@@ -982,14 +982,15 @@ def tcpsignal_accept(msg):
         col_count = tb_result.columnCount()
         if row_count > 0:
             for i in range(3, col_count):
+                item = tb_result.item(0, i)
+                if item is None:
+                    item = QTableWidgetItem()
+                    tb_result.setItem(0, i, item)
+                item.setText(lottery_term[i])
+                item.setTextAlignment(Qt.AlignCenter)
                 if i == 3:
-                    item = tb_result.item(0, i)
-                    item.setTextAlignment(Qt.AlignCenter)
-                    if lottery_term[i] == '未结束':
-                        item.setForeground(QColor("red"))
-                    else:
-                        item.setForeground(QColor("green"))
-                tb_result.item(0, i).setText(lottery_term[i])
+                    item.setForeground(QColor("red") if lottery_term[i] == "未结束" else QColor("green"))
+            tb_result.viewport().update()
         if not betting_loop_flg:
             ui.radioButton_stop_betting.click()  # 封盘
             if ui.checkBox_end_BlackScreen.isChecked():
@@ -1547,8 +1548,8 @@ class ReStartThread(QThread):
     def __init__(self):
         super(ReStartThread, self).__init__()
         self.run_flg = False
-
         self.running = True
+        self.start_flg = False
 
     def stop(self):
         self.run_flg = False
@@ -1586,6 +1587,7 @@ class ReStartThread(QThread):
             if ui.radioButton_start_betting.isChecked():  # 非模拟模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
+                    self.start_flg = True
                     term = response['term']
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
@@ -5011,6 +5013,9 @@ def cancel_end():
     global term_status
     global term_comment
     global betting_loop_flg
+    if ReStart_Thread.start_flg:
+        messagebox.showinfo("取消当局", "当前开盘中，不能直接取消比赛，如需强制取消，请点击封盘！")
+        return
     response = messagebox.askquestion("取消当局", "取消当局，你确定吗？")
     print(response)  # "yes" / "no"
     if "yes" in response:
@@ -5461,10 +5466,27 @@ def start_betting():
 
 def stop_betting():
     global betting_loop_flg
-    if not Kaj789_Thread.run_flg:
-        betting_loop_flg = False
-        Kaj789_Thread.run_type = 'post_stop'
-        Kaj789_Thread.run_flg = True
+    global term_status
+    global term_comment
+    if ReStart_Thread.start_flg:
+        response = messagebox.askquestion("取消当局", "比赛进行中，是否取消当局？")
+        print(response)  # "yes" / "no"
+        if "yes" in response:
+            term_status = 2
+            term_comment = term_comments[0]
+            while Kaj789_Thread.run_flg:
+                time.sleep(1)
+            Kaj789_Thread.run_type = 'post_end'
+            Kaj789_Thread.run_flg = True
+            betting_loop_flg = False
+        else:
+            ui.radioButton_start_betting.setChecked(True)
+            return
+    while Kaj789_Thread.run_flg:
+        time.sleep(1)
+    betting_loop_flg = False
+    Kaj789_Thread.run_type = 'post_stop'
+    Kaj789_Thread.run_flg = True
 
 
 def test_betting():
@@ -5576,9 +5598,7 @@ def my_test():
     global term
     global z_ranking_res
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
-    z_ranking_res = [random.randint(1, 10) for _ in range(10)]
-    print(z_ranking_res)
-    tcp_ranking_thread.run_flg = True
+    ui.radioButton_start_betting.setChecked(True)
     # play_alarm()
     # PlanCmd_Thread.background_state = True
     # PlanCmd_Thread.run_flg = True
