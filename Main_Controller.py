@@ -2329,7 +2329,7 @@ class ShootThread(QThread):
                         break
 
                     time_count += 1
-                    if time_count > 5:
+                    if time_count > 10:
                         if int(time_count % 3) == 0:
                             if ui.radioButton_stop_betting.isChecked():
                                 self.signal.emit(succeed("隐藏提示"))
@@ -5490,6 +5490,10 @@ def stop_betting():
 
 
 def test_betting():
+    if ReStart_Thread.start_flg:
+        messagebox.showinfo("敬告", "当前开盘中，不能更改比赛状态！")
+        ui.radioButton_start_betting.setChecked(True)
+        return
     ui.textBrowser_msg.append(succeed('模拟开盘！'))
     ui.groupBox_term.setStyleSheet('')
 
