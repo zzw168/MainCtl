@@ -796,7 +796,7 @@ class TcpRankingThread(QThread):
                                             ws.send(json.dumps(d))
                                             self.time_list[i] = copy.deepcopy(z_ranking_time[i])
                                             if i == 0:
-                                                Script_Thread.param = self.time_list[i]
+                                                Script_Thread.param = '%s"' % self.time_list[i]
                                                 Script_Thread.run_type = 'period'
                                                 Script_Thread.run_flg = True
                                 else:
@@ -2359,7 +2359,7 @@ def shootsignal_accept(msg):
     elif "隐藏提示" in msg:
         BallsNumDialog.hide()
     elif "弹射上珠不够" in msg:
-        if Shoot_Thread.run_flg and not (BallsNumDialog.isVisible()):
+        if Shoot_Thread.run_flg and (not BallsNumDialog.isVisible()):
             BallsNumDialog.show()
             play_alarm()
 
@@ -2483,8 +2483,10 @@ class PlanCmdThread(QThread):
                         break
                     if plan_list[plan_index][0] != '1':  # 是否勾选,且在圈数范围内
                         continue
-                    if (((((action_area[1] < int(float(plan_list[plan_index][1][0]))  # 运行圈数在设定圈数范围内
-                            and (float(plan_list[plan_index][1][0]) >= 0))  # 或者设定圈数的值为 0 时，最后一圈执行
+                    if (((((action_area[1] < int(float(plan_list[plan_index][1][0]))  # 循环运行圈数在设定圈数范围内
+                            and (float(plan_list[plan_index][1][0]) > 0) and cb_index == 0)  # 或者设定圈数的值为 0 时，最后一圈执行
+                           or (action_area[1] == int(float(plan_list[plan_index][1][0])) - 1  # 顺序运行圈数在设定圈数范围内
+                               and (float(plan_list[plan_index][1][0]) > 0) and cb_index == 1)  # 或者设定圈数的值为 0 时，最后一圈执行
                            or float(plan_list[plan_index][1][0]) == 0)
                           and not self.background_state
                           and not self.ready_state
@@ -5008,6 +5010,7 @@ def send_end():
 def cancel_end():
     global term_status
     global term_comment
+    global betting_loop_flg
     response = messagebox.askquestion("取消当局", "取消当局，你确定吗？")
     print(response)  # "yes" / "no"
     if "yes" in response:
@@ -5015,6 +5018,7 @@ def cancel_end():
         term_comment = term_comments[0]
         Kaj789_Thread.run_type = 'post_end'
         Kaj789_Thread.run_flg = True
+        betting_loop_flg = False
         ui.radioButton_stop_betting.click()
     # res = post_marble_results(term, 'Invalid Term', Track_number)
     # if 'Invalid Term' in res:
@@ -5450,7 +5454,9 @@ def start_betting():
 
 
 def stop_betting():
+    global betting_loop_flg
     if not Kaj789_Thread.run_flg:
+        betting_loop_flg = False
         Kaj789_Thread.run_type = 'post_stop'
         Kaj789_Thread.run_flg = True
 
