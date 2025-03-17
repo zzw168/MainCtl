@@ -5171,7 +5171,13 @@ class TestStatusThread(QThread):
             path2 = ui.lineEdit_upload_Path.text()
             folder_name = os.path.basename(path1)
             folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
-            limit_folder_size(folder_path, max_files=5000)  # 限制文件夹数量
+            if os.path.exists(folder_path):
+                limit_folder_size(folder_path, max_files=5000)  # 限制文件夹数量
+            if os.path.exists(path2):
+                limit_folder_size(path2, max_files=5000)  # 限制文件夹数量
+            video_part = os.path.join(os.path.dirname(path2), '录像').replace("\\", "/")
+            if os.path.exists(video_part):
+                limit_folder_size(video_part, max_files=800)  # 限制文件夹数量
 
             if ui.lineEdit_login.text() == 'zzw':
                 if not ui.frame_zzw_1.isEnabled():
