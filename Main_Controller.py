@@ -802,6 +802,7 @@ class TcpRankingThread(QThread):
                                 else:
                                     d = {'data': z_ranking_res[0: balls_count], 'type': 'pm'}
                                     ws.send(json.dumps(d))
+                                    # print(d)
                         except Exception as e:
                             print("pingpong_rank_1 错误：", e)
                             # self.signal.emit("pingpong 错误：%s" % e)
@@ -1874,6 +1875,7 @@ class PlanBallNumThread(QThread):
                 except:
                     print('警报电压输出错误！')
                     flg_start['card'] = False
+                self.signal.emit('检查结束')
                 for index in range(balls_count):
                     if z_ranking_time[index] == '':
                         t = time.time()
@@ -1883,7 +1885,6 @@ class PlanBallNumThread(QThread):
                         term_comment = s
                         term_status = 0
                     time.sleep(0.5)
-                self.signal.emit('检查结束')
             else:
                 print("次数归0 失败！")
                 flg_start['card'] = False
@@ -2033,11 +2034,12 @@ class ScreenShotThread(QThread):
 
     def run(self) -> None:
         global ball_sort
-        global ranking_array
         global lottery_term
         global betting_end_time
         global Send_Result_End
         global z_ranking_end
+        global z_ranking_res
+        global ranking_array
         global term_status
         global term_comment
         global main_Camera, monitor_Camera, fit_Camera
@@ -2049,6 +2051,7 @@ class ScreenShotThread(QThread):
             self.signal.emit(succeed('截图结果识别运行！'))
             obs_list = []
             rtsp_list = []
+            camera_list = []
             obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])
@@ -2077,89 +2080,65 @@ class ScreenShotThread(QThread):
                 if len(main_Camera) == len(z_ranking_res):
                     term_status = 1
                     print('主镜头识别正确:', main_Camera)
-                    if len(obs_list) > 2 and not ui.checkBox_main_camera_set.isChecked():
-                        for i in range(0, len(obs_list)):
-                            for j in range(0, len(ranking_array)):
-                                if ranking_array[j][5] == obs_list[i]:
-                                    ranking_array[j][6] = max_area_count
-                                    ranking_array[j][8] = max_lap_count - 1
-                                    ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                            ball_sort[max_area_count][max_lap_count - 1].append('')
-                            ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
-                        color_to_num(ranking_array)
                     z_ranking_end = copy.deepcopy(main_Camera)
+                    camera_list = obs_list
                     lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             elif z_ranking_res == monitor_Camera:
                 term_status = 1
                 print('网络识别正确:', monitor_Camera)
-                if len(rtsp_list) > 2:
-                    print(rtsp_list)
-                    for i in range(0, len(rtsp_list)):
-                        for j in range(0, len(ranking_array)):
-                            if ranking_array[j][5] == rtsp_list[i]:
-                                ranking_array[j][6] = max_area_count
-                                ranking_array[j][8] = max_lap_count - 1
-                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                        ball_sort[max_area_count][max_lap_count - 1].append('')
-                        ball_sort[max_area_count][max_lap_count - 1][i] = rtsp_list[i]
-                    color_to_num(ranking_array)
-                    print(ranking_array)
                 z_ranking_end = copy.deepcopy(monitor_Camera)
+                camera_list = rtsp_list
                 lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             else:
                 term_status = 0
                 term_comment = term_comments[3]
                 z_ranking_end = copy.deepcopy(z_ranking_res)
+                send_list = []
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
                     ui.lineEdit_Send_Result.setText('')
                     Send_Result_End = False
                     while self.run_flg:
                         self.signal.emit('显示结果对话框')
                         if Send_Result_End:
-                            try:
-                                send_list = []
-                                for i in range(len(z_ranking_res)):
-                                    if getattr(ui, 'lineEdit_result_%s' % i).text().isdigit():
-                                        num = int(getattr(ui, 'lineEdit_result_%s' % i).text())
-                                        if num not in send_list:
-                                            send_list.append(num)
-                                if len(send_list) >= balls_count:
-                                    for i in range(0, len(send_list)):
-                                        for j in range(0, len(z_ranking_end)):
-                                            if send_list[i] == z_ranking_end[j]:
-                                                z_ranking_end[i], z_ranking_end[j] = z_ranking_end[j], z_ranking_end[i]
-                                    for i in range(0, len(send_list)):
-                                        for j in range(0, len(ranking_array)):
-                                            if ranking_array[j][5] == rtsp_list[i]:
-                                                ranking_array[j][6] = max_area_count
-                                                ranking_array[j][8] = max_lap_count - 1
-                                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                                        ball_sort[max_area_count][max_lap_count - 1].append('')
-                                        ball_sort[max_area_count][max_lap_count - 1][i] = rtsp_list[i]
-                                    color_to_num(ranking_array)
-                                    self.signal.emit('send_ok')
-                                    Send_Result_End = False
-                                    try:
-                                        index = int(ui.lineEdit_alarm.text()) - 1
-                                        sc.GASetExtDoBit(index, 0)
-                                    except:
-                                        print('警报电压输出错误！')
-                                        flg_start['card'] = False
-                                    break
-                                else:
-                                    Send_Result_End = False
-                                    self.signal.emit(fail('发送数据错误！'))
-                            except:
-                                self.signal.emit('send_res')
+                            send_list = []
+                            for i in range(len(z_ranking_res)):
+                                if getattr(ui, 'lineEdit_result_%s' % i).text().isdigit():
+                                    num = int(getattr(ui, 'lineEdit_result_%s' % i).text())
+                                    if num not in send_list:
+                                        send_list.append(num)
+                            if len(send_list) >= balls_count:
+                                self.signal.emit('send_ok')
                                 Send_Result_End = False
+                                break
+                            else:
+                                Send_Result_End = False
+                                self.signal.emit(fail('发送数据错误！'))
                         if ui.checkBox_Pass_Ranking_Twice.isChecked():
                             break
                         time.sleep(1)
                     Send_Result_End = False
+                    for i in range(0, len(send_list)):
+                        for j in range(0, len(z_ranking_end)):
+                            if send_list[i] == z_ranking_end[j]:
+                                z_ranking_end[i], z_ranking_end[j] = z_ranking_end[j], z_ranking_end[i]
+                    camera_list = []
+                    for i in range(len(z_ranking_end)):
+                        camera_list.append(init_array[z_ranking_end[i] - 1][5])
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
 
+            for i in range(0, len(camera_list)):
+                for j in range(0, len(ranking_array)):
+                    if ranking_array[j][5] == camera_list[i]:
+                        ranking_array[j][6] = max_area_count
+                        ranking_array[j][8] = max_lap_count - 1
+                        ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                if len(ball_sort[max_area_count][max_lap_count - 1]) - 1 < i:
+                    ball_sort[max_area_count][max_lap_count - 1].append('')
+                ball_sort[max_area_count][max_lap_count - 1][i] = camera_list[i]
+            color_to_num(ranking_array)
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
+            time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
             print('ObsEnd_Thread.screen_flg:%s' % ObsEnd_Thread.screen_flg, '~~~~~~~~~~~~~~~~~~~~~~')
 
@@ -5108,6 +5087,7 @@ class ResetRankingThread(QThread):
 
 
 def reset_ranking_signal_accept(msg):
+    Map_ui.hide()
     ui.textBrowser.append(msg)
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser)
@@ -5585,7 +5565,10 @@ def flip_vertica():  # 主镜头垂直翻转
 def my_test():
     global term
     global z_ranking_res
-    cl_request.press_input_properties_button("结算页", "refreshnocache")
+    # cl_request.press_input_properties_button("结算页", "refreshnocache")
+    z_ranking_res = [random.randint(1, 10) for _ in range(10)]
+    print(z_ranking_res)
+    tcp_ranking_thread.run_flg = True
     # play_alarm()
     # PlanCmd_Thread.background_state = True
     # PlanCmd_Thread.run_flg = True
@@ -5987,7 +5970,7 @@ class MapUi(QDialog, Ui_Dialog_Map):
         super().__init__(parent)
 
     def setupUi(self, z_dialog):
-        super(self).setupUi(z_dialog)
+        super().setupUi(z_dialog)
 
 
 class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
