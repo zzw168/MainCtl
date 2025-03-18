@@ -511,8 +511,8 @@ def deal_rank(integration_qiu_array):
                             ranking_array[r_index][8] = max_lap_count - 1
 
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
-                        or (q_item[6] >= ranking_array[r_index][6] and  # 新位置要大于旧位置
-                            (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
+                        or (q_item[6] >= ranking_array[r_index][6] # 新位置要大于旧位置
+                            and (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                             ))):
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
@@ -1669,6 +1669,12 @@ def restartsignal_accept(msg):
             plan_refresh()
             ui.lineEdit_ball_end.setText('0')
             ui.lineEdit_balls_end.setText('0')
+        elif int(msg) == 35:
+            # 刷新 "浏览器来源"（Browser Source）
+            cl_request.press_input_properties_button("结算页", "refreshnocache")
+        elif int(msg) == 38:
+            cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'], False)  # 打开排位组件
+
         ui.lineEdit_time.setText(str(msg))
         ui.lineEdit_times_count.setText(str(msg))
         tb_result = ui.tableWidget_Results
@@ -1890,7 +1896,7 @@ class PlanBallNumThread(QThread):
                 flg_start['card'] = False
                 self.signal.emit(fail("运动板x输入通信出错！"))
 
-            tcp_ranking_thread.sleep_time = 0.5  # 恢复正常前端排名数据包发送频率
+            tcp_ranking_thread.sleep_time = 0.1  # 恢复正常前端排名数据包发送频率
             if screen_sort:
                 term_comment = term_comments[1]
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
@@ -1990,12 +1996,15 @@ class ObsEndThread(QThread):
                                                       1080, 100)
                 tcp_result_thread.send_type = 'updata'
                 tcp_result_thread.run_flg = True
+
+                cl_request.press_input_properties_button("浏览器", "refreshnocache")
+                time.sleep(0.2)
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
-                                                  False)  # 打开视频来源
+                                                  False)  # 关闭画中画来源
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
-                                                  False)  # 打开视频来源
+                                                  False)  # 关闭排名来源
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
-                                                  True)  # 打开视频来源
+                                                  True)  # 打开结果来源
             except:
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
@@ -5076,11 +5085,11 @@ class ResetRankingThread(QThread):
             action_area = [0, 0, 0]  # 初始化触发区域
             z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
             z_ranking_time = [''] * 10  # 初始化网页排名时间
-            tcp_ranking_thread.sleep_time = 0.5  # 重置排名数据包发送时间
+            tcp_ranking_thread.sleep_time = 0.1  # 重置排名数据包发送时间
             map_label_big.map_action = 0
             alarm_worker.toggle_enablesignal.emit(False)
             if flg_start['obs'] and not ui.checkBox_test.isChecked():
-                activate_browser()  # 刷新OBS中排名浏览器
+                # activate_browser()  # 刷新OBS中排名浏览器
                 try:
                     while Script_Thread.run_flg:
                         time.sleep(1)
