@@ -1563,6 +1563,7 @@ class ReStartThread(QThread):
         global betting_start_time
         global betting_end_time
         global action_area
+        global ball_sort
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -1642,16 +1643,17 @@ class ReStartThread(QThread):
                         if not reset_ranking_Thread.run_flg:
                             reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                         read_flg = False
+                    ball_sort[1][0] = []
                 time.sleep(1)
                 self.signal.emit(t)
             if self.run_flg:
                 while reset_ranking_Thread.run_flg:
                     print('reset_ranking_Thread.run_flg', '~~~~~~~~~~~')
                     time.sleep(1)
-                reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
-                while reset_ranking_Thread.run_flg:
-                    print('reset_ranking_Thread.run_flg', '~~~~~~~~~~~')
-                    time.sleep(1)
+                # reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
+                # while reset_ranking_Thread.run_flg:
+                #     print('reset_ranking_Thread.run_flg', '~~~~~~~~~~~')
+                #     time.sleep(1)
                 while PlanCmd_Thread.run_flg:
                     print('等待背景结束~~~~~~~')
                     time.sleep(1)
@@ -1823,6 +1825,7 @@ class PlanBallNumThread(QThread):
         global z_ranking_time
         global term_status
         global term_comment
+        global ball_sort
         while self.running:
             time.sleep(0.1)
             if (not self.run_flg) or (not flg_start['card']):
@@ -1874,6 +1877,8 @@ class PlanBallNumThread(QThread):
                             if time_num > 1:
                                 time_old = time.time()
                                 sec_ += 1
+                                for i in range(max_area_count, max_area_count - balls_count, -1):
+                                    ball_sort[i][max_lap_count - 1] = []
                                 self.signal.emit(
                                     succeed('计球倒计时：%s' %
                                             str(int(ui.lineEdit_time_count_ball.text()) - sec_)))
