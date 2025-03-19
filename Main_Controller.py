@@ -1568,6 +1568,7 @@ class ReStartThread(QThread):
             if not self.run_flg:
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
+            read_flg = True
             while PlanCmd_Thread.run_flg:
                 print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                 time.sleep(1)
@@ -1634,12 +1635,13 @@ class ReStartThread(QThread):
                 if not betting_loop_flg:
                     self.run_flg = False
                     break
-                if t < self.countdown - 5:
-                    if not PlanCmd_Thread.run_flg:
-                        PlanCmd_Thread.background_state = True  # 运行背景
+                if t <= self.countdown - 5:
+                    if not PlanCmd_Thread.background_state and read_flg:
+                        PlanCmd_Thread.ready_state = True  # 运行背景
                         PlanCmd_Thread.run_flg = True
-                    if not reset_ranking_Thread.run_flg:
-                        reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
+                        if not reset_ranking_Thread.run_flg:
+                            reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
+                        read_flg = False
                 time.sleep(1)
                 self.signal.emit(t)
             if self.run_flg:
