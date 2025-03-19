@@ -237,7 +237,7 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.press_input_properties_button("结算页", "refreshnocache")
             time.sleep(1)
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
-            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 打开排位组件
+            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
             time.sleep(1)
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
         except:
@@ -511,7 +511,7 @@ def deal_rank(integration_qiu_array):
                             ranking_array[r_index][8] = max_lap_count - 1
 
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
-                        or (q_item[6] >= ranking_array[r_index][6] # 新位置要大于旧位置
+                        or (q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
                             and (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                             ))):
                     for r_i in range(0, len(q_item)):
@@ -521,7 +521,8 @@ def deal_rank(integration_qiu_array):
                 break
         if not replaced:
             if (map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9
-                    and action_area[1] >= max_lap_count - 1):
+                    # and action_area[1] >= max_lap_count - 1
+            ):
                 ranking_array[r_index][9] = 1
             else:
                 ranking_array[r_index][9] = 0
@@ -563,8 +564,6 @@ def sort_ranking():
             continue
         if not (ranking_array[i][5] in ball_sort[ranking_array[i][6]][ranking_array[i][8]]):
             ball_sort[ranking_array[i][6]][ranking_array[i][8]].append(copy.deepcopy(ranking_array[i][5]))  # 添加寄存器球排序
-            if len(ball_sort[max_area_count][max_lap_count - 1]) >= 1:
-                break
     # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
     for i in range(0, len(ranking_array)):
         for j in range(0, len(ranking_array) - i - 1):
@@ -1074,6 +1073,8 @@ class UdpThread(QThread):
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
                     deal_rank(array_data)
                     balls_start = len(ball_sort[1][0])  # 更新起点球数
+                    # if balls_start < len(ball_sort[0][0]):   # 0区数量
+                    #     balls_start = len(ball_sort[0][0])
                     self.signal.emit(balls_start)
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~3', ranking_array)
                     deal_action()
@@ -1550,6 +1551,7 @@ class ReStartThread(QThread):
         self.run_flg = False
         self.running = True
         self.start_flg = False
+        self.countdown = '30'
 
     def stop(self):
         self.run_flg = False
@@ -1591,7 +1593,7 @@ class ReStartThread(QThread):
                     term = response['term']
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
-                    countdown = int(betting_start_time) - int(time.time())
+                    self.countdown = int(betting_start_time) - int(time.time())
                     self.signal.emit('term_ok')
                     res_start = post_start(term=term, betting_start_time=betting_start_time,
                                            starting_Position=str(z_ranking_res[:balls_count])[1:-1],
@@ -1600,12 +1602,12 @@ class ReStartThread(QThread):
                         self.signal.emit(fail('比赛开始失败:%s' % res_start))
                         self.run_flg = False
                         continue
-                    if countdown < 0:  # 时间错误，30秒后开赛
+                    if self.countdown < 0:  # 时间错误，30秒后开赛
                         betting_start_time = int(time.time())
                         betting_end_time = int(time.time()) + 30
-                        countdown = str(30)
+                        self.countdown = str(30)
                     else:
-                        countdown = str(countdown)
+                        self.countdown = str(self.countdown)
                 else:  # 封盘模式，退出循环
                     tcp_result_thread.send_type = 'time'
                     self.signal.emit('error')
@@ -1614,7 +1616,7 @@ class ReStartThread(QThread):
             else:
                 term = str(int(term) + 1)
                 self.signal.emit('测试期号')
-                countdown = ui.lineEdit_Time_Restart_Ranking.text()
+                self.countdown = ui.lineEdit_Time_Restart_Ranking.text()
 
             Script_Thread.run_type = 'term'
             Script_Thread.run_flg = True  # 发送期号到OBS的python脚本
@@ -1624,14 +1626,20 @@ class ReStartThread(QThread):
             if lottery:
                 self.signal.emit(lottery)
 
-            if countdown.isdigit():
-                countdown = int(countdown)
+            if self.countdown.isdigit():
+                self.countdown = int(self.countdown)
             else:
-                countdown = 60
-            for t in range(countdown, -1, -1):
+                self.countdown = 60
+            for t in range(self.countdown, -1, -1):
                 if not betting_loop_flg:
                     self.run_flg = False
                     break
+                if t < self.countdown - 5:
+                    if not PlanCmd_Thread.run_flg:
+                        PlanCmd_Thread.background_state = True  # 运行背景
+                        PlanCmd_Thread.run_flg = True
+                    if not reset_ranking_Thread.run_flg:
+                        reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                 time.sleep(1)
                 self.signal.emit(t)
             if self.run_flg:
@@ -1669,12 +1677,6 @@ def restartsignal_accept(msg):
             plan_refresh()
             ui.lineEdit_ball_end.setText('0')
             ui.lineEdit_balls_end.setText('0')
-        elif int(msg) == 35:
-            # 刷新 "浏览器来源"（Browser Source）
-            cl_request.press_input_properties_button("结算页", "refreshnocache")
-        elif int(msg) == 38:
-            cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'], False)  # 打开排位组件
-
         ui.lineEdit_time.setText(str(msg))
         ui.lineEdit_times_count.setText(str(msg))
         tb_result = ui.tableWidget_Results
@@ -1836,10 +1838,12 @@ class PlanBallNumThread(QThread):
             if res == 0:
                 while self.run_flg:
                     res, value = sc.GAGetDiReverseCount()
-                    # print(res, value)
+                    print(res, value)
                     if res == 0:
                         num = int(value[0] / 2)
-                        if (num != num_old) and (num <= len(z_ranking_time)):
+                        if num > len(z_ranking_time):
+                            num = len(z_ranking_time)
+                        if num != num_old:
                             for i in range(num):
                                 if z_ranking_time[i] == '':
                                     t = time.time()
@@ -1997,8 +2001,6 @@ class ObsEndThread(QThread):
                 tcp_result_thread.send_type = 'updata'
                 tcp_result_thread.run_flg = True
 
-                cl_request.press_input_properties_button("浏览器", "refreshnocache")
-                time.sleep(0.2)
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
                                                   False)  # 关闭画中画来源
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
@@ -2353,7 +2355,18 @@ class ShootThread(QThread):
                         int(ui.lineEdit_start_count.text()) - 1,
                     ]:
                         sc.GASetExtDoBit(index, 0)
-                self.run_flg = False
+
+                ranking_array = []  # 排名数组
+                for row in range(0, len(init_array)):
+                    ranking_array.append([])
+                    for col in range(0, len(init_array[row])):
+                        ranking_array[row].append(init_array[row][col])
+                ball_sort = []  # 位置寄存器
+                for row in range(0, max_area_count + 1):
+                    ball_sort.append([])
+                    for col in range(0, max_lap_count):
+                        ball_sort[row].append([])
+                balls_start = 0  # 起点球数
             except:
                 print("弹射上珠参数出错！")
                 self.signal.emit(fail("弹射上珠参数出错！"))
@@ -2516,7 +2529,8 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 0)
                                 else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
-                                if plan_list[plan_index][12][0] == ui.lineEdit_start_count.text():  # '9'倒数机关打开
+                                if (plan_list[plan_index][12][0] == ui.lineEdit_start_count.text()
+                                        and not self.background_state):  # '9'倒数机关打开
                                     lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                     self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
@@ -5060,6 +5074,7 @@ class ResetRankingThread(QThread):
         global z_ranking_res
         global z_ranking_time
         global balls_start
+        global term_comment
         # global previous_position
         while self.running:
             time.sleep(1)
@@ -5087,9 +5102,10 @@ class ResetRankingThread(QThread):
             z_ranking_time = [''] * 10  # 初始化网页排名时间
             tcp_ranking_thread.sleep_time = 0.1  # 重置排名数据包发送时间
             map_label_big.map_action = 0
+            term_comment = ''
             alarm_worker.toggle_enablesignal.emit(False)
             if flg_start['obs'] and not ui.checkBox_test.isChecked():
-                # activate_browser()  # 刷新OBS中排名浏览器
+                activate_browser()  # 刷新OBS中排名浏览器
                 try:
                     while Script_Thread.run_flg:
                         time.sleep(1)
@@ -5605,6 +5621,12 @@ def flip_vertica():  # 主镜头垂直翻转
 
 
 "****************************************参数设置_结束****************************************************"
+
+
+def red_line():
+    if flg_start['card']:
+        res, value = sc.GAGetDiReverseCount()
+        print(res, value)
 
 
 def my_test():
@@ -6235,7 +6257,8 @@ if __name__ == '__main__':
     ui.pushButton_CardClose.clicked.connect(card_close_all)
 
     ui.pushButton_start_game.clicked.connect(cmd_loop)
-    # ui.pushButton_start_game.clicked.connect(my_test)
+    ui.pushButton_RedLine.clicked.connect(red_line)
+    ui.pushButton_test1.clicked.connect(my_test)
 
     ui.checkBox_saveImgs.clicked.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)

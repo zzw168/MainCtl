@@ -3348,34 +3348,7 @@ class Ui_MainWindow(object):
         self.gridLayout_68.addWidget(self.label_96, 0, 0, 1, 1)
 
 
-        self.gridLayout_66.addWidget(self.groupBox_38, 3, 0, 1, 1)
-
-        self.textBrowser_total_msg = QTextBrowser(self.groupBox_27)
-        self.textBrowser_total_msg.setObjectName(u"textBrowser_total_msg")
-        self.textBrowser_total_msg.setFont(font6)
-        self.textBrowser_total_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.textBrowser_total_msg.setReadOnly(False)
-
-        self.gridLayout_66.addWidget(self.textBrowser_total_msg, 4, 0, 1, 1)
-
-        self.groupBox_5 = QGroupBox(self.groupBox_27)
-        self.groupBox_5.setObjectName(u"groupBox_5")
-        self.groupBox_5.setMinimumSize(QSize(0, 30))
-        self.gridLayout_64 = QGridLayout(self.groupBox_5)
-        self.gridLayout_64.setObjectName(u"gridLayout_64")
-        self.gridLayout_64.setContentsMargins(-1, 3, -1, 9)
-        self.checkBox_Flip_Horizontal = QCheckBox(self.groupBox_5)
-        self.checkBox_Flip_Horizontal.setObjectName(u"checkBox_Flip_Horizontal")
-
-        self.gridLayout_64.addWidget(self.checkBox_Flip_Horizontal, 0, 0, 1, 1)
-
-        self.checkBox_Flip_Vertica = QCheckBox(self.groupBox_5)
-        self.checkBox_Flip_Vertica.setObjectName(u"checkBox_Flip_Vertica")
-
-        self.gridLayout_64.addWidget(self.checkBox_Flip_Vertica, 0, 1, 1, 1)
-
-
-        self.gridLayout_66.addWidget(self.groupBox_5, 0, 0, 1, 1)
+        self.gridLayout_66.addWidget(self.groupBox_38, 4, 0, 1, 1)
 
         self.groupBox_20 = QGroupBox(self.groupBox_27)
         self.groupBox_20.setObjectName(u"groupBox_20")
@@ -3399,6 +3372,56 @@ class Ui_MainWindow(object):
 
 
         self.gridLayout_66.addWidget(self.groupBox_20, 1, 0, 1, 1)
+
+        self.textBrowser_total_msg = QTextBrowser(self.groupBox_27)
+        self.textBrowser_total_msg.setObjectName(u"textBrowser_total_msg")
+        self.textBrowser_total_msg.setFont(font6)
+        self.textBrowser_total_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.textBrowser_total_msg.setReadOnly(False)
+
+        self.gridLayout_66.addWidget(self.textBrowser_total_msg, 5, 0, 1, 1)
+
+        self.groupBox_5 = QGroupBox(self.groupBox_27)
+        self.groupBox_5.setObjectName(u"groupBox_5")
+        self.groupBox_5.setMinimumSize(QSize(0, 30))
+        self.gridLayout_64 = QGridLayout(self.groupBox_5)
+        self.gridLayout_64.setObjectName(u"gridLayout_64")
+        self.gridLayout_64.setContentsMargins(-1, 3, -1, 9)
+        self.checkBox_Flip_Horizontal = QCheckBox(self.groupBox_5)
+        self.checkBox_Flip_Horizontal.setObjectName(u"checkBox_Flip_Horizontal")
+
+        self.gridLayout_64.addWidget(self.checkBox_Flip_Horizontal, 0, 0, 1, 1)
+
+        self.checkBox_Flip_Vertica = QCheckBox(self.groupBox_5)
+        self.checkBox_Flip_Vertica.setObjectName(u"checkBox_Flip_Vertica")
+
+        self.gridLayout_64.addWidget(self.checkBox_Flip_Vertica, 0, 1, 1, 1)
+
+
+        self.gridLayout_66.addWidget(self.groupBox_5, 0, 0, 1, 1)
+
+        self.groupBox_13 = QGroupBox(self.groupBox_27)
+        self.groupBox_13.setObjectName(u"groupBox_13")
+        self.groupBox_13.setMinimumSize(QSize(50, 50))
+        self.groupBox_13.setMaximumSize(QSize(16777215, 16777215))
+        self.groupBox_13.setFont(font1)
+        self.gridLayout_72 = QGridLayout(self.groupBox_13)
+        self.gridLayout_72.setObjectName(u"gridLayout_72")
+        self.gridLayout_72.setContentsMargins(-1, 0, -1, -1)
+        self.pushButton_RedLine = QPushButton(self.groupBox_13)
+        self.pushButton_RedLine.setObjectName(u"pushButton_RedLine")
+        self.pushButton_RedLine.setMinimumSize(QSize(0, 25))
+
+        self.gridLayout_72.addWidget(self.pushButton_RedLine, 0, 0, 1, 1)
+
+        self.pushButton_test1 = QPushButton(self.groupBox_13)
+        self.pushButton_test1.setObjectName(u"pushButton_test1")
+        self.pushButton_test1.setMinimumSize(QSize(0, 25))
+
+        self.gridLayout_72.addWidget(self.pushButton_test1, 0, 1, 1, 1)
+
+
+        self.gridLayout_66.addWidget(self.groupBox_13, 3, 0, 1, 1)
 
 
         self.gridLayout_36.addWidget(self.groupBox_27, 0, 2, 2, 1)
@@ -4138,12 +4161,15 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_login.setText("")
         self.label_96.setText(QCoreApplication.translate("MainWindow", u"\u7ba1\u7406\u8d26\u53f7:", None))
-        self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u673a\u63a7\u5236", None))
-        self.checkBox_Flip_Horizontal.setText(QCoreApplication.translate("MainWindow", u"\u6c34\u5e73\u7ffb\u8f6c", None))
-        self.checkBox_Flip_Vertica.setText(QCoreApplication.translate("MainWindow", u"\u5bf9\u89d2\u7ffb\u8f6c", None))
         self.groupBox_20.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u5934\u5f55\u56fe\u64cd\u4f5c", None))
         self.checkBox_saveImgs_monitor.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc\u6444\u50cf\u5934", None))
         self.checkBox_saveImgs_main.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u5934", None))
+        self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u673a\u63a7\u5236", None))
+        self.checkBox_Flip_Horizontal.setText(QCoreApplication.translate("MainWindow", u"\u6c34\u5e73\u7ffb\u8f6c", None))
+        self.checkBox_Flip_Vertica.setText(QCoreApplication.translate("MainWindow", u"\u5bf9\u89d2\u7ffb\u8f6c", None))
+        self.groupBox_13.setTitle(QCoreApplication.translate("MainWindow", u"\u529f\u80fd\u6d4b\u8bd5", None))
+        self.pushButton_RedLine.setText(QCoreApplication.translate("MainWindow", u"\u7ea2\u5916\u7ebf\u4f20\u611f\u5668", None))
+        self.pushButton_test1.setText(QCoreApplication.translate("MainWindow", u"\u6d4b\u8bd51", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_4), QCoreApplication.translate("MainWindow", u"\u53c2\u6570\u8bbe\u7f6e", None))
     # retranslateUi
 

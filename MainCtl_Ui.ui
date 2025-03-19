@@ -8542,7 +8542,7 @@
                </layout>
               </widget>
              </item>
-             <item row="3" column="0">
+             <item row="4" column="0">
               <widget class="QGroupBox" name="groupBox_38">
                <property name="minimumSize">
                 <size>
@@ -8616,58 +8616,6 @@
                </layout>
               </widget>
              </item>
-             <item row="4" column="0">
-              <widget class="QTextBrowser" name="textBrowser_total_msg">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>12</pointsize>
-                 <bold>false</bold>
-                </font>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::FocusPolicy::NoFocus</enum>
-               </property>
-               <property name="readOnly">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QGroupBox" name="groupBox_5">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="title">
-                <string>摄像机控制</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_64">
-                <property name="topMargin">
-                 <number>3</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>9</number>
-                </property>
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="checkBox_Flip_Horizontal">
-                  <property name="text">
-                   <string>水平翻转</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QCheckBox" name="checkBox_Flip_Vertica">
-                  <property name="text">
-                   <string>对角翻转</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
              <item row="1" column="0">
               <widget class="QGroupBox" name="groupBox_20">
                <property name="minimumSize">
@@ -8721,6 +8669,115 @@
                   </property>
                   <property name="text">
                    <string>主摄像头</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QTextBrowser" name="textBrowser_total_msg">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>12</pointsize>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::NoFocus</enum>
+               </property>
+               <property name="readOnly">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="groupBox_5">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="title">
+                <string>摄像机控制</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_64">
+                <property name="topMargin">
+                 <number>3</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>9</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="checkBox_Flip_Horizontal">
+                  <property name="text">
+                   <string>水平翻转</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QCheckBox" name="checkBox_Flip_Vertica">
+                  <property name="text">
+                   <string>对角翻转</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QGroupBox" name="groupBox_13">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>功能测试</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_72">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="pushButton_RedLine">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>红外线传感器</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="pushButton_test1">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>测试1</string>
                   </property>
                  </widget>
                 </item>
