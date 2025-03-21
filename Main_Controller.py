@@ -2334,8 +2334,9 @@ class ShootThread(QThread):
                     time.sleep(2)
                     ball_sort[1][0] = []  # 持续刷新起点排名
                     if (BallsNum_ui.go_flg
-                            # or (ui.lineEdit_balls_auto.text().isdigit()
-                            #     and balls_start >= int(ui.lineEdit_balls_auto.text()))
+                            or (ui.lineEdit_balls_auto.text().isdigit()
+                                and balls_start >= int(ui.lineEdit_balls_auto.text())
+                                and not BallsNum_ui.isVisible())
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         self.signal.emit(succeed("隐藏提示"))
                         for index in range(0, 16):
