@@ -46,12 +46,13 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
         if post_data['CameraType'][0] in ['obs', 'monitor']:
             model = self.models['obs'] if post_data['CameraType'][0] == 'obs' else self.models['monitor']
+            conf_num = 0.1 if post_data['CameraType'][0] == 'obs' else 0.1
             np_array = np.frombuffer(base64.b64decode(post_data['img'][0].encode('ascii')), np.uint8)
             img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
 
             results = model.predict(
                 source=img,
-                conf=0.05,
+                conf=conf_num,
                 save=False,
                 save_txt=False,
                 save_conf=False,
@@ -62,9 +63,10 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             names = results[0].names
             qiu_array = []
             for r in results[0].boxes.data:
-                array = [int(r[0].item()), int(r[1].item()), int(r[2].item()), int(r[3].item()),
-                         round(r[4].item(), 2), names[int(r[5].item())]]
-                qiu_array.append(array)
+                if names[int(r[5].item())] in color_num.keys():
+                    array = [int(r[0].item()), int(r[1].item()), int(r[2].item()), int(r[3].item()),
+                             round(r[4].item(), 2), names[int(r[5].item())]]
+                    qiu_array.append(array)
 
             qiu_array = filter_max_value(qiu_array)
 
@@ -102,14 +104,14 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 else:
                     text_x = array[0] - 50
                     text_y = (array[1] + array[3]) // 2 + 13
-                if color_ch[array[5]] in ['1', '7', '10']:
-                    if color_ch[array[5]] in ['10']:
+                if color_num[array[5]] in ['1', '7', '10']:
+                    if color_num[array[5]] in ['10']:
                         text_x -= 15
-                    cv2.putText(img, "%s" % (color_ch[array[5]]), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX,
+                    cv2.putText(img, "%s" % (color_num[array[5]]), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX,
                                 fontScale=1.3,
                                 color=(0, 0, 0), thickness=3)
                 else:
-                    cv2.putText(img, "%s" % (color_ch[array[5]]), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX,
+                    cv2.putText(img, "%s" % (color_num[array[5]]), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX,
                                 fontScale=1.3,
                                 color=(248, 248, 255), thickness=3)
 
@@ -187,19 +189,20 @@ if __name__ == '__main__':
     color_names = {'red': (255, 0, 0), 'green': (0, 255, 0), 'blue': (0, 0, 255),
                    'pink': (255, 0, 255), 'yellow': (255, 255, 0), 'black': (0, 0, 0),
                    'purple': (128, 0, 128), 'White': (248, 248, 255),
-                   # 'Brown': (139, 69, 19), 'orange': (255, 165, 0)
+                   'Brown': (139, 69, 19), 'orange': (255, 165, 0)
                    }
     color_rects = {'red': (0, 0, 255), 'green': (0, 255, 0), 'blue': (255, 0, 0),
                    'pink': (255, 0, 255), 'yellow': (0, 255, 255), 'black': (0, 0, 0),
-                   'purple': (128, 0, 128), 'orange': (0, 165, 255), 'White': (255, 248, 248),
-                   'Brown': (19, 69, 139)}
-    color_ch = {'yellow': '1',
+                   'purple': (128, 0, 128), 'White': (255, 248, 248),
+                    'orange': (0, 165, 255), 'Brown': (19, 69, 139)
+                   }
+    color_num = {'yellow': '1',
                 'blue': '2',
                 'red': '3',
                 'purple': '4',
-                'orange': '9',
+                 'orange': '9',
                 'green': '6',
-                'Brown': '10',
+                 'Brown': '10',
                 'black': '8',
                 'pink': '5',
                 'White': '7'}

@@ -533,10 +533,12 @@ def sort_ranking():
     global ranking_array
     global ball_sort
     # 1.排序区域
-    for i in range(0, len(ranking_array)):  # 冒泡排序
-        for j in range(0, len(ranking_array) - i - 1):
-            if ranking_array[j][6] < ranking_array[j + 1][6]:
-                ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+    # for i in range(0, len(ranking_array)):  # 冒泡排序
+    #     for j in range(0, len(ranking_array) - i - 1):
+    #         if ranking_array[j][6] < ranking_array[j + 1][6]:
+    #             ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+    ranking_array.sort(key=lambda x: x[6], reverse=True)
+
     # 2.区域内排序
     for i in range(0, len(ranking_array)):  # 冒泡排序
         for j in range(0, len(ranking_array) - i - 1):
@@ -1586,6 +1588,8 @@ class ReStartThread(QThread):
                         break
                     if not ui.checkBox_shoot_0.isChecked():
                         break
+            while PlanCmd_Thread.run_flg:
+                print('等待背景结束~~~~~~~')
             if not self.run_flg:
                 continue
             if ui.radioButton_start_betting.isChecked():  # 非模拟模式
@@ -1647,16 +1651,10 @@ class ReStartThread(QThread):
                 time.sleep(1)
                 self.signal.emit(t)
             if self.run_flg:
-                while reset_ranking_Thread.run_flg:
-                    print('reset_ranking_Thread.run_flg', '~~~~~~~~~~~')
-                    time.sleep(1)
                 # reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                 # while reset_ranking_Thread.run_flg:
                 #     print('reset_ranking_Thread.run_flg', '~~~~~~~~~~~')
                 #     time.sleep(1)
-                while PlanCmd_Thread.run_flg:
-                    print('等待背景结束~~~~~~~')
-                    time.sleep(1)
                 for index in range(0, 16):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
@@ -1666,6 +1664,9 @@ class ReStartThread(QThread):
                         int(ui.lineEdit_start_count.text()) - 1,
                     ]:
                         sc.GASetExtDoBit(index, 1)
+                while PlanCmd_Thread.run_flg:
+                    print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
+                    time.sleep(1)
                 PlanCmd_Thread.run_flg = True
 
             print("循环启动！")
@@ -2093,19 +2094,24 @@ class ScreenShotThread(QThread):
                 monitor_Camera = camera_to_num(rtsp_list)
                 self.signal.emit(monitor_res)
 
-            if ((obs_res[1] != '[1]' and main_Camera == monitor_Camera)
-                    or (not (ui.checkBox_main_camera_set.isChecked()) and z_ranking_res == main_Camera)):
+            if obs_res[1] != '[1]' and main_Camera == monitor_Camera:
                 if len(main_Camera) == len(z_ranking_res):
                     term_status = 1
                     print('主镜头识别正确:', main_Camera)
                     z_ranking_end = copy.deepcopy(main_Camera)
-                    camera_list = obs_list
+                    camera_list = copy.deepcopy(obs_list)
                     lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             elif z_ranking_res == monitor_Camera:
                 term_status = 1
                 print('网络识别正确:', monitor_Camera)
                 z_ranking_end = copy.deepcopy(monitor_Camera)
-                camera_list = rtsp_list
+                camera_list = copy.deepcopy(rtsp_list)
+                lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+            elif z_ranking_res == main_Camera and not ui.checkBox_main_camera_set.isChecked():
+                term_status = 1
+                print('赛道识别正确:', main_Camera)
+                z_ranking_end = copy.deepcopy(main_Camera)
+                camera_list = copy.deepcopy(obs_list)
                 lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             else:
                 term_status = 0
@@ -2144,6 +2150,9 @@ class ScreenShotThread(QThread):
                         camera_list.append(init_array[z_ranking_end[i] - 1][5])
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
 
+            print(obs_list,'~~~~~~~~~~~~~~~~~~~~~~~obs_res')
+            print(rtsp_list,'~~~~~~~~~~~~~~~~~~~~~~~rtsp_list')
+            print(camera_list,'~~~~~~~~~~~~~~~~~~~~~~~camera_list')
             for i in range(0, len(camera_list)):
                 for j in range(0, len(ranking_array)):
                     if ranking_array[j][5] == camera_list[i]:
@@ -2154,6 +2163,7 @@ class ScreenShotThread(QThread):
                     ball_sort[max_area_count][max_lap_count - 1].append('')
                 ball_sort[max_area_count][max_lap_count - 1][i] = camera_list[i]
             color_to_num(ranking_array)
+            print(ranking_array,'~~~~~~~~~~~~~~~~~~~~~~~ranking_array')
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
             time.sleep(3)
@@ -2328,6 +2338,7 @@ class ShootThread(QThread):
                 time_count = 0
                 while self.run_flg:
                     time.sleep(2)
+                    ball_sort[1][0] = []  # 持续刷新起点排名
                     if ((ui.lineEdit_balls_auto.text().isdigit()
                          and balls_start >= int(ui.lineEdit_balls_auto.text()))
                             or BallsNum_ui.go_flg
@@ -2700,34 +2711,26 @@ class PlanCmdThread(QThread):
                                 self.signal.emit(fail("场景数据出错！"))
 
                 # 背景模式不循环
-                if self.background_state:
+                if self.background_state or self.ready_state or self.end_state:
                     self.background_state = False
-                    self.run_flg = False
-                    self.signal.emit(succeed("背景模式结束！"))
-                    continue
-                # 准备模式不循环
-                if self.ready_state:
                     self.ready_state = False
-                    self.run_flg = False
-                    self.signal.emit(succeed("准备模式结束！"))
-                    continue
-                # 结束模式不循环
-                if self.end_state:
                     self.end_state = False
                     self.run_flg = False
-                    ui.checkBox_end_stop.setChecked(False)
-                    ui.checkBox_end_BlackScreen.setChecked(False)
-                    if flg_start['card']:
-                        for index in range(0, 16):  # 关闭所有机关
-                            if index not in [int(ui.lineEdit_shoot.text()) - 1,
-                                             int(ui.lineEdit_start.text()) - 1,
-                                             int(ui.lineEdit_shake.text()) - 1,
-                                             int(ui.lineEdit_end.text()) - 1,
-                                             int(ui.lineEdit_alarm.text()) - 1,
-                                             int(ui.lineEdit_start_count.text()) - 1,
-                                             ]:
-                                sc.GASetExtDoBit(index, 0)
-                    self.signal.emit(succeed("结束模式完成！"))
+                    # 结束模式不循环
+                    if self.end_state:
+                        ui.checkBox_end_stop.setChecked(False)
+                        ui.checkBox_end_BlackScreen.setChecked(False)
+                        if flg_start['card']:
+                            for index in range(0, 16):  # 关闭所有机关
+                                if index not in [int(ui.lineEdit_shoot.text()) - 1,
+                                                 int(ui.lineEdit_start.text()) - 1,
+                                                 int(ui.lineEdit_shake.text()) - 1,
+                                                 int(ui.lineEdit_end.text()) - 1,
+                                                 int(ui.lineEdit_alarm.text()) - 1,
+                                                 int(ui.lineEdit_start_count.text()) - 1,
+                                                 ]:
+                                    sc.GASetExtDoBit(index, 0)
+                        self.signal.emit(succeed("辅助模式完成！"))
                     continue
                 # 强制中断情况处理
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断情况下的动作
