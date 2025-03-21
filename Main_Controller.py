@@ -851,7 +851,7 @@ class TcpResultThread(QThread):
                             send_flg = True
 
                             if self.send_type == 'updata':
-                                self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end))))
+                                self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end[:balls_count]))))
                                 datalist = {'type': 'updata',
                                             'data': {'qh': str(term), 'rank': []}}
                                 for index in range(balls_count):
@@ -1590,8 +1590,11 @@ class ReStartThread(QThread):
                         break
             while PlanCmd_Thread.run_flg:
                 print('等待背景结束~~~~~~~')
+                time.sleep(1)
             if not self.run_flg:
                 continue
+            ball_sort[1][0] = []
+            time.sleep(1)   # 有充足时间重新排名
             if ui.radioButton_start_betting.isChecked():  # 非模拟模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
@@ -2150,9 +2153,9 @@ class ScreenShotThread(QThread):
                         camera_list.append(init_array[z_ranking_end[i] - 1][5])
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
 
-            print(obs_list,'~~~~~~~~~~~~~~~~~~~~~~~obs_res')
-            print(rtsp_list,'~~~~~~~~~~~~~~~~~~~~~~~rtsp_list')
-            print(camera_list,'~~~~~~~~~~~~~~~~~~~~~~~camera_list')
+            print(obs_list, '~~~~~~~~~~~~~~~~~~~~~~~obs_res')
+            print(rtsp_list, '~~~~~~~~~~~~~~~~~~~~~~~rtsp_list')
+            print(camera_list, '~~~~~~~~~~~~~~~~~~~~~~~camera_list')
             for i in range(0, len(camera_list)):
                 for j in range(0, len(ranking_array)):
                     if ranking_array[j][5] == camera_list[i]:
@@ -2163,7 +2166,7 @@ class ScreenShotThread(QThread):
                     ball_sort[max_area_count][max_lap_count - 1].append('')
                 ball_sort[max_area_count][max_lap_count - 1][i] = camera_list[i]
             color_to_num(ranking_array)
-            print(ranking_array,'~~~~~~~~~~~~~~~~~~~~~~~ranking_array')
+            print(ranking_array, '~~~~~~~~~~~~~~~~~~~~~~~ranking_array')
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
             time.sleep(3)
@@ -2373,7 +2376,6 @@ class ShootThread(QThread):
                         int(ui.lineEdit_start_count.text()) - 1,
                     ]:
                         sc.GASetExtDoBit(index, 0)
-
                 ranking_array = []  # 排名数组
                 for row in range(0, len(init_array)):
                     ranking_array.append([])
