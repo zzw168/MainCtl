@@ -1583,9 +1583,9 @@ class ReStartThread(QThread):
                 while Shoot_Thread.run_flg:
                     print('等待上珠结束~~~~~~~')
                     time.sleep(1)
-                    if (balls_start >= balls_count
-                            or balls_start >= int(ui.lineEdit_balls_auto.text())):
-                        break
+                    # if (balls_start >= balls_count
+                    #         or balls_start >= int(ui.lineEdit_balls_auto.text())):
+                    #     break
                     if not ui.checkBox_shoot_0.isChecked():
                         break
             while PlanCmd_Thread.run_flg:
@@ -1594,7 +1594,7 @@ class ReStartThread(QThread):
             if not self.run_flg:
                 continue
             ball_sort[1][0] = []
-            time.sleep(1)   # 有充足时间重新排名
+            time.sleep(1)  # 有充足时间重新排名
             if ui.radioButton_start_betting.isChecked():  # 非模拟模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
@@ -1787,7 +1787,7 @@ class CamThread(QThread):
                     res = s485.cam_zoom_step(self.camitem[0] - 1)
                     if not res:
                         flg_start['s485'] = False
-                        self.signal.emit(fail("s485通信出错！"))
+                        self.signal.emit(fail("s485运行通信出错！"))
                         self.run_flg = False
                         continue
                     # time.sleep(self.camitem[1])
@@ -2071,9 +2071,6 @@ class ScreenShotThread(QThread):
                 continue
             print('截图结果识别运行！')
             self.signal.emit(succeed('截图结果识别运行！'))
-            obs_list = []
-            rtsp_list = []
-            camera_list = []
             obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])
@@ -2102,19 +2099,16 @@ class ScreenShotThread(QThread):
                     term_status = 1
                     print('主镜头识别正确:', main_Camera)
                     z_ranking_end = copy.deepcopy(main_Camera)
-                    camera_list = copy.deepcopy(obs_list)
                     lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             elif z_ranking_res == monitor_Camera:
                 term_status = 1
                 print('网络识别正确:', monitor_Camera)
                 z_ranking_end = copy.deepcopy(monitor_Camera)
-                camera_list = copy.deepcopy(rtsp_list)
                 lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             elif z_ranking_res == main_Camera and not ui.checkBox_main_camera_set.isChecked():
                 term_status = 1
                 print('赛道识别正确:', main_Camera)
                 z_ranking_end = copy.deepcopy(main_Camera)
-                camera_list = copy.deepcopy(obs_list)
                 lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             else:
                 term_status = 0
@@ -2148,14 +2142,10 @@ class ScreenShotThread(QThread):
                         for j in range(0, len(z_ranking_end)):
                             if send_list[i] == z_ranking_end[j]:
                                 z_ranking_end[i], z_ranking_end[j] = z_ranking_end[j], z_ranking_end[i]
-                    camera_list = []
-                    for i in range(len(z_ranking_end)):
-                        camera_list.append(init_array[z_ranking_end[i] - 1][5])
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
-
-            print(obs_list, '~~~~~~~~~~~~~~~~~~~~~~~obs_res')
-            print(rtsp_list, '~~~~~~~~~~~~~~~~~~~~~~~rtsp_list')
-            print(camera_list, '~~~~~~~~~~~~~~~~~~~~~~~camera_list')
+            camera_list = []
+            for i in range(len(z_ranking_end)):
+                camera_list.append(init_array[z_ranking_end[i] - 1][5])
             for i in range(0, len(camera_list)):
                 for j in range(0, len(ranking_array)):
                     if ranking_array[j][5] == camera_list[i]:
@@ -2333,6 +2323,7 @@ class ShootThread(QThread):
                     for col in range(0, max_lap_count):
                         ball_sort[row].append([])
                 balls_start = 0  # 起点球数
+                sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                 shoot_index = int(ui.lineEdit_shoot.text()) - 1
                 sc.GASetExtDoBit(shoot_index, 1)
                 time.sleep(2)
@@ -2342,9 +2333,9 @@ class ShootThread(QThread):
                 while self.run_flg:
                     time.sleep(2)
                     ball_sort[1][0] = []  # 持续刷新起点排名
-                    if ((ui.lineEdit_balls_auto.text().isdigit()
-                         and balls_start >= int(ui.lineEdit_balls_auto.text()))
-                            or BallsNum_ui.go_flg
+                    if (BallsNum_ui.go_flg
+                            # or (ui.lineEdit_balls_auto.text().isdigit()
+                            #     and balls_start >= int(ui.lineEdit_balls_auto.text()))
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         self.signal.emit(succeed("隐藏提示"))
                         for index in range(0, 16):
@@ -2594,7 +2585,7 @@ class PlanCmdThread(QThread):
 
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
                                 sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
-                                sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
+                                # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                                 # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                             # 轴运动
                             axis_bit = 0  # 非延迟轴统计
@@ -2716,12 +2707,11 @@ class PlanCmdThread(QThread):
                 if self.background_state or self.ready_state or self.end_state:
                     self.background_state = False
                     self.ready_state = False
-                    self.end_state = False
                     self.run_flg = False
                     # 结束模式不循环
                     if self.end_state:
-                        ui.checkBox_end_stop.setChecked(False)
-                        ui.checkBox_end_BlackScreen.setChecked(False)
+                        self.end_state = False
+                        self.signal.emit('end_state')
                         if flg_start['card']:
                             for index in range(0, 16):  # 关闭所有机关
                                 if index not in [int(ui.lineEdit_shoot.text()) - 1,
@@ -2739,7 +2729,7 @@ class PlanCmdThread(QThread):
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
                     print('另外开关~~~~~~~~~')
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
-                    sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
+                    # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                     # main_music_worker.toggle_enablesignal.emit(False)
                     self.signal.emit(succeed("运动流程：中断！"))
@@ -2757,7 +2747,7 @@ class PlanCmdThread(QThread):
             else:  # 运行出错，或者超出圈数，流程完成时执行
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
-                    sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
+                    # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                 self.signal.emit(succeed("运动流程：完成！"))
                 print('动作已完成！')
@@ -2779,6 +2769,9 @@ def cmd_signal_accept(msg):
                 ui.lineEdit_area.setText(str(msg['map_action']))
                 ui.lineEdit_area_2.setText(str(msg['map_action']))
         else:
+            if msg == 'end_state':
+                ui.checkBox_end_stop.setChecked(False)
+                ui.checkBox_end_BlackScreen.setChecked(False)
             if msg == '音乐':
                 if not ui.checkBox_test.isChecked():  # 如果是测试模式，不播放主题音乐
                     num = random.randint(1, 3)
@@ -5185,6 +5178,15 @@ class TestStatusThread(QThread):
 
             if not flg_start['s485']:
                 flg_start['s485'] = s485.cam_open()
+                try:
+                    res = s485.cam_zoom_step()
+                    if not res:
+                        flg_start['s485'] = False
+                        print("485 驱动出错！~~~~~")
+                        continue
+                except:
+                    print("485 运行出错！!!!!!")
+                    flg_start['s485'] = False
 
             if not flg_start['obs']:
                 if not Obs_Thread.isRunning():
