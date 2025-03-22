@@ -151,6 +151,7 @@
         ]
     ],
     "lineEdit_alarm": "14",
+    "comboBox_plan": 0,
     "lineEdit_area_limit": "5",
     "lineEdit_volume_1": "0.5",
     "lineEdit_volume_2": "0.8",

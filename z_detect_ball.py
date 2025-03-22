@@ -200,9 +200,9 @@ if __name__ == '__main__':
                 'blue': '2',
                 'red': '3',
                 'purple': '4',
-                 'orange': '9',
+                 # 'orange': '9',
                 'green': '6',
-                 'Brown': '10',
+                 # 'Brown': '10',
                 'black': '8',
                 'pink': '5',
                 'White': '7'}

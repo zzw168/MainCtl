@@ -785,7 +785,7 @@ class TcpRankingThread(QThread):
                             while self.run_flg:
                                 time.sleep(self.sleep_time)
                                 if z_ranking_time != self.time_list:
-                                    for i in range(len(z_ranking_time)):
+                                    for i in range(balls_count):
                                         if self.time_list[i] != z_ranking_time[i]:
                                             if is_natural_num(z_ranking_time[i]):
                                                 d = {"mc": i + 1, 'data': '%s"' % z_ranking_time[i],
@@ -1120,8 +1120,13 @@ def udpsignal_accept(msg):
 
 def load_area():  # 载入位置文件初始化区域列表
     global area_Code
+    road_num = ui.lineEdit_map_picture.text()
+    match = re.search(r"\d+(?=_)", road_num)
+    if match:
+        road_num = match.group()
     for key in area_Code.keys():
-        track_file = "./txts/%s.txt" % key
+        track_file = "./txts/%s_%s.txt" % (road_num, key)
+        print(track_file)
         if os.path.exists(track_file):  # 存在就加载数据对应赛道数据
             with open(track_file, 'r') as file:
                 content = file.read().split('\n')
@@ -1141,6 +1146,7 @@ def load_area():  # 载入位置文件初始化区域列表
                     if len(paths) > 2:
                         polgon_array['direction'] = int(paths[2])
                     area_Code[key].append(polgon_array)
+    print(area_Code)
 
 
 def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
@@ -3272,6 +3278,7 @@ def plan_refresh():  # 刷新方案列表
         num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
         ai_points[index][0].move(*ai_points[index][num][1])  # 设置初始位置
         # ai_points[index][0].show()
+    save_main_json()
 
 
 def save_main_json():
@@ -3335,6 +3342,7 @@ def save_main_json():
             main_all['lineEdit_volume_1'] = ui.lineEdit_volume_1.text()
             main_all['lineEdit_volume_2'] = ui.lineEdit_volume_2.text()
             main_all['lineEdit_volume_3'] = ui.lineEdit_volume_3.text()
+            main_all['comboBox_plan'] = ui.comboBox_plan.currentIndex()
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                 main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -3432,6 +3440,7 @@ def load_main_json():
         ui.lineEdit_volume_1.setText(main_all['lineEdit_volume_1'])
         ui.lineEdit_volume_2.setText(main_all['lineEdit_volume_2'])
         ui.lineEdit_volume_3.setText(main_all['lineEdit_volume_3'])
+        ui.comboBox_plan.setCurrentIndex(int(main_all['comboBox_plan']))
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -6356,7 +6365,6 @@ if __name__ == '__main__':
     area_Code = {1: [], 2: [], 3: [], 4: [], 5: [],
                  6: [], 7: [], 8: [], 9: [], 10: [],
                  11: [], 12: [], 13: [], 14: [], 15: [], 16: [], 'main': [], 'net': []}  # 摄像头代码列表
-    load_area()  # 初始化区域划分
     # print(area_Code)
 
     action_area = [0, 0, 0]  # 触发镜头向下一个位置活动的点位 action_area[区域, 圈数, 可写]
@@ -6428,6 +6436,7 @@ if __name__ == '__main__':
                        {"pm": 10, "id": 10, "time": 131.22}])}
     load_main_json()
     load_ballsort_json()
+    load_area()  # 初始化区域划分
 
     s485.cam_open()
 
