@@ -231,7 +231,7 @@ def activate_browser():  # 程序开始，刷新浏览器
     item_ranking = obs_data['source_ranking']
     item_settlement = obs_data['source_settlement']
     if flg_start['obs']:
-        # try:
+        try:
             # 刷新 "浏览器来源"（Browser Source）
             cl_request.press_input_properties_button("结算页", "refreshnocache")
             time.sleep(1)
@@ -239,9 +239,9 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
             time.sleep(1)
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
-        # except:
-        #     print("OBS 开关浏览器出错！")
-        #     flg_start['obs'] = False
+        except:
+            print("OBS 开关浏览器出错！")
+            flg_start['obs'] = False
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -696,15 +696,9 @@ def save_ballsort_json():
 
 
 def init_ranking_table():
-    # global z_ranking_res
-    # global z_ranking_end
-    # global z_ranking_time
     global con_data
     for i in range(0, len(init_array)):
         con_data.append([])
-        # z_ranking_res.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
-        # z_ranking_end.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
-        # z_ranking_time.append('')  # z_ranking_time[1,2,3,4,5,6,7,8,9,10]    初始化网页排名时间
         for j in range(0, 5):
             if j == 0:
                 con_data[i].append(init_array[i][5])  # con_data[[yellow,0,0,0,0]]
@@ -2151,19 +2145,24 @@ class ScreenShotThread(QThread):
             camera_list = []
             for i in range(balls_count):
                 camera_list.append(init_array[z_ranking_end[i] - 1][5])
+            ball_sort[max_area_count][max_lap_count - 1] = []
+            temp_lap = []
+            for i in range(max_lap_count):
+                temp_lap.append([])
+            ball_sort.append(temp_lap)
             for i in range(0, len(camera_list)):
                 for j in range(0, len(ranking_array)):
                     if ranking_array[j][5] == camera_list[i]:
-                        ranking_array[j][6] = max_area_count
+                        ranking_array[j][6] = max_area_count + 1
                         ranking_array[j][8] = max_lap_count - 1
                         ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                if len(ball_sort[max_area_count][max_lap_count - 1]) - 1 < i:
-                    ball_sort[max_area_count][max_lap_count - 1].append('')
-                ball_sort[max_area_count][max_lap_count - 1][i] = camera_list[i]
+                if len(ball_sort[max_area_count + 1][max_lap_count - 1]) - 1 < i:
+                    ball_sort[max_area_count + 1][max_lap_count - 1].append('')
+                ball_sort[max_area_count + 1][max_lap_count - 1][i] = camera_list[i]
             color_to_num(ranking_array)
-            print(ranking_array, '~~~~~~~~~~~~~~~~~~~~~~~ranking_array')
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
+            self.signal.emit('核对完成')
             time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
             print('ObsEnd_Thread.screen_flg:%s' % ObsEnd_Thread.screen_flg, '~~~~~~~~~~~~~~~~~~~~~~')
@@ -2215,6 +2214,8 @@ def ScreenShotsignal_accept(msg):
             play_alarm()  # 警报声
     elif msg == 'send_res':
         ui.lineEdit_Send_Result.setText('')
+    elif '核对完成' in msg:
+        set_result(z_ranking_end)
     elif msg == 'send_ok':
         result_ui.hide()
         ui.checkBox_alarm.click()
@@ -4925,16 +4926,17 @@ class Kaj789Thread(QThread):
                         if term_status == 2:
                             lottery_term[3] = '已取消'
                             self.signal.emit({'post_end': res_end})
-                        else:
+                        elif lottery_term[12] != '':
                             self.run_type = 'post_result'
                             lottery_term[3] = '已结束'
                             self.signal.emit({'post_end': res_end})
-
+                        else:
+                            break
                     else:
                         continue
                 if self.run_type == 'post_result':
                     res_result = post_result(term=term, betting_end_time=betting_end_time,
-                                             result_data=result_data,
+                                             result_data=lottery_term[12],
                                              Track_number=Track_number)  # 发送最终排名给服务器
                     if res_result == 'OK':
                         lottery_term[6] = "发送成功"
@@ -5039,6 +5041,9 @@ def kaj789_signal_accept(msg):
 
 def send_end():
     global term_status
+    if ReStart_Thread.start_flg:
+        messagebox.showinfo("敬告", "比赛未结束，进行补发！")
+        return
     Kaj789_Thread.run_type = 'post_end'
     Kaj789_Thread.run_flg = True
 
@@ -5115,7 +5120,7 @@ class ResetRankingThread(QThread):
             action_area = [0, 0, 0]  # 初始化触发区域
             z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
             z_ranking_res = z_ranking_res[:balls_count]
-            z_ranking_end = z_ranking_end[:balls_count]
+            z_ranking_end = z_ranking_res[:balls_count]
             z_ranking_time = [''] * balls_count  # 初始化网页排名时间
             tcp_ranking_thread.sleep_time = 0.1  # 重置排名数据包发送时间
             tcp_ranking_thread.run_flg = True  # 打开排名线程
@@ -5527,6 +5532,7 @@ def stop_betting():
         if "yes" in response:
             term_status = 2
             term_comment = term_comments[0]
+            ReStart_Thread.start_flg = False
             while Kaj789_Thread.run_flg:
                 time.sleep(1)
             Kaj789_Thread.run_type = 'post_end'
@@ -6486,7 +6492,7 @@ if __name__ == '__main__':
 
     "**************************卫星图_开始*****************************"
     # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 发送状态,
-    #                       图片上传状态, 备注, 图片, 录像, 结束时间, 补发状态, 补传图片]
+    #                       图片上传状态, 备注, 图片, 录像, 结束时间, 数据包, 补发状态, 补传图片]
     lottery_term = ['0'] * 15
     camera_points = []  # 摄像机移动点位 camera_points[[label内存],[区域号],[卫星图坐标]]
     audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
