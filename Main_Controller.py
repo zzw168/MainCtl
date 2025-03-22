@@ -231,8 +231,7 @@ def activate_browser():  # 程序开始，刷新浏览器
     item_ranking = obs_data['source_ranking']
     item_settlement = obs_data['source_settlement']
     if flg_start['obs']:
-        try:
-            tcp_ranking_thread.run_flg = True  # 打开排名线程
+        # try:
             # 刷新 "浏览器来源"（Browser Source）
             cl_request.press_input_properties_button("结算页", "refreshnocache")
             time.sleep(1)
@@ -240,9 +239,9 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
             time.sleep(1)
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
-        except:
-            print("OBS 开关浏览器出错！")
-            flg_start['obs'] = False
+        # except:
+        #     print("OBS 开关浏览器出错！")
+        #     flg_start['obs'] = False
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -484,7 +483,8 @@ def rtsp_save_thread():
 # 处理触发点位
 def deal_action():
     global action_area
-    action_area[0] = int(ranking_array[0][6])  # 触发区域
+    if ranking_array:
+        action_area[0] = int(ranking_array[0][6])  # 触发区域
 
 
 # 处理排名
@@ -585,18 +585,21 @@ def sort_ranking():
 def color_to_num(res):  # 按最新排名排列数组
     global z_ranking_res
     arr_res = []
+    if not z_ranking_res:
+        return
     for r in res:
-        for i in range(0, len(init_array)):
+        for i in range(0, balls_count):
             if r[5] == init_array[i][5]:
                 arr_res.append(i + 1)
     for i in range(0, len(arr_res)):
-        for j in range(0, len(z_ranking_res)):
+        for j in range(0, balls_count):
             if arr_res[i] == z_ranking_res[j]:
                 z_ranking_res[i], z_ranking_res[j] = z_ranking_res[j], z_ranking_res[i]
 
 
 def camera_to_num(res):  # 按最新排名排列数组
     camera_response = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    camera_response = camera_response[:balls_count]
     arr_res = []
     for r in res:
         for arr in range(0, len(init_array)):
@@ -693,15 +696,15 @@ def save_ballsort_json():
 
 
 def init_ranking_table():
-    global z_ranking_res
-    global z_ranking_end
-    global z_ranking_time
+    # global z_ranking_res
+    # global z_ranking_end
+    # global z_ranking_time
     global con_data
     for i in range(0, len(init_array)):
         con_data.append([])
-        z_ranking_res.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
-        z_ranking_end.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
-        z_ranking_time.append('')  # z_ranking_time[1,2,3,4,5,6,7,8,9,10]    初始化网页排名时间
+        # z_ranking_res.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
+        # z_ranking_end.append(i + 1)  # z_ranking_res[1,2,3,4,5,6,7,8,9,10]  初始化网页排名
+        # z_ranking_time.append('')  # z_ranking_time[1,2,3,4,5,6,7,8,9,10]    初始化网页排名时间
         for j in range(0, 5):
             if j == 0:
                 con_data[i].append(init_array[i][5])  # con_data[[yellow,0,0,0,0]]
@@ -741,7 +744,9 @@ class UpdateThread(QThread):
         tb_ranking = ui.tableWidget_Ranking
         while self.running:
             time.sleep(1)
-            for i in range(0, len(con_data)):
+            if not con_data:
+                continue
+            for i in range(0, balls_count):
                 for j in range(0, len(con_data[i])):
                     if con_data[i][0] in color_ch.keys():
                         if j == 0 and tb_ranking.item(i, j).text() != color_ch[con_data[i][j]]:
@@ -762,7 +767,7 @@ class TcpRankingThread(QThread):
         super(TcpRankingThread, self).__init__()
         self.running = True
         self.run_flg = False
-        self.time_list = [''] * 10
+        self.time_list = [''] * balls_count
         self.sleep_time = 0.5
 
     def stop(self):
@@ -801,9 +806,8 @@ class TcpRankingThread(QThread):
                                                 Script_Thread.run_type = 'period'
                                                 Script_Thread.run_flg = True
                                 else:
-                                    d = {'data': z_ranking_res[0: balls_count], 'type': 'pm'}
+                                    d = {'data': z_ranking_res, 'type': 'pm'}
                                     ws.send(json.dumps(d))
-                                    # print(d)
                         except Exception as e:
                             print("pingpong_rank_1 错误：", e)
                             # self.signal.emit("pingpong 错误：%s" % e)
@@ -1074,19 +1078,21 @@ class UdpThread(QThread):
                         continue
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
                     deal_rank(array_data)
-                    balls_start = len(ball_sort[1][0])  # 更新起点球数
+                    if ball_sort:
+                        balls_start = len(ball_sort[1][0])  # 更新起点球数
                     # if balls_start < len(ball_sort[0][0]):   # 0区数量
                     #     balls_start = len(ball_sort[0][0])
                     self.signal.emit(balls_start)
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~3', ranking_array)
                     deal_action()
                     con_data = []
-                    for k in range(0, len(ranking_array)):
-                        con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
-                        con_data.append(
-                            [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
-                             con_item['y1']])
-                    color_to_num(ranking_array)
+                    if ranking_array:
+                        for k in range(0, balls_count):
+                            con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
+                            con_data.append(
+                                [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
+                                 con_item['y1']])
+                        color_to_num(ranking_array)
 
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
@@ -1512,7 +1518,7 @@ class ZUi(QMainWindow, Ui_MainWindow):
                 cb = QCheckBox()
                 cb.setStyleSheet("""
                                     QCheckBox{margin:6px;padding-left: 1px;padding-top: 1px;}
-                                    
+
                                     QCheckBox::indicator:checked {
                                     background-color: lightgreen;
                                     border: 2px solid green;
@@ -1781,7 +1787,7 @@ class CamThread(QThread):
             if (not self.run_flg) or (not flg_start['s485']):
                 continue
             print('串口运行')
-            if self.camitem[0] != 0:
+            if str(self.camitem[0]).isdigit() and self.camitem[0] != 0:
                 try:
                     print(self.camitem)
                     res = s485.cam_zoom_step(self.camitem[0] - 1)
@@ -2095,11 +2101,10 @@ class ScreenShotThread(QThread):
                 self.signal.emit(monitor_res)
 
             if obs_res[1] != '[1]' and main_Camera == monitor_Camera:
-                if len(main_Camera) == len(z_ranking_res):
-                    term_status = 1
-                    print('主镜头识别正确:', main_Camera)
-                    z_ranking_end = copy.deepcopy(main_Camera)
-                    lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+                term_status = 1
+                print('主镜头识别正确:', main_Camera)
+                z_ranking_end = copy.deepcopy(main_Camera)
+                lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             elif z_ranking_res == monitor_Camera:
                 term_status = 1
                 print('网络识别正确:', monitor_Camera)
@@ -2144,7 +2149,7 @@ class ScreenShotThread(QThread):
                                 z_ranking_end[i], z_ranking_end[j] = z_ranking_end[j], z_ranking_end[i]
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
             camera_list = []
-            for i in range(len(z_ranking_end)):
+            for i in range(balls_count):
                 camera_list.append(init_array[z_ranking_end[i] - 1][5])
             for i in range(0, len(camera_list)):
                 for j in range(0, len(ranking_array)):
@@ -3197,7 +3202,7 @@ def plan_refresh():  # 刷新方案列表
         cb = QCheckBox()
         cb.setStyleSheet("""
             QCheckBox{margin:6px;padding-left: 1px;padding-top: 1px;}
-            
+
             QCheckBox::indicator:checked {
                 background-color: lightgreen;
                 border: 2px solid green;
@@ -5078,16 +5083,19 @@ class ResetRankingThread(QThread):
         global con_data
         global action_area
         global z_ranking_res
+        global z_ranking_end
         global z_ranking_time
         global balls_start
         global term_comment
+        global init_array
         # global previous_position
         while self.running:
             time.sleep(1)
             if not self.run_flg:
                 continue
+            init_array = init_array[:balls_count]
             ranking_array = []  # 排名数组
-            for row in range(0, len(init_array)):
+            for row in range(balls_count):
                 ranking_array.append([])
                 for col in range(0, len(init_array[row])):
                     ranking_array[row].append(init_array[row][col])
@@ -5097,16 +5105,21 @@ class ResetRankingThread(QThread):
                 for col in range(0, max_lap_count):
                     ball_sort[row].append([])
             balls_start = 0  # 起点球数
-            for row in range(0, len(init_array)):
-                for col in range(0, 5):
-                    if col == 0:
-                        con_data[row][col] = init_array[row][5]  # con_data 数据表数组
-                    else:
-                        con_data[row][col] = 0
+            if con_data:
+                for row in range(0, len(init_array)):
+                    for col in range(0, 5):
+                        if col == 0:
+                            con_data[row][col] = init_array[row][5]  # con_data 数据表数组
+                        else:
+                            con_data[row][col] = 0
             action_area = [0, 0, 0]  # 初始化触发区域
             z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
-            z_ranking_time = [''] * 10  # 初始化网页排名时间
+            z_ranking_res = z_ranking_res[:balls_count]
+            z_ranking_end = z_ranking_end[:balls_count]
+            z_ranking_time = [''] * balls_count  # 初始化网页排名时间
             tcp_ranking_thread.sleep_time = 0.1  # 重置排名数据包发送时间
+            tcp_ranking_thread.run_flg = True  # 打开排名线程
+            print('tcp_ranking_thread.run_flg = True~~~~~~~~~~~~')
             map_label_big.map_action = 0
             term_comment = ''
             alarm_worker.toggle_enablesignal.emit(False)
@@ -6409,6 +6422,8 @@ if __name__ == '__main__':
                        {"pm": 10, "id": 10, "time": 131.22}])}
     load_main_json()
     load_ballsort_json()
+
+    s485.cam_open()
 
     # 初始化列表
     con_data = []  # 排名数组

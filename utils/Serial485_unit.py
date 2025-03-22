@@ -11,9 +11,9 @@ import serial
 
 class Serial485:
     def __init__(self):
-        self.ser = ''
         self.s485_Cam_No = 'COM1'
         self.s485_Axis_No = 'COM23'
+        self.ser = ''
         self.cam_Visca = {'Flip_Horizontal': ['81 01 04 61 02 FF', '81 01 04 61 03 FF'],  # 水平翻转
                           'Flip_Vertica': ['81 01 04 66 02 FF', '81 01 04 66 03 FF'],  # 对角翻转
                           'Shutter': ['81 01 04 0A 00 FF', '81 01 04 0A 02 FF', '81 01 04 0A 03 FF'],  # 快门
