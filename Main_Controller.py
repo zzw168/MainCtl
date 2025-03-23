@@ -1710,6 +1710,9 @@ def restartsignal_accept(msg):
     elif msg == 'term_ok':
         ui.groupBox_term.setStyleSheet("QGroupBox { background-color: red; }")  # 让 GroupBox 变红
         ui.pushButton_term.setText(str(term))
+        ui.lineEdit_Main_Camera.setText('')
+        ui.lineEdit_Backup_Camera.setText('')
+        ui.lineEdit_Send_Result.setText('')
     elif msg == 'error':
         ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
