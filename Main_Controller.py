@@ -1577,7 +1577,7 @@ class ReStartThread(QThread):
             if not self.run_flg:
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
-            read_flg = True
+            ready_flg = True
             while PlanCmd_Thread.run_flg:
                 print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                 time.sleep(1)
@@ -1650,12 +1650,12 @@ class ReStartThread(QThread):
                     self.run_flg = False
                     break
                 if t <= self.countdown - 5:
-                    if not PlanCmd_Thread.background_state and read_flg:
+                    if not PlanCmd_Thread.background_state and ready_flg:
                         PlanCmd_Thread.ready_state = True  # 运行背景
                         PlanCmd_Thread.run_flg = True
                         if not reset_ranking_Thread.run_flg:
                             reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
-                        read_flg = False
+                        ready_flg = False
                     ball_sort[1][0] = []
                 time.sleep(1)
                 self.signal.emit(t)
@@ -1686,6 +1686,9 @@ def restartsignal_accept(msg):
     global labels
     if isinstance(msg, bool):
         lottery_data2table(ui.tableWidget_Results, lottery_term, labels)
+        ui.lineEdit_Main_Camera.setText('')
+        ui.lineEdit_Backup_Camera.setText('')
+        ui.lineEdit_Send_Result.setText('')
     elif isinstance(msg, int):
         if int(msg) == 1:
             plan_refresh()
@@ -1710,9 +1713,6 @@ def restartsignal_accept(msg):
     elif msg == 'term_ok':
         ui.groupBox_term.setStyleSheet("QGroupBox { background-color: red; }")  # 让 GroupBox 变红
         ui.pushButton_term.setText(str(term))
-        ui.lineEdit_Main_Camera.setText('')
-        ui.lineEdit_Backup_Camera.setText('')
-        ui.lineEdit_Send_Result.setText('')
     elif msg == 'error':
         ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
