@@ -1601,7 +1601,7 @@ class ReStartThread(QThread):
                 continue
             ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
-            if ui.radioButton_start_betting.isChecked():  # 非模拟模式
+            if ui.radioButton_start_betting.isChecked():  # 开盘模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
                     self.start_flg = True
@@ -1635,7 +1635,7 @@ class ReStartThread(QThread):
 
             Script_Thread.run_type = 'term'
             Script_Thread.run_flg = True  # 发送期号到OBS的python脚本
-            tcp_result_thread.send_type = 'time'
+            tcp_result_thread.send_type = 'time'    # 发送新期号,结束TCP_RESULT线程
 
             lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
             if lottery:
