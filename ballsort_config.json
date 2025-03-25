@@ -3,5 +3,5 @@
     "max_lap_count": 1,
     "reset_time": 10,
     "time_count_ball": 10,
-    "time_send_result": 0
+    "lineEdit_start_count_ball": 20
 }

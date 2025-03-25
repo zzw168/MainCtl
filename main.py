@@ -616,7 +616,7 @@ def load_ballsort_yaml():
         ui.lineEdit_area_Ranking.setText(str(max_area_count))
         ui.lineEdit_Time_Restart_Ranking.setText(str(ballsort_all['reset_time']))
         ui.lineEdit_time_send_result.setText(str(ballsort_all['time_send_result']))
-        ui.lineEdit_time_count_ball.setText(str(ballsort_all['time_count_ball']))
+        ui.lineEdit_end_count_ball.setText(str(ballsort_all['time_count_ball']))
 
         f.close()
     else:
@@ -638,7 +638,7 @@ def save_ballsort_yaml():
             ballsort_all['max_area_count'] = int(ui.lineEdit_area_Ranking.text())
             ballsort_all['reset_time'] = int(ui.lineEdit_Time_Restart_Ranking.text())
             ballsort_all['time_send_result'] = int(ui.lineEdit_time_send_result.text())
-            ballsort_all['time_count_ball'] = int(ui.lineEdit_time_count_ball.text())
+            ballsort_all['time_count_ball'] = int(ui.lineEdit_end_count_ball.text())
             max_lap_count = int(ui.lineEdit_lap_Ranking.text())
             max_area_count = int(ui.lineEdit_area_Ranking.text())
             # print(ballsort_conf)
@@ -1611,7 +1611,7 @@ class PlanBallNumThread(QThread):
                                 break
                             elif num >= balls_count and ui.checkBox_Pass_Recognition_Start.isChecked():
                                 break
-                            elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
+                            elif time.time() - time_now > int(ui.lineEdit_end_count_ball.text()):
                                 # 超时则跳出循环计球
                                 sc.GASetDiReverseCount()  # 输入次数归0
                                 # self._signal.emit(0)
@@ -4552,7 +4552,7 @@ if __name__ == '__main__':
     ui.pushButton_save_Ranking.clicked.connect(save_ballsort_yaml)
 
     ui.lineEdit_time_send_result.editingFinished.connect(save_ballsort_yaml)
-    ui.lineEdit_time_count_ball.editingFinished.connect(save_ballsort_yaml)
+    ui.lineEdit_end_count_ball.editingFinished.connect(save_ballsort_yaml)
 
     # 初始化球数组，位置寄存器
     reset_ranking_array()  # 重置排名数组

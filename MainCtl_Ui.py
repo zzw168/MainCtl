@@ -2127,12 +2127,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_47.addWidget(self.label_41, 2, 0, 1, 1)
 
-        self.lineEdit_time_count_ball = QLineEdit(self.groupBox_33)
-        self.lineEdit_time_count_ball.setObjectName(u"lineEdit_time_count_ball")
-        self.lineEdit_time_count_ball.setMinimumSize(QSize(0, 10))
-        self.lineEdit_time_count_ball.setMaximumSize(QSize(50, 16777215))
+        self.lineEdit_end_count_ball = QLineEdit(self.groupBox_33)
+        self.lineEdit_end_count_ball.setObjectName(u"lineEdit_end_count_ball")
+        self.lineEdit_end_count_ball.setMinimumSize(QSize(0, 10))
+        self.lineEdit_end_count_ball.setMaximumSize(QSize(50, 16777215))
 
-        self.gridLayout_47.addWidget(self.lineEdit_time_count_ball, 2, 1, 1, 1)
+        self.gridLayout_47.addWidget(self.lineEdit_end_count_ball, 2, 1, 1, 1)
 
         self.label_28 = QLabel(self.groupBox_33)
         self.label_28.setObjectName(u"label_28")
@@ -2148,12 +2148,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_47.addWidget(self.label_40, 2, 2, 1, 1)
 
-        self.lineEdit_time_send_result = QLineEdit(self.groupBox_33)
-        self.lineEdit_time_send_result.setObjectName(u"lineEdit_time_send_result")
-        self.lineEdit_time_send_result.setMinimumSize(QSize(0, 10))
-        self.lineEdit_time_send_result.setMaximumSize(QSize(50, 16777215))
+        self.lineEdit_start_count_ball = QLineEdit(self.groupBox_33)
+        self.lineEdit_start_count_ball.setObjectName(u"lineEdit_start_count_ball")
+        self.lineEdit_start_count_ball.setMinimumSize(QSize(0, 10))
+        self.lineEdit_start_count_ball.setMaximumSize(QSize(50, 16777215))
 
-        self.gridLayout_47.addWidget(self.lineEdit_time_send_result, 0, 1, 1, 1)
+        self.gridLayout_47.addWidget(self.lineEdit_start_count_ball, 0, 1, 1, 1)
 
         self.label_29 = QLabel(self.groupBox_33)
         self.label_29.setObjectName(u"label_29")
@@ -3812,6 +3812,7 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.lineEdit_Map_Action.setToolTip("")
 #endif // QT_CONFIG(tooltip)
+        self.lineEdit_Map_Action.setText(QCoreApplication.translate("MainWindow", u"8", None))
         self.label_72.setText(QCoreApplication.translate("MainWindow", u"\u8ba1\u7403\u4f4d\u7f6e:", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_area_limit.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>\u8bbe\u7f6e\u6700\u5927\u533a\u57df\u6570</p></body></html>", None))
@@ -3828,11 +3829,11 @@ class Ui_MainWindow(object):
         self.label_97.setText(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u533a\u57df\uff1a", None))
         self.label_27.setText(QCoreApplication.translate("MainWindow", u"\u5faa\u73af\u5012\u8ba1\u65f6\uff1a", None))
         self.lineEdit_area_2.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        self.label_41.setText(QCoreApplication.translate("MainWindow", u"\u7edf\u8ba1\u7403\u65f6\u95f4\uff1a", None))
-        self.lineEdit_time_count_ball.setText(QCoreApplication.translate("MainWindow", u"30", None))
-        self.label_28.setText(QCoreApplication.translate("MainWindow", u"\u53d1\u9001\u7ed3\u679c\u65f6\u95f4\uff1a", None))
+        self.label_41.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u8ba1\u7403\uff1a", None))
+        self.lineEdit_end_count_ball.setText(QCoreApplication.translate("MainWindow", u"30", None))
+        self.label_28.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\u8ba1\u7403\uff1a", None))
         self.label_40.setText(QCoreApplication.translate("MainWindow", u"\u79d2", None))
-        self.lineEdit_time_send_result.setText(QCoreApplication.translate("MainWindow", u"15", None))
+        self.lineEdit_start_count_ball.setText(QCoreApplication.translate("MainWindow", u"15", None))
         self.label_29.setText(QCoreApplication.translate("MainWindow", u"\u79d2", None))
         self.groupBox_37.setTitle("")
         self.pushButton_CardStop_2.setText(QCoreApplication.translate("MainWindow", u"\u505c\u6b62", None))

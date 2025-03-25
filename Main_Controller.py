@@ -650,8 +650,8 @@ def load_ballsort_json():
         ui.lineEdit_lap_Ranking.setText(str(max_lap_count))
         ui.lineEdit_area_Ranking.setText(str(max_area_count))
         ui.lineEdit_Time_Restart_Ranking.setText(str(ballsort_all['reset_time']))
-        ui.lineEdit_time_send_result.setText(str(ballsort_all['time_send_result']))
-        ui.lineEdit_time_count_ball.setText(str(ballsort_all['time_count_ball']))
+        ui.lineEdit_start_count_ball.setText(str(ballsort_all['lineEdit_start_count_ball']))
+        ui.lineEdit_end_count_ball.setText(str(ballsort_all['time_count_ball']))
 
         f.close()
     else:
@@ -674,8 +674,8 @@ def save_ballsort_json():
             ballsort_all['max_lap_count'] = int(ui.lineEdit_lap_Ranking.text())
             ballsort_all['max_area_count'] = int(ui.lineEdit_area_Ranking.text())
             ballsort_all['reset_time'] = int(ui.lineEdit_Time_Restart_Ranking.text())
-            ballsort_all['time_send_result'] = int(ui.lineEdit_time_send_result.text())
-            ballsort_all['time_count_ball'] = int(ui.lineEdit_time_count_ball.text())
+            ballsort_all['lineEdit_start_count_ball'] = int(ui.lineEdit_start_count_ball.text())
+            ballsort_all['time_count_ball'] = int(ui.lineEdit_end_count_ball.text())
             max_lap_count = int(ui.lineEdit_lap_Ranking.text())
             max_area_count = int(ui.lineEdit_area_Ranking.text())
             ball_sort = []  # 位置寄存器
@@ -1877,7 +1877,7 @@ class PlanBallNumThread(QThread):
                             break
                         # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
                         #     break
-                        elif time.time() - time_now > int(ui.lineEdit_time_count_ball.text()):
+                        elif time.time() - time_now > int(ui.lineEdit_end_count_ball.text()):
                             # 超时则跳出循环计球
                             if ui.checkBox_Pass_Ranking_Twice.isChecked():
                                 self.run_flg = False
@@ -1894,7 +1894,7 @@ class PlanBallNumThread(QThread):
                                     ball_sort[i][max_lap_count - 1] = []
                                 self.signal.emit(
                                     succeed('计球倒计时：%s' %
-                                            str(int(ui.lineEdit_time_count_ball.text()) - sec_)))
+                                            str(int(ui.lineEdit_end_count_ball.text()) - sec_)))
                     else:
                         flg_start['card'] = False
                         self.signal.emit(fail("运动板x输入通信出错！"))
@@ -2002,15 +2002,6 @@ class ObsEndThread(QThread):
                 continue
             print('结算页面运行！')
             self.signal.emit('录图结束')
-            num = 0
-            num_end = ui.lineEdit_time_send_result.text()
-            if num_end.isdigit():
-                num_end = int(num_end)
-                while self.run_flg:
-                    if num_end < num:
-                        break
-                    num += 1
-                    time.sleep(1)
             try:
                 save_path = '%s' % ui.lineEdit_upload_Path.text()
                 if os.path.exists(save_path):
@@ -2346,7 +2337,7 @@ class ShootThread(QThread):
                 sc.GASetExtDoBit(end_index, 0)
                 time_count = 0
                 while self.run_flg:
-                    time.sleep(2)
+                    time.sleep(1)
                     ball_sort[1][0] = []  # 持续刷新起点排名
                     if (BallsNum_ui.go_flg
                             or (ui.lineEdit_balls_auto.text().isdigit()
@@ -2368,7 +2359,7 @@ class ShootThread(QThread):
                         break
 
                     time_count += 1
-                    if time_count > 10:
+                    if time_count > int(ui.lineEdit_start_count_ball.text()):
                         if int(time_count % 3) == 0:
                             if ui.radioButton_stop_betting.isChecked():
                                 self.signal.emit(succeed("隐藏提示"))
@@ -6496,8 +6487,8 @@ if __name__ == '__main__':
 
     ui.pushButton_save_Ranking.clicked.connect(save_ballsort_json)
 
-    ui.lineEdit_time_send_result.editingFinished.connect(save_ballsort_json)
-    ui.lineEdit_time_count_ball.editingFinished.connect(save_ballsort_json)
+    ui.lineEdit_start_count_ball.editingFinished.connect(save_ballsort_json)
+    ui.lineEdit_end_count_ball.editingFinished.connect(save_ballsort_json)
 
     # 初始化球数组，位置寄存器
     reset_ranking_Thread.run_flg = True  # 重置排名数组
