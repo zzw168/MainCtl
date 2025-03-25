@@ -1858,10 +1858,10 @@ class PlanBallNumThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     print(res, value)
                     if res == 0:
-                        num = int(value[0] / 2)
+                        num = int(value[0] / 2) - 1
                         if num > len(z_ranking_time):
                             num = len(z_ranking_time)
-                        if num != num_old:
+                        if num > num_old:
                             for i in range(num):
                                 if z_ranking_time[i] == '':
                                     t = time.time()
@@ -2593,11 +2593,12 @@ class PlanCmdThread(QThread):
                                     and not self.end_state
                                     and not self.ready_state
                                     and not self.background_state
-                                    and (len(plan_list) / 10 * 7 <= plan_index)
+                                    and (map_label_big.map_action >=
+                                         len(map_label_big.path_points) / 10 * int(ui.lineEdit_Map_Action.text()))
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
-                                if len(plan_list) / 10 * 8 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
-                                    PlanBallNum_Thread.run_flg = True  # 终点计数器线程
+                                # if len(plan_list) / 10 * 8 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
+                                PlanBallNum_Thread.run_flg = True  # 终点计数器线程
 
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
                                 sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
@@ -3345,6 +3346,7 @@ def save_main_json():
             main_all['lineEdit_volume_1'] = ui.lineEdit_volume_1.text()
             main_all['lineEdit_volume_2'] = ui.lineEdit_volume_2.text()
             main_all['lineEdit_volume_3'] = ui.lineEdit_volume_3.text()
+            main_all['lineEdit_Map_Action'] = ui.lineEdit_Map_Action.text()
             main_all['comboBox_plan'] = ui.comboBox_plan.currentIndex()
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
@@ -3443,6 +3445,7 @@ def load_main_json():
         ui.lineEdit_volume_1.setText(main_all['lineEdit_volume_1'])
         ui.lineEdit_volume_2.setText(main_all['lineEdit_volume_2'])
         ui.lineEdit_volume_3.setText(main_all['lineEdit_volume_3'])
+        ui.lineEdit_Map_Action.setText(str(main_all['lineEdit_Map_Action']))
         ui.comboBox_plan.setCurrentIndex(int(main_all['comboBox_plan']))
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
@@ -5679,7 +5682,9 @@ def my_test():
     global term
     global z_ranking_res
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
-    ui.radioButton_start_betting.setChecked(True)
+    PlanBallNum_Thread.run_flg = True  # 终点计数器线程
+    # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
+    sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
     # play_alarm()
     # PlanCmd_Thread.background_state = True
     # PlanCmd_Thread.run_flg = True
@@ -6674,6 +6679,7 @@ if __name__ == '__main__':
     ui.lineEdit_volume_1.editingFinished.connect(save_main_json)
     ui.lineEdit_volume_2.editingFinished.connect(save_main_json)
     ui.lineEdit_volume_3.editingFinished.connect(save_main_json)
+    ui.lineEdit_Map_Action.editingFinished.connect(save_main_json)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)
     ui.radioButton_music_background_2.clicked.connect(save_main_json)

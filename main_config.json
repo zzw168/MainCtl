@@ -152,6 +152,7 @@
     ],
     "lineEdit_alarm": "14",
     "comboBox_plan": 0,
+    "lineEdit_Map_Action": "8",
     "lineEdit_area_limit": "5",
     "lineEdit_volume_1": "0.5",
     "lineEdit_volume_2": "0.8",
@@ -167,8 +168,8 @@
     "lineEdit_start": "2",
     "lineEdit_start_count": "9",
     "lineEdit_upload_Path": "D:/数据/上报",
-    "map_line": "./img/09_沙漠.json",
-    "map_picture": "./img/09_沙漠.jpg",
+    "map_line": "./img/13_华山.json",
+    "map_picture": "./img/13_华山.jpg",
     "map_size": "680",
     "monitor_sort": "1",
     "music_1": [
