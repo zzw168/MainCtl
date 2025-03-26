@@ -1635,7 +1635,7 @@ class ReStartThread(QThread):
 
             Script_Thread.run_type = 'term'
             Script_Thread.run_flg = True  # 发送期号到OBS的python脚本
-            tcp_result_thread.send_type = 'time'    # 发送新期号,结束TCP_RESULT线程
+            tcp_result_thread.send_type = 'time'  # 发送新期号,结束TCP_RESULT线程
 
             lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
             if lottery:
@@ -1673,6 +1673,7 @@ class ReStartThread(QThread):
                         int(ui.lineEdit_start_count.text()) - 1,
                     ]:
                         sc.GASetExtDoBit(index, 1)
+                OrganCycle_Thread.run_flg = True
                 while PlanCmd_Thread.run_flg:
                     print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                     time.sleep(1)
@@ -2345,15 +2346,6 @@ class ShootThread(QThread):
                                 and not BallsNum_ui.isVisible())
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         self.signal.emit(succeed("隐藏提示"))
-                        for index in range(0, 16):
-                            if index not in [
-                                int(ui.lineEdit_start.text()) - 1,
-                                int(ui.lineEdit_shake.text()) - 1,
-                                int(ui.lineEdit_end.text()) - 1,
-                                int(ui.lineEdit_alarm.text()) - 1,
-                                int(ui.lineEdit_start_count.text()) - 1,
-                            ]:
-                                sc.GASetExtDoBit(index, 0)
                         if BallsNum_ui.go_flg:
                             BallsNum_ui.go_flg = False
                         break
@@ -2374,6 +2366,7 @@ class ShootThread(QThread):
                         int(ui.lineEdit_start_count.text()) - 1,
                     ]:
                         sc.GASetExtDoBit(index, 0)
+                OrganCycle_Thread.run_flg = False
                 ranking_array = []  # 排名数组
                 for row in range(0, len(init_array)):
                     ranking_array.append([])
@@ -3333,12 +3326,14 @@ def save_main_json():
             main_all['lineEdit_alarm'] = ui.lineEdit_alarm.text()
             main_all['lineEdit_shoot_2'] = ui.lineEdit_shoot_2.text()
             main_all['lineEdit_shoot_3'] = ui.lineEdit_shoot_3.text()
+            main_all['lineEdit_Cycle'] = ui.lineEdit_Cycle.text()
+            main_all['lineEdit_Cycle_Time'] = ui.lineEdit_Cycle_Time.text()
             main_all['lineEdit_area_limit'] = ui.lineEdit_area_limit.text()
             main_all['lineEdit_volume_1'] = ui.lineEdit_volume_1.text()
             main_all['lineEdit_volume_2'] = ui.lineEdit_volume_2.text()
             main_all['lineEdit_volume_3'] = ui.lineEdit_volume_3.text()
             main_all['lineEdit_Map_Action'] = ui.lineEdit_Map_Action.text()
-            main_all['comboBox_plan'] = ui.comboBox_plan.currentIndex()
+            main_all['checkBox_Cycle'] = ui.checkBox_Cycle.isChecked()
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                 main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -3430,6 +3425,8 @@ def load_main_json():
         ui.lineEdit_alarm.setText(main_all['lineEdit_alarm'])
         ui.lineEdit_shoot_2.setText(main_all['lineEdit_shoot_2'])
         ui.lineEdit_shoot_3.setText(main_all['lineEdit_shoot_3'])
+        ui.lineEdit_Cycle.setText(main_all['lineEdit_Cycle'])
+        ui.lineEdit_Cycle_Time.setText(main_all['lineEdit_Cycle_Time'])
         ui.lineEdit_Track_number.setText(main_all['Track_number'])
         ui.pushButton_start_game.setEnabled(main_all['pushButton_start_game'])
         ui.lineEdit_area_limit.setText(main_all['lineEdit_area_limit'])
@@ -3438,6 +3435,7 @@ def load_main_json():
         ui.lineEdit_volume_3.setText(main_all['lineEdit_volume_3'])
         ui.lineEdit_Map_Action.setText(str(main_all['lineEdit_Map_Action']))
         ui.comboBox_plan.setCurrentIndex(int(main_all['comboBox_plan']))
+        ui.checkBox_Cycle.setChecked(main_all['checkBox_Cycle'])
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -4885,6 +4883,51 @@ def script_signal_accept(msg):
     scroll_to_bottom(ui.textBrowser_msg)
 
 
+class OrganCycleThread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(OrganCycleThread, self).__init__()
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        while self.running:
+            time.sleep(1)
+            organ_list = ui.lineEdit_Cycle.text().split(',')
+            cycle_list = ui.lineEdit_Cycle_Time.text().split(',')
+            if len(organ_list) != len(cycle_list):
+                self.signal.emit(fail('循环机关设置错误！'))
+                continue
+            cycle_time = 0
+            while self.run_flg and ui.checkBox_Cycle.isChecked():
+                time.sleep(1)
+                try:
+                    for i in range(len(organ_list)):
+                        if cycle_time % int(cycle_list[i]) == 0:
+                            index = int(organ_list[i]) - 1
+                            on_off = int(cycle_time / int(cycle_list[i])) % 2
+                            sc.GASetExtDoBit(index, on_off)
+                except:
+                    print('循环机关错误！')
+                    ui.textBrowser_msg.append(fail('循环机关错误！'))
+                    flg_start['card'] = False
+                cycle_time += 1
+            self.run_flg = False
+
+
+def OrganCycle_signal_accept(msg):
+    ui.textBrowser.append(msg)
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser)
+    scroll_to_bottom(ui.textBrowser_msg)
+
+
 class Kaj789Thread(QThread):
     signal = Signal(object)
 
@@ -5673,9 +5716,7 @@ def my_test():
     global term
     global z_ranking_res
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
-    PlanBallNum_Thread.run_flg = True  # 终点计数器线程
-    # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
-    sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+    OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
     # play_alarm()
     # PlanCmd_Thread.background_state = True
     # PlanCmd_Thread.run_flg = True
@@ -5800,6 +5841,7 @@ class ZApp(QApplication):
             Script_Thread.stop()
             Kaj789_Thread.stop()
             reset_ranking_Thread.stop()
+            OrganCycle_Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -5829,6 +5871,7 @@ class ZApp(QApplication):
             Script_Thread.wait()  # OBS计时脚本线程
             Kaj789_Thread.wait()  # 开奖王线程（补发结果数据）
             reset_ranking_Thread.wait()  # 初始化数据线程
+            OrganCycle_Thread.stop()  # 机关循环
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -6274,6 +6317,10 @@ if __name__ == '__main__':
     Script_Thread.signal.connect(script_signal_accept)
     Script_Thread.start()
 
+    OrganCycle_Thread = OrganCycleThread()  # OBS脚本线程
+    OrganCycle_Thread.signal.connect(OrganCycle_signal_accept)
+    OrganCycle_Thread.start()
+
     reset_ranking_Thread = ResetRankingThread()  # KAJ789发送线程
     reset_ranking_Thread.signal.connect(reset_ranking_signal_accept)
     reset_ranking_Thread.start()
@@ -6666,11 +6713,14 @@ if __name__ == '__main__':
     ui.lineEdit_alarm.editingFinished.connect(save_main_json)
     ui.lineEdit_shoot_2.editingFinished.connect(save_main_json)
     ui.lineEdit_shoot_3.editingFinished.connect(save_main_json)
+    ui.lineEdit_Cycle.editingFinished.connect(save_main_json)
+    ui.lineEdit_Cycle_Time.editingFinished.connect(save_main_json)
     ui.lineEdit_area_limit.editingFinished.connect(save_main_json)
     ui.lineEdit_volume_1.editingFinished.connect(save_main_json)
     ui.lineEdit_volume_2.editingFinished.connect(save_main_json)
     ui.lineEdit_volume_3.editingFinished.connect(save_main_json)
     ui.lineEdit_Map_Action.editingFinished.connect(save_main_json)
+    ui.checkBox_Cycle.checkStateChanged.connect(save_main_json)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)
     ui.radioButton_music_background_2.clicked.connect(save_main_json)
