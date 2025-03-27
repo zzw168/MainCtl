@@ -4909,7 +4909,9 @@ class OrganCycleThread(QThread):
                 time.sleep(1)
                 try:
                     for i in range(len(organ_list)):
-                        if cycle_time % int(cycle_list[i]) == 0:
+                        if (organ_list[i].isdigit()
+                                and cycle_list[i].isdigit()
+                                and cycle_time % int(cycle_list[i]) == 0):
                             index = int(organ_list[i]) - 1
                             on_off = int(cycle_time / int(cycle_list[i])) % 2
                             sc.GASetExtDoBit(index, on_off)
