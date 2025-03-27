@@ -4901,7 +4901,7 @@ class OrganCycleThread(QThread):
             time.sleep(1)
             organ_list = ui.lineEdit_Cycle.text().split(',')
             cycle_list = ui.lineEdit_Cycle_Time.text().split(',')
-            if len(organ_list) != len(cycle_list):
+            if len(organ_list) < 1 or len(organ_list) != len(cycle_list):
                 self.signal.emit(fail('循环机关设置错误！'))
                 continue
             cycle_time = 0
