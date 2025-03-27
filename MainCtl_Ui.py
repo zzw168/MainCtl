@@ -494,39 +494,6 @@ class Ui_MainWindow(object):
         self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_71 = QGridLayout(self.frame_6)
         self.gridLayout_71.setObjectName(u"gridLayout_71")
-        self.groupBox_10 = QGroupBox(self.frame_6)
-        self.groupBox_10.setObjectName(u"groupBox_10")
-        self.groupBox_10.setMinimumSize(QSize(0, 50))
-        self.groupBox_10.setMaximumSize(QSize(180, 100))
-        self.groupBox_10.setFont(font1)
-        self.gridLayout_18 = QGridLayout(self.groupBox_10)
-        self.gridLayout_18.setObjectName(u"gridLayout_18")
-        self.radioButton_noball = QRadioButton(self.groupBox_10)
-        self.radioButton_noball.setObjectName(u"radioButton_noball")
-
-        self.gridLayout_18.addWidget(self.radioButton_noball, 0, 0, 1, 1)
-
-        self.checkBox_saveImgs = QCheckBox(self.groupBox_10)
-        self.checkBox_saveImgs.setObjectName(u"checkBox_saveImgs")
-        self.checkBox_saveImgs.setFont(font1)
-
-        self.gridLayout_18.addWidget(self.checkBox_saveImgs, 0, 1, 1, 1)
-
-        self.radioButton_ball = QRadioButton(self.groupBox_10)
-        self.radioButton_ball.setObjectName(u"radioButton_ball")
-        self.radioButton_ball.setChecked(True)
-
-        self.gridLayout_18.addWidget(self.radioButton_ball, 1, 0, 1, 1)
-
-        self.checkBox_saveImgs_auto = QCheckBox(self.groupBox_10)
-        self.checkBox_saveImgs_auto.setObjectName(u"checkBox_saveImgs_auto")
-        self.checkBox_saveImgs_auto.setFont(font1)
-
-        self.gridLayout_18.addWidget(self.checkBox_saveImgs_auto, 1, 1, 1, 1)
-
-
-        self.gridLayout_71.addWidget(self.groupBox_10, 0, 0, 2, 1)
-
         self.groupBox_11 = QGroupBox(self.frame_6)
         self.groupBox_11.setObjectName(u"groupBox_11")
         self.groupBox_11.setMinimumSize(QSize(0, 50))
@@ -558,20 +525,79 @@ class Ui_MainWindow(object):
 
         self.gridLayout_71.addWidget(self.pushButton_Cardreset, 1, 1, 1, 1)
 
+        self.groupBox_10 = QGroupBox(self.frame_6)
+        self.groupBox_10.setObjectName(u"groupBox_10")
+        self.groupBox_10.setMinimumSize(QSize(0, 50))
+        self.groupBox_10.setMaximumSize(QSize(180, 100))
+        self.groupBox_10.setFont(font1)
+        self.gridLayout_18 = QGridLayout(self.groupBox_10)
+        self.gridLayout_18.setObjectName(u"gridLayout_18")
+        self.lineEdit_End_Num = QLineEdit(self.groupBox_10)
+        self.lineEdit_End_Num.setObjectName(u"lineEdit_End_Num")
+        self.lineEdit_End_Num.setMinimumSize(QSize(40, 18))
+        palette = QPalette()
+        self.lineEdit_End_Num.setPalette(palette)
+        self.lineEdit_End_Num.setFont(font1)
+        self.lineEdit_End_Num.setAutoFillBackground(False)
+        self.lineEdit_End_Num.setStyleSheet(u"")
+
+        self.gridLayout_18.addWidget(self.lineEdit_End_Num, 3, 3, 1, 1)
+
+        self.radioButton_noball = QRadioButton(self.groupBox_10)
+        self.radioButton_noball.setObjectName(u"radioButton_noball")
+        self.radioButton_noball.setMaximumSize(QSize(80, 16777215))
+
+        self.gridLayout_18.addWidget(self.radioButton_noball, 0, 0, 2, 2)
+
+        self.checkBox_saveImgs_auto = QCheckBox(self.groupBox_10)
+        self.checkBox_saveImgs_auto.setObjectName(u"checkBox_saveImgs_auto")
+        self.checkBox_saveImgs_auto.setMinimumSize(QSize(110, 0))
+        self.checkBox_saveImgs_auto.setFont(font1)
+
+        self.gridLayout_18.addWidget(self.checkBox_saveImgs_auto, 3, 0, 1, 2)
+
+        self.checkBox_saveImgs = QCheckBox(self.groupBox_10)
+        self.checkBox_saveImgs.setObjectName(u"checkBox_saveImgs")
+        self.checkBox_saveImgs.setMinimumSize(QSize(110, 0))
+        self.checkBox_saveImgs.setFont(font1)
+
+        self.gridLayout_18.addWidget(self.checkBox_saveImgs, 2, 0, 1, 2)
+
+        self.radioButton_ball = QRadioButton(self.groupBox_10)
+        self.radioButton_ball.setObjectName(u"radioButton_ball")
+        self.radioButton_ball.setMinimumSize(QSize(80, 0))
+        self.radioButton_ball.setChecked(True)
+
+        self.gridLayout_18.addWidget(self.radioButton_ball, 0, 2, 1, 1)
+
+        self.lineEdit_GPS_Num = QLineEdit(self.groupBox_10)
+        self.lineEdit_GPS_Num.setObjectName(u"lineEdit_GPS_Num")
+        self.lineEdit_GPS_Num.setMinimumSize(QSize(40, 18))
+        palette1 = QPalette()
+        self.lineEdit_GPS_Num.setPalette(palette1)
+        self.lineEdit_GPS_Num.setFont(font1)
+        self.lineEdit_GPS_Num.setAutoFillBackground(False)
+        self.lineEdit_GPS_Num.setStyleSheet(u"")
+
+        self.gridLayout_18.addWidget(self.lineEdit_GPS_Num, 2, 3, 1, 1)
+
+
+        self.gridLayout_71.addWidget(self.groupBox_10, 0, 0, 2, 1)
+
 
         self.gridLayout_10.addWidget(self.frame_6, 1, 0, 1, 1)
 
         self.groupBox_term = QGroupBox(self.frame_2)
         self.groupBox_term.setObjectName(u"groupBox_term")
         self.groupBox_term.setMinimumSize(QSize(0, 200))
-        palette = QPalette()
+        palette2 = QPalette()
         brush = QBrush(QColor(255, 0, 0, 255))
         brush.setStyle(Qt.SolidPattern)
-        palette.setBrush(QPalette.Active, QPalette.Window, brush)
-        palette.setBrush(QPalette.Inactive, QPalette.Window, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.Base, brush)
-        palette.setBrush(QPalette.Disabled, QPalette.Window, brush)
-        self.groupBox_term.setPalette(palette)
+        palette2.setBrush(QPalette.Active, QPalette.Window, brush)
+        palette2.setBrush(QPalette.Inactive, QPalette.Window, brush)
+        palette2.setBrush(QPalette.Disabled, QPalette.Base, brush)
+        palette2.setBrush(QPalette.Disabled, QPalette.Window, brush)
+        self.groupBox_term.setPalette(palette2)
         self.groupBox_term.setAutoFillBackground(False)
         self.groupBox_term.setStyleSheet(u"")
         self.gridLayout_5 = QGridLayout(self.groupBox_term)
@@ -591,8 +617,8 @@ class Ui_MainWindow(object):
 
         self.lineEdit_Main_Camera = QLineEdit(self.groupBox_term)
         self.lineEdit_Main_Camera.setObjectName(u"lineEdit_Main_Camera")
-        palette1 = QPalette()
-        self.lineEdit_Main_Camera.setPalette(palette1)
+        palette3 = QPalette()
+        self.lineEdit_Main_Camera.setPalette(palette3)
         self.lineEdit_Main_Camera.setFont(font1)
         self.lineEdit_Main_Camera.setAutoFillBackground(False)
         self.lineEdit_Main_Camera.setStyleSheet(u"")
@@ -608,8 +634,8 @@ class Ui_MainWindow(object):
         self.lineEdit_Send_Result = QLineEdit(self.groupBox_term)
         self.lineEdit_Send_Result.setObjectName(u"lineEdit_Send_Result")
         self.lineEdit_Send_Result.setEnabled(True)
-        palette2 = QPalette()
-        self.lineEdit_Send_Result.setPalette(palette2)
+        palette4 = QPalette()
+        self.lineEdit_Send_Result.setPalette(palette4)
         font3 = QFont()
         font3.setFamilies([u"\u5fae\u8f6f\u96c5\u9ed1"])
         font3.setPointSize(16)
@@ -682,8 +708,8 @@ class Ui_MainWindow(object):
 
         self.lineEdit_Backup_Camera = QLineEdit(self.groupBox_term)
         self.lineEdit_Backup_Camera.setObjectName(u"lineEdit_Backup_Camera")
-        palette3 = QPalette()
-        self.lineEdit_Backup_Camera.setPalette(palette3)
+        palette5 = QPalette()
+        self.lineEdit_Backup_Camera.setPalette(palette5)
         self.lineEdit_Backup_Camera.setFont(font1)
         self.lineEdit_Backup_Camera.setAutoFillBackground(False)
         self.lineEdit_Backup_Camera.setStyleSheet(u"")
@@ -3608,15 +3634,17 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
         self.pushButton_Stop_All.setText(QCoreApplication.translate("MainWindow", u"\u8f68\u9053\u505c\u6b62", None))
         self.pushButton_end_all.setText(QCoreApplication.translate("MainWindow", u"\u6536\u5de5", None))
-        self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u4e3b\u673a\u5f55\u56fe\u64cd\u4f5c", None))
-        self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
-        self.checkBox_saveImgs.setText(QCoreApplication.translate("MainWindow", u"GPS\u5f55\u56fe", None))
-        self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
-        self.checkBox_saveImgs_auto.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u5f55\u56fe", None))
         self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u6444\u50cf\u5934", None))
         self.checkBox_main_camera.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444", None))
         self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc", None))
         self.pushButton_Cardreset.setText(QCoreApplication.translate("MainWindow", u"\u590d\u4f4d", None))
+        self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u4e3b\u673a\u5f55\u56fe\u64cd\u4f5c", None))
+        self.lineEdit_End_Num.setText(QCoreApplication.translate("MainWindow", u"5000", None))
+        self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
+        self.checkBox_saveImgs_auto.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u5f55\u56fe  \u6570\u91cf\uff1a", None))
+        self.checkBox_saveImgs.setText(QCoreApplication.translate("MainWindow", u"GPS\u5f55\u56fe  \u6570\u91cf\uff1a", None))
+        self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
+        self.lineEdit_GPS_Num.setText(QCoreApplication.translate("MainWindow", u"5000", None))
         self.pushButton_Backup_Camera.setText(QCoreApplication.translate("MainWindow", u"\u9009", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u673a\uff1a  ", None))
         self.checkBox_Auto_Send.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8", None))

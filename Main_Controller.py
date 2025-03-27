@@ -3333,6 +3333,8 @@ def save_main_json():
             main_all['lineEdit_volume_2'] = ui.lineEdit_volume_2.text()
             main_all['lineEdit_volume_3'] = ui.lineEdit_volume_3.text()
             main_all['lineEdit_Map_Action'] = ui.lineEdit_Map_Action.text()
+            main_all['lineEdit_GPS_Num'] = ui.lineEdit_GPS_Num.text()
+            main_all['lineEdit_End_Num'] = ui.lineEdit_End_Num.text()
             main_all['checkBox_Cycle'] = ui.checkBox_Cycle.isChecked()
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
@@ -3434,6 +3436,8 @@ def load_main_json():
         ui.lineEdit_volume_2.setText(main_all['lineEdit_volume_2'])
         ui.lineEdit_volume_3.setText(main_all['lineEdit_volume_3'])
         ui.lineEdit_Map_Action.setText(str(main_all['lineEdit_Map_Action']))
+        ui.lineEdit_GPS_Num.setText(main_all['lineEdit_GPS_Num'])
+        ui.lineEdit_End_Num.setText(main_all['lineEdit_End_Num'])
         ui.comboBox_plan.setCurrentIndex(int(main_all['comboBox_plan']))
         ui.checkBox_Cycle.setChecked(main_all['checkBox_Cycle'])
         for index in range(1, 4):
@@ -5201,6 +5205,76 @@ def reset_ranking_signal_accept(msg):
     scroll_to_bottom(ui.textBrowser_msg)
 
 
+class CheckFileThread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(CheckFileThread, self).__init__()
+        self.run_flg = True
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        global flg_start
+        while self.running:
+            time.sleep(3)
+            if not self.run_flg:
+                continue
+            path1 = ui.lineEdit_saidao_Path.text()
+            path2 = ui.lineEdit_upload_Path.text()
+            path3 = ui.lineEdit_end1_Path.text()
+            path4 = ui.lineEdit_end2_Path.text()
+            folder_name = os.path.basename(path1)
+            folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
+            gps_num = 5000
+            end_num = 5000
+            if os.path.exists(folder_path):
+                files = [os.path.join(folder_path, f) for f in os.listdir(folder_path) if
+                         os.path.isfile(os.path.join(folder_path, f))]
+                if ui.lineEdit_GPS_Num.text().isdigit():
+                    gps_num = int(ui.lineEdit_GPS_Num.text())
+                if ui.lineEdit_End_Num.text().isdigit():
+                    end_num = int(ui.lineEdit_End_Num.text())
+                if len(files) >= gps_num:
+                    self.signal.emit('停止录图')
+                limit_folder_size(folder_path, max_files=gps_num)  # 限制GPS文件夹数量
+            if os.path.exists(path2):
+                limit_folder_size(path2, max_files=gps_num)  # 限制上报文件夹数量
+            if os.path.exists(path3):
+                limit_folder_size(path3, max_files=end_num)  # 限制终点1文件夹数量
+            if os.path.exists(path4):
+                limit_folder_size(path4, max_files=end_num)  # 限制终点2文件夹数量
+            video_part = os.path.join(os.path.dirname(path2), '录像').replace("\\", "/")
+            if os.path.exists(video_part):
+                limit_folder_size(video_part, max_files=800)  # 限制文件夹数量
+            if os.path.exists('D:/ApowerREC'):
+                limit_folder_size('D:/ApowerREC', max_files=50)  # 限制文件夹数量
+
+            if ui.lineEdit_login.text() == 'zzw':
+                if not ui.frame_zzw_1.isEnabled():
+                    ui.frame_zzw_1.setEnabled(True)
+                    ui.frame_zzw_2.setEnabled(True)
+                    ui.groupBox_ranking.setEnabled(True)
+                    ui.checkBox_shoot_0.setEnabled(True)
+                    ui.lineEdit_balls_auto.setEnabled(True)
+            else:
+                if ui.frame_zzw_1.isEnabled():
+                    ui.frame_zzw_1.setEnabled(False)
+                    ui.frame_zzw_2.setEnabled(False)
+                    ui.groupBox_ranking.setEnabled(False)
+                    ui.checkBox_shoot_0.setEnabled(False)
+                    ui.lineEdit_balls_auto.setEnabled(False)
+
+
+def CheckFile_signal_accept(msg):
+    if '停止录图' in msg:
+        ui.checkBox_saveImgs.setChecked(False)
+
+
 class TestStatusThread(QThread):
     signal = Signal(object)
 
@@ -5281,34 +5355,6 @@ class TestStatusThread(QThread):
                 except:
                     flg_start['ai'] = False
 
-            path1 = ui.lineEdit_saidao_Path.text()
-            path2 = ui.lineEdit_upload_Path.text()
-            folder_name = os.path.basename(path1)
-            folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
-            if os.path.exists(folder_path):
-                limit_folder_size(folder_path, max_files=5000)  # 限制文件夹数量
-            if os.path.exists(path2):
-                limit_folder_size(path2, max_files=5000)  # 限制文件夹数量
-            video_part = os.path.join(os.path.dirname(path2), '录像').replace("\\", "/")
-            if os.path.exists(video_part):
-                limit_folder_size(video_part, max_files=800)  # 限制文件夹数量
-            if os.path.exists('D:/ApowerREC'):
-                limit_folder_size('D:/ApowerREC', max_files=50)  # 限制文件夹数量
-
-            if ui.lineEdit_login.text() == 'zzw':
-                if not ui.frame_zzw_1.isEnabled():
-                    ui.frame_zzw_1.setEnabled(True)
-                    ui.frame_zzw_2.setEnabled(True)
-                    ui.groupBox_ranking.setEnabled(True)
-                    ui.checkBox_shoot_0.setEnabled(True)
-                    ui.lineEdit_balls_auto.setEnabled(True)
-            else:
-                if ui.frame_zzw_1.isEnabled():
-                    ui.frame_zzw_1.setEnabled(False)
-                    ui.frame_zzw_2.setEnabled(False)
-                    ui.groupBox_ranking.setEnabled(False)
-                    ui.checkBox_shoot_0.setEnabled(False)
-                    ui.lineEdit_balls_auto.setEnabled(False)
             self.signal.emit('标志')
 
 
@@ -5846,6 +5892,7 @@ class ZApp(QApplication):
             Kaj789_Thread.stop()
             reset_ranking_Thread.stop()
             OrganCycle_Thread.stop()
+            CheckFile_Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -5875,6 +5922,7 @@ class ZApp(QApplication):
             Script_Thread.wait()  # OBS计时脚本线程
             Kaj789_Thread.wait()  # 开奖王线程（补发结果数据）
             reset_ranking_Thread.wait()  # 初始化数据线程
+            CheckFile_Thread.wait()  # 检查文件线程
             OrganCycle_Thread.stop()  # 机关循环
         except Exception as e:
             print(f"Error waiting threads: {e}")
@@ -6317,6 +6365,10 @@ if __name__ == '__main__':
     TestStatus_Thread.signal.connect(test_statussignal_accept)
     TestStatus_Thread.start()
 
+    CheckFile_Thread = CheckFileThread()  # 测试线程 13
+    CheckFile_Thread.signal.connect(CheckFile_signal_accept)
+    CheckFile_Thread.start()
+
     Script_Thread = ScriptThread()  # OBS脚本线程
     Script_Thread.signal.connect(script_signal_accept)
     Script_Thread.start()
@@ -6353,7 +6405,7 @@ if __name__ == '__main__':
     ui.pushButton_RedLine.clicked.connect(red_line)
     ui.pushButton_test1.clicked.connect(my_test)
 
-    ui.checkBox_saveImgs.clicked.connect(save_images)
+    ui.checkBox_saveImgs.checkStateChanged.connect(save_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.checkBox_test.checkStateChanged.connect(edit_enable)
 
@@ -6724,6 +6776,9 @@ if __name__ == '__main__':
     ui.lineEdit_volume_2.editingFinished.connect(save_main_json)
     ui.lineEdit_volume_3.editingFinished.connect(save_main_json)
     ui.lineEdit_Map_Action.editingFinished.connect(save_main_json)
+    ui.lineEdit_End_Num.editingFinished.connect(save_main_json)
+    ui.lineEdit_GPS_Num.editingFinished.connect(save_main_json)
+
     ui.checkBox_Cycle.checkStateChanged.connect(save_main_json)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)

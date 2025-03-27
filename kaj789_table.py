@@ -70,6 +70,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
 
     def showEvent(self, event: QShowEvent):
         super().showEvent(event)  # 调用父类的 showEvent
+        self.loadFiles()
         self.load_json_file()
 
     def eventFilter(self, obj, event):
@@ -307,10 +308,6 @@ def lottery_data2table(tb_result, lottery_t, labels):  # 赛事入表
                 tb_result.item(row, col).setText(tb_result.item(row - 1, col).text())
     for index, value in enumerate(lottery_t):
         tb_result.item(0, index).setText(str(value))
-
-
-def kaj789_showEvent(kaj789_ui):
-    kaj789_ui.load_json_file()
 
 
 if __name__ == '__main__':

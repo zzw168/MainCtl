@@ -161,6 +161,8 @@
     "lineEdit_volume_2": "0.8",
     "lineEdit_volume_3": "0.5",
     "lineEdit_end": "4",
+    "lineEdit_GPS_Num": "6000",
+    "lineEdit_End_Num": "6000",
     "lineEdit_end1_Path": "D:/数据/14_黄山_终点/obs",
     "lineEdit_end2_Path": "D:/rtsp",
     "lineEdit_saidao_Path": "Z:/14_黄山_赛道",
