@@ -5290,6 +5290,8 @@ class TestStatusThread(QThread):
             video_part = os.path.join(os.path.dirname(path2), '录像').replace("\\", "/")
             if os.path.exists(video_part):
                 limit_folder_size(video_part, max_files=800)  # 限制文件夹数量
+            if os.path.exists('D:/ApowerREC'):
+                limit_folder_size('D:/ApowerREC', max_files=50)  # 限制文件夹数量
 
             if ui.lineEdit_login.text() == 'zzw':
                 if not ui.frame_zzw_1.isEnabled():
