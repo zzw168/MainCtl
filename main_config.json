@@ -166,6 +166,8 @@
     "lineEdit_end1_Path": "D:/数据/14_黄山_终点/obs",
     "lineEdit_end2_Path": "D:/rtsp",
     "lineEdit_saidao_Path": "Z:/14_黄山_赛道",
+    "lineEdit_Start_Path": "Z:/14_黄山_起点",
+    "lineEdit_background_Path": "Z:/14_黄山_背景",
     "lineEdit_shake": "3",
     "lineEdit_shoot": "1",
     "lineEdit_shoot_2": "5",

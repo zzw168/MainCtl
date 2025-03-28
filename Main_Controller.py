@@ -490,6 +490,7 @@ def deal_action():
 # 处理排名
 def deal_rank(integration_qiu_array):
     global ranking_array
+    area_limit = 0
     for r_index in range(0, len(ranking_array)):
         replaced = False
         for q_item in integration_qiu_array:
@@ -513,7 +514,8 @@ def deal_rank(integration_qiu_array):
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
                             and (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
-                            ))):
+                            ))
+                        or (abs(q_item[6] - ranking_array[0][6]) <= area_limit / 2)):  # 在头名附近
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_array[r_index][9] = 1
@@ -526,6 +528,12 @@ def deal_rank(integration_qiu_array):
                 ranking_array[r_index][9] = 1
             else:
                 ranking_array[r_index][9] = 0
+
+    for i in range(len(ranking_array)):  # 处理套圈排名
+        if abs(ranking_array[0][6] - ranking_array[i][6]) > area_limit / 2:
+            if ranking_array[i][8] < ranking_array[0][8]:
+                ranking_array[i][8] = ranking_array[0][8]
+
     sort_ranking()
 
 
@@ -1072,11 +1080,9 @@ class UdpThread(QThread):
                         continue
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
                     deal_rank(array_data)
-                    if ball_sort:
+                    if ball_sort and balls_start != len(ball_sort[1][0]):
                         balls_start = len(ball_sort[1][0])  # 更新起点球数
-                    # if balls_start < len(ball_sort[0][0]):   # 0区数量
-                    #     balls_start = len(ball_sort[0][0])
-                    self.signal.emit(balls_start)
+                        self.signal.emit(balls_start)
                     # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~3', ranking_array)
                     deal_action()
                     con_data = []
@@ -1099,18 +1105,15 @@ def udpsignal_accept(msg):
     global flg_start
     # print(msg)
     if isinstance(msg, int):
-        bt_udp_time = ui.pushButton_udp_time
-        if msg > 1200:
-            bt_udp_time.setText('识别主机超时！%s 毫秒' % msg)
-            if bt_udp_time.styleSheet() != 'background:rgb(255, 0, 0)':
-                bt_udp_time.setStyleSheet('background:rgb(255, 0, 0)')
-        else:
-            if bt_udp_time.styleSheet() != 'background:rgb(0, 255, 0)':
-                bt_udp_time.setStyleSheet('background:rgb(0, 255, 0)')
-                bt_udp_time.setText('图像识别状态正常')
         if int(ui.lineEdit_ball_start.text()) < balls_start or balls_start == 0:  # 更新起点球数
             ui.lineEdit_balls_start.setText(str(balls_start))
             ui.lineEdit_ball_start.setText(str(balls_start))
+            if (ui.checkBox_saveImgs_start.isChecked()
+                    and balls_start < balls_count
+                    and balls_start != 0):
+                save_start_images(1)
+            else:
+                save_start_images(0)
     else:
         if '错误' in msg:
             ui.textBrowser_msg.append(msg)
@@ -2342,8 +2345,8 @@ class ShootThread(QThread):
                     ball_sort[1][0] = []  # 持续刷新起点排名
                     if (BallsNum_ui.go_flg
                             or (ui.lineEdit_balls_auto.text().isdigit()
-                                and balls_start >= int(ui.lineEdit_balls_auto.text())
-                                and not BallsNum_ui.isVisible())
+                                and ((not BallsNum_ui.isVisible())
+                                     and balls_start >= int(ui.lineEdit_balls_auto.text())))
                             or ui.checkBox_Pass_Recognition_Start.isChecked()):
                         self.signal.emit(succeed("隐藏提示"))
                         if BallsNum_ui.go_flg:
@@ -2392,10 +2395,10 @@ def shootsignal_accept(msg):
         ui.lineEdit_balls_start.setText('0')
         ui.lineEdit_ball_start.setText('0')
     elif "隐藏提示" in msg:
-        BallsNumDialog.hide()
+        BallsNum_ui.hide()
     elif "弹射上珠不够" in msg:
-        if Shoot_Thread.run_flg and (not BallsNumDialog.isVisible()):
-            BallsNumDialog.show()
+        if Shoot_Thread.run_flg and (not BallsNum_ui.isVisible()):
+            BallsNum_ui.show()
             play_alarm()
 
 
@@ -3332,6 +3335,8 @@ def save_main_json():
             main_all['lineEdit_volume_1'] = ui.lineEdit_volume_1.text()
             main_all['lineEdit_volume_2'] = ui.lineEdit_volume_2.text()
             main_all['lineEdit_volume_3'] = ui.lineEdit_volume_3.text()
+            main_all['lineEdit_background_Path'] = ui.lineEdit_background_Path.text()
+            main_all['lineEdit_Start_Path'] = ui.lineEdit_Start_Path.text()
             main_all['lineEdit_Map_Action'] = ui.lineEdit_Map_Action.text()
             main_all['lineEdit_GPS_Num'] = ui.lineEdit_GPS_Num.text()
             main_all['lineEdit_End_Num'] = ui.lineEdit_End_Num.text()
@@ -3438,6 +3443,8 @@ def load_main_json():
         ui.lineEdit_Map_Action.setText(str(main_all['lineEdit_Map_Action']))
         ui.lineEdit_GPS_Num.setText(main_all['lineEdit_GPS_Num'])
         ui.lineEdit_End_Num.setText(main_all['lineEdit_End_Num'])
+        ui.lineEdit_background_Path.setText(main_all['lineEdit_background_Path'])
+        ui.lineEdit_Start_Path.setText(main_all['lineEdit_Start_Path'])
         ui.comboBox_plan.setCurrentIndex(int(main_all['comboBox_plan']))
         ui.checkBox_Cycle.setChecked(main_all['checkBox_Cycle'])
         for index in range(1, 4):
@@ -3709,8 +3716,10 @@ def save_images():
         saveImgRun = 0  # 1 录图关闭标志
     if ui.radioButton_ball.isChecked():
         saveBackground = 0  # 0 有球录图标志
+        save_path = ui.lineEdit_saidao_Path.text()
     else:
         saveBackground = 1  # 0 无球录图标志
+        save_path = ui.lineEdit_background_Path.text()
     form_data = {
         'saveImgRun': saveImgRun,
         'requestType': 'saveImg',
@@ -3718,7 +3727,27 @@ def save_images():
         'saveImgNum': '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15',
         # 'saveImgNum': '1',
         # 'saveImgPath': r'\\%s\%s' % (local_ip[2], ui.lineEdit_saidao_Path.text()),
-        'saveImgPath': r'%s' % ui.lineEdit_saidao_Path.text(),
+        'saveImgPath': r'%s' % save_path,
+    }
+    try:
+        for index in range(len(wakeup_addr)):
+            r = requests.post(url=wakeup_addr[index], data=form_data)
+            print(r.text)
+    except:
+        print('图像识别主机通信失败！')
+
+
+def save_start_images(saveImgRun):
+    saveBackground = 0  # 0 有球录图标志
+    save_path = ui.lineEdit_Start_Path.text()
+    form_data = {
+        'saveImgRun': saveImgRun,
+        'requestType': 'saveImg',
+        'saveBackground': saveBackground,
+        'saveImgNum': '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15',
+        # 'saveImgNum': '1',
+        # 'saveImgPath': r'\\%s\%s' % (local_ip[2], ui.lineEdit_saidao_Path.text()),
+        'saveImgPath': r'%s' % save_path,
     }
     try:
         for index in range(len(wakeup_addr)):
@@ -6147,8 +6176,8 @@ class ResultUi(QDialog, Ui_Dialog_Result):
 
 
 class BallsNumUi(QDialog, Ui_Dialog_BallsNum):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.go_flg = False
 
     def setupUi(self, z_dialog):
@@ -6159,12 +6188,12 @@ def balls_close_btn():
     ReStart_Thread.run_flg = False
     Shoot_Thread.run_flg = False
     ui.radioButton_stop_betting.click()
-    BallsNumDialog.hide()
+    BallsNum_ui.hide()
 
 
 def balls_continue_btn():
     BallsNum_ui.go_flg = True
-    BallsNumDialog.hide()
+    BallsNum_ui.hide()
 
 
 class MapUi(QDialog, Ui_Dialog_Map):
@@ -6249,12 +6278,10 @@ if __name__ == '__main__':
     result_ui.pushButton_Send_Res.clicked.connect(result2end)
     result_ui.checkBox_stop.checkStateChanged.connect(stop_alarm)
 
-    BallsNumDialog = QDialog(z_window)  #
-    BallsNum_ui = BallsNumUi()
-    BallsNum_ui.setupUi(BallsNumDialog)
+    BallsNum_ui = BallsNumUi(z_window)
+    BallsNum_ui.setupUi(BallsNum_ui)
     BallsNum_ui.pushButton_close.clicked.connect(balls_close_btn)
     BallsNum_ui.pushButton_continue.clicked.connect(balls_continue_btn)
-    # BallsNumDialog.show()
 
     OrganDialog = QDialog(z_window)
     organ_ui = OrganUi()
@@ -6778,6 +6805,8 @@ if __name__ == '__main__':
     ui.lineEdit_Map_Action.editingFinished.connect(save_main_json)
     ui.lineEdit_End_Num.editingFinished.connect(save_main_json)
     ui.lineEdit_GPS_Num.editingFinished.connect(save_main_json)
+    ui.lineEdit_background_Path.editingFinished.connect(save_main_json)
+    ui.lineEdit_Start_Path.editingFinished.connect(save_main_json)
 
     ui.checkBox_Cycle.checkStateChanged.connect(save_main_json)
 
