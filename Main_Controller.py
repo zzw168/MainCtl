@@ -490,18 +490,15 @@ def deal_action():
 # 处理排名
 def deal_rank(integration_qiu_array):
     global ranking_array
-    area_limit = 0
+    area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
     for r_index in range(0, len(ranking_array)):
         replaced = False
         for q_item in integration_qiu_array:
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
                 if (map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9
                         and action_area[1] >= max_lap_count - 1):
-                    area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
                     for i in range(len(ranking_array)):
                         ranking_array[i][8] = max_lap_count - 1
-                else:
-                    area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
 
                 if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
@@ -511,28 +508,32 @@ def deal_rank(integration_qiu_array):
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = max_lap_count - 1
 
+                if q_item[6] < area_limit and ranking_array[r_index][8] < action_area[1]:
+                    ranking_array[r_index][8] = action_area[1]
+
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
                         or (q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
-                            and (q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
-                            ))
-                        or (abs(q_item[6] - ranking_array[0][6]) <= area_limit / 2)):  # 在头名附近
+                            and q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
+                        )):
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_array[r_index][9] = 1
+
+                if (r_index > 0
+                        and ranking_array[r_index][8] < ranking_array[0][8]
+                        and q_item[6] <= max_area_count / 2):
+                    if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
+                        for r_i in range(0, len(q_item)):
+                            ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                        ranking_array[r_index][9] = 1
+                        ranking_array[r_index][8] = ranking_array[0][8]
                 replaced = True
                 break
         if not replaced:
-            if (map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9
-                    # and action_area[1] >= max_lap_count - 1
-            ):
+            if map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9:
                 ranking_array[r_index][9] = 1
             else:
                 ranking_array[r_index][9] = 0
-
-    for i in range(len(ranking_array)):  # 处理套圈排名
-        if abs(ranking_array[0][6] - ranking_array[i][6]) > area_limit / 2:
-            if ranking_array[i][8] < ranking_array[0][8]:
-                ranking_array[i][8] = ranking_array[0][8]
 
     sort_ranking()
 
@@ -2016,8 +2017,6 @@ class ObsEndThread(QThread):
                 tcp_result_thread.send_type = 'updata'
                 tcp_result_thread.run_flg = True
 
-                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
-                                                  False)  # 关闭画中画来源
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                   False)  # 关闭排名来源
                 cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
@@ -3564,18 +3563,29 @@ def card_close_all():
     if not flg_start['card']:
         return
     for index in range(0, 16):
-        if index not in [int(ui.lineEdit_shoot.text()) - 1,
-                         int(ui.lineEdit_start.text()) - 1,
-                         int(ui.lineEdit_shake.text()) - 1,
-                         int(ui.lineEdit_end.text()) - 1,
-                         int(ui.lineEdit_alarm.text()) - 1,
-                         int(ui.lineEdit_start_count.text()) - 1,
-                         ]:
+        if index not in [
+            # int(ui.lineEdit_shoot.text()) - 1,
+            int(ui.lineEdit_start.text()) - 1,
+            int(ui.lineEdit_shake.text()) - 1,
+            int(ui.lineEdit_end.text()) - 1,
+            int(ui.lineEdit_alarm.text()) - 1,
+            int(ui.lineEdit_start_count.text()) - 1,
+        ]:
             sc.GASetExtDoBit(index, 0)
     ui.textBrowser.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_background_data.append(succeed('已经关闭所有机关！'))
 
+def end_all():
+    card_reset()
+    card_close_all()
+    if flg_start['live']:
+        cl_request.stop_stream()
+    res = QMessageBox.warning(z_window, '提示', '请确认直播已关闭！',
+                              QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+    print(res)
+    if res == QMessageBox.No:
+        return
 
 def card_on_off_all():
     if not flg_start['card']:
@@ -5429,14 +5439,16 @@ def test_ai_end():
 def maintain_screen():  # OBS维护
     if ui.checkBox_maintain.isChecked() and flg_start['obs']:
         try:
-            cl_request.set_current_program_scene('维护')
+            cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
+                                              True)  # 打开维护来源
         except:
             print('obs 维护 错误！')
             ui.textBrowser_msg.append(fail('obs 维护 错误！'))
             flg_start['obs'] = False
     else:
         try:
-            cl_request.set_current_program_scene(obs_data['obs_scene'])
+            cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
+                                              False)  # 关闭维护来源
         except:
             print('obs %s 错误！' % obs_data['obs_scene'])
             ui.textBrowser_msg.append(fail('obs %s 错误！' % obs_data['obs_scene']))
@@ -5794,8 +5806,9 @@ def red_line():
 def my_test():
     global term
     global z_ranking_res
+    cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
-    OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
+    # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
     # play_alarm()
     # PlanCmd_Thread.background_state = True
     # PlanCmd_Thread.run_flg = True
@@ -5898,6 +5911,7 @@ class ZApp(QApplication):
     def stop_all_threads(self):
         """停止所有线程的函数。"""
         try:
+            stop_server()
             PlanCmd_Thread.stop()
             PlanObs_Thread.stop()
             PlanCam_Thread.stop()
@@ -6417,7 +6431,6 @@ if __name__ == '__main__':
     ui.pushButton_CardRun_2.clicked.connect(cmd_run)
     ui.pushButton_CardReset.clicked.connect(card_reset)
     ui.pushButton_Cardreset.clicked.connect(card_reset)
-    ui.pushButton_end_all.clicked.connect(card_reset)
     ui.pushButton_ToTable.clicked.connect(p_to_table)
     ui.pushButton_Obs2Table.clicked.connect(obs_to_table)
     ui.pushButton_Source2Table.clicked.connect(source_to_table)
@@ -6427,6 +6440,7 @@ if __name__ == '__main__':
     ui.pushButton_Draw.clicked.connect(open_draw)
     ui.checkBox_all.stateChanged.connect(card_on_off_all)
     ui.pushButton_CardClose.clicked.connect(card_close_all)
+    ui.pushButton_end_all.clicked.connect(end_all)
 
     ui.pushButton_start_game.clicked.connect(cmd_loop)
     ui.pushButton_RedLine.clicked.connect(red_line)

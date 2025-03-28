@@ -44,7 +44,7 @@
          <enum>Qt::FocusPolicy::NoFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -6657,7 +6657,7 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>画中画</string>
+                      <string>维护</string>
                      </property>
                      <property name="readOnly">
                       <bool>false</bool>
@@ -6740,7 +6740,7 @@
                       </font>
                      </property>
                      <property name="text">
-                      <string>画中画：</string>
+                      <string>维护：</string>
                      </property>
                     </widget>
                    </item>
