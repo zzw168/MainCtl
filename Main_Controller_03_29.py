@@ -521,7 +521,7 @@ def deal_rank(integration_qiu_array):
 
                 if (r_index > 0
                         and ranking_array[r_index][8] < ranking_array[0][8]
-                        and q_item[6] <= max_area_count / 3 * 2):
+                        and q_item[6] <= max_area_count / 2):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         for r_i in range(0, len(q_item)):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
@@ -834,6 +834,14 @@ class TcpResultThread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
+        global lottery_term
+        global tcp_result_socket
+        global action_area
+        global term_comment
+        global result_data
+        global betting_loop_flg
+        global balls_start
+
         tcp_result_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcp_result_socket.bind(result_tcpServer_addr)
         tcp_result_socket.listen(5)
@@ -847,31 +855,126 @@ class TcpResultThread(QThread):
                     try:
                         while self.run_flg:
                             time.sleep(1)
+                            send_flg = True
+
                             if self.send_type == 'updata':
                                 self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end[:balls_count]))))
-                                data_list = {'type': 'updata',
-                                             'data': {'qh': str(term), 'rank': []}}
+                                datalist = {'type': 'updata',
+                                            'data': {'qh': str(term), 'rank': []}}
                                 for index in range(balls_count):
                                     if is_natural_num(z_ranking_time[index]):
-                                        data_list["data"]['rank'].append(
+                                        datalist["data"]['rank'].append(
                                             {"mc": z_ranking_end[index], "time": ('%s"' % z_ranking_time[index])})
                                     else:
-                                        data_list["data"]['rank'].append(
+                                        datalist["data"]['rank'].append(
                                             {"mc": z_ranking_end[index], "time": ('%s' % z_ranking_time[index])})
                                 # print(datalist)
-                                ws.send(json.dumps(data_list))
-                                self.send_type = ''
+                                ws.send(json.dumps(datalist))
+                                lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+                                if ui.radioButton_start_betting.isChecked():  # 开盘模式
+                                    result_data = {"raceTrackID": Track_number, "term": str(term),
+                                                   "actualResultOpeningTime": betting_end_time,
+                                                   "result": z_ranking_end[0:balls_count],
+                                                   "timings": "[]"}
+                                    data_temp = []
+                                    for index in range(balls_count):
+                                        if is_natural_num(z_ranking_time[index]):
+                                            data_temp.append(
+                                                {"pm": index + 1, "id": z_ranking_end[index],
+                                                 "time": float(z_ranking_time[index])})
+                                        else:
+                                            data_temp.append(
+                                                {"pm": index + 1, "id": z_ranking_end[index],
+                                                 "time": z_ranking_time[index]})
+                                    result_data["timings"] = json.dumps(data_temp)
+                                    lottery_term[12] = json.dumps(result_data)
+                                    print(lottery_term[12])
+                                    try:
+                                        res_end = post_end(term=term, betting_end_time=betting_end_time,
+                                                           status=term_status,
+                                                           Track_number=Track_number)  # 发送游戏结束信号给服务器
+                                        if res_end == 'OK':
+                                            res_result = post_result(term=term, betting_end_time=betting_end_time,
+                                                                     result_data=result_data,
+                                                                     Track_number=Track_number)  # 发送最终排名给服务器
+                                            if res_result == 'OK':
+                                                lottery_term[6] = "发送成功"
+                                            else:
+                                                lottery_term[6] = "发送失败"
+                                            if os.path.exists(lottery_term[9]):
+                                                res_upload = post_upload(term=term, img_path=lottery_term[9],
+                                                                         Track_number=Track_number)  # 上传结果图片
+                                                if res_upload == 'OK':
+                                                    lottery_term[7] = "上传成功"
+                                                else:
+                                                    lottery_term[7] = "上传失败"
+                                            if term_comment != '':
+                                                res_marble_results = post_marble_results(term=term,
+                                                                                         comments=term_comment,
+                                                                                         Track_number=Track_number)  # 上传备注信息
+                                                if str(term) in res_marble_results:
+                                                    lottery_term[8] = term_comment
+                                                else:
+                                                    lottery_term[8] = "备注失败"
+                                                term_comment = ''
+                                        else:
+                                            send_flg = False
+                                    except:
+                                        send_flg = False
+                                        self.signal.emit(fail('上传结果错误！'))
+                                        print('上传结果错误！')
+                                    ReStart_Thread.start_flg = False
+                                # 获取录屏状态
+                                recording_status = cl_request.get_record_status()
+                                try:
+                                    # 检查是否正在录屏
+                                    if recording_status.output_active:  # 确保键名正确
+                                        time.sleep(3)
+                                        video_name = cl_request.stop_record()  # 关闭录像
+                                        lottery_term[10] = video_name.output_path  # 视频保存路径
+                                except:
+                                    pass
+                                if send_flg:
+                                    lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+                                    # lottery2sql()  # 保存数据库
+                                    lottery2json()  # 保存数据
+
+                                else:
+                                    lottery_term[3] = '未结束'
+                                    betting_loop_flg = False
+
+                                if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
+                                    betting_loop_flg = False
+
+                                if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
+                                    betting_loop_flg = False
+
+                                if betting_loop_flg:
+                                    self.send_type = ''
+                                    while PlanCmd_Thread.run_flg:
+                                        time.sleep(1)
+                                    ReStart_Thread.run_flg = True  # 1分钟后重启动作
+                                else:
+                                    while PlanCmd_Thread.run_flg:
+                                        time.sleep(1)
+                                    action_area = [0, 0, 0]  # 初始化触发区域
+                                    PlanCmd_Thread.end_state = True  # 运行背景
+                                    PlanCmd_Thread.run_flg = True
+                                    auto_shoot()  # 自动上珠
+                                    self.run_flg = False
+
+                                self.signal.emit(succeed('第%s期 结束！' % term))
 
                             elif self.send_type == 'time':
-                                data_list = {'type': 'time',
-                                             'data': str(term)}
-                                ws.send(json.dumps(data_list))
+                                datalist = {'type': 'time',
+                                            'data': str(term)}
+                                ws.send(json.dumps(datalist))
                                 self.send_type = ''
                                 self.run_flg = False
                             else:
-                                data_list = {'type': 'pong',
-                                             'data': str(term)}
-                                ws.send(json.dumps(data_list))
+                                datalist = {'type': 'pong',
+                                            'data': str(term)}
+                                ws.send(json.dumps(datalist))
                     except Exception as e:
                         print("pingpong_result_1 错误：%s" % e)
                         # self.signal.emit("pingpong 错误：%s" % e)
@@ -881,6 +984,29 @@ class TcpResultThread(QThread):
 
 def tcpsignal_accept(msg):
     # print(msg)
+    if '期 结束！' in msg:
+        tb_result = ui.tableWidget_Results
+        row_count = tb_result.rowCount()
+        col_count = tb_result.columnCount()
+        if row_count > 0:
+            for i in range(3, col_count):
+                item = tb_result.item(0, i)
+                if item is None:
+                    item = QTableWidgetItem()
+                    tb_result.setItem(0, i, item)
+                item.setText(lottery_term[i])
+                item.setTextAlignment(Qt.AlignCenter)
+                if i == 3:
+                    item.setForeground(QColor("red") if lottery_term[i] == "未结束" else QColor("green"))
+            tb_result.viewport().update()
+        if not betting_loop_flg:
+            ui.radioButton_stop_betting.click()  # 封盘
+            if ui.checkBox_end_BlackScreen.isChecked():
+                ui.checkBox_black_screen.click()
+        ui.checkBox_main_music.setChecked(False)
+        ui.lineEdit_balls_start.setText('0')
+        ui.lineEdit_ball_start.setText('0')
+        ui.groupBox_term.setStyleSheet("")
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
     ui.textBrowser_background_data.append(msg)
@@ -983,12 +1109,12 @@ def udpsignal_accept(msg):
         if int(ui.lineEdit_ball_start.text()) < balls_start or balls_start == 0:  # 更新起点球数
             ui.lineEdit_balls_start.setText(str(balls_start))
             ui.lineEdit_ball_start.setText(str(balls_start))
-            # if (ui.checkBox_saveImgs_start.isChecked()
-            #         and balls_start < balls_count
-            #         and balls_start != 0):
-            #     save_start_images(1)
-            # else:
-            #     save_start_images(0)
+            if (ui.checkBox_saveImgs_start.isChecked()
+                    and balls_start < balls_count
+                    and balls_start != 0):
+                save_start_images(1)
+            else:
+                save_start_images(0)
     else:
         if '错误' in msg:
             ui.textBrowser_msg.append(msg)
@@ -1436,7 +1562,7 @@ class ReStartThread(QThread):
         super(ReStartThread, self).__init__()
         self.run_flg = False
         self.running = True
-        self.start_flg = False  # 比赛进行中的标志
+        self.start_flg = False
         self.countdown = '30'
 
     def stop(self):
@@ -1511,11 +1637,9 @@ class ReStartThread(QThread):
                 self.signal.emit('测试期号')
                 self.countdown = ui.lineEdit_Time_Restart_Ranking.text()
 
-            while tcp_result_thread.send_type != '':
-                time.sleep(1)
-            tcp_result_thread.send_type = 'time'  # 发送新期号,结束TCP_RESULT线程
             Script_Thread.run_type = 'term'
             Script_Thread.run_flg = True  # 发送期号到OBS的python脚本
+            tcp_result_thread.send_type = 'time'  # 发送新期号,结束TCP_RESULT线程
 
             lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
             if lottery:
@@ -1877,19 +2001,12 @@ class ObsEndThread(QThread):
 
     def run(self) -> None:
         global lottery_term
-        global tcp_result_socket
-        global action_area
-        global term_comment
-        global result_data
-        global betting_loop_flg
-        global balls_start
         while self.running:
             time.sleep(1)
             if not (self.screen_flg and self.ball_flg):
                 continue
             print('结算页面运行！')
             self.signal.emit('录图结束')
-            send_flg = True  # 发送赛果成功标志
             try:
                 save_path = '%s' % ui.lineEdit_upload_Path.text()
                 if os.path.exists(save_path):
@@ -1908,97 +2025,6 @@ class ObsEndThread(QThread):
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
 
-            lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-            if ui.radioButton_start_betting.isChecked():  # 开盘模式
-                result_data = {"raceTrackID": Track_number, "term": str(term),
-                               "actualResultOpeningTime": betting_end_time,
-                               "result": z_ranking_end[0:balls_count],
-                               "timings": "[]"}
-                data_temp = []
-                for index in range(balls_count):
-                    if is_natural_num(z_ranking_time[index]):
-                        data_temp.append(
-                            {"pm": index + 1, "id": z_ranking_end[index],
-                             "time": float(z_ranking_time[index])})
-                    else:
-                        data_temp.append(
-                            {"pm": index + 1, "id": z_ranking_end[index],
-                             "time": z_ranking_time[index]})
-                result_data["timings"] = json.dumps(data_temp)
-                lottery_term[12] = json.dumps(result_data)
-                print(lottery_term[12])
-                try:
-                    res_end = post_end(term=term, betting_end_time=betting_end_time,
-                                       status=term_status,
-                                       Track_number=Track_number)  # 发送游戏结束信号给服务器
-                    if res_end == 'OK':
-                        res_result = post_result(term=term, betting_end_time=betting_end_time,
-                                                 result_data=result_data,
-                                                 Track_number=Track_number)  # 发送最终排名给服务器
-                        if res_result == 'OK':
-                            lottery_term[6] = "发送成功"
-                        else:
-                            lottery_term[6] = "发送失败"
-                        if os.path.exists(lottery_term[9]):
-                            res_upload = post_upload(term=term, img_path=lottery_term[9],
-                                                     Track_number=Track_number)  # 上传结果图片
-                            if res_upload == 'OK':
-                                lottery_term[7] = "上传成功"
-                            else:
-                                lottery_term[7] = "上传失败"
-                        if term_comment != '':
-                            res_marble_results = post_marble_results(term=term,
-                                                                     comments=term_comment,
-                                                                     Track_number=Track_number)  # 上传备注信息
-                            if str(term) in res_marble_results:
-                                lottery_term[8] = term_comment
-                            else:
-                                lottery_term[8] = "备注失败"
-                            term_comment = ''
-                    else:
-                        send_flg = False
-                except:
-                    send_flg = False
-                    self.signal.emit(fail('上传结果错误！'))
-                    print('上传结果错误！')
-                ReStart_Thread.start_flg = False  # 比赛结束标志
-            # 获取录屏状态
-            recording_status = cl_request.get_record_status()
-            try:
-                # 检查是否正在录屏
-                if recording_status.output_active:  # 确保键名正确
-                    time.sleep(3)
-                    video_name = cl_request.stop_record()  # 关闭录像
-                    lottery_term[10] = video_name.output_path  # 视频保存路径
-            except:
-                pass
-            if send_flg:
-                lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
-            else:
-                lottery_term[3] = '未结束'
-                betting_loop_flg = False
-            lottery2json()  # 保存数据
-
-            if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
-                betting_loop_flg = False
-
-            if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
-                betting_loop_flg = False
-
-            if betting_loop_flg:
-                while PlanCmd_Thread.run_flg:
-                    time.sleep(1)
-                ReStart_Thread.run_flg = True  # 重启动作
-            else:
-                while PlanCmd_Thread.run_flg:
-                    time.sleep(1)
-                action_area = [0, 0, 0]  # 初始化触发区域
-                PlanCmd_Thread.end_state = True  # 运行背景
-                PlanCmd_Thread.run_flg = True
-                auto_shoot()  # 自动上珠
-                self.run_flg = False
-
-            self.signal.emit(succeed('第%s期 结束！' % term))
 
             self.screen_flg = False
             self.ball_flg = False
@@ -2012,29 +2038,6 @@ def ObsEndsignal_accept(msg):
         if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():
             ui.checkBox_saveImgs_main.setChecked(False)
             ui.checkBox_saveImgs_monitor.setChecked(False)
-    elif '期 结束！' in msg:
-        tb_result = ui.tableWidget_Results
-        row_count = tb_result.rowCount()
-        col_count = tb_result.columnCount()
-        if row_count > 0:
-            for i in range(3, col_count):
-                item = tb_result.item(0, i)
-                if item is None:
-                    item = QTableWidgetItem()
-                    tb_result.setItem(0, i, item)
-                item.setText(lottery_term[i])
-                item.setTextAlignment(Qt.AlignCenter)
-                if i == 3:
-                    item.setForeground(QColor("red") if lottery_term[i] == "未结束" else QColor("green"))
-            tb_result.viewport().update()
-        if not betting_loop_flg:
-            ui.radioButton_stop_betting.click()  # 封盘
-            if ui.checkBox_end_BlackScreen.isChecked():
-                ui.checkBox_black_screen.click()
-        ui.checkBox_main_music.setChecked(False)
-        ui.lineEdit_balls_start.setText('0')
-        ui.lineEdit_ball_start.setText('0')
-        ui.groupBox_term.setStyleSheet("")
 
 
 '''
@@ -3574,7 +3577,6 @@ def card_close_all():
     ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_background_data.append(succeed('已经关闭所有机关！'))
 
-
 def end_all():
     card_reset()
     card_close_all()
@@ -3585,7 +3587,6 @@ def end_all():
     print(res)
     if res == QMessageBox.No:
         return
-
 
 def card_on_off_all():
     if not flg_start['card']:
@@ -3954,8 +3955,8 @@ class MapLabel(QLabel):
         self.positions = []  # 每个球的当前位置索引
         self.pos_stop = []  # 每个球的停止位置索引
         for num in range(balls_count):
-            self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0])
-            # [位置索引, 顔色, 號碼, 圈數, 实际位置, 停留时间]
+            self.positions.append([num * self.ball_space, init_array[num][5], 0, 0])
+            # [位置索引, 顔色, 號碼, 圈數]
         # 创建定时器，用于定时更新球的位置
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_positions)  # 定时触发更新
@@ -3965,25 +3966,26 @@ class MapLabel(QLabel):
         global positions_live
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
-            self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间]
+            self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數]
             for num in range(balls_count):
-                self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0])
+                self.positions.append([num * self.ball_space, init_array[num][5], 0, 0])
         for num in range(0, balls_count):
             if len(ranking_array) >= balls_count and ranking_array[num][5] in self.color_names.keys():
-                area_num = max_area_count - balls_count  # 跟踪区域数量
-                p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
                 for i in range(len(self.positions)):  # 排序
                     if self.positions[i][1] == ranking_array[num][5]:
                         self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
                         self.positions[num][3] = ranking_array[num][8]
-                        if self.positions[num][4] != p:
-                            self.positions[num][4] = p
-                            self.positions[num][5] = int(time.time())
+                        # break
                 if ranking_array[num][6] <= 1:  # 起点
                     if num == 0:
                         index = len(ranking_array) * self.ball_space
                     else:
                         index = len(ranking_array) * self.ball_space - num * self.ball_space
+                    if index < len(self.path_points) and ranking_array[num][8] < max_lap_count:
+                        self.positions[num][0] = index
+                        for color_index in range(len(init_array)):
+                            if init_array[color_index][5] == ranking_array[num][5]:
+                                self.positions[num][2] = color_index + 1
                 elif (ranking_array[num][8] >= max_lap_count - 1  # 最后一圈处理
                       and ranking_array[num][6] >= max_area_count / 3 * 2
                       and self.positions[num][0] > len(self.path_points) - num * self.ball_space - 20):
@@ -3991,23 +3993,28 @@ class MapLabel(QLabel):
                         index = len(self.path_points) - 1
                     else:
                         index = len(self.path_points) - 1 - num * self.ball_space
+                    if index < len(self.path_points) and ranking_array[num][8] < max_lap_count:
+                        self.positions[num][0] = index
+                        for color_index in range(len(init_array)):
+                            if init_array[color_index][5] == ranking_array[num][5]:
+                                self.positions[num][2] = color_index + 1
                 else:
+                    area_num = max_area_count - balls_count  # 跟踪区域数量
+                    p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
                     if p - self.positions[num][0] > 50:
                         self.speed = 3
                     elif 50 >= p - self.positions[num][0] >= 25:
                         self.speed = 2
                     elif p < self.positions[num][0] and ranking_array[num][9] == 1:
                         self.positions[num][0] = p  # 跨圈情况
-                    elif int(time.time()) - self.positions[num][5] > 3:
-                        self.positions[num][0] = p  # 停留超过 5 秒
                     else:
                         self.speed = 1
                     index = self.positions[num][0] + self.speed
-                if index < len(self.path_points) and ranking_array[num][8] < max_lap_count:
-                    self.positions[num][0] = index
-                    for color_index in range(len(init_array)):
-                        if init_array[color_index][5] == ranking_array[num][5]:
-                            self.positions[num][2] = color_index + 1
+                    if index < len(self.path_points) and ranking_array[num][8] < max_lap_count:
+                        self.positions[num][0] = index
+                        for color_index in range(len(init_array)):
+                            if init_array[color_index][5] == ranking_array[num][5]:
+                                self.positions[num][2] = color_index + 1
         # 更新实时触发位置
         for i in range(len(self.positions)):
             if ((self.positions[i][0] - self.map_action < len(self.path_points) / 3)
