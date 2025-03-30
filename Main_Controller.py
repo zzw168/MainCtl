@@ -521,7 +521,7 @@ def deal_rank(integration_qiu_array):
 
                 if (r_index > 0
                         and ranking_array[r_index][8] < ranking_array[0][8]
-                        and q_item[6] <= max_area_count / 3 * 2):
+                        and q_item[6] <= max_area_count - balls_count):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         for r_i in range(0, len(q_item)):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
@@ -3972,6 +3972,8 @@ class MapLabel(QLabel):
             if len(ranking_array) >= balls_count and ranking_array[num][5] in self.color_names.keys():
                 area_num = max_area_count - balls_count  # 跟踪区域数量
                 p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
+                if p >= len(self.path_points):
+                    p = len(self.path_points) - 1
                 for i in range(len(self.positions)):  # 排序
                     if self.positions[i][1] == ranking_array[num][5]:
                         self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
