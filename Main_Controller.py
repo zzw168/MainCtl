@@ -1518,6 +1518,9 @@ class ReStartThread(QThread):
                 self.signal.emit('测试期号')
                 self.countdown = ui.lineEdit_Time_Restart_Ranking.text()
 
+            print('tcp_result_thread.send_type~~~~~', tcp_result_thread.send_type)
+            if tcp_result_thread.send_type == 'time':
+                tcp_result_thread.send_type = ''
             while tcp_result_thread.send_type != '':
                 time.sleep(1)
             tcp_result_thread.send_type = 'time'  # 发送新期号,结束TCP_RESULT线程
@@ -2508,7 +2511,6 @@ class PlanCmdThread(QThread):
             time.sleep(0.1)
             if not self.run_flg:
                 continue
-            sound_effect = pygame.mixer.Sound('')
             if flg_start['card'] and action_area[1] < max_lap_count:
                 Audio_Thread.run_flg = True  # 开启音频播放线程
                 Ai_Thread.run_flg = True  # 开启AI播放线程
@@ -2550,7 +2552,6 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if (plan_list[plan_index][12][0] == ui.lineEdit_start_count.text()
                                         and not self.background_state):  # '9'倒数机关打开
-                                    sound_effect.stop()  # 停止所有过场等待音效
                                     lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                     self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
@@ -2578,9 +2579,12 @@ class PlanCmdThread(QThread):
                                     sound_volume = float(tb_audio.item(int(plan_list[plan_index][15][0]) - 1, 3).text())
                                     print(sound_file, sound_times, sound_delay)
                                     # 加载音效
-                                    sound_effect = pygame.mixer.Sound(sound_file)
-                                    sound_effect.set_volume(sound_volume)  # 设置音量（范围：0.0 到 1.0）
-                                    sound_effect.play(loops=sound_times, maxtime=sound_delay)  # 播放音效
+                                    try:
+                                        sound_effect = pygame.mixer.Sound(sound_file)
+                                        sound_effect.set_volume(sound_volume)  # 设置音量（范围：0.0 到 1.0）
+                                        sound_effect.play(loops=sound_times, maxtime=sound_delay)  # 播放音效
+                                    except:
+                                        print('音效加载失败！~~~~~')
 
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
