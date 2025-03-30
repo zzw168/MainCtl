@@ -517,7 +517,7 @@ def deal_rank(integration_qiu_array):
                         )):
                     if r_index > 0:
                         if not ((abs(q_item[0] - ranking_array[r_index - 1][0]) < 10)  # 不能和前一个球的位置重叠
-                                and (abs(q_item[1] - ranking_array[r_index - 1][1]) < 10)):
+                                and (abs(q_item[1] - ranking_array[r_index - 1][1]) < 10)): # 避免误判两种颜色
                             for r_i in range(0, len(q_item)):
                                 ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                             ranking_array[r_index][9] = 1
