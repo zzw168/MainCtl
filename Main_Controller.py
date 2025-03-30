@@ -515,9 +515,16 @@ def deal_rank(integration_qiu_array):
                         or (q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
                             and q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                         )):
-                    for r_i in range(0, len(q_item)):
-                        ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                    ranking_array[r_index][9] = 1
+                    if r_index > 0:
+                        if not ((abs(q_item[0] - ranking_array[r_index][0]) < 10)
+                                and (abs(q_item[1] - ranking_array[r_index][1]) < 10)):
+                            for r_i in range(0, len(q_item)):
+                                ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                            ranking_array[r_index][9] = 1
+                    else:
+                        for r_i in range(0, len(q_item)):
+                            ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                        ranking_array[r_index][9] = 1
 
                 if (r_index > 0
                         and ranking_array[r_index][8] < ranking_array[0][8]
@@ -2501,6 +2508,7 @@ class PlanCmdThread(QThread):
             time.sleep(0.1)
             if not self.run_flg:
                 continue
+            sound_effect = pygame.mixer.Sound('')
             if flg_start['card'] and action_area[1] < max_lap_count:
                 Audio_Thread.run_flg = True  # 开启音频播放线程
                 Ai_Thread.run_flg = True  # 开启AI播放线程
@@ -2542,6 +2550,7 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if (plan_list[plan_index][12][0] == ui.lineEdit_start_count.text()
                                         and not self.background_state):  # '9'倒数机关打开
+                                    sound_effect.stop()  # 停止所有过场等待音效
                                     lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                     self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
