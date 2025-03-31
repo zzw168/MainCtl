@@ -517,8 +517,8 @@ def deal_rank(integration_qiu_array):
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
                     for i in range(len(ranking_array)):
-                        if ((abs(q_item[0] - ranking_array[i][0]) < 20)  # 不能和前一个球的位置重叠
-                                and (abs(q_item[1] - ranking_array[i][1]) < 20)):  # 避免误判两种颜色
+                        if ((abs(q_item[0] - ranking_array[i][0]) < 15)  # 不能和前一个球的位置重叠
+                                and (abs(q_item[1] - ranking_array[i][1]) < 15)):  # 避免误判两种颜色
                             write_ok = False
                             break
                     if write_ok:
@@ -1975,6 +1975,7 @@ class ObsEndThread(QThread):
                     self.signal.emit(fail('上传结果错误！'))
                     print('上传结果错误！')
                 ReStart_Thread.start_flg = False  # 比赛结束标志
+                lottery_term[2] = str(int(time.time() - ranking_time_start))
             # 获取录屏状态
             recording_status = cl_request.get_record_status()
             try:
@@ -2018,7 +2019,7 @@ class ObsEndThread(QThread):
 
 
 def ObsEndsignal_accept(msg):
-    print(msg)
+    # print(msg)
     if '录图结束' in msg:
         if term_comment in ['TRAP', 'OUT']:
             Map_ui.show()
@@ -2034,12 +2035,12 @@ def ObsEndsignal_accept(msg):
         row_count = tb_result.rowCount()
         col_count = tb_result.columnCount()
         if row_count > 0:
-            for i in range(3, col_count):
+            for i in range(2, col_count):
                 item = tb_result.item(0, i)
                 if item is None:
                     item = QTableWidgetItem()
                     tb_result.setItem(0, i, item)
-                item.setText(lottery_term[i])
+                item.setText(str(lottery_term[i]))
                 item.setTextAlignment(Qt.AlignCenter)
                 if i == 3:
                     item.setForeground(QColor("red") if lottery_term[i] == "未结束" else QColor("green"))
