@@ -44,7 +44,7 @@
          <enum>Qt::FocusPolicy::NoFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -369,6 +369,25 @@
                   <property name="frameShadow">
                    <enum>QFrame::Shadow::Raised</enum>
                   </property>
+                  <layout class="QGridLayout" name="gridLayout_74">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_time_count">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>16</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>0</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignmentFlag::AlignCenter</set>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
                  </widget>
                 </item>
                 <item row="0" column="2" colspan="2">

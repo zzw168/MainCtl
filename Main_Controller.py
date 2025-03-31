@@ -515,13 +515,13 @@ def deal_rank(integration_qiu_array):
                     or (q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
                         and q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                     )) and q_item[6] <= max_area_count:
-                    if r_index > 0:
-                        if not ((abs(q_item[0] - ranking_array[r_index - 1][0]) < 10)  # 不能和前一个球的位置重叠
-                                and (abs(q_item[1] - ranking_array[r_index - 1][1]) < 10)):  # 避免误判两种颜色
-                            for r_i in range(0, len(q_item)):
-                                ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                            ranking_array[r_index][9] = 1
-                    else:
+                    write_ok = True
+                    for i in range(len(ranking_array)):
+                        if ((abs(q_item[0] - ranking_array[i][0]) < 20)  # 不能和前一个球的位置重叠
+                                and (abs(q_item[1] - ranking_array[i][1]) < 20)):  # 避免误判两种颜色
+                            write_ok = False
+                            break
+                    if write_ok:
                         for r_i in range(0, len(q_item)):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                         ranking_array[r_index][9] = 1
@@ -1457,6 +1457,7 @@ class ReStartThread(QThread):
         global betting_end_time
         global action_area
         global ball_sort
+        global ranking_time_start
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -1547,6 +1548,7 @@ class ReStartThread(QThread):
                             reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                         ready_flg = False
                     ball_sort[1][0] = []
+                ranking_time_start = time.time()
                 time.sleep(1)
                 self.signal.emit(t)
             if self.run_flg:
@@ -1896,6 +1898,7 @@ class ObsEndThread(QThread):
         while self.running:
             time.sleep(1)
             if not (self.screen_flg and self.ball_flg):
+                self.signal.emit('比赛计时')
                 continue
             print('结算页面运行！')
             self.signal.emit('录图结束')
@@ -2022,6 +2025,10 @@ def ObsEndsignal_accept(msg):
         if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():
             ui.checkBox_saveImgs_main.setChecked(False)
             ui.checkBox_saveImgs_monitor.setChecked(False)
+    elif '比赛计时' in msg:
+        if ReStart_Thread.start_flg:
+            t = int(time.time() - ranking_time_start)
+            ui.label_time_count.setText(str(t))
     elif '期 结束！' in msg:
         tb_result = ui.tableWidget_Results
         row_count = tb_result.rowCount()
@@ -2794,6 +2801,7 @@ def cmd_signal_accept(msg):
             if msg == '进行中':
                 tb_result = ui.tableWidget_Results
                 tb_result.item(0, 3).setText(lottery_term[3])  # 新一期比赛的状态（1.进行中）
+                ui.label_time_count.setText('0')
             ui.textBrowser_msg.append(msg)
             scroll_to_bottom(ui.textBrowser_msg)
     except:
