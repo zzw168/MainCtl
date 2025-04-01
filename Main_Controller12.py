@@ -534,6 +534,12 @@ def deal_rank(integration_qiu_array):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                         ranking_array[r_index][9] = 1
                         ranking_array[r_index][8] = ranking_array[0][8]
+                    if r_index > 3:
+                        if abs(q_item[6] - ranking_array[3][6]) < area_limit / 2:
+                            for r_i in range(0, len(q_item)):
+                                ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                            ranking_array[r_index][9] = 1
+                            ranking_array[r_index][8] = ranking_array[0][8]
                 replaced = True
                 break
         if not replaced:
