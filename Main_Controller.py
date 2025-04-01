@@ -3387,8 +3387,10 @@ def save_main_json():
             json.dump(main_all, f, indent=4, ensure_ascii=False)
         f.close()
         ui.textBrowser_save_msg.append(succeed('方案保存：成功'))
+        ui.textBrowser_background_data.append(succeed('方案保存：成功'))
     except:
         ui.textBrowser_save_msg.append(fail('方案保存：失败'))
+        ui.textBrowser_background_data.append(fail('方案保存：失败'))
     print("保存成功~！")
 
 
