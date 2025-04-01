@@ -528,7 +528,7 @@ def deal_rank(integration_qiu_array):
 
                 if (r_index > 0
                         and ranking_array[r_index][8] < ranking_array[0][8]
-                        and q_item[6] <= (max_area_count - balls_count) / 3 * 2):
+                        and q_item[6] <= (max_area_count - balls_count) * float(ui.lineEdit_area_percent.text())):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         for r_i in range(0, len(q_item)):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
@@ -3359,6 +3359,7 @@ def save_main_json():
             main_all['lineEdit_Map_Action'] = ui.lineEdit_Map_Action.text()
             main_all['lineEdit_GPS_Num'] = ui.lineEdit_GPS_Num.text()
             main_all['lineEdit_End_Num'] = ui.lineEdit_End_Num.text()
+            main_all['lineEdit_area_percent'] = ui.lineEdit_area_percent.text()
             main_all['checkBox_Cycle'] = ui.checkBox_Cycle.isChecked()
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
@@ -3464,6 +3465,7 @@ def load_main_json():
         ui.lineEdit_End_Num.setText(main_all['lineEdit_End_Num'])
         ui.lineEdit_background_Path.setText(main_all['lineEdit_background_Path'])
         ui.lineEdit_Start_Path.setText(main_all['lineEdit_Start_Path'])
+        ui.lineEdit_area_percent.setText(main_all['lineEdit_area_percent'])
         ui.comboBox_plan.setCurrentIndex(int(main_all['comboBox_plan']))
         ui.checkBox_Cycle.setChecked(main_all['checkBox_Cycle'])
         for index in range(1, 4):
@@ -6735,9 +6737,13 @@ if __name__ == '__main__':
     ui.pushButton_save_camera.clicked.connect(lambda: save_points('red'))
     ui.pushButton_save_Audio.clicked.connect(lambda: save_points('blue'))
     ui.pushButton_save_Ai.clicked.connect(lambda: save_points('green'))
-    ui.checkBox_show_camera.clicked.connect(lambda: show_points('red'))
-    ui.checkBox_show_audio.clicked.connect(lambda: show_points('blue'))
-    ui.checkBox_show_ai.clicked.connect(lambda: show_points('green'))
+    ui.checkBox_show_camera.checkStateChanged.connect(lambda: show_points('red'))
+    ui.checkBox_show_audio.checkStateChanged.connect(lambda: show_points('blue'))
+    ui.checkBox_show_ai.checkStateChanged.connect(lambda: show_points('green'))
+
+    ui.checkBox_show_camera.setChecked(False)
+    ui.checkBox_show_audio.setChecked(False)
+    ui.checkBox_show_ai.setChecked(False)
 
     "**************************摄像头结果_开始*****************************"
     main_Camera = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 主镜头结果
@@ -6839,6 +6845,7 @@ if __name__ == '__main__':
     ui.lineEdit_GPS_Num.editingFinished.connect(save_main_json)
     ui.lineEdit_background_Path.editingFinished.connect(save_main_json)
     ui.lineEdit_Start_Path.editingFinished.connect(save_main_json)
+    ui.lineEdit_area_percent.editingFinished.connect(save_main_json)
 
     ui.checkBox_Cycle.checkStateChanged.connect(save_main_json)
 
