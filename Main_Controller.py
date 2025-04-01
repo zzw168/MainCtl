@@ -3996,45 +3996,46 @@ class MapLabel(QLabel):
         for num in range(0, balls_count):
             if len(ranking_array) >= balls_count and ranking_array[num][5] in self.color_names.keys():
                 area_num = max_area_count - balls_count  # 跟踪区域数量
-                p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
-                if p >= len(self.path_points):
-                    p = len(self.path_points) - 1
-                for i in range(len(self.positions)):  # 排序
-                    if self.positions[i][1] == ranking_array[num][5]:
-                        self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
-                        self.positions[num][3] = ranking_array[num][8]
-                        if self.positions[num][4] != p:
-                            self.positions[num][4] = p
-                            self.positions[num][5] = int(time.time())
-                if ranking_array[num][6] <= 1:  # 起点
-                    if num == 0:
-                        index = len(ranking_array) * self.ball_space
+                if ranking_array[num][6] <= max_area_count - balls_count:
+                    p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
+                    if p >= len(self.path_points):
+                        p = len(self.path_points) - 1
+                    for i in range(len(self.positions)):  # 排序
+                        if self.positions[i][1] == ranking_array[num][5]:
+                            self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
+                            self.positions[num][3] = ranking_array[num][8]
+                            if self.positions[num][4] != p:
+                                self.positions[num][4] = p
+                                self.positions[num][5] = int(time.time())
+                    if ranking_array[num][6] <= 1:  # 起点
+                        if num == 0:
+                            index = len(ranking_array) * self.ball_space
+                        else:
+                            index = len(ranking_array) * self.ball_space - num * self.ball_space
+                    elif (ranking_array[num][8] >= max_lap_count - 1  # 最后一圈处理
+                          and ranking_array[num][6] >= max_area_count / 3 * 2
+                          and self.positions[num][0] > len(self.path_points) - num * self.ball_space - 20):
+                        if num == 0:
+                            index = len(self.path_points) - 1
+                        else:
+                            index = len(self.path_points) - 1 - num * self.ball_space
                     else:
-                        index = len(ranking_array) * self.ball_space - num * self.ball_space
-                elif (ranking_array[num][8] >= max_lap_count - 1  # 最后一圈处理
-                      and ranking_array[num][6] >= max_area_count / 3 * 2
-                      and self.positions[num][0] > len(self.path_points) - num * self.ball_space - 20):
-                    if num == 0:
-                        index = len(self.path_points) - 1
-                    else:
-                        index = len(self.path_points) - 1 - num * self.ball_space
-                else:
-                    if p - self.positions[num][0] > 50:
-                        self.speed = 3
-                    elif 50 >= p - self.positions[num][0] >= 25:
-                        self.speed = 2
-                    elif p < self.positions[num][0] and ranking_array[num][9] == 1:
-                        self.positions[num][0] = p  # 跨圈情况
-                    elif int(time.time()) - self.positions[num][5] > 3:
-                        self.positions[num][0] = p  # 停留超过 5 秒
-                    else:
-                        self.speed = 1
-                    index = self.positions[num][0] + self.speed
-                if index < len(self.path_points) and ranking_array[num][8] < max_lap_count:
-                    self.positions[num][0] = index
-                    for color_index in range(len(init_array)):
-                        if init_array[color_index][5] == ranking_array[num][5]:
-                            self.positions[num][2] = color_index + 1
+                        if p - self.positions[num][0] > 50:
+                            self.speed = 3
+                        elif 50 >= p - self.positions[num][0] >= 25:
+                            self.speed = 2
+                        elif p < self.positions[num][0] and ranking_array[num][9] == 1:
+                            self.positions[num][0] = p  # 跨圈情况
+                        elif int(time.time()) - self.positions[num][5] > 3:
+                            self.positions[num][0] = p  # 停留超过 5 秒
+                        else:
+                            self.speed = 1
+                        index = self.positions[num][0] + self.speed
+                    if index < len(self.path_points) and ranking_array[num][8] < max_lap_count:
+                        self.positions[num][0] = index
+                        for color_index in range(len(init_array)):
+                            if init_array[color_index][5] == ranking_array[num][5]:
+                                self.positions[num][2] = color_index + 1
         # 更新实时触发位置
         for i in range(len(self.positions)):
             if ((self.positions[i][0] - self.map_action < len(self.path_points) / 3)
