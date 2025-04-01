@@ -3602,15 +3602,14 @@ def card_close_all():
 
 
 def end_all():
-    card_reset()
-    card_close_all()
-    if flg_start['live']:
-        cl_request.stop_stream()
-    res = QMessageBox.warning(z_window, '提示', '请确认直播已关闭！',
+    res = QMessageBox.warning(z_window, '提示', '是否关闭直播，和所有机关！',
                               QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
     print(res)
-    if res == QMessageBox.No:
-        return
+    if res == QMessageBox.Yes:
+        card_reset()
+        card_close_all()
+        if flg_start['live']:
+            cl_request.stop_stream()
 
 
 def card_on_off_all():

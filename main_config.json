@@ -156,7 +156,7 @@
     "lineEdit_Cycle": "4",
     "checkBox_Cycle": false,
     "lineEdit_Cycle_Time": "2",
-    "lineEdit_area_percent": "0.3",
+    "lineEdit_area_percent": "0.5",
     "lineEdit_area_limit": "5",
     "lineEdit_volume_1": "0.5",
     "lineEdit_volume_2": "0.8",
