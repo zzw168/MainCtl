@@ -1527,8 +1527,7 @@ class ReStartThread(QThread):
                 self.countdown = ui.lineEdit_Time_Restart_Ranking.text()
 
             print('tcp_result_thread.send_type~~~~~', tcp_result_thread.send_type)
-            if tcp_result_thread.send_type == 'time':
-                tcp_result_thread.send_type = ''
+            tcp_result_thread.send_type = ''  # 退出结果页面循环
             while tcp_result_thread.send_type != '':
                 time.sleep(1)
             tcp_result_thread.send_type = 'time'  # 发送新期号,结束TCP_RESULT线程
@@ -3576,6 +3575,7 @@ def cmd_stop():
     ReStart_Thread.run_flg = False  # 停止循环
     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
     Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+    tcp_result_thread.send_type = ''  # 退出结果页面循环
     sc.card_stop()  # 立即停止
 
 
@@ -6145,6 +6145,11 @@ def monitor_hide_event(event):
     event.accept()
 
 
+def map_hide_event(event):
+    ui.checkBox_map.setChecked(False)
+    event.accept()
+
+
 def main_cam_change():
     if ui.checkBox_main_camera.isChecked():
         MainCameraDialog.show()
@@ -6157,6 +6162,13 @@ def monitor_cam_change():
         MonitorCameraDialog.show()
     else:
         MonitorCameraDialog.hide()
+
+
+def map_change():
+    if ui.checkBox_map.isChecked():
+        Map_ui.show()
+    else:
+        Map_ui.hide()
 
 
 "************************************ResultDlg_Ui*********************************************"
@@ -6316,6 +6328,7 @@ if __name__ == '__main__':
 
     Map_ui = MapUi(z_window)
     Map_ui.setupUi(Map_ui)
+    Map_ui.hideEvent = map_hide_event
 
     TrapBall_ui = TrapBallUi(z_window)
     TrapBall_ui.setupUi(TrapBall_ui)
@@ -6804,6 +6817,7 @@ if __name__ == '__main__':
 
     ui.checkBox_main_camera.checkStateChanged.connect(main_cam_change)
     ui.checkBox_monitor_cam.checkStateChanged.connect(monitor_cam_change)
+    ui.checkBox_map.checkStateChanged.connect(map_change)
 
     set_result_class()
 

@@ -527,6 +527,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_70.addWidget(self.checkBox_monitor_cam, 0, 1, 1, 1)
 
+        self.checkBox_map = QCheckBox(self.groupBox_11)
+        self.checkBox_map.setObjectName(u"checkBox_map")
+        self.checkBox_map.setMaximumSize(QSize(100, 16777215))
+
+        self.gridLayout_70.addWidget(self.checkBox_map, 0, 2, 1, 1)
+
 
         self.gridLayout_71.addWidget(self.groupBox_11, 0, 1, 1, 1)
 
@@ -3688,6 +3694,7 @@ class Ui_MainWindow(object):
         self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u6444\u50cf\u5934", None))
         self.checkBox_main_camera.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444", None))
         self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc", None))
+        self.checkBox_map.setText(QCoreApplication.translate("MainWindow", u"\u5730\u56fe", None))
         self.pushButton_Cardreset.setText(QCoreApplication.translate("MainWindow", u"\u590d\u4f4d", None))
         self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u4e3b\u673a\u5f55\u56fe\u64cd\u4f5c", None))
         self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
