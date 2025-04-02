@@ -359,6 +359,8 @@ def obs_save_image():
             resp = cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
                                                      '%s/%s.jpg' % (save_path, time.time()), 1920,
                                                      1080, 100)
+            if ui.checkBox_saveImgs_auto.isChecked():
+                break
             time.sleep(1)
 
 
@@ -458,7 +460,6 @@ def rtsp_save_image():
                 cap.release()
                 if ret:
                     f = '%s/%s.jpg' % (save_path, int(time.time()))
-                    print('~~~~~~~~~~~~~~~~~~~~~~~~~~%s' % f)
                     cv2.imwrite(f, frame)
                 else:
                     print("无法读取视频帧")
@@ -467,6 +468,8 @@ def rtsp_save_image():
                 cap.release()
                 print(f'无法打开摄像头')
                 return
+            if ui.checkBox_saveImgs_auto.isChecked():
+                break
             time.sleep(1)
 
 
@@ -980,8 +983,8 @@ class UdpThread(QThread):
                             con_data.append(
                                 [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
                                  con_item['y1']])
-                        if ranking_array[0][6] >= max_area_count:
-                            color_to_num(ranking_array)
+                        # if ranking_array[0][6] >= max_area_count:
+                        #     color_to_num(ranking_array)
 
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
@@ -1765,7 +1768,7 @@ class PlanBallNumThread(QThread):
                                 if z_ranking_time[i] == '':
                                     t = time.time()
                                     z_ranking_time[i] = '%.2f' % (t - ranking_time_start)
-                            if num == 1:
+                            if num == balls_count:
                                 self.signal.emit('录终点图')
                             self.signal.emit(num)
                             num_old = num
@@ -3548,7 +3551,7 @@ def cmd_run():
     if not ui.checkBox_test.isChecked():
         if not ReStart_Thread.run_flg:
             ReStart_Thread.run_flg = True
-        ui.checkBox_saveImgs_auto.setChecked(True)
+        # ui.checkBox_saveImgs_auto.setChecked(True)
     else:
         save_plan_json()
         plan_refresh()
@@ -4045,9 +4048,9 @@ class MapLabel(QLabel):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
         # 模拟排名
-        if ranking_array[0][6] < max_area_count:
-            self.positions.sort(key=lambda x: (-x[3], -x[0]))
-            z_ranking_res = [ball[2] for ball in self.positions]
+        # if ranking_array[0][6] < max_area_count:
+        self.positions.sort(key=lambda x: (-x[3], -x[0]))
+        z_ranking_res = [ball[2] for ball in self.positions]
 
         # 更新实时触发位置
         for i in range(len(self.positions)):
