@@ -980,7 +980,7 @@ class UdpThread(QThread):
                             con_data.append(
                                 [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
                                  con_item['y1']])
-                        if ranking_array[0][6] >= max_area_count - balls_count:
+                        if ranking_array[0][6] >= max_area_count:
                             color_to_num(ranking_array)
 
             except Exception as e:
@@ -4045,7 +4045,7 @@ class MapLabel(QLabel):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
         # 模拟排名
-        if ranking_array[0][6] < max_area_count - balls_count:
+        if ranking_array[0][6] < max_area_count:
             self.positions.sort(key=lambda x: (-x[3], -x[0]))
             z_ranking_res = [ball[2] for ball in self.positions]
 
