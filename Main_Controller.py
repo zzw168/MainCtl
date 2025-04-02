@@ -980,7 +980,8 @@ class UdpThread(QThread):
                             con_data.append(
                                 [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
                                  con_item['y1']])
-                        color_to_num(ranking_array)
+                        if ranking_array[0][6] >= max_area_count - balls_count:
+                            color_to_num(ranking_array)
 
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
@@ -3994,6 +3995,7 @@ class MapLabel(QLabel):
 
     def update_positions(self):
         global positions_live
+        global z_ranking_res
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
             self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间]
@@ -4042,6 +4044,11 @@ class MapLabel(QLabel):
                         for color_index in range(len(init_array)):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
+        # 模拟排名
+        if ranking_array[0][6] < max_area_count - balls_count:
+            self.positions.sort(key=lambda x: (-x[3], -x[0]))
+            z_ranking_res = [ball[2] for ball in self.positions]
+
         # 更新实时触发位置
         for i in range(len(self.positions)):
             if ((self.positions[i][0] - self.map_action < len(self.path_points) / 3)
@@ -4067,19 +4074,19 @@ class MapLabel(QLabel):
             }
 
         # 保留卡珠位置
-        if TrapBall_ui.isVisible():
-            self.pos_stop = copy.deepcopy(self.positions)
-            for num in range(0, balls_count):
-                for i in range(len(self.pos_stop)):  # 排序
-                    if self.pos_stop[i][1] == ranking_array[num][5]:
-                        self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
-                        area_num = max_area_count - balls_count  # 跟踪区域数量
-                        p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
-                        if p < len(self.path_points):
-                            self.pos_stop[num][0] = p
-        if Map_ui.isVisible():
-            if len(self.pos_stop) == len(self.positions):
-                self.positions = copy.deepcopy(self.pos_stop)
+        # if TrapBall_ui.isVisible():
+        #     self.pos_stop = copy.deepcopy(self.positions)
+        #     for num in range(0, balls_count):
+        #         for i in range(len(self.pos_stop)):  # 排序
+        #             if self.pos_stop[i][1] == ranking_array[num][5]:
+        #                 self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
+        #                 area_num = max_area_count - balls_count  # 跟踪区域数量
+        #                 p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
+        #                 if p < len(self.path_points):
+        #                     self.pos_stop[num][0] = p
+        # if Map_ui.isVisible():
+        #     if len(self.pos_stop) == len(self.positions):
+        #         self.positions = copy.deepcopy(self.pos_stop)
 
         # 触发重绘
         self.update()
