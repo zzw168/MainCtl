@@ -922,8 +922,13 @@ class DealUdpThread(QThread):
         global balls_start
         udp_time_old = 0
         while self.running:
-            time.sleep(0.01)
+            if udp_thread.res == '':
+                print('UDP_res无数据！', udp_thread.res)
+                time.sleep(0.01)
+                continue
             data_res = eval(udp_thread.res)  # str转换list
+            # data_res = []
+            print(data_res)
             if len(data_res) < 2:
                 print('UDP_recv_data无数据！', udp_thread.res)
                 continue
@@ -5988,6 +5993,7 @@ class ZApp(QApplication):
             Kaj789_Thread.stop()
             reset_ranking_Thread.stop()
             OrganCycle_Thread.stop()
+            deal_udp_thread.stop()
             CheckFile_Thread.stop()
             pygame.quit()
         except Exception as e:
@@ -6019,7 +6025,8 @@ class ZApp(QApplication):
             Kaj789_Thread.wait()  # 开奖王线程（补发结果数据）
             reset_ranking_Thread.wait()  # 初始化数据线程
             CheckFile_Thread.wait()  # 检查文件线程
-            OrganCycle_Thread.stop()  # 机关循环
+            OrganCycle_Thread.wait()  # 机关循环
+            deal_udp_thread.wait()  # 机关循环
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
