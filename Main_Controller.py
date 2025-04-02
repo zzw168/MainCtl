@@ -903,11 +903,11 @@ def tcpsignal_accept(msg):
     scroll_to_bottom(ui.textBrowser_background_data)
 
 
-class UdpThread(QThread):
+class DealUdpThread(QThread):
     signal = Signal(object)
 
     def __init__(self):
-        super(UdpThread, self).__init__()
+        super(DealUdpThread, self).__init__()
         self.run_flg = True
         self.running = True
 
@@ -921,6 +921,77 @@ class UdpThread(QThread):
         global con_data
         global balls_start
         udp_time_old = 0
+        while self.running:
+            time.sleep(0.01)
+            data_res = eval(udp_thread.res)  # str转换list
+            if len(data_res) < 2:
+                print('UDP_recv_data无数据！', udp_thread.res)
+                continue
+            self.signal.emit(data_res)
+            if (str(data_res[0]).isdigit()
+                    and str(data_res[1][6]) == '1'):  # UDP数据包时间间隔
+                time_interval = int(data_res[0]) - udp_time_old
+                self.signal.emit(time_interval)
+                udp_time_old = int(data_res[0])
+            array_data = []
+            for i_ in range(1, len(data_res)):  # data_res[0] 是时间戳差值 ms
+                array_data.append(copy.deepcopy(data_res[i_]))
+            # print(array_data)
+            if len(array_data) < 1:
+                continue
+            if len(array_data[0]) < 7:
+                self.signal.emit(fail('array_data:%s < 7数据错误！' % array_data[0]))
+                print('array_data < 7数据错误！', array_data[0])
+                continue
+            if action_area[0] > max_area_count - balls_count - 2:
+                array_data = filter_max_value(array_data)  # 结束时，以置信度为准
+            else:
+                array_data = filter_max_value(array_data)  # 在平时球位置追踪，前面为准
+            if array_data is None or len(array_data) < 1:
+                continue
+            array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
+            if array_data is None or len(array_data) < 1:
+                continue
+            if len(array_data[0]) < 8:
+                self.signal.emit(fail('array_data:%s < 8数据错误！' % array_data[0]))
+                print('array_data < 8数据错误！', array_data[0])
+                continue
+            if array_data is None or len(array_data) < 1:
+                continue
+            # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
+            deal_rank(array_data)
+            if ball_sort and balls_start != len(ball_sort[1][0]):
+                balls_start = len(ball_sort[1][0])  # 更新起点球数
+                self.signal.emit(balls_start)
+            # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~3', ranking_array)
+            deal_action()
+            con_data = []
+            if ranking_array:
+                for k in range(0, balls_count):
+                    con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
+                    con_data.append(
+                        [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
+                         con_item['y1']])
+                # if ranking_array[0][6] >= max_area_count:
+                #     color_to_num(ranking_array)
+
+
+class UdpThread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(UdpThread, self).__init__()
+        self.run_flg = True
+        self.running = True
+        self.res = ''
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        udp_socket.close()
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
         udp_socket.bind(udpServer_addr)
         while self.running:
             try:
@@ -929,63 +1000,7 @@ class UdpThread(QThread):
                 if len(recv_data) < 1:
                     print('UDP无数据！')
                     continue
-                if self.run_flg:
-                    res = recv_data[0].decode('utf8')
-                    if res == '':
-                        print('UDP_res无数据！', recv_data[0])
-                        continue
-                    data_res = eval(res)  # str转换list
-                    if len(recv_data) < 2:
-                        print('UDP_recv_data无数据！', res)
-                        continue
-                    self.signal.emit(data_res)
-                    if (str(data_res[0]).isdigit()
-                            and str(data_res[1][6]) == '1'):  # UDP数据包时间间隔
-                        time_interval = int(data_res[0]) - udp_time_old
-                        self.signal.emit(time_interval)
-                        udp_time_old = int(data_res[0])
-                    array_data = []
-                    for i_ in range(1, len(data_res)):  # data_res[0] 是时间戳差值 ms
-                        array_data.append(copy.deepcopy(data_res[i_]))
-                    # print(array_data)
-                    if len(array_data) < 1:
-                        continue
-                    if len(array_data[0]) < 7:
-                        self.signal.emit(fail('array_data:%s < 7数据错误！' % array_data[0]))
-                        print('array_data < 7数据错误！', array_data[0])
-                        continue
-                    if action_area[0] > max_area_count - balls_count - 2:
-                        array_data = filter_max_value(array_data)  # 结束时，以置信度为准
-                    else:
-                        array_data = filter_max_value(array_data)  # 在平时球位置追踪，前面为准
-                    if array_data is None or len(array_data) < 1:
-                        continue
-                    array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
-                    if array_data is None or len(array_data) < 1:
-                        continue
-                    if len(array_data[0]) < 8:
-                        self.signal.emit(fail('array_data:%s < 8数据错误！' % array_data[0]))
-                        print('array_data < 8数据错误！', array_data[0])
-                        continue
-                    if array_data is None or len(array_data) < 1:
-                        continue
-                    # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
-                    deal_rank(array_data)
-                    if ball_sort and balls_start != len(ball_sort[1][0]):
-                        balls_start = len(ball_sort[1][0])  # 更新起点球数
-                        self.signal.emit(balls_start)
-                    # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~3', ranking_array)
-                    deal_action()
-                    con_data = []
-                    if ranking_array:
-                        for k in range(0, balls_count):
-                            con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
-                            con_data.append(
-                                [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
-                                 con_item['y1']])
-                        # if ranking_array[0][6] >= max_area_count:
-                        #     color_to_num(ranking_array)
-
+                self.res = recv_data[0].decode('utf8')
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
                 self.signal.emit("UDP数据接收出错:%s" % e)
@@ -6654,6 +6669,10 @@ if __name__ == '__main__':
         # 使用infomation信息框
         QMessageBox.information(z_window, "UDP", "UDP端口被占用")
         # sys.exit()
+
+    deal_udp_thread = DealUdpThread()
+    deal_udp_thread.signal.connect(udpsignal_accept)
+    deal_udp_thread.start()
 
     # pingpong 发送排名 15
     tcp_ranking_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
