@@ -2127,16 +2127,16 @@ class ScreenShotThread(QThread):
                 print('主镜头识别正确:', main_Camera)
                 z_ranking_end = copy.deepcopy(main_Camera)
                 lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
-            elif z_ranking_res == monitor_Camera:
-                term_status = 1
-                print('网络识别正确:', monitor_Camera)
-                z_ranking_end = copy.deepcopy(monitor_Camera)
-                lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
-            elif z_ranking_res == main_Camera and not ui.checkBox_main_camera_set.isChecked():
-                term_status = 1
-                print('赛道识别正确:', main_Camera)
-                z_ranking_end = copy.deepcopy(main_Camera)
-                lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+            # elif z_ranking_res == monitor_Camera:
+            #     term_status = 1
+            #     print('网络识别正确:', monitor_Camera)
+            #     z_ranking_end = copy.deepcopy(monitor_Camera)
+            #     lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+            # elif z_ranking_res == main_Camera and not ui.checkBox_main_camera_set.isChecked():
+            #     term_status = 1
+            #     print('赛道识别正确:', main_Camera)
+            #     z_ranking_end = copy.deepcopy(main_Camera)
+            #     lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             else:
                 term_status = 0
                 term_comment = term_comments[3]
