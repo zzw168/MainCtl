@@ -921,16 +921,20 @@ class DealUdpThread(QThread):
         global con_data
         global balls_start
         udp_time_old = 0
+        res = ''
         while self.running:
             if udp_thread.res == '':
                 print('UDP_res无数据！', udp_thread.res)
                 time.sleep(0.01)
                 continue
-            data_res = eval(udp_thread.res)  # str转换list
+            if res == udp_thread.res:
+                continue
+            res = copy.deepcopy(udp_thread.res)
+            data_res = eval(res)  # str转换list
             # data_res = []
             print(data_res)
             if len(data_res) < 2:
-                print('UDP_recv_data无数据！', udp_thread.res)
+                print('UDP_recv_data无数据！', res)
                 continue
             self.signal.emit(data_res)
             if (str(data_res[0]).isdigit()
