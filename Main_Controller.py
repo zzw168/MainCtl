@@ -498,10 +498,10 @@ def deal_rank(integration_qiu_array):
         replaced = False
         for q_item in integration_qiu_array:
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
-                if (map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9
-                        and action_area[1] >= max_lap_count - 1):
-                    for i in range(len(ranking_array)):
-                        ranking_array[i][8] = max_lap_count - 1
+                # if (map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9
+                #         and action_area[1] >= max_lap_count - 1):
+                #     for i in range(len(ranking_array)):
+                #         ranking_array[i][8] = max_lap_count - 1
 
                 if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
@@ -510,9 +510,6 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
                         if ranking_array[r_index][8] > max_lap_count - 1:
                             ranking_array[r_index][8] = max_lap_count - 1
-
-                if q_item[6] < area_limit and ranking_array[r_index][8] < action_area[1]:
-                    ranking_array[r_index][8] = action_area[1]
 
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
                     or (q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
@@ -546,7 +543,7 @@ def deal_rank(integration_qiu_array):
                 replaced = True
                 break
         if not replaced:
-            if map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9:
+            if map_label_big.map_action >= len(map_label_big.path_points) - 20:
                 ranking_array[r_index][9] = 1
             else:
                 ranking_array[r_index][9] = 0
@@ -821,6 +818,7 @@ class TcpRankingThread(QThread):
                                             ws.send(json.dumps(d))
                                             self.time_list[i] = copy.deepcopy(z_ranking_time[i])
                                             if i == 0:
+                                                map_label_big.bet_running = False
                                                 Script_Thread.param = '%s"' % self.time_list[i]
                                                 Script_Thread.run_type = 'period'
                                                 Script_Thread.run_flg = True
@@ -920,34 +918,31 @@ class DealUdpThread(QThread):
     def run(self) -> None:
         global con_data
         global balls_start
-        udp_time_old = 0
         res = ''
         while self.running:
             if udp_thread.res == '':
-                print('UDP_res无数据！', udp_thread.res)
+                # print('UDP_res无数据！', udp_thread.res)
                 time.sleep(0.01)
                 continue
             if res == udp_thread.res:
+                time.sleep(0.01)
                 continue
             res = copy.deepcopy(udp_thread.res)
             data_res = eval(res)  # str转换list
             # data_res = []
-            print(data_res)
-            if len(data_res) < 2:
+            # if data_res[0][6] == 11:
+            #     print(data_res)
+            if len(data_res) < 1:
                 print('UDP_recv_data无数据！', res)
                 continue
             self.signal.emit(data_res)
-            if (str(data_res[0]).isdigit()
-                    and str(data_res[1][6]) == '1'):  # UDP数据包时间间隔
-                time_interval = int(data_res[0]) - udp_time_old
-                self.signal.emit(time_interval)
-                udp_time_old = int(data_res[0])
             array_data = []
-            for i_ in range(1, len(data_res)):  # data_res[0] 是时间戳差值 ms
+            for i_ in range(0, len(data_res)):  # data_res[0] 是时间戳差值 ms
                 array_data.append(copy.deepcopy(data_res[i_]))
             # print(array_data)
             if len(array_data) < 1:
                 continue
+            # print(array_data)
             if len(array_data[0]) < 7:
                 self.signal.emit(fail('array_data:%s < 7数据错误！' % array_data[0]))
                 print('array_data < 7数据错误！', array_data[0])
@@ -981,8 +976,8 @@ class DealUdpThread(QThread):
                     con_data.append(
                         [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
                          con_item['y1']])
-                # if ranking_array[0][6] >= max_area_count:
-                #     color_to_num(ranking_array)
+                if ranking_array[0][9] != 0:
+                    color_to_num(ranking_array)
 
 
 class UdpThread(QThread):
@@ -1603,6 +1598,7 @@ class ReStartThread(QThread):
                     print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                     time.sleep(1)
                 PlanCmd_Thread.run_flg = True
+                map_label_big.pos_stop = []
 
             print("循环启动！")
             self.run_flg = False
@@ -2054,8 +2050,8 @@ class ObsEndThread(QThread):
 def ObsEndsignal_accept(msg):
     # print(msg)
     if '录图结束' in msg:
-        if term_comment in ['TRAP', 'OUT']:
-            Map_ui.show()
+        # if term_comment in ['TRAP', 'OUT']:
+        #     Map_ui.show()
         if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():
             ui.checkBox_saveImgs_main.setChecked(False)
             ui.checkBox_saveImgs_monitor.setChecked(False)
@@ -2605,6 +2601,7 @@ class PlanCmdThread(QThread):
                                         self.signal.emit('音乐')
                                         Script_Thread.run_type = 'start'
                                         Script_Thread.run_flg = True  # 开始OBS的python脚本计时
+                                        map_label_big.bet_running = True
                                         ranking_time_start = time.time()  # 每个球的起跑时间
 
                             if (plan_list[plan_index][15][0].isdigit()
@@ -3981,6 +3978,7 @@ class MapLabel(QLabel):
         self.step_length = step_length  # 步长
         self.ball_space = ball_space  # 球之间的距离（步数）
         self.ball_radius = ball_radius  # 像素
+        self.bet_running = False
         # 设置label的尺寸
         self.setMaximumSize(picture_size, picture_size)
         self.setPixmap(pixmap)
@@ -4031,7 +4029,7 @@ class MapLabel(QLabel):
         for num in range(0, balls_count):
             if len(ranking_array) >= balls_count and ranking_array[num][5] in self.color_names.keys():
                 area_num = max_area_count - balls_count  # 跟踪区域数量
-                if ranking_array[num][6] <= max_area_count + 1:
+                if ranking_array[num][6] <= max_area_count:
                     p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
                     if p >= len(self.path_points):
                         p = len(self.path_points) - 1
@@ -4061,7 +4059,7 @@ class MapLabel(QLabel):
                             self.speed = 2
                         elif p < self.positions[num][0] and ranking_array[num][9] == 1:
                             self.positions[num][0] = p  # 跨圈情况
-                        elif int(time.time()) - self.positions[num][5] > 3:
+                        elif int(time.time()) - self.positions[num][5] > 10:
                             self.positions[num][0] = p  # 停留超过 5 秒  12号赛道不需要
                         else:
                             self.speed = 1
@@ -4072,9 +4070,9 @@ class MapLabel(QLabel):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
         # 模拟排名
-        # if ranking_array[0][6] < max_area_count:
-        self.positions.sort(key=lambda x: (-x[3], -x[0]))
-        z_ranking_res = [ball[2] for ball in self.positions]
+        if ranking_array[0][6] < max_area_count - 2 and ranking_array[0][9] == 0:
+            self.positions.sort(key=lambda x: (-x[3], -x[0]))
+            z_ranking_res = [ball[2] for ball in self.positions]
 
         # 更新实时触发位置
         for i in range(len(self.positions)):
@@ -4091,8 +4089,12 @@ class MapLabel(QLabel):
             for i in range(balls_count):
                 x, y = self.path_points[self.positions[i][0]]
                 b = round(self.positions[i][0] / len(self.path_points), 4)
+                t = 0
+                if self.bet_running:
+                    t = int((time.time() - ranking_time_start) * 1000)
                 res.append(
-                    {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b, "b": b})
+                    {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
+                     "b": b * 100, "t": t})
             positions_live = {
                 "raceTrackID": Track_number,
                 "term": term,
@@ -4100,20 +4102,20 @@ class MapLabel(QLabel):
                 "result": res
             }
 
-        # 保留卡珠位置
-        # if TrapBall_ui.isVisible():
-        #     self.pos_stop = copy.deepcopy(self.positions)
-        #     for num in range(0, balls_count):
-        #         for i in range(len(self.pos_stop)):  # 排序
-        #             if self.pos_stop[i][1] == ranking_array[num][5]:
-        #                 self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
-        #                 area_num = max_area_count - balls_count  # 跟踪区域数量
-        #                 p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
-        #                 if p < len(self.path_points):
-        #                     self.pos_stop[num][0] = p
-        # if Map_ui.isVisible():
-        #     if len(self.pos_stop) == len(self.positions):
-        #         self.positions = copy.deepcopy(self.pos_stop)
+            # 保留卡珠位置
+            if TrapBall_ui.isVisible():
+                self.pos_stop = copy.deepcopy(self.positions)
+                for num in range(0, balls_count):
+                    for i in range(len(self.pos_stop)):  # 排序
+                        if self.pos_stop[i][1] == ranking_array[num][5]:
+                            self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
+                            area_num = max_area_count - balls_count  # 跟踪区域数量
+                            p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
+                            if p < len(self.path_points):
+                                self.pos_stop[num][0] = p
+            if Map_ui.isVisible():
+                if len(self.pos_stop) == len(self.positions):
+                    self.positions = copy.deepcopy(self.pos_stop)
 
         # 触发重绘
         self.update()
@@ -5299,7 +5301,7 @@ class ResetRankingThread(QThread):
 
 
 def reset_ranking_signal_accept(msg):
-    Map_ui.hide()
+    # Map_ui.hide()
     ui.textBrowser.append(msg)
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser)
