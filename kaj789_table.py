@@ -21,6 +21,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         self.Track_number = 'L'
         self.kaj789_thread = threading.Thread(target=self.resend_end, args=(self.Track_number, 'post_end', 1),
                                               daemon=True)
+        self.kaj789_table_thread = threading.Thread(target=self.load_json_file, daemon=True)
         """global rtsp_save_t
     if not self.kaj789_thread.is_alive():
         self.kaj789_thread = threading.Thread(target=self.resend_end, args=(self.Track_number, 'post_end', 1),
@@ -71,7 +72,9 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
     def showEvent(self, event: QShowEvent):
         super().showEvent(event)  # 调用父类的 showEvent
         self.loadFiles()
-        self.load_json_file()
+        # self.load_json_file()
+        self.load_json_thread()
+
 
     def eventFilter(self, obj, event):
         # 检测到 CornerButton 的 Paint 事件
@@ -185,6 +188,11 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             if files:
                 files.sort(key=lambda f: os.path.getctime(os.path.join(folder_path, f)), reverse=True)
                 self.comboBox_kaj789.addItems(files)  # 添加文件名到 ComboBox
+
+    def load_json_thread(self):
+        if not self.kaj789_table_thread.is_alive():
+            self.kaj789_table_thread = threading.Thread(target=self.load_json_thread, daemon=True)
+            self.kaj789_table_thread.start()
 
     def load_json_file(self):
         """读取 ComboBox 选中的 JSON 文件并显示"""
