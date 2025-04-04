@@ -1770,6 +1770,7 @@ class PlanBallNumThread(QThread):
             num_old = 0
             term_status = 1
             screen_sort = True
+            ObsEnd_Thread.ball_flg = False  # 结算页标志2
             if res == 0:
                 while self.run_flg:
                     res, value = sc.GAGetDiReverseCount()
@@ -1796,7 +1797,8 @@ class PlanBallNumThread(QThread):
                         #     break
                         elif time.time() - time_now > int(ui.lineEdit_end_count_ball.text()):
                             # 超时则跳出循环计球
-                            if ui.checkBox_Pass_Ranking_Twice.isChecked():
+                            if (ui.checkBox_Pass_Ranking_Twice.isChecked()
+                                    or ui.radioButton_stop_betting.isChecked()):
                                 self.run_flg = False
                             self.signal.emit('人工检查')
                             time.sleep(1)
@@ -1868,7 +1870,7 @@ def PlanBallNumsignal_accept(msg):
         TrapBall_ui.label_state.setStyleSheet('color: rgb(0, 255, 0)')
         TrapBall_ui.hide()
     elif '人工检查' in msg:
-        if not TrapBall_ui.isVisible():
+        if not TrapBall_ui.isVisible() and PlanBallNum_Thread.run_flg:
             TrapBall_ui.label_state.setText('请确认卡珠情况')
             TrapBall_ui.label_state.setStyleSheet('color: rgb(255, 0, 0)')
             TrapBall_ui.show()
@@ -2114,6 +2116,7 @@ class ScreenShotThread(QThread):
                 continue
             print('截图结果识别运行！')
             self.signal.emit(succeed('截图结果识别运行！'))
+            ObsEnd_Thread.screen_flg = False  # 结算页标志1
             obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])

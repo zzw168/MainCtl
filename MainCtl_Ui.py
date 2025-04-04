@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainCtl_Ui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.3
+## Created by: Qt User Interface Compiler version 6.8.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -576,6 +576,7 @@ class Ui_MainWindow(object):
         self.checkBox_saveImgs_auto.setObjectName(u"checkBox_saveImgs_auto")
         self.checkBox_saveImgs_auto.setMinimumSize(QSize(110, 0))
         self.checkBox_saveImgs_auto.setFont(font1)
+        self.checkBox_saveImgs_auto.setChecked(True)
 
         self.gridLayout_18.addWidget(self.checkBox_saveImgs_auto, 3, 0, 1, 2)
 

@@ -1368,6 +1368,9 @@
                      <property name="text">
                       <string>终点录图  数量：</string>
                      </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
                     </widget>
                    </item>
                    <item row="3" column="4">
