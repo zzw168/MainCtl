@@ -498,10 +498,10 @@ def deal_rank(integration_qiu_array):
         replaced = False
         for q_item in integration_qiu_array:
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
-                # if (map_label_big.map_action >= len(map_label_big.path_points) / 10 * 9
-                #         and action_area[1] >= max_lap_count - 1):
-                #     for i in range(len(ranking_array)):
-                #         ranking_array[i][8] = max_lap_count - 1
+                if (ranking_array[0][6] >= max_area_count - balls_count
+                        and ranking_array[0][8] >= max_lap_count - 1):
+                    for i in range(len(ranking_array)):
+                        ranking_array[i][8] = max_lap_count - 1
 
                 if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
@@ -528,18 +528,12 @@ def deal_rank(integration_qiu_array):
 
                 if (r_index > 0
                         and ranking_array[r_index][8] < ranking_array[0][8]
-                        and q_item[6] <= (max_area_count - balls_count) * float(ui.lineEdit_area_percent.text())):
+                        and q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         for r_i in range(0, len(q_item)):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                         ranking_array[r_index][9] = 1
                         ranking_array[r_index][8] = ranking_array[0][8]
-                    if r_index > 3:
-                        if abs(q_item[6] - ranking_array[3][6]) < area_limit / 2:
-                            for r_i in range(0, len(q_item)):
-                                ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                            ranking_array[r_index][9] = 1
-                            ranking_array[r_index][8] = ranking_array[0][8]
                 replaced = True
                 break
         if not replaced:
@@ -932,13 +926,14 @@ class DealUdpThread(QThread):
             # data_res = []
             # if data_res[0][6] == 11:
             #     print(data_res)
-            if len(data_res) < 1:
-                print('UDP_recv_data无数据！', res)
-                continue
+            # if len(data_res) < 1:
+            #     print('UDP_recv_data无数据！', res)
+            #     continue
             self.signal.emit(data_res)
             array_data = []
             for i_ in range(0, len(data_res)):  # data_res[0] 是时间戳差值 ms
-                array_data.append(copy.deepcopy(data_res[i_]))
+                if isinstance(data_res[i_], list):
+                    array_data.append(copy.deepcopy(data_res[i_]))
             # print(array_data)
             if len(array_data) < 1:
                 continue
@@ -2542,6 +2537,8 @@ class PlanCmdThread(QThread):
         global action_area
         global ranking_time_start
         global lottery_term
+        global ranking_array
+        global ball_sort
 
         axis_list = [1, 2, 4, 8, 16]
         while self.running:
@@ -2589,11 +2586,24 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if (plan_list[plan_index][12][0] == ui.lineEdit_start_count.text()
                                         and not self.background_state):  # '9'倒数机关打开
+                                    ranking_array = []  # 排名数组
+                                    for row in range(balls_count):
+                                        ranking_array.append([])
+                                        for col in range(0, len(init_array[row])):
+                                            ranking_array[row].append(init_array[row][col])
+                                    ball_sort = []  # 位置寄存器
+                                    for row in range(0, max_area_count + 1):
+                                        ball_sort.append([])
+                                        for col in range(0, max_lap_count):
+                                            ball_sort[row].append([])
                                     lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                     self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
                                         try:
-                                            cl_request.start_record()  # 开启OBS录像
+                                            # 获取录屏状态
+                                            recording_status = cl_request.get_record_status()
+                                            if not recording_status.output_active:  # 确保键名正确
+                                                cl_request.start_record()  # 开启OBS录像
                                         except:
                                             print('OBS脚本开始错误！')
                                 if plan_list[plan_index][12][0] == ui.lineEdit_start.text():  # '2'闸门机关打开
@@ -2633,7 +2643,8 @@ class PlanCmdThread(QThread):
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
                                 # if len(plan_list) / 10 * 8 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
-                                PlanBallNum_Thread.run_flg = True  # 终点计数器线程
+                                if not ui.radioButton_stop_betting.isChecked():
+                                    PlanBallNum_Thread.run_flg = True  # 终点计数器线程
 
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
                                 sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
@@ -3389,7 +3400,7 @@ def save_main_json():
             main_all['lineEdit_Map_Action'] = ui.lineEdit_Map_Action.text()
             main_all['lineEdit_GPS_Num'] = ui.lineEdit_GPS_Num.text()
             main_all['lineEdit_End_Num'] = ui.lineEdit_End_Num.text()
-            main_all['lineEdit_area_percent'] = ui.lineEdit_area_percent.text()
+            main_all['lineEdit_lost'] = ui.lineEdit_lost.text()
             main_all['checkBox_Cycle'] = ui.checkBox_Cycle.isChecked()
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
@@ -3497,7 +3508,7 @@ def load_main_json():
         ui.lineEdit_End_Num.setText(main_all['lineEdit_End_Num'])
         ui.lineEdit_background_Path.setText(main_all['lineEdit_background_Path'])
         ui.lineEdit_Start_Path.setText(main_all['lineEdit_Start_Path'])
-        ui.lineEdit_area_percent.setText(main_all['lineEdit_area_percent'])
+        ui.lineEdit_lost.setText(main_all['lineEdit_lost'])
         ui.comboBox_plan.setCurrentIndex(int(main_all['comboBox_plan']))
         ui.checkBox_Cycle.setChecked(main_all['checkBox_Cycle'])
         for index in range(1, 4):
@@ -4029,7 +4040,8 @@ class MapLabel(QLabel):
         for num in range(0, balls_count):
             if len(ranking_array) >= balls_count and ranking_array[num][5] in self.color_names.keys():
                 area_num = max_area_count - balls_count  # 跟踪区域数量
-                if ranking_array[num][6] <= max_area_count:
+                if (ranking_array[num][6] <= max_area_count + 1
+                        and not ObsEnd_Thread.ball_flg):
                     p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
                     if p >= len(self.path_points):
                         p = len(self.path_points) - 1
@@ -4059,7 +4071,7 @@ class MapLabel(QLabel):
                             self.speed = 2
                         elif p < self.positions[num][0] and ranking_array[num][9] == 1:
                             self.positions[num][0] = p  # 跨圈情况
-                        elif int(time.time()) - self.positions[num][5] > 10:
+                        elif int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text()):
                             self.positions[num][0] = p  # 停留超过 5 秒  12号赛道不需要
                         else:
                             self.speed = 1
@@ -4103,19 +4115,19 @@ class MapLabel(QLabel):
             }
 
             # 保留卡珠位置
-            if TrapBall_ui.isVisible():
-                self.pos_stop = copy.deepcopy(self.positions)
-                for num in range(0, balls_count):
-                    for i in range(len(self.pos_stop)):  # 排序
-                        if self.pos_stop[i][1] == ranking_array[num][5]:
-                            self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
-                            area_num = max_area_count - balls_count  # 跟踪区域数量
-                            p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
-                            if p < len(self.path_points):
-                                self.pos_stop[num][0] = p
-            if Map_ui.isVisible():
-                if len(self.pos_stop) == len(self.positions):
-                    self.positions = copy.deepcopy(self.pos_stop)
+            # if TrapBall_ui.isVisible():
+            #     self.pos_stop = copy.deepcopy(self.positions)
+            #     for num in range(0, balls_count):
+            #         for i in range(len(self.pos_stop)):  # 排序
+            #             if self.pos_stop[i][1] == ranking_array[num][5]:
+            #                 self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
+            #                 area_num = max_area_count - balls_count  # 跟踪区域数量
+            #                 p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
+            #                 if p < len(self.path_points):
+            #                     self.pos_stop[num][0] = p
+            # if Map_ui.isVisible():
+            #     if len(self.pos_stop) == len(self.positions):
+            #         self.positions = copy.deepcopy(self.pos_stop)
 
         # 触发重绘
         self.update()
@@ -5355,7 +5367,7 @@ class CheckFileThread(QThread):
             if os.path.exists(video_part):
                 limit_folder_size(video_part, max_files=800)  # 限制文件夹数量
             if os.path.exists('D:/ApowerREC'):
-                limit_folder_size('D:/ApowerREC', max_files=50)  # 限制文件夹数量
+                limit_folder_size('D:/ApowerREC', max_files=30)  # 限制文件夹数量
 
             if ui.lineEdit_login.text() == 'zzw':
                 if not ui.frame_zzw_1.isEnabled():
@@ -5791,7 +5803,10 @@ def ready_btn():
 
 
 def kaj789_table():
-    Kaj789_ui.show()
+    if ui.radioButton_start_betting.isChecked():
+        QMessageBox.information(z_window, "开盘中", "正在开盘中，请在封盘后再处理赛事数据！")
+    else:
+        Kaj789_ui.show()
 
 
 "****************************************直播大厅_结束****************************************************"
@@ -6909,7 +6924,7 @@ if __name__ == '__main__':
     ui.lineEdit_GPS_Num.editingFinished.connect(save_main_json)
     ui.lineEdit_background_Path.editingFinished.connect(save_main_json)
     ui.lineEdit_Start_Path.editingFinished.connect(save_main_json)
-    ui.lineEdit_area_percent.editingFinished.connect(save_main_json)
+    ui.lineEdit_lost.editingFinished.connect(save_main_json)
 
     ui.checkBox_Cycle.checkStateChanged.connect(save_main_json)
 
