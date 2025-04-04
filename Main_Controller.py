@@ -812,7 +812,6 @@ class TcpRankingThread(QThread):
                                             ws.send(json.dumps(d))
                                             self.time_list[i] = copy.deepcopy(z_ranking_time[i])
                                             if i == 0:
-                                                map_label_big.bet_running = False
                                                 Script_Thread.param = '%s"' % self.time_list[i]
                                                 Script_Thread.run_type = 'period'
                                                 Script_Thread.run_flg = True
@@ -1756,6 +1755,8 @@ class PlanBallNumThread(QThread):
         global term_status
         global term_comment
         global ball_sort
+        global betting_end_time
+        global lottery_term
         while self.running:
             time.sleep(0.1)
             if (not self.run_flg) or (not flg_start['card']):
@@ -1784,6 +1785,10 @@ class PlanBallNumThread(QThread):
                                 if z_ranking_time[i] == '':
                                     t = time.time()
                                     z_ranking_time[i] = '%.2f' % (t - ranking_time_start)
+                            if num == 1:
+                                betting_end_time = int(time.time())
+                                lottery_term[11] = str(betting_end_time)
+                                map_label_big.bet_running = False
                             if num == balls_count:
                                 self.signal.emit('录终点图')
                             self.signal.emit(num)
@@ -4104,9 +4109,10 @@ class MapLabel(QLabel):
             for i in range(balls_count):
                 x, y = self.path_points[self.positions[i][0]]
                 b = round(self.positions[i][0] / len(self.path_points), 4)
-                t = betting_end_time
                 if self.bet_running:
                     t = int((time.time() - ranking_time_start) * 1000)
+                else:
+                    t = betting_end_time
                 res.append(
                     {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
                      "b": b * 100, "t": t})
