@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainCtl_Ui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.8.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -2266,13 +2266,13 @@ class Ui_MainWindow(object):
 
         self.gridLayout_30.addWidget(self.label_74, 1, 4, 1, 2)
 
-        self.lineEdit_area_percent = QLineEdit(self.groupBox_ranking)
-        self.lineEdit_area_percent.setObjectName(u"lineEdit_area_percent")
-        self.lineEdit_area_percent.setMinimumSize(QSize(0, 10))
-        self.lineEdit_area_percent.setMaximumSize(QSize(30, 16777215))
-        self.lineEdit_area_percent.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_lost = QLineEdit(self.groupBox_ranking)
+        self.lineEdit_lost.setObjectName(u"lineEdit_lost")
+        self.lineEdit_lost.setMinimumSize(QSize(0, 10))
+        self.lineEdit_lost.setMaximumSize(QSize(30, 16777215))
+        self.lineEdit_lost.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.gridLayout_30.addWidget(self.lineEdit_area_percent, 1, 6, 1, 1)
+        self.gridLayout_30.addWidget(self.lineEdit_lost, 1, 6, 1, 1)
 
         self.label_75 = QLabel(self.groupBox_ranking)
         self.label_75.setObjectName(u"label_75")
@@ -3956,12 +3956,12 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_area_limit.setText(QCoreApplication.translate("MainWindow", u"5", None))
         self.label_71.setText(QCoreApplication.translate("MainWindow", u"/1\u5168\u533a", None))
-        self.label_74.setText(QCoreApplication.translate("MainWindow", u"\u5934\u540d\u8303\u56f4:", None))
+        self.label_74.setText(QCoreApplication.translate("MainWindow", u"\u76f2\u8dd1\u65f6\u95f4:", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_area_percent.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>\u8bbe\u7f6e\u6700\u5927\u533a\u57df\u6570</p></body></html>", None))
+        self.lineEdit_lost.setToolTip(QCoreApplication.translate("MainWindow", u"<html><head/><body><p>\u8bbe\u7f6e\u6700\u5927\u533a\u57df\u6570</p></body></html>", None))
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_area_percent.setText(QCoreApplication.translate("MainWindow", u"0.5", None))
-        self.label_75.setText(QCoreApplication.translate("MainWindow", u"\u5168\u533a", None))
+        self.lineEdit_lost.setText(QCoreApplication.translate("MainWindow", u"10", None))
+        self.label_75.setText(QCoreApplication.translate("MainWindow", u"\u79d2", None))
         self.label_15.setText(QCoreApplication.translate("MainWindow", u"\u5faa\u73af\u65f6\u95f4:", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_Time_Restart_Ranking.setToolTip("")

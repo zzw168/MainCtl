@@ -5629,12 +5629,12 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>头名范围:</string>
+                      <string>盲跑时间:</string>
                      </property>
                     </widget>
                    </item>
                    <item row="1" column="6">
-                    <widget class="QLineEdit" name="lineEdit_area_percent">
+                    <widget class="QLineEdit" name="lineEdit_lost">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -5651,7 +5651,7 @@
                       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                      <property name="text">
-                      <string>0.5</string>
+                      <string>10</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -5667,7 +5667,7 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>全区</string>
+                      <string>秒</string>
                      </property>
                     </widget>
                    </item>
