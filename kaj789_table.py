@@ -31,7 +31,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
     def setupUi(self, z_dialog):
         super().setupUi(z_dialog)
         self.loadFiles()
-        self.comboBox_kaj789.currentIndexChanged.connect(self.load_json_file)
+        self.comboBox_kaj789.currentIndexChanged.connect(self.load_json_thread)
         tb_result = self.tableWidget_Results
         tb_result.horizontalHeader().resizeSection(0, 100)
         tb_result.horizontalHeader().resizeSection(1, 150)
@@ -191,7 +191,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
 
     def load_json_thread(self):
         if not self.kaj789_table_thread.is_alive():
-            self.kaj789_table_thread = threading.Thread(target=self.load_json_thread, daemon=True)
+            self.kaj789_table_thread = threading.Thread(target=self.load_json_file, daemon=True)
             self.kaj789_table_thread.start()
 
     def load_json_file(self):
