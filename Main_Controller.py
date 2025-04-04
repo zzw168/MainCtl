@@ -355,12 +355,23 @@ def get_picture(scence_current):
 def obs_save_image():
     save_path = ui.lineEdit_end1_Path.text()
     if os.path.exists(save_path):
+        if not ui.checkBox_saveImgs_auto.isChecked():
+            res = sc.GASetDiReverseCount()  # 输入次数归0
+            if res != 0:
+                print('无法读取计球器！')
+                return
         while ui.checkBox_saveImgs_main.isChecked():
-            resp = cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
-                                                     '%s/%s.jpg' % (save_path, time.time()), 1920,
-                                                     1080, 100)
+            res, value = sc.GAGetDiReverseCount()
+            if res == 0:
+                num = int(value[0] / 2)
+                if num >= balls_count:
+                    cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
+                                                      '%s/%s.jpg' % (save_path, time.time()), 1920,
+                                                      1080, 100)
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
+            else:
+                sc.GASetDiReverseCount()  # 输入次数归0
             time.sleep(1)
 
 
@@ -453,23 +464,34 @@ def rtsp_save_image():
         except:
             print("网络摄像头不能打开！")
             return
-        while ui.checkBox_saveImgs_monitor.isChecked():
-            cap = cv2.VideoCapture(rtsp_url)
-            if cap.isOpened():
-                ret, frame = cap.read()
-                cap.release()
-                if ret:
-                    f = '%s/%s.jpg' % (save_path, int(time.time()))
-                    cv2.imwrite(f, frame)
-                else:
-                    print("无法读取视频帧")
-                    return
-            else:
-                cap.release()
-                print(f'无法打开摄像头')
+        if not ui.checkBox_saveImgs_auto.isChecked():
+            res = sc.GASetDiReverseCount()  # 输入次数归0
+            if res != 0:
+                print('无法读取计球器！')
                 return
+        while ui.checkBox_saveImgs_monitor.isChecked():
+            res, value = sc.GAGetDiReverseCount()
+            if res == 0:
+                num = int(value[0] / 2)
+                if num >= balls_count:
+                    cap = cv2.VideoCapture(rtsp_url)
+                    if cap.isOpened():
+                        ret, frame = cap.read()
+                        cap.release()
+                        if ret:
+                            f = '%s/%s.jpg' % (save_path, int(time.time()))
+                            cv2.imwrite(f, frame)
+                        else:
+                            print("无法读取视频帧")
+                            return
+                    else:
+                        cap.release()
+                        print(f'无法打开摄像头')
+                        return
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
+            else:
+                sc.GASetDiReverseCount()  # 输入次数归0
             time.sleep(1)
 
 
