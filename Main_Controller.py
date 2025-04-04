@@ -2643,7 +2643,7 @@ class PlanCmdThread(QThread):
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
                                 # if len(plan_list) / 10 * 8 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
-                                if not ui.radioButton_stop_betting:
+                                if not ui.radioButton_stop_betting.isChecked():
                                     PlanBallNum_Thread.run_flg = True  # 终点计数器线程
 
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
@@ -5803,7 +5803,10 @@ def ready_btn():
 
 
 def kaj789_table():
-    Kaj789_ui.show()
+    if ui.radioButton_start_betting.isChecked():
+        QMessageBox.information(z_window, "开盘中", "正在开盘中，请在封盘后再处理赛事数据！")
+    else:
+        Kaj789_ui.show()
 
 
 "****************************************直播大厅_结束****************************************************"
