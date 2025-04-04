@@ -5719,7 +5719,7 @@ def backup2result():
 def res2end():
     global Send_Result_End
     s = ui.lineEdit_Send_Result.text().split('_')
-    if len(s) == 10:
+    if len(s) == balls_count:
         for index, item in enumerate(s):
             getattr(ui, 'lineEdit_result_%s' % index).setText(item)
         Send_Result_End = True
@@ -5728,7 +5728,7 @@ def res2end():
 
 def result2end():
     global Send_Result_End
-    for index in range(10):
+    for index in range(balls_count):
         item = getattr(result_ui, 'lineEdit_result_%s' % index).text()
         getattr(ui, 'lineEdit_result_%s' % index).setText(item)
     Send_Result_End = True
