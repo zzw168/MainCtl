@@ -558,7 +558,7 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][9] = 1
 
                 if (r_index > 0
-                        and ranking_array[r_index][8] < ranking_array[0][8]
+                        # and ranking_array[r_index][8] < ranking_array[0][8]
                         and q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         for r_i in range(0, len(q_item)):
