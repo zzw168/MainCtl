@@ -369,10 +369,7 @@ def obs_save_image():
                                                       '%s/%s.jpg' % (save_path, time.time()), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
-                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
-                        time.sleep(5)
                         sc.GASetDiReverseCount()  # 输入次数归0
-                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
 
@@ -492,13 +489,8 @@ def rtsp_save_image():
                         cap.release()
                         print(f'无法打开摄像头')
                         return
-                    if (not ui.checkBox_saveImgs_auto.isChecked()
-                            and not ui.checkBox_saveImgs_main.isChecked()):
-                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
-                        time.sleep(5)
+                    if not ui.checkBox_saveImgs_auto.isChecked():
                         sc.GASetDiReverseCount()  # 输入次数归0
-                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
-
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
             time.sleep(1)
