@@ -536,7 +536,7 @@ def deal_rank(integration_qiu_array):
 
                 if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
-                    if result_count >= max_area_count - area_limit:
+                    if result_count >= max_area_count - area_limit - balls_count:
                         ranking_array[r_index][8] += 1
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
                         if ranking_array[r_index][8] > max_lap_count - 1:
