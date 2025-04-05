@@ -355,10 +355,21 @@ def get_picture(scence_current):
 def obs_save_image():
     save_path = ui.lineEdit_end1_Path.text()
     if os.path.exists(save_path):
+        if not ui.checkBox_saveImgs_auto.isChecked():
+            res = sc.GASetDiReverseCount()  # 输入次数归0
+            if res != 0:
+                print('无法读取计球器！')
+                return
         while ui.checkBox_saveImgs_main.isChecked():
-            resp = cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
-                                                     '%s/%s.jpg' % (save_path, time.time()), 1920,
-                                                     1080, 100)
+            res, value = sc.GAGetDiReverseCount()
+            if res == 0:
+                num = int(value[0] / 2)
+                if num >= balls_count:
+                    cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
+                                                      '%s/%s.jpg' % (save_path, time.time()), 1920,
+                                                      1080, 100)
+                    if not ui.checkBox_saveImgs_auto.isChecked():
+                        sc.GASetDiReverseCount()  # 输入次数归0
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
             time.sleep(1)
@@ -453,21 +464,32 @@ def rtsp_save_image():
         except:
             print("网络摄像头不能打开！")
             return
-        while ui.checkBox_saveImgs_monitor.isChecked():
-            cap = cv2.VideoCapture(rtsp_url)
-            if cap.isOpened():
-                ret, frame = cap.read()
-                cap.release()
-                if ret:
-                    f = '%s/%s.jpg' % (save_path, int(time.time()))
-                    cv2.imwrite(f, frame)
-                else:
-                    print("无法读取视频帧")
-                    return
-            else:
-                cap.release()
-                print(f'无法打开摄像头')
+        if not ui.checkBox_saveImgs_auto.isChecked():
+            res = sc.GASetDiReverseCount()  # 输入次数归0
+            if res != 0:
+                print('无法读取计球器！')
                 return
+        while ui.checkBox_saveImgs_monitor.isChecked():
+            res, value = sc.GAGetDiReverseCount()
+            if res == 0:
+                num = int(value[0] / 2)
+                if num >= balls_count + 1:
+                    cap = cv2.VideoCapture(rtsp_url)
+                    if cap.isOpened():
+                        ret, frame = cap.read()
+                        cap.release()
+                        if ret:
+                            f = '%s/%s.jpg' % (save_path, int(time.time()))
+                            cv2.imwrite(f, frame)
+                        else:
+                            print("无法读取视频帧")
+                            return
+                    else:
+                        cap.release()
+                        print(f'无法打开摄像头')
+                        return
+                    if not ui.checkBox_saveImgs_auto.isChecked():
+                        sc.GASetDiReverseCount()  # 输入次数归0
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
             time.sleep(1)
@@ -503,9 +525,9 @@ def deal_rank(integration_qiu_array):
                     for i in range(len(ranking_array)):
                         ranking_array[i][8] = max_lap_count - 1
 
-                if q_item[6] < ranking_array[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
+                if q_item[6] < ranking_array[r_index][6] < max_area_count + 1:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
-                    if result_count >= max_area_count - area_limit:
+                    if result_count >= max_area_count - area_limit - balls_count:
                         ranking_array[r_index][8] += 1
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
                         if ranking_array[r_index][8] > max_lap_count - 1:
@@ -527,7 +549,7 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][9] = 1
 
                 if (r_index > 0
-                        and ranking_array[r_index][8] < ranking_array[0][8]
+                        # and ranking_array[r_index][8] < ranking_array[0][8]
                         and q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         for r_i in range(0, len(q_item)):
@@ -812,7 +834,6 @@ class TcpRankingThread(QThread):
                                             ws.send(json.dumps(d))
                                             self.time_list[i] = copy.deepcopy(z_ranking_time[i])
                                             if i == 0:
-                                                map_label_big.bet_running = False
                                                 Script_Thread.param = '%s"' % self.time_list[i]
                                                 Script_Thread.run_type = 'period'
                                                 Script_Thread.run_flg = True
@@ -1756,6 +1777,8 @@ class PlanBallNumThread(QThread):
         global term_status
         global term_comment
         global ball_sort
+        global betting_end_time
+        global lottery_term
         while self.running:
             time.sleep(0.1)
             if (not self.run_flg) or (not flg_start['card']):
@@ -1784,6 +1807,10 @@ class PlanBallNumThread(QThread):
                                 if z_ranking_time[i] == '':
                                     t = time.time()
                                     z_ranking_time[i] = '%.2f' % (t - ranking_time_start)
+                            if num == 1:
+                                betting_end_time = int(time.time())
+                                lottery_term[11] = str(betting_end_time)
+                                map_label_big.bet_running = False
                             if num == balls_count:
                                 self.signal.emit('录终点图')
                             self.signal.emit(num)
@@ -4104,9 +4131,10 @@ class MapLabel(QLabel):
             for i in range(balls_count):
                 x, y = self.path_points[self.positions[i][0]]
                 b = round(self.positions[i][0] / len(self.path_points), 4)
-                t = 0
                 if self.bet_running:
                     t = int((time.time() - ranking_time_start) * 1000)
+                else:
+                    t = betting_end_time
                 res.append(
                     {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
                      "b": b * 100, "t": t})
@@ -5713,7 +5741,7 @@ def backup2result():
 def res2end():
     global Send_Result_End
     s = ui.lineEdit_Send_Result.text().split('_')
-    if len(s) == 10:
+    if len(s) == balls_count:
         for index, item in enumerate(s):
             getattr(ui, 'lineEdit_result_%s' % index).setText(item)
         Send_Result_End = True
@@ -5722,7 +5750,7 @@ def res2end():
 
 def result2end():
     global Send_Result_End
-    for index in range(10):
+    for index in range(balls_count):
         item = getattr(result_ui, 'lineEdit_result_%s' % index).text()
         getattr(ui, 'lineEdit_result_%s' % index).setText(item)
     Send_Result_End = True
