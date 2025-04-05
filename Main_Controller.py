@@ -368,10 +368,14 @@ def obs_save_image():
                     cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
                                                       '%s/%s.jpg' % (save_path, time.time()), 1920,
                                                       1080, 100)
+                    if not ui.checkBox_saveImgs_auto.isChecked():
+                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
+                        time.sleep(5)
+                        sc.GASetDiReverseCount()  # 输入次数归0
+                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
-            else:
-                sc.GASetDiReverseCount()  # 输入次数归0
+
             time.sleep(1)
 
 
@@ -473,7 +477,7 @@ def rtsp_save_image():
             res, value = sc.GAGetDiReverseCount()
             if res == 0:
                 num = int(value[0] / 2)
-                if num >= balls_count:
+                if num >= balls_count + 1:
                     cap = cv2.VideoCapture(rtsp_url)
                     if cap.isOpened():
                         ret, frame = cap.read()
@@ -488,10 +492,15 @@ def rtsp_save_image():
                         cap.release()
                         print(f'无法打开摄像头')
                         return
+                    if (not ui.checkBox_saveImgs_auto.isChecked()
+                            and not ui.checkBox_saveImgs_main.isChecked()):
+                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
+                        time.sleep(5)
+                        sc.GASetDiReverseCount()  # 输入次数归0
+                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
-            else:
-                sc.GASetDiReverseCount()  # 输入次数归0
             time.sleep(1)
 
 
