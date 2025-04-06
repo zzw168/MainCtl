@@ -4794,13 +4794,13 @@ class CameraLabel(QLabel):
             x_offset += ball_radius + x_space  # 更新下一个图片的 x_offset
 
     # 重写鼠标按下事件处理函数
-    def mousePressEvent(self, event):
+    def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.LeftButton:
             print("QLabel 被左键点击")
-            # if self.Camera_index == 'main_Camera':
-            #     set_result(main_Camera)
-            # elif self.Camera_index == 'monitor_Camera':
-            #     set_result(monitor_Camera)
+            if self.Camera_index == 'main_Camera':
+                set_result(main_Camera)
+            elif self.Camera_index == 'monitor_Camera':
+                set_result(monitor_Camera)
         elif event.button() == Qt.RightButton:
             print("QLabel 被右键点击")
 
@@ -5589,6 +5589,8 @@ def maintain_screen():  # OBS维护
         try:
             cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_picture'],
                                               True)  # 打开维护来源
+            cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
+                                              False)  # 关闭结算页来源
         except:
             print('obs 维护 错误！')
             ui.textBrowser_msg.append(fail('obs 维护 错误！'))
