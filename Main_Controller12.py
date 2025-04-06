@@ -301,13 +301,23 @@ def scenes_change():  # 变换场景
 # 截取OBS图片
 def get_picture(scence_current):
     global lottery_term
+    global cl_request
     if not flg_start['obs']:
         return ['', '[1]', 'obs']
-    try:
-        resp = cl_request.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
-    except:
-        flg_start['obs'] = False
-        return ['', '[1]', 'obs']
+    resp = ''
+    for i in range(5):
+        try:
+            resp = cl_request.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
+            break
+        except:
+            if i < 3:
+                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                print('重连OBS~~~~~~~~~~~~')
+                time.sleep(0.5)
+                continue
+            else:
+                flg_start['obs'] = False
+                return ['', '[1]', 'obs']
     try:
         if len(area_Code['main']) > 0:
             base64_string = resp.image_data[22:]
@@ -405,7 +415,14 @@ def get_rtsp(rtsp_url):
         return ['', '[1]', 'monitor']
     cap = cv2.VideoCapture(rtsp_url)
     if cap.isOpened():
-        ret, frame = cap.read()
+        ret = False
+        frame = ''
+        for i in range(3):
+            ret, frame = cap.read()
+            if ret:
+                break
+            else:
+                continue
         cap.release()
         if ret:
             try:
@@ -525,7 +542,8 @@ def deal_rank(integration_qiu_array):
                     for i in range(len(ranking_array)):
                         ranking_array[i][8] = max_lap_count - 1
 
-                if q_item[6] < ranking_array[r_index][6] < max_area_count + 1:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
+                if (q_item[6] < ranking_array[r_index][6] < max_area_count + 1
+                        and ranking_array[r_index][8] < max_lap_count - 1):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
                     if result_count >= max_area_count - area_limit - balls_count:
                         ranking_array[r_index][8] += 1
@@ -1502,13 +1520,15 @@ class ReStartThread(QThread):
         global betting_end_time
         global action_area
         global ball_sort
+        global ball_stop
         global ranking_time_start
         while self.running:
             time.sleep(1)
             if not self.run_flg:
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
-            ready_flg = True
+            ready_flg = True    # 准备动作开启信号
+            ball_stop = False # 保留卡珠信号
             while PlanCmd_Thread.run_flg:
                 print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                 time.sleep(1)
@@ -4062,6 +4082,7 @@ class MapLabel(QLabel):
     def update_positions(self):
         global positions_live
         global z_ranking_res
+        global ball_stop
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
             self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间]
@@ -4070,8 +4091,10 @@ class MapLabel(QLabel):
         for num in range(0, balls_count):
             if len(ranking_array) >= balls_count and ranking_array[num][5] in self.color_names.keys():
                 area_num = max_area_count - balls_count  # 跟踪区域数量
-                if (ranking_array[num][6] <= max_area_count + 1
-                        and not ObsEnd_Thread.ball_flg):
+                if ((ranking_array[num][6] <= max_area_count
+                     and not ObsEnd_Thread.ball_flg)
+                        or (ranking_array[num][6] >= max_area_count + 1
+                            and ObsEnd_Thread.ball_flg)):
                     p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
                     if p >= len(self.path_points):
                         p = len(self.path_points) - 1
@@ -4145,20 +4168,21 @@ class MapLabel(QLabel):
                 "result": res
             }
 
-            # 保留卡珠位置
-            # if TrapBall_ui.isVisible():
-            #     self.pos_stop = copy.deepcopy(self.positions)
-            #     for num in range(0, balls_count):
-            #         for i in range(len(self.pos_stop)):  # 排序
-            #             if self.pos_stop[i][1] == ranking_array[num][5]:
-            #                 self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
-            #                 area_num = max_area_count - balls_count  # 跟踪区域数量
-            #                 p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
-            #                 if p < len(self.path_points):
-            #                     self.pos_stop[num][0] = p
-            # if Map_ui.isVisible():
-            #     if len(self.pos_stop) == len(self.positions):
-            #         self.positions = copy.deepcopy(self.pos_stop)
+        # 保留卡珠位置
+        if TrapBall_ui.isVisible():
+            self.pos_stop = copy.deepcopy(self.positions)
+            ball_stop = True
+            for num in range(0, balls_count):
+                for i in range(len(self.pos_stop)):  # 排序
+                    if self.pos_stop[i][1] == ranking_array[num][5]:
+                        self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
+                        area_num = max_area_count - balls_count  # 跟踪区域数量
+                        p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
+                        if p < len(self.path_points):
+                            self.pos_stop[num][0] = p
+        if ball_stop:
+            if len(self.pos_stop) == len(self.positions):
+                self.positions = copy.deepcopy(self.pos_stop)
 
         # 触发重绘
         self.update()
@@ -6641,6 +6665,7 @@ if __name__ == '__main__':
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
     ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
+    ball_stop = False
 
     # 初始化数据
     max_lap_count = 1  # 最大圈
