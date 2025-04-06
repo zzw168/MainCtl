@@ -330,6 +330,11 @@ def get_picture(scence_current):
             y1, y2 = area[1][1], area[2][1]
             cropped_image = image[y1:y2, x1:x2]
 
+            if ui.checkBox_Main_Horizontal.isChecked():
+                cropped_image = cv2.flip(cropped_image, 1)  # 🔁 5. 水平翻转图片
+            if ui.checkBox_Main_Vertica.isChecked():
+                cropped_image = cv2.flip(cropped_image, 0)  # 🔁 5. 垂直翻转图片
+
             _, buffer = cv2.imencode('.jpg', cropped_image)  # 5. 可选：转换裁剪后的图片回 Base64
             img = base64.b64encode(buffer).decode("utf-8")
         else:
@@ -432,6 +437,10 @@ def get_rtsp(rtsp_url):
                     x1, x2 = area[0][0], area[1][0]
                     y1, y2 = area[1][1], area[2][1]
                     frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
+                    if ui.checkBox_Monitor_Horizontal.isChecked():
+                        frame = cv2.flip(frame, 1)  # 水平翻转图片
+                    if ui.checkBox_Monitor_Vertica.isChecked():
+                        frame = cv2.flip(frame, 0)  # 垂直翻转图片
             except:
                 pass
             success, jpeg_data = cv2.imencode('.jpg', frame)
@@ -3452,6 +3461,10 @@ def save_main_json():
             main_all['lineEdit_End_Num'] = ui.lineEdit_End_Num.text()
             main_all['lineEdit_lost'] = ui.lineEdit_lost.text()
             main_all['checkBox_Cycle'] = ui.checkBox_Cycle.isChecked()
+            main_all['checkBox_Monitor_Horizontal'] = ui.checkBox_Monitor_Horizontal.isChecked()
+            main_all['checkBox_Monitor_Vertica'] = ui.checkBox_Monitor_Vertica.isChecked()
+            main_all['checkBox_Main_Horizontal'] = ui.checkBox_Main_Horizontal.isChecked()
+            main_all['checkBox_Main_Vertica'] = ui.checkBox_Main_Vertica.isChecked()
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                 main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -3561,6 +3574,10 @@ def load_main_json():
         ui.lineEdit_lost.setText(main_all['lineEdit_lost'])
         ui.comboBox_plan.setCurrentIndex(int(main_all['comboBox_plan']))
         ui.checkBox_Cycle.setChecked(main_all['checkBox_Cycle'])
+        ui.checkBox_Monitor_Horizontal.setChecked(main_all['checkBox_Monitor_Horizontal'])
+        ui.checkBox_Monitor_Vertica.setChecked(main_all['checkBox_Monitor_Vertica'])
+        ui.checkBox_Main_Horizontal.setChecked(main_all['checkBox_Main_Horizontal'])
+        ui.checkBox_Main_Vertica.setChecked(main_all['checkBox_Main_Vertica'])
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -6983,6 +7000,10 @@ if __name__ == '__main__':
     ui.lineEdit_lost.editingFinished.connect(save_main_json)
 
     ui.checkBox_Cycle.checkStateChanged.connect(save_main_json)
+    ui.checkBox_Monitor_Horizontal.checkStateChanged.connect(save_main_json)
+    ui.checkBox_Monitor_Vertica.checkStateChanged.connect(save_main_json)
+    ui.checkBox_Main_Horizontal.checkStateChanged.connect(save_main_json)
+    ui.checkBox_Main_Vertica.checkStateChanged.connect(save_main_json)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)
     ui.radioButton_music_background_2.clicked.connect(save_main_json)

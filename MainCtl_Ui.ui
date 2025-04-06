@@ -6280,7 +6280,7 @@
                <property name="maximumSize">
                 <size>
                  <width>600</width>
-                 <height>150</height>
+                 <height>120</height>
                 </size>
                </property>
                <property name="font">
@@ -6545,13 +6545,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>0</height>
+                 <height>220</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>600</width>
-                 <height>230</height>
+                 <height>220</height>
                 </size>
                </property>
                <property name="font">
@@ -6796,44 +6796,18 @@
                </layout>
               </widget>
              </item>
-             <item row="5" column="0">
-              <widget class="QGroupBox" name="groupBox_28">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="title">
-                <string>操作信息</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_59">
-                <item row="0" column="2">
-                 <widget class="QTextBrowser" name="textBrowser_save_msg">
-                  <property name="focusPolicy">
-                   <enum>Qt::FocusPolicy::NoFocus</enum>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
              <item row="1" column="0">
               <widget class="QGroupBox" name="groupBox_29">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>0</height>
+                 <height>100</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>600</width>
-                 <height>130</height>
+                 <height>100</height>
                 </size>
                </property>
                <property name="font">
@@ -6975,13 +6949,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>180</height>
+                 <height>220</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>600</width>
-                 <height>350</height>
+                 <height>220</height>
                 </size>
                </property>
                <property name="font">
@@ -7066,13 +7040,13 @@
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
-                    <height>0</height>
+                    <height>80</height>
                    </size>
                   </property>
                   <property name="maximumSize">
                    <size>
                     <width>600</width>
-                    <height>130</height>
+                    <height>80</height>
                    </size>
                   </property>
                   <property name="font">
@@ -7092,6 +7066,20 @@
                    <property name="bottomMargin">
                     <number>9</number>
                    </property>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_90">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>监控摄像头：</string>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="0" column="0">
                     <widget class="QLabel" name="label_91">
                      <property name="font">
@@ -7106,17 +7094,29 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="2">
-                    <widget class="QLabel" name="label_90">
+                   <item row="1" column="1">
+                    <widget class="QLineEdit" name="lineEdit_monitor_sort">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
                      <property name="font">
                       <font>
                        <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
+                       <pointsize>10</pointsize>
                        <bold>false</bold>
                       </font>
                      </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
                      <property name="text">
-                      <string>监控摄像头：</string>
+                      <string>11</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -7146,29 +7146,31 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="3">
-                    <widget class="QLineEdit" name="lineEdit_monitor_sort">
-                     <property name="minimumSize">
-                      <size>
-                       <width>30</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
+                   <item row="1" column="3">
+                    <widget class="QCheckBox" name="checkBox_Monitor_Horizontal">
                      <property name="text">
-                      <string>11</string>
+                      <string>水平翻转</string>
                      </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
+                    </widget>
+                   </item>
+                   <item row="1" column="4">
+                    <widget class="QCheckBox" name="checkBox_Monitor_Vertica">
+                     <property name="text">
+                      <string>垂直翻转</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="4">
+                    <widget class="QCheckBox" name="checkBox_Main_Vertica">
+                     <property name="text">
+                      <string>垂直翻转</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="3">
+                    <widget class="QCheckBox" name="checkBox_Main_Horizontal">
+                     <property name="text">
+                      <string>水平翻转</string>
                      </property>
                     </widget>
                    </item>
@@ -8896,8 +8898,8 @@
              <string>辅助控制</string>
             </property>
             <layout class="QGridLayout" name="gridLayout_66">
-             <item row="2" column="0">
-              <widget class="QGroupBox" name="groupBox_12">
+             <item row="1" column="0">
+              <widget class="QGroupBox" name="groupBox_20">
                <property name="minimumSize">
                 <size>
                  <width>50</width>
@@ -8918,35 +8920,37 @@
                 </font>
                </property>
                <property name="title">
-                <string>地图划区编辑制作</string>
+                <string>摄像头录图操作</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_31">
+               <layout class="QGridLayout" name="gridLayout_60">
                 <property name="topMargin">
-                 <number>0</number>
+                 <number>3</number>
                 </property>
-                <item row="0" column="0">
-                 <widget class="QPushButton" name="pushButton_Draw">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>25</height>
-                   </size>
+                <item row="0" column="1">
+                 <widget class="QCheckBox" name="checkBox_saveImgs_monitor">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
-                   <string>画图工具</string>
+                   <string>网络摄像头</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QPushButton" name="pushButton_to_TXT">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>25</height>
-                   </size>
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="checkBox_saveImgs_main">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
                   </property>
                   <property name="text">
-                   <string>转换TXT</string>
+                   <string>主摄像头</string>
                   </property>
                  </widget>
                 </item>
@@ -9025,82 +9029,6 @@
                  </widget>
                 </item>
                </layout>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QGroupBox" name="groupBox_20">
-               <property name="minimumSize">
-                <size>
-                 <width>50</width>
-                 <height>50</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>10</pointsize>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="title">
-                <string>摄像头录图操作</string>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_60">
-                <property name="topMargin">
-                 <number>3</number>
-                </property>
-                <item row="0" column="1">
-                 <widget class="QCheckBox" name="checkBox_saveImgs_monitor">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>网络摄像头</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="checkBox_saveImgs_main">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>主摄像头</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item row="5" column="0">
-              <widget class="QTextBrowser" name="textBrowser_total_msg">
-               <property name="font">
-                <font>
-                 <family>微软雅黑</family>
-                 <pointsize>12</pointsize>
-                 <bold>false</bold>
-                </font>
-               </property>
-               <property name="focusPolicy">
-                <enum>Qt::FocusPolicy::NoFocus</enum>
-               </property>
-               <property name="readOnly">
-                <bool>false</bool>
-               </property>
               </widget>
              </item>
              <item row="0" column="0">
@@ -9189,6 +9117,106 @@
                   </property>
                   <property name="text">
                    <string>测试1</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QTextBrowser" name="textBrowser_total_msg">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>12</pointsize>
+                 <bold>false</bold>
+                </font>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::FocusPolicy::NoFocus</enum>
+               </property>
+               <property name="readOnly">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QGroupBox" name="groupBox_12">
+               <property name="minimumSize">
+                <size>
+                 <width>50</width>
+                 <height>50</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>地图划区编辑制作</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_31">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QPushButton" name="pushButton_Draw">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>画图工具</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QPushButton" name="pushButton_to_TXT">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>25</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>转换TXT</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QGroupBox" name="groupBox_28">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
+               </property>
+               <property name="title">
+                <string>操作信息</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_59">
+                <item row="0" column="2">
+                 <widget class="QTextBrowser" name="textBrowser_save_msg">
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>

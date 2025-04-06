@@ -34,18 +34,18 @@ class Ui_Camera_Dialog(object):
         font.setBold(True)
         self.groupBox_main_camera.setFont(font)
         self.groupBox_main_camera.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
-        self.gridLayout_15 = QGridLayout(self.groupBox_main_camera)
-        self.gridLayout_15.setObjectName(u"gridLayout_15")
+        self.gridLayout_2 = QGridLayout(self.groupBox_main_camera)
+        self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.label_picture = QLabel(self.groupBox_main_camera)
         self.label_picture.setObjectName(u"label_picture")
         self.label_picture.setMinimumSize(QSize(300, 10))
 
-        self.gridLayout_15.addWidget(self.label_picture, 1, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.label_picture, 1, 0, 1, 2)
 
         self.pushButton_net = QPushButton(self.groupBox_main_camera)
         self.pushButton_net.setObjectName(u"pushButton_net")
 
-        self.gridLayout_15.addWidget(self.pushButton_net, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.pushButton_net, 0, 0, 1, 2)
 
 
         self.gridLayout.addWidget(self.groupBox_main_camera, 0, 0, 1, 1)
