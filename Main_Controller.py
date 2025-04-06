@@ -302,8 +302,6 @@ def scenes_change():  # 变换场景
 def get_picture(scence_current):
     global lottery_term
     global cl_request
-    if not flg_start['obs']:
-        return ['', '[1]', 'obs']
     resp = ''
     for i in range(5):
         try:
@@ -320,7 +318,8 @@ def get_picture(scence_current):
                 return ['', '[1]', 'obs']
     try:
         if len(area_Code['main']) > 0:
-            base64_string = resp.image_data[22:]
+            Screenshot = resp.image_data
+            base64_string = Screenshot.replace('data:image/jpg;base64,', '')
             image_data = base64.b64decode(base64_string)  # 1. 解码 Base64 字符串为二进制数据
             nparr = np.frombuffer(image_data, np.uint8)  # 2. 转换为 NumPy 数组
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)  # 3. 使用 OpenCV 读取图片
