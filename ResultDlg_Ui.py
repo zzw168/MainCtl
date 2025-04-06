@@ -78,6 +78,7 @@ class Ui_Dialog_Result(object):
         self.pushButton_Send_Res = QPushButton(self.groupBox_8)
         self.pushButton_Send_Res.setObjectName(u"pushButton_Send_Res")
         self.pushButton_Send_Res.setMinimumSize(QSize(50, 30))
+        self.pushButton_Send_Res.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.pushButton_Send_Res.setStyleSheet(u"background:rgb(0,255,0)")
 
         self.gridLayout_28.addWidget(self.pushButton_Send_Res, 4, 0, 1, 3)

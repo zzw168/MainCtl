@@ -52,6 +52,7 @@ class Ui_Dialog_BallsNum(object):
         self.pushButton_continue.setObjectName(u"pushButton_continue")
         self.pushButton_continue.setMinimumSize(QSize(150, 38))
         self.pushButton_continue.setMaximumSize(QSize(150, 16777215))
+        self.pushButton_continue.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.pushButton_continue.setStyleSheet(u"background:rgb(240,0,0)")
 
         self.gridLayout.addWidget(self.pushButton_continue, 4, 2, 1, 1)
@@ -97,6 +98,7 @@ class Ui_Dialog_BallsNum(object):
         self.pushButton_close.setObjectName(u"pushButton_close")
         self.pushButton_close.setMinimumSize(QSize(150, 38))
         self.pushButton_close.setMaximumSize(QSize(200, 16777215))
+        self.pushButton_close.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.pushButton_close.setStyleSheet(u"background:rgb(0,240,0)")
 
         self.gridLayout.addWidget(self.pushButton_close, 4, 4, 1, 1)

@@ -131,6 +131,9 @@
           <height>30</height>
          </size>
         </property>
+        <property name="focusPolicy">
+         <enum>Qt::FocusPolicy::NoFocus</enum>
+        </property>
         <property name="styleSheet">
          <string notr="true">background:rgb(0,255,0)</string>
         </property>

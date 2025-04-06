@@ -90,6 +90,9 @@
        <height>16777215</height>
       </size>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::FocusPolicy::NoFocus</enum>
+     </property>
      <property name="styleSheet">
       <string notr="true">background:rgb(240,0,0)</string>
      </property>
@@ -175,6 +178,9 @@
        <width>200</width>
        <height>16777215</height>
       </size>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::FocusPolicy::NoFocus</enum>
      </property>
      <property name="styleSheet">
       <string notr="true">background:rgb(0,240,0)</string>

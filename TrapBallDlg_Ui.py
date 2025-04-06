@@ -58,6 +58,7 @@ class Ui_Dialog_TrapBall(object):
         self.pushButton_cancel.setObjectName(u"pushButton_cancel")
         self.pushButton_cancel.setMinimumSize(QSize(150, 38))
         self.pushButton_cancel.setMaximumSize(QSize(150, 16777215))
+        self.pushButton_cancel.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.pushButton_cancel.setStyleSheet(u"background:rgb(230,0,0)")
 
         self.gridLayout_4.addWidget(self.pushButton_cancel, 1, 1, 1, 1)
@@ -267,6 +268,7 @@ class Ui_Dialog_TrapBall(object):
         self.pushButton_ok.setObjectName(u"pushButton_ok")
         self.pushButton_ok.setMinimumSize(QSize(150, 38))
         self.pushButton_ok.setMaximumSize(QSize(150, 16777215))
+        self.pushButton_ok.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.pushButton_ok.setStyleSheet(u"background:rgb(0,245,0)")
 
         self.gridLayout_4.addWidget(self.pushButton_ok, 1, 3, 1, 1)
