@@ -568,8 +568,12 @@ def deal_rank(integration_qiu_array):
                             ranking_array[r_index][8] = max_lap_count - 1
 
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
-                    or (q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
+                    or (max_area_count - balls_count >= q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
                         and q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
+                    )   # 处理除终点排名位置的条件
+                    or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
+                        and q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
+                        and ranking_array[r_index][8] == max_lap_count -1   # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
                     for i in range(len(ranking_array)):
@@ -1547,7 +1551,7 @@ class ReStartThread(QThread):
             ready_flg = True  # 准备动作开启信号
             ball_stop = False  # 保留卡珠信号
             try:
-                cl_request.disconnect() # 断开重连 OBS
+                cl_request.disconnect()  # 断开重连 OBS
                 time.sleep(0.5)
                 cl_request = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
                 print('断开重连OBS~~~~~~')
@@ -1704,6 +1708,7 @@ def restartsignal_accept(msg):
         ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser)
         scroll_to_bottom(ui.textBrowser_msg)
+
 
 '''
     PosThread(QThread) 检测各轴位置
