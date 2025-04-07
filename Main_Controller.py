@@ -312,11 +312,14 @@ def get_picture(scence_current):
             break
         except:
             if i < 3:
-                cl_request.disconnect()
-                time.sleep(0.5)
-                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
-                print('重连OBS~~~~~~~~~~~~')
-                time.sleep(0.5)
+                try:
+                    cl_request.disconnect()
+                    time.sleep(0.5)
+                    cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                    print('重连OBS~~~~~~~~~~~~')
+                    time.sleep(0.5)
+                except:
+                    print('链接OBS失败~~~~~~~~~~~~')
                 continue
             else:
                 flg_start['obs'] = False
