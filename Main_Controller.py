@@ -1543,10 +1543,13 @@ class ReStartThread(QThread):
             action_area = [0, 0, 0]  # 初始化触发区域
             ready_flg = True  # 准备动作开启信号
             ball_stop = False  # 保留卡珠信号
-            cl_request.disconnect() # 断开重连 OBS
-            time.sleep(0.5)
-            cl_request = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
-            print('断开重连OBS~~~~~~')
+            try:
+                cl_request.disconnect() # 断开重连 OBS
+                time.sleep(0.5)
+                cl_request = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
+                print('断开重连OBS~~~~~~')
+            except:
+                self.signal.emit(fail('OBS链接失败！'))
             while PlanCmd_Thread.run_flg:
                 print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                 time.sleep(1)
@@ -1693,7 +1696,11 @@ def restartsignal_accept(msg):
         ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
         scroll_to_bottom(ui.textBrowser_msg)
-
+    else:
+        ui.textBrowser.append(msg)
+        ui.textBrowser_msg.append(msg)
+        scroll_to_bottom(ui.textBrowser)
+        scroll_to_bottom(ui.textBrowser_msg)
 
 '''
     PosThread(QThread) 检测各轴位置
