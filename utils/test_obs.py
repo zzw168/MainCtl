@@ -13,7 +13,10 @@ import obsws_python as obs
 # cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
 # resp = cl_request.get_source_screenshot('终点1', "jpg", 1920, 1080, 100)
 # print(resp.image_data[:22])
-
+cl_request = obs.ReqClient()
+print(cl_request)
+cl_request.disconnect()
+print(cl_request)
 for i in range(5):
     try:
         resp = cl_request.get_source_screenshot('终点1', "jpg", 1920, 1080, 100)

@@ -130,6 +130,9 @@ class ObsThread(QThread):
         global flg_start
         try:
             if not flg_start['obs']:
+                cl_request.disconnect()
+                cl_event.disconnect()
+                time.sleep(0.5)
                 cl_request = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
                 cl_event = obs.EventClient()  # 监听 链接配置在 config.toml 文件中
 
@@ -1530,13 +1533,18 @@ class ReStartThread(QThread):
         global ball_sort
         global ball_stop
         global ranking_time_start
+        global cl_request
         while self.running:
             time.sleep(1)
             if not self.run_flg:
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
-            ready_flg = True    # 准备动作开启信号
-            ball_stop = False # 保留卡珠信号
+            ready_flg = True  # 准备动作开启信号
+            ball_stop = False  # 保留卡珠信号
+            cl_request.disconnect() # 断开重连 OBS
+            time.sleep(0.5)
+            cl_request = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
+            print('断开重连OBS~~~~~~')
             while PlanCmd_Thread.run_flg:
                 print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                 time.sleep(1)
@@ -6646,8 +6654,21 @@ if __name__ == '__main__':
                 'source_settlement': 26}  # 各来源ID号初始化{'现场', '排名时间组件', '画中画', '结算页'}
     record_data = [False, 'OBS_WEBSOCKET_OUTPUT_STARTING', None]  # OBS 录像状态数据
     scene_now = ''
-    cl_request = ''  # 请求
-    cl_event = ''  # 监听
+    cl_request = ''  # 请求 链接配置在 config.toml 文件中
+    cl_event = ''  # 监听 链接配置在 config.toml 文件中
+
+    try:
+        cl_request = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
+        cl_event = obs.EventClient()  # 监听 链接配置在 config.toml 文件中
+
+        cl_event.callback.register(on_current_program_scene_changed)  # 场景变化
+        cl_event.callback.register(on_scene_item_enable_state_changed)  # 来源变化
+        cl_event.callback.register(on_record_state_changed)  # 录制状态
+        cl_event.callback.register(on_stream_state_changed)  # 直播流状态
+        cl_event.callback.register(on_get_stream_status)  # 直播流状态
+        flg_start['obs'] = True
+    except:
+        flg_start['obs'] = False
 
     Obs_Thread = ObsThread()  # OBS启动线程
     Obs_Thread.signal.connect(obssignal_accept)
