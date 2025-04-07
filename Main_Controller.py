@@ -2620,7 +2620,7 @@ class PlanCmdThread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
-        global action_area
+        global action_area, previous_channel
         global ranking_time_start
         global lottery_term
         global ranking_array
@@ -2716,7 +2716,12 @@ class PlanCmdThread(QThread):
                                     try:
                                         sound_effect = pygame.mixer.Sound(sound_file)
                                         sound_effect.set_volume(sound_volume)  # 设置音量（范围：0.0 到 1.0）
-                                        sound_effect.play(loops=sound_times, maxtime=sound_delay)  # 播放音效
+                                        # sound_effect.play(loops=sound_times, maxtime=sound_delay)  # 播放音效
+                                        # 如果上一次有播放音效，淡出它（例如在 1000ms 内逐渐停止）
+                                        if previous_channel is not None and previous_channel.get_busy():
+                                            previous_channel.fadeout(1000)
+                                        # 播放新的音效，并保存通道
+                                        previous_channel = sound_effect.play(loops=sound_times, maxtime=sound_delay)
                                     except:
                                         print('音效加载失败！~~~~~')
 
@@ -6863,6 +6868,7 @@ if __name__ == '__main__':
     audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
     ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
     map_orbit = []  # 地图轨迹
+    previous_channel = None # 音效通道
     positions_live = {
         "raceTrackID": "D",
         "term": "5712844",
