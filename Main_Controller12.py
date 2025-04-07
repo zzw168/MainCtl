@@ -130,6 +130,9 @@ class ObsThread(QThread):
         global flg_start
         try:
             if not flg_start['obs']:
+                cl_request.disconnect()
+                cl_event.disconnect()
+                time.sleep(0.5)
                 cl_request = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
                 cl_event = obs.EventClient()  # 监听 链接配置在 config.toml 文件中
 
@@ -302,8 +305,6 @@ def scenes_change():  # 变换场景
 def get_picture(scence_current):
     global lottery_term
     global cl_request
-    if not flg_start['obs']:
-        return ['', '[1]', 'obs']
     resp = ''
     for i in range(5):
         try:
@@ -311,16 +312,22 @@ def get_picture(scence_current):
             break
         except:
             if i < 3:
-                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
-                print('重连OBS~~~~~~~~~~~~')
-                time.sleep(0.5)
+                try:
+                    cl_request.disconnect()
+                    time.sleep(0.5)
+                    cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                    print('重连OBS~~~~~~~~~~~~')
+                    time.sleep(0.5)
+                except:
+                    print('链接OBS失败~~~~~~~~~~~~')
                 continue
             else:
                 flg_start['obs'] = False
                 return ['', '[1]', 'obs']
     try:
         if len(area_Code['main']) > 0:
-            base64_string = resp.image_data[22:]
+            Screenshot = resp.image_data
+            base64_string = Screenshot.replace('data:image/jpg;base64,', '')
             image_data = base64.b64decode(base64_string)  # 1. 解码 Base64 字符串为二进制数据
             nparr = np.frombuffer(image_data, np.uint8)  # 2. 转换为 NumPy 数组
             image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)  # 3. 使用 OpenCV 读取图片
@@ -561,8 +568,12 @@ def deal_rank(integration_qiu_array):
                             ranking_array[r_index][8] = max_lap_count - 1
 
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
-                    or (q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
+                    or (max_area_count - balls_count >= q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
                         and q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
+                    )   # 处理除终点排名位置的条件
+                    or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
+                        and q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
+                        and ranking_array[r_index][8] == max_lap_count -1   # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
                     for i in range(len(ranking_array)):
@@ -1531,13 +1542,21 @@ class ReStartThread(QThread):
         global ball_sort
         global ball_stop
         global ranking_time_start
+        global cl_request
         while self.running:
             time.sleep(1)
             if not self.run_flg:
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
-            ready_flg = True    # 准备动作开启信号
-            ball_stop = False # 保留卡珠信号
+            ready_flg = True  # 准备动作开启信号
+            ball_stop = False  # 保留卡珠信号
+            try:
+                cl_request.disconnect()  # 断开重连 OBS
+                time.sleep(0.5)
+                cl_request = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
+                print('断开重连OBS~~~~~~')
+            except:
+                self.signal.emit(fail('OBS链接失败！'))
             while PlanCmd_Thread.run_flg:
                 print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                 time.sleep(1)
@@ -1683,6 +1702,11 @@ def restartsignal_accept(msg):
     elif msg == 'error':
         ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
+        scroll_to_bottom(ui.textBrowser_msg)
+    else:
+        ui.textBrowser.append(msg)
+        ui.textBrowser_msg.append(msg)
+        scroll_to_bottom(ui.textBrowser)
         scroll_to_bottom(ui.textBrowser_msg)
 
 
@@ -6647,8 +6671,21 @@ if __name__ == '__main__':
                 'source_settlement': 26}  # 各来源ID号初始化{'现场', '排名时间组件', '画中画', '结算页'}
     record_data = [False, 'OBS_WEBSOCKET_OUTPUT_STARTING', None]  # OBS 录像状态数据
     scene_now = ''
-    cl_request = ''  # 请求
-    cl_event = ''  # 监听
+    cl_request = ''  # 请求 链接配置在 config.toml 文件中
+    cl_event = ''  # 监听 链接配置在 config.toml 文件中
+
+    try:
+        cl_request = obs.ReqClient()  # 请求 链接配置在 config.toml 文件中
+        cl_event = obs.EventClient()  # 监听 链接配置在 config.toml 文件中
+
+        cl_event.callback.register(on_current_program_scene_changed)  # 场景变化
+        cl_event.callback.register(on_scene_item_enable_state_changed)  # 来源变化
+        cl_event.callback.register(on_record_state_changed)  # 录制状态
+        cl_event.callback.register(on_stream_state_changed)  # 直播流状态
+        cl_event.callback.register(on_get_stream_status)  # 直播流状态
+        flg_start['obs'] = True
+    except:
+        flg_start['obs'] = False
 
     Obs_Thread = ObsThread()  # OBS启动线程
     Obs_Thread.signal.connect(obssignal_accept)

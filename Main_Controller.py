@@ -982,6 +982,9 @@ class DealUdpThread(QThread):
                 continue
             res = copy.deepcopy(udp_thread.res)
             data_res = eval(res)  # str转换list
+            if not isinstance(data_res, list):
+                time.sleep(0.01)
+                continue
             # data_res = []
             # if data_res[0][6] == 11:
             #     print(data_res)
