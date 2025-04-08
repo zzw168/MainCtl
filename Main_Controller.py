@@ -385,13 +385,19 @@ def obs_save_image():
         while ui.checkBox_saveImgs_main.isChecked():
             res, value = sc.GAGetDiReverseCount()
             if res == 0:
-                num = int(value[0] / 2)
+                num = int(value[0] / 2) - 1
+                print(num,'obs~~~~~~~~~~~~~~~~~~~~~~~')
                 if num >= balls_count:
                     cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
                                                       '%s/%s.jpg' % (save_path, time.time()), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
+                        time.sleep(0.1)
+                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
+                        time.sleep(3)
                         sc.GASetDiReverseCount()  # 输入次数归0
+                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
             time.sleep(1)
@@ -505,8 +511,9 @@ def rtsp_save_image():
         while ui.checkBox_saveImgs_monitor.isChecked():
             res, value = sc.GAGetDiReverseCount()
             if res == 0:
-                num = int(value[0] / 2)
-                if num >= balls_count + 1:
+                num = int(value[0] / 2) - 1
+                print(num, 'rtsp~~~~~~~~~~~~~~~~~~')
+                if num >= balls_count:
                     cap = cv2.VideoCapture(rtsp_url)
                     if cap.isOpened():
                         ret, frame = cap.read()
@@ -521,8 +528,12 @@ def rtsp_save_image():
                         cap.release()
                         print(f'无法打开摄像头')
                         return
-                    if not ui.checkBox_saveImgs_auto.isChecked():
+                    if (not ui.checkBox_saveImgs_auto.isChecked()
+                            and not ui.checkBox_saveImgs_main.isChecked()) :
+                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
+                        time.sleep(3)
                         sc.GASetDiReverseCount()  # 输入次数归0
+                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
             time.sleep(1)
@@ -570,10 +581,10 @@ def deal_rank(integration_qiu_array):
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
                     or (max_area_count - balls_count >= q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
                         and q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
-                    )   # 处理除终点排名位置的条件
+                    )  # 处理除终点排名位置的条件
                     or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
                         and q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
-                        and ranking_array[r_index][8] == max_lap_count -1   # 处理最后一圈终点附近的条件
+                        and ranking_array[r_index][8] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
                     for i in range(len(ranking_array)):
@@ -971,32 +982,17 @@ class DealUdpThread(QThread):
     def run(self) -> None:
         global con_data
         global balls_start
-        res = ''
+        data_res = []
         while self.running:
-            if udp_thread.res == '':
-                # print('UDP_res无数据！', udp_thread.res)
+            if data_res == udp_thread.data_res:
                 time.sleep(0.01)
                 continue
-            if res == udp_thread.res:
-                time.sleep(0.01)
-                continue
-            res = copy.deepcopy(udp_thread.res)
-            data_res = eval(res)  # str转换list
-            if not isinstance(data_res, list):
-                time.sleep(0.01)
-                continue
-            # data_res = []
-            # if data_res[0][6] == 11:
-            #     print(data_res)
-            # if len(data_res) < 1:
-            #     print('UDP_recv_data无数据！', res)
-            #     continue
+            data_res = copy.deepcopy(udp_thread.data_res)  # str转换list
             self.signal.emit(data_res)
             array_data = []
             for i_ in range(0, len(data_res)):  # data_res[0] 是时间戳差值 ms
                 if isinstance(data_res[i_], list):
                     array_data.append(copy.deepcopy(data_res[i_]))
-            # print(array_data)
             if len(array_data) < 1:
                 continue
             # print(array_data)
@@ -1044,7 +1040,7 @@ class UdpThread(QThread):
         super(UdpThread, self).__init__()
         self.run_flg = True
         self.running = True
-        self.res = ''
+        self.data_res = []
 
     def stop(self):
         self.run_flg = False
@@ -1061,7 +1057,14 @@ class UdpThread(QThread):
                 if len(recv_data) < 1:
                     print('UDP无数据！')
                     continue
-                self.res = recv_data[0].decode('utf8')
+                res = recv_data[0].decode('utf8')
+                if res == '':
+                    # print('UDP_res无数据！', udp_thread.res)
+                    continue
+                data_res = eval(res)  # str转换list
+                if not isinstance(data_res, list):
+                    continue
+                self.data_res = data_res
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
                 self.signal.emit("UDP数据接收出错:%s" % e)
@@ -2101,6 +2104,7 @@ class ObsEndThread(QThread):
                 lottery_term[3] = '未结束'
                 betting_loop_flg = False
             lottery2json()  # 保存数据
+            self.signal.emit(succeed('第%s期 结束！' % term))
 
             if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
                 betting_loop_flg = False
@@ -2120,8 +2124,6 @@ class ObsEndThread(QThread):
                 PlanCmd_Thread.run_flg = True
                 auto_shoot()  # 自动上珠
                 self.run_flg = False
-
-            self.signal.emit(succeed('第%s期 结束！' % term))
 
             self.screen_flg = False
             self.ball_flg = False
@@ -4129,7 +4131,7 @@ class MapLabel(QLabel):
         self.timer.start(self.flash_time)  # 每1秒更新一次
 
     def update_positions(self):
-        global positions_live
+        global positions_live, t
         global z_ranking_res
         global ball_stop
         # 更新每个小球的位置
@@ -4205,8 +4207,6 @@ class MapLabel(QLabel):
                 b = round(self.positions[i][0] / len(self.path_points), 4)
                 if self.bet_running:
                     t = int((time.time() - ranking_time_start) * 1000)
-                else:
-                    t = betting_end_time
                 res.append(
                     {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
                      "b": b * 100, "t": t})
@@ -4218,7 +4218,7 @@ class MapLabel(QLabel):
             }
 
         # 保留卡珠位置
-        if TrapBall_ui.isVisible():
+        if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
             self.pos_stop = copy.deepcopy(self.positions)
             ball_stop = True
             for num in range(0, balls_count):
@@ -6868,7 +6868,8 @@ if __name__ == '__main__':
     audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
     ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
     map_orbit = []  # 地图轨迹
-    previous_channel = None # 音效通道
+    previous_channel = None  # 音效通道
+    t = 0  # 比赛进行时间
     positions_live = {
         "raceTrackID": "D",
         "term": "5712844",
