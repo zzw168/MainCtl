@@ -230,10 +230,11 @@ def source_enable():  # 开关来源
 
 
 def activate_browser():  # 程序开始，刷新浏览器
+    global cl_request
     obs_scene = obs_data['obs_scene']
     item_ranking = obs_data['source_ranking']
     item_settlement = obs_data['source_settlement']
-    if flg_start['obs']:
+    for i in range(5):
         try:
             # 刷新 "浏览器来源"（Browser Source）
             cl_request.press_input_properties_button("结算页", "refreshnocache")
@@ -242,9 +243,22 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
             time.sleep(1)
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
+            break
         except:
-            print("OBS 开关浏览器出错！")
-            flg_start['obs'] = False
+            if i < 3:
+                try:
+                    cl_request.disconnect()
+                    time.sleep(0.5)
+                    cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                    print('重连OBS~~~~~~~~~~~~')
+                    time.sleep(0.5)
+                except:
+                    print('链接OBS失败~~~~~~~~~~~~')
+                continue
+            else:
+                lottery_term[9] = '截图失败'
+                print('OBS 切换操作失败！')
+                flg_start['obs'] = False
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -2024,56 +2038,56 @@ class ObsEndThread(QThread):
                             print('OBS 截图操作失败！')
                             self.signal.emit(fail('OBS 截图操作失败！'))
                             flg_start['obs'] = False
-                for i in range(5):
-                    try:
-                        tcp_result_thread.send_type = 'updata'
-                        tcp_result_thread.run_flg = True
+            for i in range(5):
+                try:
+                    tcp_result_thread.send_type = 'updata'
+                    tcp_result_thread.run_flg = True
 
-                        cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
-                                                          False)  # 关闭排名来源
-                        cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
-                                                          True)  # 打开结果来源
-                        break
-                    except:
-                        if i < 3:
-                            try:
-                                cl_request.disconnect()
-                                time.sleep(0.5)
-                                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
-                                print('重连OBS~~~~~~~~~~~~')
-                                time.sleep(0.5)
-                            except:
-                                print('链接OBS失败~~~~~~~~~~~~')
-                            continue
-                        else:
-                            print('OBS 切换操作失败！')
-                            self.signal.emit(fail('OBS 切换操作失败！'))
-                            flg_start['obs'] = False
-                for i in range(5):
-                    try:
-                        # 获取录屏状态
-                        recording_status = cl_request.get_record_status()
-                        # 检查是否正在录屏
-                        if recording_status.output_active:  # 确保键名正确
-                            time.sleep(3)
-                            video_name = cl_request.stop_record()  # 关闭录像
-                            lottery_term[10] = video_name.output_path  # 视频保存路径
-                        break
-                    except:
-                        if i < 3:
-                            try:
-                                cl_request.disconnect()
-                                time.sleep(0.5)
-                                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
-                                print('重连OBS~~~~~~~~~~~~')
-                                time.sleep(0.5)
-                            except:
-                                print('链接OBS失败~~~~~~~~~~~~')
-                            continue
-                        else:
-                            print('OBS 关闭录像失败！')
-                            self.signal.emit(fail('OBS 关闭录像失败！'))
-                            flg_start['obs'] = False
+                    cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
+                                                      False)  # 关闭排名来源
+                    cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
+                                                      True)  # 打开结果来源
+                    break
+                except:
+                    if i < 3:
+                        try:
+                            cl_request.disconnect()
+                            time.sleep(0.5)
+                            cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                            print('重连OBS~~~~~~~~~~~~')
+                            time.sleep(0.5)
+                        except:
+                            print('链接OBS失败~~~~~~~~~~~~')
+                        continue
+                    else:
+                        print('OBS 切换操作失败！')
+                        self.signal.emit(fail('OBS 切换操作失败！'))
+                        flg_start['obs'] = False
+            for i in range(5):
+                try:
+                    # 获取录屏状态
+                    recording_status = cl_request.get_record_status()
+                    # 检查是否正在录屏
+                    if recording_status.output_active:  # 确保键名正确
+                        time.sleep(3)
+                        video_name = cl_request.stop_record()  # 关闭录像
+                        lottery_term[10] = video_name.output_path  # 视频保存路径
+                    break
+                except:
+                    if i < 3:
+                        try:
+                            cl_request.disconnect()
+                            time.sleep(0.5)
+                            cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                            print('重连OBS~~~~~~~~~~~~')
+                            time.sleep(0.5)
+                        except:
+                            print('链接OBS失败~~~~~~~~~~~~')
+                        continue
+                    else:
+                        print('OBS 关闭录像失败！')
+                        self.signal.emit(fail('OBS 关闭录像失败！'))
+                        flg_start['obs'] = False
 
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
@@ -4213,8 +4227,12 @@ class MapLabel(QLabel):
                             self.speed = 2
                         elif p < self.positions[num][0] and ranking_array[num][9] == 1:
                             self.positions[num][0] = p  # 跨圈情况
-                        elif int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text()):
-                            self.positions[num][0] = p  # 停留超过 5 秒  12号赛道不需要
+                        elif (int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text())
+                              and self.map_action <= len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
+                            self.positions[num][0] = p  # 盲跑时间
+                        elif (int(time.time()) - self.positions[num][5] > 1
+                              and self.map_action > len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
+                            self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
                         else:
                             self.speed = 1
                         index = self.positions[num][0] + self.speed
@@ -5440,7 +5458,7 @@ class ResetRankingThread(QThread):
             map_label_big.map_action = 0
             term_comment = ''
             alarm_worker.toggle_enablesignal.emit(False)
-            if flg_start['obs'] and not ui.checkBox_test.isChecked():
+            if not ui.checkBox_test.isChecked():
                 activate_browser()  # 刷新OBS中排名浏览器
                 try:
                     while Script_Thread.run_flg:
