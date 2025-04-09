@@ -2007,6 +2007,25 @@ class ObsEndThread(QThread):
                         cl_request.save_source_screenshot(ui.lineEdit_scene_name.text(), "jpg",
                                                           lottery_term[9], 1920,
                                                           1080, 100)
+                        break
+                    except:
+                        if i < 3:
+                            try:
+                                cl_request.disconnect()
+                                time.sleep(0.5)
+                                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                                print('重连OBS~~~~~~~~~~~~')
+                                time.sleep(0.5)
+                            except:
+                                print('链接OBS失败~~~~~~~~~~~~')
+                            continue
+                        else:
+                            lottery_term[9] = '截图失败'
+                            print('OBS 截图操作失败！')
+                            self.signal.emit(fail('OBS 截图操作失败！'))
+                            flg_start['obs'] = False
+                for i in range(5):
+                    try:
                         tcp_result_thread.send_type = 'updata'
                         tcp_result_thread.run_flg = True
 
@@ -2014,6 +2033,24 @@ class ObsEndThread(QThread):
                                                           False)  # 关闭排名来源
                         cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
                                                           True)  # 打开结果来源
+                        break
+                    except:
+                        if i < 3:
+                            try:
+                                cl_request.disconnect()
+                                time.sleep(0.5)
+                                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                                print('重连OBS~~~~~~~~~~~~')
+                                time.sleep(0.5)
+                            except:
+                                print('链接OBS失败~~~~~~~~~~~~')
+                            continue
+                        else:
+                            print('OBS 切换操作失败！')
+                            self.signal.emit(fail('OBS 切换操作失败！'))
+                            flg_start['obs'] = False
+                for i in range(5):
+                    try:
                         # 获取录屏状态
                         recording_status = cl_request.get_record_status()
                         # 检查是否正在录屏
@@ -2034,8 +2071,8 @@ class ObsEndThread(QThread):
                                 print('链接OBS失败~~~~~~~~~~~~')
                             continue
                         else:
-                            lottery_term[9] = '截图失败'
-                            print('OBS 切换操作失败！')
+                            print('OBS 关闭录像失败！')
+                            self.signal.emit(fail('OBS 关闭录像失败！'))
                             flg_start['obs'] = False
 
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
@@ -2159,6 +2196,11 @@ def ObsEndsignal_accept(msg):
         ui.lineEdit_balls_start.setText('0')
         ui.lineEdit_ball_start.setText('0')
         ui.groupBox_term.setStyleSheet("")
+    else:
+        ui.textBrowser.append(str(msg))
+        ui.textBrowser_msg.append(str(msg))
+        scroll_to_bottom(ui.textBrowser)
+        scroll_to_bottom(ui.textBrowser_msg)
 
 
 '''
