@@ -4275,8 +4275,9 @@ class MapLabel(QLabel):
 
         # 保留卡珠位置
         if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
-            self.pos_stop = copy.deepcopy(self.positions)
             ball_stop = True
+        if TrapBall_ui.isVisible():
+            self.pos_stop = copy.deepcopy(self.positions)
             for num in range(0, balls_count):
                 for i in range(len(self.pos_stop)):  # 排序
                     if self.pos_stop[i][1] == ranking_array[num][5]:
