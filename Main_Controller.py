@@ -230,10 +230,11 @@ def source_enable():  # 开关来源
 
 
 def activate_browser():  # 程序开始，刷新浏览器
+    global cl_request
     obs_scene = obs_data['obs_scene']
     item_ranking = obs_data['source_ranking']
     item_settlement = obs_data['source_settlement']
-    if flg_start['obs']:
+    for i in range(5):
         try:
             # 刷新 "浏览器来源"（Browser Source）
             cl_request.press_input_properties_button("结算页", "refreshnocache")
@@ -242,9 +243,22 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
             time.sleep(1)
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
+            break
         except:
-            print("OBS 开关浏览器出错！")
-            flg_start['obs'] = False
+            if i < 3:
+                try:
+                    cl_request.disconnect()
+                    time.sleep(0.5)
+                    cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                    print('重连OBS~~~~~~~~~~~~')
+                    time.sleep(0.5)
+                except:
+                    print('链接OBS失败~~~~~~~~~~~~')
+                continue
+            else:
+                lottery_term[9] = '截图失败'
+                print('OBS 切换操作失败！')
+                flg_start['obs'] = False
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -5444,7 +5458,7 @@ class ResetRankingThread(QThread):
             map_label_big.map_action = 0
             term_comment = ''
             alarm_worker.toggle_enablesignal.emit(False)
-            if flg_start['obs'] and not ui.checkBox_test.isChecked():
+            if not ui.checkBox_test.isChecked():
                 activate_browser()  # 刷新OBS中排名浏览器
                 try:
                     while Script_Thread.run_flg:
