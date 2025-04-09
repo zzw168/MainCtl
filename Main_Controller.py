@@ -309,7 +309,47 @@ def get_picture(scence_current):
     for i in range(5):
         try:
             resp = cl_request.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
-            break
+            if len(area_Code['main']) > 0:
+                Screenshot = resp.image_data
+                base64_string = Screenshot.replace('data:image/jpg;base64,', '')
+                image_data = base64.b64decode(base64_string)  # 1. 解码 Base64 字符串为二进制数据
+                nparr = np.frombuffer(image_data, np.uint8)  # 2. 转换为 NumPy 数组
+                image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)  # 3. 使用 OpenCV 读取图片
+
+                area = area_Code['main'][0]['coordinates']  # 4. 定义裁剪区域 (y1:y2, x1:x2)
+                x1, x2 = area[0][0], area[1][0]
+                y1, y2 = area[1][1], area[2][1]
+                cropped_image = image[y1:y2, x1:x2]
+
+                if ui.checkBox_Main_Horizontal.isChecked():
+                    cropped_image = cv2.flip(cropped_image, 1)  # 🔁 5. 水平翻转图片
+                if ui.checkBox_Main_Vertica.isChecked():
+                    cropped_image = cv2.flip(cropped_image, 0)  # 🔁 5. 垂直翻转图片
+
+                _, buffer = cv2.imencode('.jpg', cropped_image)  # 5. 可选：转换裁剪后的图片回 Base64
+                img = base64.b64encode(buffer).decode("utf-8")
+            else:
+                img = resp.image_data[22:]
+            form_data = {
+                'CameraType': 'obs',
+                'img': img,
+                'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+            }
+            try:
+                res = requests.post(url=recognition_addr, data=form_data, timeout=8)
+                r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
+                # r_img = r_list[0]
+                # if os.path.exists(ui.lineEdit_upload_Path.text()):
+                #     image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_upload_Path.text(), lottery_term[0]), 'wb')
+                #     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+                #     image_json.close()
+                flg_start['ai_end'] = True
+                return r_list
+            except:
+                flg_start['ai_end'] = False
+                image_byte = base64.b64decode(img.encode('ascii'))
+                print('终点识别服务没有开启！')
+                return [image_byte, '[1]', 'obs']
         except:
             if i < 3:
                 try:
@@ -324,54 +364,9 @@ def get_picture(scence_current):
             else:
                 flg_start['obs'] = False
                 return ['', '[1]', 'obs']
-    try:
-        if len(area_Code['main']) > 0:
-            Screenshot = resp.image_data
-            base64_string = Screenshot.replace('data:image/jpg;base64,', '')
-            image_data = base64.b64decode(base64_string)  # 1. 解码 Base64 字符串为二进制数据
-            nparr = np.frombuffer(image_data, np.uint8)  # 2. 转换为 NumPy 数组
-            image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)  # 3. 使用 OpenCV 读取图片
-
-            area = area_Code['main'][0]['coordinates']  # 4. 定义裁剪区域 (y1:y2, x1:x2)
-            x1, x2 = area[0][0], area[1][0]
-            y1, y2 = area[1][1], area[2][1]
-            cropped_image = image[y1:y2, x1:x2]
-
-            if ui.checkBox_Main_Horizontal.isChecked():
-                cropped_image = cv2.flip(cropped_image, 1)  # 🔁 5. 水平翻转图片
-            if ui.checkBox_Main_Vertica.isChecked():
-                cropped_image = cv2.flip(cropped_image, 0)  # 🔁 5. 垂直翻转图片
-
-            _, buffer = cv2.imencode('.jpg', cropped_image)  # 5. 可选：转换裁剪后的图片回 Base64
-            img = base64.b64encode(buffer).decode("utf-8")
-        else:
-            img = resp.image_data[22:]
-    except:
-        print('OBS截图错误！')
-        return ['', '[1]', 'obs']
     # if os.path.exists(ui.lineEdit_upload_Path.text()):
     #     img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_upload_Path.text(), lottery_term[0], int(time.time()))
     #     str2image_file(img, img_file)  # 保存图片
-    form_data = {
-        'CameraType': 'obs',
-        'img': img,
-        'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
-    }
-    try:
-        res = requests.post(url=recognition_addr, data=form_data, timeout=8)
-        r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
-        # r_img = r_list[0]
-        # if os.path.exists(ui.lineEdit_upload_Path.text()):
-        #     image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_upload_Path.text(), lottery_term[0]), 'wb')
-        #     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-        #     image_json.close()
-        flg_start['ai_end'] = True
-        return r_list
-    except:
-        flg_start['ai_end'] = False
-        image_byte = base64.b64decode(img.encode('ascii'))
-        print('终点识别服务没有开启！')
-        return [image_byte, '[1]', 'obs']
 
 
 def obs_save_image():
@@ -385,19 +380,13 @@ def obs_save_image():
         while ui.checkBox_saveImgs_main.isChecked():
             res, value = sc.GAGetDiReverseCount()
             if res == 0:
-                num = int(value[0] / 2) - 1
-                print(num,'obs~~~~~~~~~~~~~~~~~~~~~~~')
+                num = int(value[0] / 2)
                 if num >= balls_count:
                     cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
                                                       '%s/%s.jpg' % (save_path, time.time()), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
-                        time.sleep(0.1)
-                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
-                        time.sleep(3)
                         sc.GASetDiReverseCount()  # 输入次数归0
-                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
-
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
             time.sleep(1)
@@ -511,9 +500,8 @@ def rtsp_save_image():
         while ui.checkBox_saveImgs_monitor.isChecked():
             res, value = sc.GAGetDiReverseCount()
             if res == 0:
-                num = int(value[0] / 2) - 1
-                print(num, 'rtsp~~~~~~~~~~~~~~~~~~')
-                if num >= balls_count:
+                num = int(value[0] / 2)
+                if num >= balls_count + 1:
                     cap = cv2.VideoCapture(rtsp_url)
                     if cap.isOpened():
                         ret, frame = cap.read()
@@ -528,12 +516,8 @@ def rtsp_save_image():
                         cap.release()
                         print(f'无法打开摄像头')
                         return
-                    if (not ui.checkBox_saveImgs_auto.isChecked()
-                            and not ui.checkBox_saveImgs_main.isChecked()) :
-                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
-                        time.sleep(3)
+                    if not ui.checkBox_saveImgs_auto.isChecked():
                         sc.GASetDiReverseCount()  # 输入次数归0
-                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
             time.sleep(1)
@@ -583,7 +567,7 @@ def deal_rank(integration_qiu_array):
                         and q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                     )  # 处理除终点排名位置的条件
                     or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
-                        and q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
+                        and abs(q_item[6] - ranking_array[r_index][6]) <= area_limit + balls_count
                         and ranking_array[r_index][8] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
@@ -2000,7 +1984,7 @@ class ObsEndThread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
-        global lottery_term
+        global lottery_term, cl_request
         global tcp_result_socket
         global action_area
         global term_comment
@@ -2015,23 +1999,44 @@ class ObsEndThread(QThread):
             print('结算页面运行！')
             self.signal.emit('录图结束')
             send_flg = True  # 发送赛果成功标志
-            try:
-                save_path = '%s' % ui.lineEdit_upload_Path.text()
-                if os.path.exists(save_path):
-                    lottery_term[9] = '%s/%s.jpg' % (save_path, term)
-                    cl_request.save_source_screenshot(ui.lineEdit_scene_name.text(), "jpg",
-                                                      lottery_term[9], 1920,
-                                                      1080, 100)
-                tcp_result_thread.send_type = 'updata'
-                tcp_result_thread.run_flg = True
+            save_path = '%s' % ui.lineEdit_upload_Path.text()
+            if os.path.exists(save_path):
+                lottery_term[9] = '%s/%s.jpg' % (save_path, term)
+                for i in range(5):
+                    try:
+                        cl_request.save_source_screenshot(ui.lineEdit_scene_name.text(), "jpg",
+                                                          lottery_term[9], 1920,
+                                                          1080, 100)
+                        tcp_result_thread.send_type = 'updata'
+                        tcp_result_thread.run_flg = True
 
-                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
-                                                  False)  # 关闭排名来源
-                cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
-                                                  True)  # 打开结果来源
-            except:
-                print('OBS 切换操作失败！')
-                flg_start['obs'] = False
+                        cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
+                                                          False)  # 关闭排名来源
+                        cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
+                                                          True)  # 打开结果来源
+                        # 获取录屏状态
+                        recording_status = cl_request.get_record_status()
+                        # 检查是否正在录屏
+                        if recording_status.output_active:  # 确保键名正确
+                            time.sleep(3)
+                            video_name = cl_request.stop_record()  # 关闭录像
+                            lottery_term[10] = video_name.output_path  # 视频保存路径
+                        break
+                    except:
+                        if i < 3:
+                            try:
+                                cl_request.disconnect()
+                                time.sleep(0.5)
+                                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                                print('重连OBS~~~~~~~~~~~~')
+                                time.sleep(0.5)
+                            except:
+                                print('链接OBS失败~~~~~~~~~~~~')
+                            continue
+                        else:
+                            lottery_term[9] = '截图失败'
+                            print('OBS 切换操作失败！')
+                            flg_start['obs'] = False
 
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
@@ -2088,16 +2093,6 @@ class ObsEndThread(QThread):
                     print('上传结果错误！')
                 ReStart_Thread.start_flg = False  # 比赛结束标志
                 lottery_term[2] = str(int(time.time() - ranking_time_start))
-            # 获取录屏状态
-            recording_status = cl_request.get_record_status()
-            try:
-                # 检查是否正在录屏
-                if recording_status.output_active:  # 确保键名正确
-                    time.sleep(3)
-                    video_name = cl_request.stop_record()  # 关闭录像
-                    lottery_term[10] = video_name.output_path  # 视频保存路径
-            except:
-                pass
             if send_flg:
                 lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             else:
@@ -2284,7 +2279,8 @@ class ScreenShotThread(QThread):
             for i in range(0, len(camera_list)):
                 for j in range(0, len(ranking_array)):
                     if ranking_array[j][5] == camera_list[i]:
-                        ranking_array[j][6] = max_area_count + 1
+                        if i < balls_count - 1:
+                            ranking_array[j][6] = max_area_count + 1
                         ranking_array[j][8] = max_lap_count - 1
                         ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
                 if len(ball_sort[max_area_count + 1][max_lap_count - 1]) - 1 < i:
