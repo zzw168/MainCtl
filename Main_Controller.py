@@ -4213,7 +4213,8 @@ class MapLabel(QLabel):
                             self.speed = 2
                         elif p < self.positions[num][0] and ranking_array[num][9] == 1:
                             self.positions[num][0] = p  # 跨圈情况
-                        elif int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text()):
+                        elif (int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text())
+                              and self.map_action < len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 停留超过 5 秒  12号赛道不需要
                         else:
                             self.speed = 1
