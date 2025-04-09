@@ -1554,6 +1554,7 @@ class ReStartThread(QThread):
             action_area = [0, 0, 0]  # 初始化触发区域
             ready_flg = True  # 准备动作开启信号
             ball_stop = False  # 保留卡珠信号
+            TrapBall_ui.trap_flg = False    # 卡珠标记
             try:
                 cl_request.disconnect()  # 断开重连 OBS
                 time.sleep(0.5)
@@ -4276,7 +4277,7 @@ class MapLabel(QLabel):
         # 保留卡珠位置
         if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
             ball_stop = True
-        if TrapBall_ui.isVisible():
+        if TrapBall_ui.trap_flg:
             self.pos_stop = copy.deepcopy(self.positions)
             for num in range(0, balls_count):
                 for i in range(len(self.pos_stop)):  # 排序
@@ -6477,6 +6478,7 @@ class MapUi(QDialog, Ui_Dialog_Map):
 class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.trap_flg = False   # 卡珠记录时间标记
 
     def setupUi(self, z_dialog):
         super(TrapBallUi, self).setupUi(z_dialog)
@@ -6517,6 +6519,7 @@ def set_trap_btn():
 
 def trap_ok():
     PlanBallNum_Thread.run_flg = False
+    TrapBall_ui.trap_flg = True
     TrapBall_ui.hide()
 
 
