@@ -1896,7 +1896,7 @@ class PlanBallNumThread(QThread):
                                 sec_ += 1
                                 for i in range(max_area_count, max_area_count - balls_count, -1):
                                     for j in range(balls_count):
-                                        if ranking_array[balls_count][6] == i:
+                                        if ranking_array[j][6] == i:
                                             ball_sort[i][max_lap_count - 1] = []
                                             break
                                 self.signal.emit(
