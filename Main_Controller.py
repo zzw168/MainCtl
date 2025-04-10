@@ -1555,6 +1555,7 @@ class ReStartThread(QThread):
             ready_flg = True  # 准备动作开启信号
             ball_stop = False  # 保留卡珠信号
             TrapBall_ui.trap_flg = False    # 卡珠标记
+            map_label_big.pos_stop = [] # 重置停留位置
             try:
                 cl_request.disconnect()  # 断开重连 OBS
                 time.sleep(0.5)
@@ -1667,7 +1668,6 @@ class ReStartThread(QThread):
                     print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                     time.sleep(1)
                 PlanCmd_Thread.run_flg = True
-                map_label_big.pos_stop = []
 
             print("循环启动！")
             self.run_flg = False
@@ -1895,7 +1895,10 @@ class PlanBallNumThread(QThread):
                                 time_old = time.time()
                                 sec_ += 1
                                 for i in range(max_area_count, max_area_count - balls_count, -1):
-                                    ball_sort[i][max_lap_count - 1] = []
+                                    for j in range(balls_count):
+                                        if ranking_array[balls_count][6] == i:
+                                            ball_sort[i][max_lap_count - 1] = []
+                                            break
                                 self.signal.emit(
                                     succeed('计球倒计时：%s' %
                                             str(int(ui.lineEdit_end_count_ball.text()) - sec_)))
