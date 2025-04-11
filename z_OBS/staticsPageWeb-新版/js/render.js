@@ -4,14 +4,14 @@ const datalist ={
   qh:"9555059",
   rank:[
       
-      {
-        "mc": 10,
-        "time": "138.18"
-      },
-      {
-        "mc": 9,
-        "time": "138.18"
-      },
+      // {
+      //   "mc": 10,
+      //   "time": "138.18"
+      // },
+      // {
+      //   "mc": 9,
+      //   "time": "138.18"
+      // },
       {
         "mc": 8,
         "time": "138.18"
@@ -70,7 +70,6 @@ $("#wrap").html(`
            
           <div class="pathBox flex-box center column animate__animated animate__backInRight">
            <div class="coutBox" >
-            
                 <div class="txt flex-box center ">${rTopTxt}</div>
             </div>  
             <img id="sphere" class="pathImg" src="./assets/pathBg.png" alt="" />
@@ -82,7 +81,7 @@ $("#wrap").html(`
                       </div>  
                 </div> 
                 <div class="rtxt fl ">
-                    <div>TURN</div>
+                    <div>TURNS</div>
                         <div class="rtxt2">
                          ${rtxt2}
                       </div>  
