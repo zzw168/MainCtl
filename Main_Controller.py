@@ -428,13 +428,13 @@ def obs_script_request():
 
 
 # 获取网络摄像头图片
-def get_rtsp(rtsp_url):
+def get_rtsp(r_url):
     # try:
     #     ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
     #     requests.get(ip_address)
     # except:
     #     return ['', '[1]', 'monitor']
-    cap = cv2.VideoCapture(rtsp_url)
+    cap = cv2.VideoCapture(r_url)
     if cap.isOpened():
         for i in range(3):
             ret, frame = cap.read()
