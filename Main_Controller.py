@@ -473,7 +473,7 @@ def get_rtsp(rtsp_url):
                         print("jpg_base64 转换错误！")
                         continue
                 except:
-                    print("识别服务器未开启！")
+                    print("图片错误或识别服务器未开启！")
                     continue
             else:
                 print("无法读取视频帧")
