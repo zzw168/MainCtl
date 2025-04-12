@@ -4279,6 +4279,7 @@ class MapLabel(QLabel):
                         p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
                         if p < len(self.path_points):
                             self.pos_stop[num][0] = p
+            TrapBall_ui.trap_flg = False
         if ball_stop:
             if len(self.pos_stop) == len(self.positions):
                 self.positions = copy.deepcopy(self.pos_stop)

@@ -565,10 +565,10 @@ def deal_rank(integration_qiu_array):
 
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
                     or (max_area_count - balls_count >= q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
-                        and q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
+                        and 0 < q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                     )  # 处理除终点排名位置的条件
                     or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
-                        and abs(q_item[6] - ranking_array[r_index][6]) <= area_limit + balls_count
+                        and 0< q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
                         and ranking_array[r_index][8] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
@@ -1118,8 +1118,10 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
             continue
         if len(ball) == 7:
             ball.append(0)
-        x = (ball[0] + ball[2]) / 2
-        y = (ball[1] + ball[3]) / 2
+        # x = (ball[0] + ball[2]) / 2
+        # y = (ball[1] + ball[3]) / 2
+        x = ball[0]
+        y = ball[1]
         point = (x, y)
         if cap_num in area_Code.keys():
             for area in area_Code[cap_num]:
@@ -4277,6 +4279,7 @@ class MapLabel(QLabel):
                         p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
                         if p < len(self.path_points):
                             self.pos_stop[num][0] = p
+            TrapBall_ui.trap_flg = False
         if ball_stop:
             if len(self.pos_stop) == len(self.positions):
                 self.positions = copy.deepcopy(self.pos_stop)
