@@ -565,10 +565,10 @@ def deal_rank(integration_qiu_array):
 
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
                     or (max_area_count - balls_count >= q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
-                        and q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
+                        and 0 < q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                     )  # 处理除终点排名位置的条件
                     or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
-                        and abs(q_item[6] - ranking_array[r_index][6]) <= area_limit + balls_count
+                        and 0 < q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
                         and ranking_array[r_index][8] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
@@ -616,16 +616,20 @@ def sort_ranking():
         for j in range(0, len(ranking_array) - i - 1):
             if ranking_array[j][6] == ranking_array[j + 1][6]:
                 if ranking_array[j][7] == 0:  # (左后->右前)
-                    if ranking_array[j][0] < ranking_array[j + 1][0]:
+                    if ((ranking_array[j][0] + ranking_array[j][2]) / 2
+                            < (ranking_array[j + 1][0] + ranking_array[j + 1][2]) / 2):
                         ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
                 if ranking_array[j][7] == 1:  # (左前<-右后)
-                    if ranking_array[j][0] > ranking_array[j + 1][0]:
+                    if ((ranking_array[j][0] + ranking_array[j][2]) / 2
+                            > (ranking_array[j + 1][0] + ranking_array[j + 1][2]) / 2):
                         ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
                 if ranking_array[j][7] == 10:  # (上前 ↑ 下后)
-                    if ranking_array[j][1] > ranking_array[j + 1][1]:
+                    if ((ranking_array[j][1] + ranking_array[j][3]) / 2
+                            < (ranking_array[j + 1][1] + ranking_array[j + 1][3]) / 2):
                         ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
                 if ranking_array[j][7] == 11:  # (上后 ↓ 下前)
-                    if ranking_array[j][1] < ranking_array[j + 1][1]:
+                    if ((ranking_array[j][1] + ranking_array[j][3]) / 2
+                            > (ranking_array[j + 1][1] + ranking_array[j + 1][3]) / 2):
                         ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
     # 3.圈数排序
     for i in range(0, len(ranking_array)):  # 冒泡排序
@@ -1012,8 +1016,9 @@ class DealUdpThread(QThread):
                 for k in range(0, balls_count):
                     con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
                     con_data.append(
-                        [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
-                         con_item['y1']])
+                        [con_item['name'], con_item['position'], con_item['lapCount'],
+                         int((con_item['x1'] + con_item['x2']) / 2),
+                         int((con_item['y1'] + con_item['y2']) / 2)])
                 if ranking_array[0][9] != 0:
                     color_to_num(ranking_array)
 
