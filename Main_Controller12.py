@@ -4174,7 +4174,7 @@ class MapLabel(QLabel):
         self.timer.start(self.flash_time)  # 每1秒更新一次
 
     def update_positions(self):
-        global positions_live, t
+        global positions_live, ranking_time
         global z_ranking_res
         global ball_stop
         # 更新每个小球的位置
@@ -4253,10 +4253,10 @@ class MapLabel(QLabel):
                 x, y = self.path_points[self.positions[i][0]]
                 b = round(self.positions[i][0] / len(self.path_points), 4)
                 if self.bet_running:
-                    t = int((time.time() - ranking_time_start) * 1000)
+                    ranking_time = int((time.time() - ranking_time_start) * 1000)
                 res.append(
                     {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
-                     "b": b * 100, "t": t})
+                     "b": b * 100, "t": ranking_time})
             positions_live = {
                 "raceTrackID": Track_number,
                 "term": term,
@@ -6919,7 +6919,7 @@ if __name__ == '__main__':
     ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
     map_orbit = []  # 地图轨迹
     previous_channel = None  # 音效通道
-    t = 0  # 比赛进行时间
+    ranking_time = 0  # 比赛进行时间
     positions_live = {
         "raceTrackID": "D",
         "term": "5712844",
