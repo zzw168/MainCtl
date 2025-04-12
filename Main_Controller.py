@@ -1541,8 +1541,8 @@ class ReStartThread(QThread):
             action_area = [0, 0, 0]  # 初始化触发区域
             ready_flg = True  # 准备动作开启信号
             ball_stop = False  # 保留卡珠信号
-            TrapBall_ui.trap_flg = False    # 卡珠标记
-            map_label_big.pos_stop = [] # 重置停留位置
+            TrapBall_ui.trap_flg = False  # 卡珠标记
+            map_label_big.pos_stop = []  # 重置停留位置
             try:
                 cl_request.disconnect()  # 断开重连 OBS
                 time.sleep(0.5)
@@ -1849,7 +1849,7 @@ class PlanBallNumThread(QThread):
                             num = len(z_ranking_time)
                         if num > num_old:
                             for i in range(num):
-                                if z_ranking_time[i] == '':
+                                if z_ranking_time[i] in ['TRAP', 'OUT', '']:
                                     t = time.time()
                                     z_ranking_time[i] = '%.2f' % (t - ranking_time_start)
                             if num == 1:
@@ -6468,7 +6468,7 @@ class MapUi(QDialog, Ui_Dialog_Map):
 class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.trap_flg = False   # 卡珠记录时间标记
+        self.trap_flg = False  # 卡珠记录时间标记
 
     def setupUi(self, z_dialog):
         super(TrapBallUi, self).setupUi(z_dialog)
