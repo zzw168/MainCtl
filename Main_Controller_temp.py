@@ -4161,8 +4161,8 @@ class MapLabel(QLabel):
                 map_scale = picture_size / int(map_data[2])  # 缩放比例
             for i in range(len(fcc_data)):
                 self.path_points.append([])
-            for p in fcc_data[0]["content"]:
-                self.path_points[0].append((p['x'] * map_scale, p['y'] * map_scale))
+                for p in fcc_data[i]["content"]:
+                    self.path_points[i].append((p['x'] * map_scale, p['y'] * map_scale))
             self.path_points[0] = divide_path(self.path_points[0], self.step_length)
             print('地图长度:%s' % len(self.path_points[0]))
             if map_scale == 1:
@@ -4173,8 +4173,8 @@ class MapLabel(QLabel):
         self.flash_time = flash_time
         self.positions = []  # 每个球的当前位置索引
         for num in range(balls_count):
-            self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0])
-            # [位置索引, 顔色, 號碼, 圈數, 实际位置, 停留时间]
+            self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0])
+            # [位置索引, 顔色, 號碼, 圈數, 实际位置, 停留时间, 路线, 方向]
         # 创建定时器，用于定时更新球的位置
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_positions)  # 定时触发更新
@@ -4187,9 +4187,9 @@ class MapLabel(QLabel):
         global pos_stop
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
-            self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间]
+            self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间, 路线, 方向]
             for num in range(balls_count):
-                self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0])
+                self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0])
         for num in range(0, balls_count):
             if len(ranking_array) >= balls_count and ranking_array[num][5] in self.color_names.keys():
                 area_num = max_area_count - balls_count  # 跟踪区域数量
@@ -4203,7 +4203,9 @@ class MapLabel(QLabel):
                     for i in range(len(self.positions)):  # 排序
                         if self.positions[i][1] == ranking_array[num][5]:
                             self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
-                            self.positions[num][3] = ranking_array[num][9]
+                            self.positions[num][3] = ranking_array[num][9]  # 可见标志
+                            self.positions[num][6] = ranking_array[num][8]  # 路线标志
+                            self.positions[num][7] = ranking_array[num][7]  # 方向标志
                             if self.positions[num][4] != p:
                                 self.positions[num][4] = p
                                 self.positions[num][5] = int(time.time())
@@ -4323,6 +4325,11 @@ class MapLabel(QLabel):
             index = self.positions[index_position][0]  # 获取当前球的路径索引
             if index in range(len(self.path_points[0])):
                 x, y = self.path_points[0][index]
+                if self.positions[index_position][6]!= 0:   # 分岔路线
+                    if self.positions[index_position][7] < 10:  # 小于10是X轴
+                        y = interpolate_y_from_x(self.path_points[self.positions[index_position][6]], x)
+                    else:
+                        x = interpolate_x_from_y(self.path_points[self.positions[index_position][6]], y)
                 # 设置球的颜色
                 painter.setBrush(QBrush(self.color_names[self.positions[index_position][1]], Qt.SolidPattern))
                 # 绘制球
