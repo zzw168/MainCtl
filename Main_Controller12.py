@@ -573,8 +573,8 @@ def deal_rank(integration_qiu_array):
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
                     for i in range(len(ranking_array)):
-                        if ((abs(q_item[0] - ranking_array[i][0]) < 15)  # 不能和前一个球的位置重叠
-                                and (abs(q_item[1] - ranking_array[i][1]) < 15)):  # 避免误判两种颜色
+                        if ((abs(q_item[0] - ranking_array[i][0]) < 5)  # 不能和前一个球的位置重叠
+                                and (abs(q_item[1] - ranking_array[i][1]) < 5)):  # 避免误判两种颜色
                             write_ok = False
                             break
                     if write_ok:
@@ -1536,6 +1536,7 @@ class ReStartThread(QThread):
         global ball_stop
         global ranking_time_start
         global cl_request
+        global pos_stop
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -1544,7 +1545,7 @@ class ReStartThread(QThread):
             ready_flg = True  # 准备动作开启信号
             ball_stop = False  # 保留卡珠信号
             TrapBall_ui.trap_flg = False  # 卡珠标记
-            map_label_big.pos_stop = []  # 重置停留位置
+            pos_stop = []  # 重置停留位置
             try:
                 cl_request.disconnect()  # 断开重连 OBS
                 time.sleep(0.5)
@@ -4166,7 +4167,6 @@ class MapLabel(QLabel):
         self.speed = 1  # 小球每次前进的步数（可以根据需要调整）
         self.flash_time = flash_time
         self.positions = []  # 每个球的当前位置索引
-        self.pos_stop = []  # 每个球的停止位置索引
         for num in range(balls_count):
             self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0])
             # [位置索引, 顔色, 號碼, 圈數, 实际位置, 停留时间]
@@ -4179,6 +4179,7 @@ class MapLabel(QLabel):
         global positions_live, ranking_time
         global z_ranking_res
         global ball_stop
+        global pos_stop
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
             self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间]
@@ -4270,19 +4271,19 @@ class MapLabel(QLabel):
         if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
             ball_stop = True
         if TrapBall_ui.trap_flg:
-            self.pos_stop = copy.deepcopy(self.positions)
+            pos_stop = copy.deepcopy(self.positions)
             for num in range(0, balls_count):
-                for i in range(len(self.pos_stop)):  # 排序
-                    if self.pos_stop[i][1] == ranking_array[num][5]:
-                        self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
+                for i in range(len(pos_stop)):  # 排序
+                    if pos_stop[i][1] == ranking_array[num][5]:
+                        pos_stop[i], pos_stop[num] = pos_stop[num], pos_stop[i]
                         area_num = max_area_count - balls_count  # 跟踪区域数量
                         p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
                         if p < len(self.path_points):
-                            self.pos_stop[num][0] = p
+                            pos_stop[num][0] = p
             TrapBall_ui.trap_flg = False
         if ball_stop:
-            if len(self.pos_stop) == len(self.positions):
-                self.positions = copy.deepcopy(self.pos_stop)
+            if len(pos_stop) == len(self.positions):
+                self.positions = copy.deepcopy(pos_stop)
 
         # 触发重绘
         self.update()
@@ -6783,6 +6784,7 @@ if __name__ == '__main__':
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
     ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
     ball_stop = False
+    pos_stop = []  # 每个球的停止位置索引
 
     # 初始化数据
     max_lap_count = 1  # 最大圈
