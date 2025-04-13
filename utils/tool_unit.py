@@ -206,7 +206,7 @@ if __name__ == '__main__':
     # x_at_50 = interpolate_x_from_y(polyline, y_target)
     # print(f"Y = {y_target} 对应的 X ≈ {x_at_50}")
     polyline = [(0, 0), (100, 100), (200, 0)]
-    x_target = 150
+    x_target = 140
 
     y_at_150 = interpolate_y_from_x(polyline, x_target)
     print(f"X = {x_target} 对应的 Y ≈ {y_at_150}")
