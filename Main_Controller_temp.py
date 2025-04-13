@@ -583,7 +583,6 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][10] = 1
 
                 if (r_index > 0
-                        # and ranking_array[r_index][9] < ranking_array[0][9]
                         and q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         for r_i in range(0, len(q_item)):
@@ -593,7 +592,7 @@ def deal_rank(integration_qiu_array):
                 replaced = True
                 break
         if not replaced:
-            if map_label_big.map_action >= len(map_label_big.path_points) - 20:
+            if map_label_big.map_action >= len(map_label_big.path_points[0]) - 20:
                 ranking_array[r_index][10] = 1
             else:
                 ranking_array[r_index][10] = 0
@@ -2782,7 +2781,7 @@ class PlanCmdThread(QThread):
                                     and not self.ready_state
                                     and not self.background_state
                                     and (map_label_big.map_action >=
-                                         len(map_label_big.path_points) / 10 * int(ui.lineEdit_Map_Action.text()))
+                                         len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
                                 # if len(plan_list) / 10 * 8 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
@@ -4160,12 +4159,14 @@ class MapLabel(QLabel):
                 map_scale = 1
             else:
                 map_scale = picture_size / int(map_data[2])  # 缩放比例
+            for i in range(len(fcc_data)):
+                self.path_points.append([])
             for p in fcc_data[0]["content"]:
-                self.path_points.append((p['x'] * map_scale, p['y'] * map_scale))
-            self.path_points = divide_path(self.path_points, self.step_length)
-            print('地图长度:%s' % len(self.path_points))
+                self.path_points[0].append((p['x'] * map_scale, p['y'] * map_scale))
+            self.path_points[0] = divide_path(self.path_points[0], self.step_length)
+            print('地图长度:%s' % len(self.path_points[0]))
             if map_scale == 1:
-                map_orbit = self.path_points
+                map_orbit = self.path_points[0]
 
         # self.num_balls = 8  # 8个小球
         self.speed = 1  # 小球每次前进的步数（可以根据需要调整）
@@ -4196,9 +4197,9 @@ class MapLabel(QLabel):
                      and not ObsEnd_Thread.ball_flg)
                         or (ranking_array[num][6] >= max_area_count + 1
                             and ObsEnd_Thread.ball_flg)):
-                    p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
-                    if p >= len(self.path_points):
-                        p = len(self.path_points) - 1
+                    p = int(len(self.path_points[0]) * (ranking_array[num][6] / area_num))
+                    if p >= len(self.path_points[0]):
+                        p = len(self.path_points[0]) - 1
                     for i in range(len(self.positions)):  # 排序
                         if self.positions[i][1] == ranking_array[num][5]:
                             self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
@@ -4213,11 +4214,11 @@ class MapLabel(QLabel):
                             index = len(ranking_array) * self.ball_space - num * self.ball_space
                     elif (ranking_array[num][9] >= max_lap_count - 1  # 最后一圈处理
                           and ranking_array[num][6] >= max_area_count / 3 * 2
-                          and self.positions[num][0] > len(self.path_points) - num * self.ball_space - 20):
+                          and self.positions[num][0] > len(self.path_points[0]) - num * self.ball_space - 20):
                         if num == 0:
-                            index = len(self.path_points) - 1
+                            index = len(self.path_points[0]) - 1
                         else:
-                            index = len(self.path_points) - 1 - num * self.ball_space
+                            index = len(self.path_points[0]) - 1 - num * self.ball_space
                     else:
                         if p - self.positions[num][0] > 50:
                             self.speed = 3
@@ -4226,15 +4227,15 @@ class MapLabel(QLabel):
                         elif p < self.positions[num][0] and ranking_array[num][10] == 1:
                             self.positions[num][0] = p  # 跨圈情况
                         elif (int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text())
-                              and self.map_action <= len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
+                              and self.map_action <= len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 盲跑时间
                         elif (int(time.time()) - self.positions[num][5] > 1
-                              and self.map_action > len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
+                              and self.map_action > len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
                         else:
                             self.speed = 1
                         index = self.positions[num][0] + self.speed
-                    if index < len(self.path_points) and ranking_array[num][9] < max_lap_count:
+                    if index < len(self.path_points[0]) and ranking_array[num][9] < max_lap_count:
                         self.positions[num][0] = index
                         for color_index in range(len(init_array)):
                             if init_array[color_index][5] == ranking_array[num][5]:
@@ -4246,7 +4247,7 @@ class MapLabel(QLabel):
 
         # 更新实时触发位置
         for i in range(len(self.positions)):
-            if ((self.positions[i][0] - self.map_action < len(self.path_points) / 3)
+            if ((self.positions[i][0] - self.map_action < len(self.path_points[0]) / 3)
                     and (self.positions[i][3]) == action_area[1]):  # 圈数重置后，重新位置更新范围限制300个点位以内
                 if self.picture_size == 860:
                     if self.map_action < self.positions[i][0]:
@@ -4257,8 +4258,8 @@ class MapLabel(QLabel):
         res = []
         if self.picture_size == 860:
             for i in range(balls_count):
-                x, y = self.path_points[self.positions[i][0]]
-                b = round(self.positions[i][0] / len(self.path_points), 4)
+                x, y = self.path_points[0][self.positions[i][0]]
+                b = round(self.positions[i][0] / len(self.path_points[0]), 4)
                 if self.bet_running:
                     ranking_time = int((time.time() - ranking_time_start) * 1000)
                 res.append(
@@ -4281,8 +4282,8 @@ class MapLabel(QLabel):
                     if pos_stop[i][1] == ranking_array[num][5]:
                         pos_stop[i], pos_stop[num] = pos_stop[num], pos_stop[i]
                         area_num = max_area_count - balls_count  # 跟踪区域数量
-                        p = int(len(self.path_points) * (ranking_array[num][6] / area_num))
-                        if p < len(self.path_points):
+                        p = int(len(self.path_points[0]) * (ranking_array[num][6] / area_num))
+                        if p < len(self.path_points[0]):
                             pos_stop[num][0] = p
             TrapBall_ui.trap_flg = False
         if ball_stop:
@@ -4301,27 +4302,27 @@ class MapLabel(QLabel):
         painter.setRenderHint(QPainter.Antialiasing)
 
         if ui.checkBox_show_orbit.isChecked():  # 绘制路径
-            for index in range(len(self.path_points)):
-                part = len(self.path_points) / (max_area_count - balls_count)
+            for index in range(len(self.path_points[0])):
+                part = len(self.path_points[0]) / (max_area_count - balls_count)
                 if index % int(part) == 0:
                     painter.setBrush(QBrush(QColor(255, 0, 0), Qt.SolidPattern))
                     font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
                     painter.setFont(font)
                     painter.setPen('green')
-                    painter.drawText(int(self.path_points[index][0]), int(self.path_points[index][1]),
+                    painter.drawText(int(self.path_points[0][index][0]), int(self.path_points[0][index][1]),
                                      str(index // int(part)))
-                    painter.drawEllipse(int(self.path_points[index][0]), int(self.path_points[index][1]),
+                    painter.drawEllipse(int(self.path_points[0][index][0]), int(self.path_points[0][index][1]),
                                         10, 10)
                 else:
                     painter.setBrush(QBrush(QColor(0, 255, 0), Qt.SolidPattern))
-                    painter.drawEllipse(int(self.path_points[index][0]), int(self.path_points[index][1]),
+                    painter.drawEllipse(int(self.path_points[0][index][0]), int(self.path_points[0][index][1]),
                                         2, 2)
 
         # 绘制每个小球
         for index_position in range(len(self.positions)):
             index = self.positions[index_position][0]  # 获取当前球的路径索引
-            if index in range(len(self.path_points)):
-                x, y = self.path_points[index]
+            if index in range(len(self.path_points[0])):
+                x, y = self.path_points[0][index]
                 # 设置球的颜色
                 painter.setBrush(QBrush(self.color_names[self.positions[index_position][1]], Qt.SolidPattern))
                 # 绘制球

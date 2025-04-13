@@ -11,6 +11,8 @@ from PySide6.QtCore import QByteArray, QBuffer, QIODevice
 from PySide6.QtGui import QImage
 import os
 
+from scipy.interpolate import interp1d
+
 
 def limit_folder_size(folder_path, max_files=5000):  # 保持文件夹里最大文件数量
     # 获取文件列表，并按修改时间排序（最早修改的在前）
@@ -104,6 +106,36 @@ def is_natural_num(z):
         return False
 
 
+def interpolate_y_from_x(polyline, x_value):
+    """
+    给定 polyline 和某个 x 值，返回对应的 y 值（通过线性插值）
+    :param polyline: list of (x, y)
+    :param x_value: float，目标 x
+    :return: float，插值得到的 y
+    """
+    points = sorted(polyline, key=lambda p: p[0])  # 确保按 x 排序
+    x_vals = [p[0] for p in points]
+    y_vals = [p[1] for p in points]
+
+    interpolator = interp1d(x_vals, y_vals, bounds_error=False, fill_value="extrapolate")
+    return float(interpolator(x_value))
+
+
+def interpolate_x_from_y(polyline, y_value):
+    """
+    给定 polyline 和某个 y 值，返回对应的 x 值（通过线性插值）
+    :param polyline: list of (x, y)
+    :param y_value: float，目标 y
+    :return: float，插值得到的 x
+    """
+    points = sorted(polyline, key=lambda p: p[1])  # 按 y 值排序
+    y_vals = [p[1] for p in points]
+    x_vals = [p[0] for p in points]
+
+    interpolator = interp1d(y_vals, x_vals, bounds_error=False, fill_value="extrapolate")
+    return float(interpolator(y_value))
+
+
 def divide_path(path_points, step_length):
     """
     按照固定的步长分割路径。
@@ -166,3 +198,16 @@ def z_sort(z_array, direction=0, index=None):  # 排序函数
                     if z_array[j] > z_array[j + 1]:
                         z_array[j], z_array[j + 1] = z_array[j + 1], z_array[j]
     return z_array
+
+if __name__ == '__main__':
+    # polyline = [(0, 0), (100, 100), (200, 0)]
+    # y_target = 100
+    #
+    # x_at_50 = interpolate_x_from_y(polyline, y_target)
+    # print(f"Y = {y_target} 对应的 X ≈ {x_at_50}")
+    polyline = [(0, 0), (100, 100), (200, 0)]
+    x_target = 150
+
+    y_at_150 = interpolate_y_from_x(polyline, x_target)
+    print(f"X = {x_target} 对应的 Y ≈ {y_at_150}")
+
