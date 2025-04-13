@@ -5531,6 +5531,8 @@ class CheckFileThread(QThread):
                     ui.frame_zzw_2.setEnabled(True)
                     ui.groupBox_ranking.setEnabled(True)
                     ui.checkBox_shoot_0.setEnabled(True)
+                    ui.checkBox_Pass_Recognition_Start.setEnabled(True)
+                    ui.checkBox_Pass_Ranking_Twice.setEnabled(True)
                     ui.lineEdit_balls_auto.setEnabled(True)
             else:
                 if ui.frame_zzw_1.isEnabled():
@@ -5538,6 +5540,8 @@ class CheckFileThread(QThread):
                     ui.frame_zzw_2.setEnabled(False)
                     ui.groupBox_ranking.setEnabled(False)
                     ui.checkBox_shoot_0.setEnabled(False)
+                    ui.checkBox_Pass_Recognition_Start.setEnabled(False)
+                    ui.checkBox_Pass_Ranking_Twice.setEnabled(False)
                     ui.lineEdit_balls_auto.setEnabled(False)
 
 

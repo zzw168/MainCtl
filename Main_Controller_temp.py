@@ -550,26 +550,26 @@ def deal_rank(integration_qiu_array):
         for q_item in integration_qiu_array:
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
                 if (ranking_array[0][6] >= max_area_count - balls_count
-                        and ranking_array[0][8] >= max_lap_count - 1):
+                        and ranking_array[0][9] >= max_lap_count - 1):
                     for i in range(len(ranking_array)):
-                        ranking_array[i][8] = max_lap_count - 1
+                        ranking_array[i][9] = max_lap_count - 1
 
                 if (q_item[6] < ranking_array[r_index][6] < max_area_count + 1
-                        and ranking_array[r_index][8] < max_lap_count - 1):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
+                        and ranking_array[r_index][9] < max_lap_count - 1):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
                     if result_count >= max_area_count - area_limit - balls_count:
-                        ranking_array[r_index][8] += 1
+                        ranking_array[r_index][9] += 1
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
-                        if ranking_array[r_index][8] > max_lap_count - 1:
-                            ranking_array[r_index][8] = max_lap_count - 1
+                        if ranking_array[r_index][9] > max_lap_count - 1:
+                            ranking_array[r_index][9] = max_lap_count - 1
 
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
                     or (max_area_count - balls_count >= q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
                         and 0 < q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                     )  # 处理除终点排名位置的条件
                     or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
-                        and 0< q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
-                        and ranking_array[r_index][8] == max_lap_count - 1  # 处理最后一圈终点附近的条件
+                        and 0 < q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
+                        and ranking_array[r_index][9] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
                     for i in range(len(ranking_array)):
@@ -580,23 +580,23 @@ def deal_rank(integration_qiu_array):
                     if write_ok:
                         for r_i in range(0, len(q_item)):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                        ranking_array[r_index][9] = 1
+                        ranking_array[r_index][10] = 1
 
                 if (r_index > 0
-                        # and ranking_array[r_index][8] < ranking_array[0][8]
+                        # and ranking_array[r_index][9] < ranking_array[0][9]
                         and q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         for r_i in range(0, len(q_item)):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                        ranking_array[r_index][9] = 1
-                        ranking_array[r_index][8] = ranking_array[0][8]
+                        ranking_array[r_index][10] = 1
+                        ranking_array[r_index][9] = ranking_array[0][9]
                 replaced = True
                 break
         if not replaced:
             if map_label_big.map_action >= len(map_label_big.path_points) - 20:
-                ranking_array[r_index][9] = 1
+                ranking_array[r_index][10] = 1
             else:
-                ranking_array[r_index][9] = 0
+                ranking_array[r_index][10] = 0
 
     sort_ranking()
 
@@ -630,14 +630,14 @@ def sort_ranking():
     # 3.圈数排序
     for i in range(0, len(ranking_array)):  # 冒泡排序
         for j in range(0, len(ranking_array) - i - 1):
-            if ranking_array[j][8] < ranking_array[j + 1][8]:
+            if ranking_array[j][9] < ranking_array[j + 1][9]:
                 ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
     # 4.寄存器保存固定每个区域的最新排位（因为ranking_array 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
     for i in range(0, len(ranking_array)):
         if len(ball_sort) - 1 < ranking_array[i][6]:
             continue
-        if not (ranking_array[i][5] in ball_sort[ranking_array[i][6]][ranking_array[i][8]]):
-            ball_sort[ranking_array[i][6]][ranking_array[i][8]].append(copy.deepcopy(ranking_array[i][5]))  # 添加寄存器球排序
+        if not (ranking_array[i][5] in ball_sort[ranking_array[i][6]][ranking_array[i][9]]):
+            ball_sort[ranking_array[i][6]][ranking_array[i][9]].append(copy.deepcopy(ranking_array[i][5]))  # 添加寄存器球排序
     # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
     for i in range(0, len(ranking_array)):
         for j in range(0, len(ranking_array) - i - 1):
@@ -1014,7 +1014,7 @@ class DealUdpThread(QThread):
                     con_data.append(
                         [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
                          con_item['y1']])
-                if ranking_array[0][9] != 0:
+                if ranking_array[0][10] != 0:
                     color_to_num(ranking_array)
 
 
@@ -1091,7 +1091,7 @@ def load_area():  # 载入位置文件初始化区域列表
                 content = file.read().split('\n')
             for area in content:
                 if area:
-                    polgon_array = {'coordinates': [], 'area_code': 0, 'direction': 0}
+                    polgon_array = {'coordinates': [], 'area_code': 0, 'direction': 0, 'road_path': 0}
                     paths = area.split(' ')
                     if len(paths) < 2:
                         print("分区文件错误！")
@@ -1104,6 +1104,8 @@ def load_area():  # 载入位置文件初始化区域列表
                     polgon_array['area_code'] = int(paths[1])
                     if len(paths) > 2:
                         polgon_array['direction'] = int(paths[2])
+                    if len(paths) > 3:
+                        polgon_array['road_path'] = int(paths[3])
                     area_Code[key].append(polgon_array)
     print(area_Code)
 
@@ -4219,7 +4221,7 @@ class MapLabel(QLabel):
                             self.speed = 3
                         elif 50 >= p - self.positions[num][0] >= 25:
                             self.speed = 2
-                        elif p < self.positions[num][0] and ranking_array[num][9] == 1:
+                        elif p < self.positions[num][0] and ranking_array[num][10] == 1:
                             self.positions[num][0] = p  # 跨圈情况
                         elif (int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text())
                               and self.map_action <= len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
@@ -4236,7 +4238,7 @@ class MapLabel(QLabel):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
         # 模拟排名
-        if ranking_array[0][6] < max_area_count - 2 and ranking_array[0][9] == 0:
+        if ranking_array[0][6] < max_area_count - 2 and ranking_array[0][10] == 0:
             self.positions.sort(key=lambda x: (-x[3], -x[0]))
             z_ranking_res = [ball[2] for ball in self.positions]
 
@@ -5531,8 +5533,6 @@ class CheckFileThread(QThread):
                     ui.frame_zzw_2.setEnabled(True)
                     ui.groupBox_ranking.setEnabled(True)
                     ui.checkBox_shoot_0.setEnabled(True)
-                    ui.checkBox_Pass_Recognition_Start.setEnabled(True)
-                    ui.checkBox_Pass_Ranking_Twice.setEnabled(True)
                     ui.lineEdit_balls_auto.setEnabled(True)
             else:
                 if ui.frame_zzw_1.isEnabled():
@@ -5540,8 +5540,6 @@ class CheckFileThread(QThread):
                     ui.frame_zzw_2.setEnabled(False)
                     ui.groupBox_ranking.setEnabled(False)
                     ui.checkBox_shoot_0.setEnabled(False)
-                    ui.checkBox_Pass_Recognition_Start.setEnabled(False)
-                    ui.checkBox_Pass_Ranking_Twice.setEnabled(False)
                     ui.lineEdit_balls_auto.setEnabled(False)
 
 
@@ -6784,8 +6782,8 @@ if __name__ == '__main__':
     action_area = [0, 0, 0]  # 触发镜头向下一个位置活动的点位 action_area[区域, 圈数, 可写]
     balls_count = 8  # 运行球数
     balls_start = 0  # 起点球数量
-    ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
-    keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "lastItem"]
+    ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见,.
+    keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "lapCount", "visible", "roadPart"]
     ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
     ball_stop = False
     pos_stop = []  # 每个球的停止位置索引
@@ -6794,16 +6792,16 @@ if __name__ == '__main__':
     max_lap_count = 1  # 最大圈
     max_area_count = 39  # 统计一圈的位置差
     init_array = [
-        [0, 0, 0, 0, 0, 'yellow', 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 'blue', 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 'red', 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 'purple', 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 'orange', 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 'green', 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 'Brown', 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 'black', 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 'pink', 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 'White', 0, 0, 0, 0]
+        [0, 0, 0, 0, 0, 'yellow', 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'blue', 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'red', 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'purple', 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'orange', 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'green', 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'Brown', 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'black', 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'pink', 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 'White', 0, 0, 0, 0, 0]
     ]
     color_ch = {'yellow': '黄',
                 'blue': '蓝',
