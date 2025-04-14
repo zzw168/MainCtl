@@ -1103,8 +1103,12 @@ def load_area():  # 载入位置文件初始化区域列表
                     polgon_array['area_code'] = int(paths[1])
                     if len(paths) > 2:
                         polgon_array['direction'] = int(paths[2])
+                    else:
+                        polgon_array['direction'] = 0
                     if len(paths) > 3:
                         polgon_array['road_path'] = int(paths[3])
+                    else:
+                        polgon_array['road_path'] = 0
                     area_Code[key].append(polgon_array)
     print(area_Code)
 
@@ -1117,9 +1121,9 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
         # print(ball)
         if ball[4] < 0.05:  # 置信度小于 0.45 的数据不处理
             continue
-        if len(ball) == 7:
-            ball.append(0)
-            ball.append(0)
+        if len(ball) < 9:
+            for i in range(8, len(ball) - 1, -1):
+                ball.append(0)
         # x = (ball[0] + ball[2]) / 2
         # y = (ball[1] + ball[3]) / 2
         x = ball[0]
@@ -1129,11 +1133,12 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
             for area in area_Code[cap_num]:
                 pts = np.array(area['coordinates'], np.int32)
                 res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
-                if res > -1.0 and len(ball) <= 8:
+                if res > -1 and len(ball) <= 9:
                     ball[6] = area['area_code']
                     ball[7] = area['direction']
                     ball[8] = area['road_path']
                     ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向,路线
+    print(ball_area_array)
     return ball_area_array  # ball_area_array = [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
 
 
@@ -2785,7 +2790,7 @@ class PlanCmdThread(QThread):
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
                                 if (map_label_big.map_action >=
-                                     len(map_label_big.path_points) / 20 * int(ui.lineEdit_Map_Action.text())):
+                                        len(map_label_big.path_points) / 20 * int(ui.lineEdit_Map_Action.text())):
                                     if not ui.radioButton_stop_betting.isChecked():
                                         PlanBallNum_Thread.run_flg = True  # 终点计数器线程
 
@@ -4247,7 +4252,7 @@ class MapLabel(QLabel):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
         # 模拟排名
-        if ranking_array[0][6] < max_area_count - 2 and ranking_array[0][10] == 0:
+        if ranking_array and ranking_array[0][6] < max_area_count - 2 and ranking_array[0][10] == 0:
             self.positions.sort(key=lambda x: (-x[3], -x[0]))
             z_ranking_res = [ball[2] for ball in self.positions]
 
