@@ -4203,7 +4203,7 @@ class MapLabel(QLabel):
                     for i in range(len(self.positions)):  # 排序
                         if self.positions[i][1] == ranking_array[num][5]:
                             self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
-                            self.positions[num][3] = ranking_array[num][9]  # 可见标志
+                            self.positions[num][3] = ranking_array[num][9]  # 圈数
                             self.positions[num][6] = ranking_array[num][8]  # 路线标志
                             self.positions[num][7] = ranking_array[num][7]  # 方向标志
                             if self.positions[num][4] != p:
@@ -4229,8 +4229,12 @@ class MapLabel(QLabel):
                         elif p < self.positions[num][0] and ranking_array[num][10] == 1:
                             self.positions[num][0] = p  # 跨圈情况
                         elif (int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text())
-                              and self.map_action <= len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
+                              and self.map_action <= len(self.path_points[0]) / 10 * int(
+                                    ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 盲跑时间
+                        elif (int(time.time()) - self.positions[num][5] >= 0    # 最后路段不盲跑
+                              and self.map_action > len(self.path_points[0]) / 10):
+                            self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
                         elif (int(time.time()) - self.positions[num][5] > 1
                               and self.map_action > len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
@@ -4325,7 +4329,7 @@ class MapLabel(QLabel):
             index = self.positions[index_position][0]  # 获取当前球的路径索引
             if index in range(len(self.path_points[0])):
                 x, y = self.path_points[0][index]
-                if self.positions[index_position][6]!= 0:   # 分岔路线
+                if self.positions[index_position][6] != 0:  # 分岔路线
                     if self.positions[index_position][7] < 10:  # 小于10是X轴
                         y = interpolate_y_from_x(self.path_points[self.positions[index_position][6]], x)
                     else:
