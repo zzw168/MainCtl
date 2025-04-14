@@ -1138,7 +1138,6 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
                     ball[7] = area['direction']
                     ball[8] = area['road_path']
                     ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向,路线
-    print(ball_area_array)
     return ball_area_array  # ball_area_array = [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
 
 
