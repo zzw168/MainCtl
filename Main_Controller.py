@@ -568,7 +568,7 @@ def deal_rank(integration_qiu_array):
                         and 0 < q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                     )  # 处理除终点排名位置的条件
                     or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
-                        and 0< q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
+                        and 0 < q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
                         and ranking_array[r_index][8] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
@@ -2782,7 +2782,7 @@ class PlanCmdThread(QThread):
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
                                 if (map_label_big.map_action >=
-                                     len(map_label_big.path_points) / 20 * int(ui.lineEdit_Map_Action.text())):
+                                        len(map_label_big.path_points) / 10 * 9):
                                     if not ui.radioButton_stop_betting.isChecked():
                                         PlanBallNum_Thread.run_flg = True  # 终点计数器线程
 
@@ -4225,7 +4225,8 @@ class MapLabel(QLabel):
                         elif (int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text())
                               and self.map_action <= len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 盲跑时间
-                        elif self.map_action > len(self.path_points) / 10:
+                        elif (int(time.time()) - self.positions[num][5] > 0
+                              and self.map_action > len(self.path_points) / 10 * 9):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为0秒
                         elif (int(time.time()) - self.positions[num][5] > 1
                               and self.map_action > len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
