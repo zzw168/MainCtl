@@ -1116,8 +1116,9 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
         # print(ball)
         if ball[4] < 0.05:  # 置信度小于 0.45 的数据不处理
             continue
-        if len(ball) == 7:
-            ball.append(0)
+        if len(ball) < 8:
+            for i in range(7, len(ball) - 1, -1):
+                ball.append(0)
         # x = (ball[0] + ball[2]) / 2
         # y = (ball[1] + ball[3]) / 2
         x = ball[0]
@@ -4240,7 +4241,7 @@ class MapLabel(QLabel):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
         # 模拟排名
-        if ranking_array[0][6] < max_area_count - 2 and ranking_array[0][9] == 0:
+        if ranking_array and ranking_array[0][6] < max_area_count - 2 and ranking_array[0][9] == 0:
             self.positions.sort(key=lambda x: (-x[3], -x[0]))
             z_ranking_res = [ball[2] for ball in self.positions]
 

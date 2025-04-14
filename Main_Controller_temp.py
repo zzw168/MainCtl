@@ -2789,7 +2789,7 @@ class PlanCmdThread(QThread):
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
                                 if (map_label_big.map_action >=
-                                        len(map_label_big.path_points) / 20 * int(ui.lineEdit_Map_Action.text())):
+                                        len(map_label_big.path_points) / 10 * 9):
                                     if not ui.radioButton_stop_betting.isChecked():
                                         PlanBallNum_Thread.run_flg = True  # 终点计数器线程
 
@@ -4237,8 +4237,9 @@ class MapLabel(QLabel):
                               and self.map_action <= len(self.path_points[0]) / 10 * int(
                                     ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 盲跑时间
-                        elif self.map_action > len(self.path_points[0]) / 10:
-                            self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
+                        elif (int(time.time()) - self.positions[num][5] > 0
+                              and self.map_action > len(self.path_points[0]) / 10 * 9):
+                            self.positions[num][0] = p  # 最后路段，盲跑时间为0秒
                         elif (int(time.time()) - self.positions[num][5] > 1
                               and self.map_action > len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
