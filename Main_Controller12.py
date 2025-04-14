@@ -4225,7 +4225,7 @@ class MapLabel(QLabel):
                               and self.map_action <= len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 盲跑时间
                         elif (int(time.time()) - self.positions[num][5] >= 0    # 最后路段不盲跑
-                              and self.map_action > len(self.path_points[0]) / 10):
+                              and self.map_action > len(self.path_points) / 10):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
                         elif (int(time.time()) - self.positions[num][5] > 1
                               and self.map_action > len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):

@@ -1847,7 +1847,7 @@ class PlanBallNumThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     print(res, value)
                     if res == 0:
-                        num = int(value[0] / 2) - 1
+                        num = int(value[0] / 2)
                         if num > len(z_ranking_time):
                             num = len(z_ranking_time)
                         if num > num_old:
@@ -2781,9 +2781,10 @@ class PlanCmdThread(QThread):
                                          len(map_label_big.path_points) / 10 * int(ui.lineEdit_Map_Action.text()))
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 计球器
-                                # if len(plan_list) / 10 * 8 <= plan_index:  # 到达最后两个动作时，触发球计数器启动
-                                if not ui.radioButton_stop_betting.isChecked():
-                                    PlanBallNum_Thread.run_flg = True  # 终点计数器线程
+                                if (map_label_big.map_action >=
+                                     len(map_label_big.path_points) / 20 * int(ui.lineEdit_Map_Action.text())):
+                                    if not ui.radioButton_stop_betting.isChecked():
+                                        PlanBallNum_Thread.run_flg = True  # 终点计数器线程
 
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
                                 sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
@@ -4224,7 +4225,7 @@ class MapLabel(QLabel):
                         elif (int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text())
                               and self.map_action <= len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 盲跑时间
-                        elif self.map_action > len(self.path_points[0]) / 10:
+                        elif self.map_action > len(self.path_points) / 10:
                             self.positions[num][0] = p  # 最后路段，盲跑时间为0秒
                         elif (int(time.time()) - self.positions[num][5] > 1
                               and self.map_action > len(self.path_points) / 10 * int(ui.lineEdit_Map_Action.text())):
