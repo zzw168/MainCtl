@@ -3,62 +3,73 @@ import numpy as np
 from PySide6.QtWidgets import QApplication, QMainWindow, QVBoxLayout, QWidget
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
-import matplotlib
 
-class PlotWindow(QMainWindow):
+# 支持中文
+import matplotlib
+matplotlib.rcParams['font.family'] = 'SimHei'
+matplotlib.rcParams['axes.unicode_minus'] = False
+
+class InteractivePlot(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("最近点显示 - PySide6 + Matplotlib")
+        self.setWindowTitle("交互式最近点显示")
         self.setMinimumSize(800, 600)
 
-        # 创建主 widget 和布局
+        # 创建主Widget
         widget = QWidget()
-        layout = QVBoxLayout()
-        widget.setLayout(layout)
+        layout = QVBoxLayout(widget)
         self.setCentralWidget(widget)
 
-        # 创建图形区域
+        # 曲线数据
+        self.x_vals = np.linspace(0, 4 * np.pi, 500)
+        self.curve = np.column_stack((self.x_vals, np.sin(self.x_vals)))
+
+        # 初始已知点
+        self.point = np.array([1.0, 1.5])
+
+        # 创建图形和画布
         self.canvas = FigureCanvas(Figure(figsize=(8, 6)))
         layout.addWidget(self.canvas)
-
-        # 获取 Axes
         self.ax = self.canvas.figure.add_subplot(111)
 
-        # 画图
-        self.plot_curve_and_point()
+        # 绑定鼠标点击事件
+        self.canvas.mpl_connect("button_press_event", self.on_click)
 
-    def plot_curve_and_point(self):
-        matplotlib.rcParams['font.family'] = 'SimHei'  # 使用黑体显示中文
-        matplotlib.rcParams['axes.unicode_minus'] = False  # 正确显示负号
-        # 曲线点集（y = sin(x)）
-        x_vals = np.linspace(0, 4 * np.pi, 500)
-        curve = np.column_stack((x_vals, np.sin(x_vals)))
+        # 首次绘图
+        self.plot()
 
-        # 已知点
-        point = np.array([1.0, 1.5])
-
-        # 找最近点
-        distances = np.linalg.norm(curve - point, axis=1)
+    def find_closest_point(self, point):
+        distances = np.linalg.norm(self.curve - point, axis=1)
         min_index = np.argmin(distances)
-        closest_point = curve[min_index]
+        return self.curve[min_index]
 
-        # 清空图像，重新绘制
+    def plot(self):
+        closest_point = self.find_closest_point(self.point)
+
         self.ax.clear()
-        self.ax.plot(curve[:, 0], curve[:, 1], label="曲线 y = sin(x)")
-        self.ax.scatter(*point, color='blue', label='已知点')
-        self.ax.scatter(*closest_point, color='red', label='最近点')
-        self.ax.plot([point[0], closest_point[0]], [point[1], closest_point[1]], 'k--', label='最短距离')
-
-        self.ax.set_title("PySide6 嵌入式图形显示")
+        self.ax.plot(self.curve[:, 0], self.curve[:, 1], label="曲线 y = sin(x)")
+        self.ax.scatter(*self.point, color='blue', label='已知点', zorder=5)
+        self.ax.scatter(*closest_point, color='red', label='最近点', zorder=5)
+        self.ax.plot(
+            [self.point[0], closest_point[0]],
+            [self.point[1], closest_point[1]],
+            'k--', label='最短距离'
+        )
+        self.ax.set_title("点击图像设置已知点")
         self.ax.set_xlabel("x")
         self.ax.set_ylabel("y")
         self.ax.grid(True)
         self.ax.legend()
-
         self.canvas.draw()
+
+    def on_click(self, event):
+        # 如果点击在图像区域内
+        if event.inaxes:
+            self.point = np.array([event.xdata, event.ydata])
+            self.plot()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = PlotWindow()
+    window = InteractivePlot()
     window.show()
     sys.exit(app.exec())
