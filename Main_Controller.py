@@ -4234,14 +4234,14 @@ class MapLabel(QLabel):
                         elif p < self.positions[num][0] and ranking_array[num][10] == 1:
                             self.positions[num][0] = p  # 跨圈情况
                         elif (int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text())
-                              and self.map_action <= len(self.path_points[0]) / 10 * int(
+                              and self.positions[num][0] <= len(self.path_points[0]) / 10 * int(
                                     ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 盲跑时间
                         elif (int(time.time()) - self.positions[num][5] > 0
-                              and self.map_action > len(self.path_points[0]) / 10 * 9):
+                              and self.positions[num][0] > len(self.path_points[0]) / 10 * 9):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为0秒
                         elif (int(time.time()) - self.positions[num][5] > 1
-                              and self.map_action > len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
+                              and self.positions[num][0] > len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
                         else:
                             self.speed = 1
