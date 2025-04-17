@@ -2347,7 +2347,7 @@ class ScreenShotThread(QThread):
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
             self.signal.emit('核对完成')
-            time.sleep(3)
+            # time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
             print('ObsEnd_Thread.screen_flg:%s' % ObsEnd_Thread.screen_flg, '~~~~~~~~~~~~~~~~~~~~~~')
 
