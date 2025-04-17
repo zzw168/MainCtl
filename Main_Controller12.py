@@ -583,7 +583,7 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][10] = 1
 
                 if (r_index > 0
-                        and q_item[6] <= (max_area_count - balls_count)):
+                        and 1 < q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         for r_i in range(0, len(q_item)):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
@@ -4213,7 +4213,7 @@ class MapLabel(QLabel):
                             self.positions[num][7] = ranking_array[num][7]  # 方向标志
                             if self.positions[num][4] != p:
                                 self.positions[num][4] = p
-                                self.positions[num][5] = int(time.time())
+                                self.positions[num][5] = round(time.time(), 2)
                     if ranking_array[num][6] <= 1:  # 起点
                         if num == 0:
                             index = len(ranking_array) * self.ball_space
@@ -4233,14 +4233,14 @@ class MapLabel(QLabel):
                             self.speed = 2
                         elif p < self.positions[num][0] and ranking_array[num][10] == 1:
                             self.positions[num][0] = p  # 跨圈情况
-                        elif (int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text())
+                        elif (round(time.time(), 2) - self.positions[num][5] > float(ui.lineEdit_lost.text())
                               and self.positions[num][0] <= len(self.path_points[0]) / 10 * int(
                                     ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 盲跑时间
-                        elif (int(time.time()) - self.positions[num][5] > 0
+                        elif (round(time.time(), 2) - self.positions[num][5] > 0.5
                               and self.positions[num][0] > len(self.path_points[0]) / 10 * 9):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为0秒
-                        elif (int(time.time()) - self.positions[num][5] > 1
+                        elif (round(time.time(), 2) - self.positions[num][5] > 1
                               and self.positions[num][0] > len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
                         else:
