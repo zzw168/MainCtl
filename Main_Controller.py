@@ -4027,7 +4027,7 @@ class PositionsLiveThread(QThread):
                         data = positions_live
                         z_ws.send(json.dumps(data))
                         # print(f"已发送数据: {data}")
-                    time.sleep(0.05)  # 每 0.05 秒发送一次
+                    time.sleep(0.1)  # 每 0.05 秒发送一次
                 except Exception as e:
                     print(f"发送数据时出错: {e}")
                     self.signal.emit(fail(f"发送数据时出错: {e}"))
