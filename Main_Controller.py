@@ -583,12 +583,19 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][10] = 1
 
                 if (r_index > 0
-                        and q_item[6] <= (max_area_count - balls_count)):
+                        and 1 < q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
-                        for r_i in range(0, len(q_item)):
-                            ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                        ranking_array[r_index][10] = 1
-                        ranking_array[r_index][9] = ranking_array[0][9]
+                        write_ok = True
+                        for i in range(len(ranking_array)):
+                            if ((abs(q_item[0] - ranking_array[i][0]) <= 5)  # 不能和前一个球的位置重叠
+                                    and (abs(q_item[1] - ranking_array[i][1]) <= 5)):  # 避免误判两种颜色
+                                write_ok = False
+                                break
+                        if write_ok:
+                            for r_i in range(0, len(q_item)):
+                                ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                            ranking_array[r_index][10] = 1
+                            ranking_array[r_index][9] = ranking_array[0][9]
                 replaced = True
                 break
         if not replaced:
