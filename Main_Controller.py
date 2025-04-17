@@ -573,8 +573,8 @@ def deal_rank(integration_qiu_array):
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
                     for i in range(len(ranking_array)):
-                        if ((abs(q_item[0] - ranking_array[i][0]) < 5)  # 不能和前一个球的位置重叠
-                                and (abs(q_item[1] - ranking_array[i][1]) < 5)):  # 避免误判两种颜色
+                        if ((abs(q_item[0] - ranking_array[i][0]) <= 7)  # 不能和前一个球的位置重叠
+                                and (abs(q_item[1] - ranking_array[i][1]) <= 7)):  # 避免误判两种颜色
                             write_ok = False
                             break
                     if write_ok:
@@ -4027,7 +4027,7 @@ class PositionsLiveThread(QThread):
                         data = positions_live
                         z_ws.send(json.dumps(data))
                         # print(f"已发送数据: {data}")
-                    time.sleep(0.05)  # 每 2 秒发送一次
+                    time.sleep(0.05)  # 每 0.05 秒发送一次
                 except Exception as e:
                     print(f"发送数据时出错: {e}")
                     self.signal.emit(fail(f"发送数据时出错: {e}"))
@@ -4213,7 +4213,7 @@ class MapLabel(QLabel):
                             self.positions[num][7] = ranking_array[num][7]  # 方向标志
                             if self.positions[num][4] != p:
                                 self.positions[num][4] = p
-                                self.positions[num][5] = int(time.time())
+                                self.positions[num][5] = round(time.time(), 2)
                     if ranking_array[num][6] <= 1:  # 起点
                         if num == 0:
                             index = len(ranking_array) * self.ball_space
@@ -4233,14 +4233,14 @@ class MapLabel(QLabel):
                             self.speed = 2
                         elif p < self.positions[num][0] and ranking_array[num][10] == 1:
                             self.positions[num][0] = p  # 跨圈情况
-                        elif (int(time.time()) - self.positions[num][5] > int(ui.lineEdit_lost.text())
+                        elif (round(time.time(), 2) - self.positions[num][5] > float(ui.lineEdit_lost.text())
                               and self.positions[num][0] <= len(self.path_points[0]) / 10 * int(
                                     ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 盲跑时间
-                        elif (int(time.time()) - self.positions[num][5] > 0
+                        elif (round(time.time(), 2) - self.positions[num][5] > 0.5
                               and self.positions[num][0] > len(self.path_points[0]) / 10 * 9):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为0秒
-                        elif (int(time.time()) - self.positions[num][5] > 1
+                        elif (round(time.time(), 2) - self.positions[num][5] > 1
                               and self.positions[num][0] > len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
                         else:
