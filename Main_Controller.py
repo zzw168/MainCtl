@@ -5581,7 +5581,7 @@ class CheckFileThread(QThread):
             if os.path.exists('D:/ApowerREC'):
                 limit_folder_size('D:/ApowerREC', max_files=30)  # 限制文件夹数量
             if os.path.exists(path_mark):
-                limit_folder_count(path_mark, max_folders=3)  # 限制文件夹数量
+                limit_folder_count(path_mark, max_folders=60)  # 限制文件夹数量
 
             if ui.lineEdit_login.text() == 'zzw':
                 if not ui.frame_zzw_1.isEnabled():
