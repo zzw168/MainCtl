@@ -573,8 +573,8 @@ def deal_rank(integration_qiu_array):
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
                     for i in range(len(ranking_array)):
-                        if ((abs(q_item[0] - ranking_array[i][0]) < 5)  # 不能和前一个球的位置重叠
-                                and (abs(q_item[1] - ranking_array[i][1]) < 5)):  # 避免误判两种颜色
+                        if ((abs(q_item[0] - ranking_array[i][0]) <= 7)  # 不能和前一个球的位置重叠
+                                and (abs(q_item[1] - ranking_array[i][1]) <= 7)):  # 避免误判两种颜色
                             write_ok = False
                             break
                     if write_ok:
@@ -1626,7 +1626,7 @@ class ReStartThread(QThread):
             lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
             if lottery:
                 self.signal.emit(lottery)
-
+            save_mark_images()   # 录标记图
             if self.countdown.isdigit():
                 self.countdown = int(self.countdown)
             else:
@@ -2347,7 +2347,7 @@ class ScreenShotThread(QThread):
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
             self.signal.emit('核对完成')
-            time.sleep(3)
+            # time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
             print('ObsEnd_Thread.screen_flg:%s' % ObsEnd_Thread.screen_flg, '~~~~~~~~~~~~~~~~~~~~~~')
 
@@ -3960,6 +3960,39 @@ def save_images():
         # 'saveImgNum': '1',
         # 'saveImgPath': r'\\%s\%s' % (local_ip[2], ui.lineEdit_saidao_Path.text()),
         'saveImgPath': r'%s' % save_path,
+        'save_mark_image': '0'  # 是否保存记号图 1 是，0 否
+    }
+    try:
+        for index in range(len(wakeup_addr)):
+            r = requests.post(url=wakeup_addr[index], data=form_data)
+            print(r.text)
+    except:
+        print('图像识别主机通信失败！')
+
+
+def save_mark_images():
+    if ui.radioButton_ball.isChecked():
+        saveBackground = 0  # 0 有球录图标志
+        formatted = time.strftime("%m-%d %H", time.localtime())
+        save_path = '%s/%s/%s' % (ui.lineEdit_Start_Path.text(), formatted, term)
+    else:
+        saveBackground = 1  # 0 无球录图标志
+        formatted = time.strftime("%m-%d %H", time.localtime())
+        save_path = '%s/%s/%s' % (ui.lineEdit_background_Path.text(), formatted, term)
+    if ui.checkBox_saveImgs_mark.isChecked():
+        saveImgRun = 1  # 1 录图开启标志
+        os.makedirs(save_path, exist_ok=True)
+    else:
+        saveImgRun = 0  # 1 录图关闭标志
+    form_data = {
+        'saveImgRun': saveImgRun,
+        'requestType': 'saveImg',
+        'saveBackground': saveBackground,
+        'saveImgNum': '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15',
+        # 'saveImgNum': '1',
+        # 'saveImgPath': r'\\%s\%s' % (local_ip[2], ui.lineEdit_saidao_Path.text()),
+        'saveImgPath': r'%s' % save_path,
+        'save_mark_image': '1'  # 是否保存记号图 1 是，0 否
     }
     try:
         for index in range(len(wakeup_addr)):
@@ -4027,7 +4060,7 @@ class PositionsLiveThread(QThread):
                         data = positions_live
                         z_ws.send(json.dumps(data))
                         # print(f"已发送数据: {data}")
-                    time.sleep(0.05)  # 每 0.05 秒发送一次
+                    time.sleep(0.1)  # 每 0.1 秒发送一次
                 except Exception as e:
                     print(f"发送数据时出错: {e}")
                     self.signal.emit(fail(f"发送数据时出错: {e}"))
@@ -4241,7 +4274,8 @@ class MapLabel(QLabel):
                               and self.positions[num][0] > len(self.path_points[0]) / 10 * 9):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为0秒
                         elif (round(time.time(), 2) - self.positions[num][5] > 1
-                              and self.positions[num][0] > len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
+                              and self.positions[num][0] > len(self.path_points[0]) / 10 * int(
+                                    ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
                         else:
                             self.speed = 1
@@ -5520,6 +5554,7 @@ class CheckFileThread(QThread):
             path2 = ui.lineEdit_upload_Path.text()
             path3 = ui.lineEdit_end1_Path.text()
             path4 = ui.lineEdit_end2_Path.text()
+            path_mark = ui.lineEdit_Start_Path.text()
             folder_name = os.path.basename(path1)
             folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
             gps_num = 5000
@@ -5545,6 +5580,8 @@ class CheckFileThread(QThread):
                 limit_folder_size(video_part, max_files=800)  # 限制文件夹数量
             if os.path.exists('D:/ApowerREC'):
                 limit_folder_size('D:/ApowerREC', max_files=30)  # 限制文件夹数量
+            if os.path.exists(path_mark):
+                limit_folder_count(path_mark, max_folders=60)  # 限制文件夹数量
 
             if ui.lineEdit_login.text() == 'zzw':
                 if not ui.frame_zzw_1.isEnabled():
@@ -6726,6 +6763,7 @@ if __name__ == '__main__':
     ui.pushButton_test1.clicked.connect(my_test)
 
     ui.checkBox_saveImgs.checkStateChanged.connect(save_images)
+    # ui.checkBox_saveImgs_mark.checkStateChanged.connect(save_mark_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.checkBox_test.checkStateChanged.connect(edit_enable)
 
