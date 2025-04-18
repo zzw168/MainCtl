@@ -5554,6 +5554,7 @@ class CheckFileThread(QThread):
             path2 = ui.lineEdit_upload_Path.text()
             path3 = ui.lineEdit_end1_Path.text()
             path4 = ui.lineEdit_end2_Path.text()
+            path_mark = ui.lineEdit_Start_Path.text()
             folder_name = os.path.basename(path1)
             folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
             gps_num = 5000
@@ -5579,6 +5580,8 @@ class CheckFileThread(QThread):
                 limit_folder_size(video_part, max_files=800)  # 限制文件夹数量
             if os.path.exists('D:/ApowerREC'):
                 limit_folder_size('D:/ApowerREC', max_files=30)  # 限制文件夹数量
+            if os.path.exists(path_mark):
+                limit_folder_count(path_mark, max_folders=3)  # 限制文件夹数量
 
             if ui.lineEdit_login.text() == 'zzw':
                 if not ui.frame_zzw_1.isEnabled():

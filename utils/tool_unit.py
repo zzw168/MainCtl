@@ -12,6 +12,23 @@ from PySide6.QtGui import QImage
 import os
 
 from scipy.interpolate import interp1d
+import shutil
+
+def limit_folder_count(parent_path, max_folders=5):
+    # 获取子目录列表，并按修改时间排序（最早修改的在前）
+    folders = sorted(
+        [os.path.join(parent_path, f) for f in os.listdir(parent_path) if os.path.isdir(os.path.join(parent_path, f))],
+        key=os.path.getmtime
+    )
+
+    # 计算多出的文件夹数量
+    excess_folders = len(folders) - max_folders
+
+    # 删除多余的旧文件夹
+    if excess_folders > 0:
+        for i in range(excess_folders):
+            shutil.rmtree(folders[i])
+            print(f"Deleted folder: {folders[i]}")
 
 
 def limit_folder_size(folder_path, max_files=5000):  # 保持文件夹里最大文件数量
