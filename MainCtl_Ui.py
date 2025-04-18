@@ -502,52 +502,16 @@ class Ui_MainWindow(object):
 
         self.frame_6 = QFrame(self.frame_2)
         self.frame_6.setObjectName(u"frame_6")
-        self.frame_6.setMinimumSize(QSize(0, 130))
-        self.frame_6.setMaximumSize(QSize(16777215, 135))
+        self.frame_6.setMinimumSize(QSize(0, 120))
+        self.frame_6.setMaximumSize(QSize(16777215, 120))
         self.frame_6.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_71 = QGridLayout(self.frame_6)
         self.gridLayout_71.setObjectName(u"gridLayout_71")
-        self.groupBox_11 = QGroupBox(self.frame_6)
-        self.groupBox_11.setObjectName(u"groupBox_11")
-        self.groupBox_11.setMinimumSize(QSize(0, 50))
-        self.groupBox_11.setMaximumSize(QSize(180, 50))
-        self.groupBox_11.setFont(font1)
-        self.gridLayout_70 = QGridLayout(self.groupBox_11)
-        self.gridLayout_70.setObjectName(u"gridLayout_70")
-        self.checkBox_main_camera = QCheckBox(self.groupBox_11)
-        self.checkBox_main_camera.setObjectName(u"checkBox_main_camera")
-        self.checkBox_main_camera.setMaximumSize(QSize(100, 16777215))
-
-        self.gridLayout_70.addWidget(self.checkBox_main_camera, 0, 0, 1, 1)
-
-        self.checkBox_monitor_cam = QCheckBox(self.groupBox_11)
-        self.checkBox_monitor_cam.setObjectName(u"checkBox_monitor_cam")
-        self.checkBox_monitor_cam.setMaximumSize(QSize(100, 16777215))
-
-        self.gridLayout_70.addWidget(self.checkBox_monitor_cam, 0, 1, 1, 1)
-
-        self.checkBox_map = QCheckBox(self.groupBox_11)
-        self.checkBox_map.setObjectName(u"checkBox_map")
-        self.checkBox_map.setMaximumSize(QSize(100, 16777215))
-
-        self.gridLayout_70.addWidget(self.checkBox_map, 0, 2, 1, 1)
-
-
-        self.gridLayout_71.addWidget(self.groupBox_11, 0, 1, 1, 1)
-
-        self.pushButton_Cardreset = QPushButton(self.frame_6)
-        self.pushButton_Cardreset.setObjectName(u"pushButton_Cardreset")
-        self.pushButton_Cardreset.setMinimumSize(QSize(80, 20))
-        self.pushButton_Cardreset.setFont(font1)
-        self.pushButton_Cardreset.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.pushButton_Cardreset.setStyleSheet(u"background:rgb(0,255,220)")
-
-        self.gridLayout_71.addWidget(self.pushButton_Cardreset, 1, 1, 1, 1)
-
+        self.gridLayout_71.setContentsMargins(-1, 3, -1, 3)
         self.groupBox_10 = QGroupBox(self.frame_6)
         self.groupBox_10.setObjectName(u"groupBox_10")
-        self.groupBox_10.setMinimumSize(QSize(0, 130))
+        self.groupBox_10.setMinimumSize(QSize(170, 120))
         self.groupBox_10.setMaximumSize(QSize(180, 150))
         self.groupBox_10.setFont(font1)
         self.gridLayout_18 = QGridLayout(self.groupBox_10)
@@ -606,12 +570,49 @@ class Ui_MainWindow(object):
         self.checkBox_saveImgs_mark.setObjectName(u"checkBox_saveImgs_mark")
         self.checkBox_saveImgs_mark.setMinimumSize(QSize(110, 0))
         self.checkBox_saveImgs_mark.setFont(font1)
-        self.checkBox_saveImgs_mark.setChecked(True)
+        self.checkBox_saveImgs_mark.setChecked(False)
 
         self.gridLayout_18.addWidget(self.checkBox_saveImgs_mark, 4, 0, 1, 5)
 
 
-        self.gridLayout_71.addWidget(self.groupBox_10, 0, 0, 2, 1)
+        self.gridLayout_71.addWidget(self.groupBox_10, 0, 0, 3, 1)
+
+        self.groupBox_11 = QGroupBox(self.frame_6)
+        self.groupBox_11.setObjectName(u"groupBox_11")
+        self.groupBox_11.setMinimumSize(QSize(0, 50))
+        self.groupBox_11.setMaximumSize(QSize(165, 50))
+        self.groupBox_11.setFont(font1)
+        self.gridLayout_70 = QGridLayout(self.groupBox_11)
+        self.gridLayout_70.setObjectName(u"gridLayout_70")
+        self.checkBox_main_camera = QCheckBox(self.groupBox_11)
+        self.checkBox_main_camera.setObjectName(u"checkBox_main_camera")
+        self.checkBox_main_camera.setMaximumSize(QSize(100, 16777215))
+
+        self.gridLayout_70.addWidget(self.checkBox_main_camera, 0, 0, 1, 1)
+
+        self.checkBox_monitor_cam = QCheckBox(self.groupBox_11)
+        self.checkBox_monitor_cam.setObjectName(u"checkBox_monitor_cam")
+        self.checkBox_monitor_cam.setMaximumSize(QSize(100, 16777215))
+
+        self.gridLayout_70.addWidget(self.checkBox_monitor_cam, 0, 1, 1, 1)
+
+        self.checkBox_map = QCheckBox(self.groupBox_11)
+        self.checkBox_map.setObjectName(u"checkBox_map")
+        self.checkBox_map.setMaximumSize(QSize(100, 16777215))
+
+        self.gridLayout_70.addWidget(self.checkBox_map, 0, 2, 1, 1)
+
+
+        self.gridLayout_71.addWidget(self.groupBox_11, 0, 1, 1, 1)
+
+        self.pushButton_Cardreset = QPushButton(self.frame_6)
+        self.pushButton_Cardreset.setObjectName(u"pushButton_Cardreset")
+        self.pushButton_Cardreset.setMinimumSize(QSize(80, 20))
+        self.pushButton_Cardreset.setFont(font1)
+        self.pushButton_Cardreset.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.pushButton_Cardreset.setStyleSheet(u"background:rgb(0,255,220)")
+
+        self.gridLayout_71.addWidget(self.pushButton_Cardreset, 1, 1, 2, 1)
 
 
         self.gridLayout_10.addWidget(self.frame_6, 1, 0, 1, 1)
@@ -3720,11 +3721,6 @@ class Ui_MainWindow(object):
         self.label_2.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
         self.pushButton_Stop_All.setText(QCoreApplication.translate("MainWindow", u"\u8f68\u9053\u505c\u6b62", None))
         self.pushButton_end_all.setText(QCoreApplication.translate("MainWindow", u"\u6536\u5de5", None))
-        self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u6444\u50cf\u5934", None))
-        self.checkBox_main_camera.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444", None))
-        self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc", None))
-        self.checkBox_map.setText(QCoreApplication.translate("MainWindow", u"\u5730\u56fe", None))
-        self.pushButton_Cardreset.setText(QCoreApplication.translate("MainWindow", u"\u590d\u4f4d", None))
         self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u4e3b\u673a\u5f55\u56fe\u64cd\u4f5c", None))
         self.lineEdit_End_Num.setText(QCoreApplication.translate("MainWindow", u"5000", None))
         self.checkBox_saveImgs.setText(QCoreApplication.translate("MainWindow", u"GPS\u5f55\u56fe  \u6570\u91cf\uff1a", None))
@@ -3733,6 +3729,11 @@ class Ui_MainWindow(object):
         self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
         self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
         self.checkBox_saveImgs_mark.setText(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u8bc6\u522b\u6807\u8bb0", None))
+        self.groupBox_11.setTitle(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u6444\u50cf\u5934", None))
+        self.checkBox_main_camera.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444", None))
+        self.checkBox_monitor_cam.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc", None))
+        self.checkBox_map.setText(QCoreApplication.translate("MainWindow", u"\u5730\u56fe", None))
+        self.pushButton_Cardreset.setText(QCoreApplication.translate("MainWindow", u"\u590d\u4f4d", None))
         self.pushButton_Backup_Camera.setText(QCoreApplication.translate("MainWindow", u"\u9009", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u673a\uff1a  ", None))
         self.checkBox_Auto_Send.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8", None))

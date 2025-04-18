@@ -1626,7 +1626,7 @@ class ReStartThread(QThread):
             lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
             if lottery:
                 self.signal.emit(lottery)
-
+            save_mark_images()   # 录标记图
             if self.countdown.isdigit():
                 self.countdown = int(self.countdown)
             else:
@@ -3971,10 +3971,6 @@ def save_images():
 
 
 def save_mark_images():
-    if ui.checkBox_saveImgs_mark.isChecked():
-        saveImgRun = 1  # 1 录图开启标志
-    else:
-        saveImgRun = 0  # 1 录图关闭标志
     if ui.radioButton_ball.isChecked():
         saveBackground = 0  # 0 有球录图标志
         formatted = time.strftime("%m-%d %H", time.localtime())
@@ -3983,6 +3979,11 @@ def save_mark_images():
         saveBackground = 1  # 0 无球录图标志
         formatted = time.strftime("%m-%d %H", time.localtime())
         save_path = '%s/%s/%s' % (ui.lineEdit_background_Path.text(), formatted, term)
+    if ui.checkBox_saveImgs_mark.isChecked():
+        saveImgRun = 1  # 1 录图开启标志
+        os.makedirs(save_path, exist_ok=True)
+    else:
+        saveImgRun = 0  # 1 录图关闭标志
     form_data = {
         'saveImgRun': saveImgRun,
         'requestType': 'saveImg',
@@ -6759,7 +6760,7 @@ if __name__ == '__main__':
     ui.pushButton_test1.clicked.connect(my_test)
 
     ui.checkBox_saveImgs.checkStateChanged.connect(save_images)
-    ui.checkBox_saveImgs_mark.checkStateChanged.connect(save_mark_images)
+    # ui.checkBox_saveImgs_mark.checkStateChanged.connect(save_mark_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.checkBox_test.checkStateChanged.connect(edit_enable)
 
