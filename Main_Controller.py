@@ -3960,6 +3960,38 @@ def save_images():
         # 'saveImgNum': '1',
         # 'saveImgPath': r'\\%s\%s' % (local_ip[2], ui.lineEdit_saidao_Path.text()),
         'saveImgPath': r'%s' % save_path,
+        'save_mark_image': '0'  # 是否保存记号图 1 是，0 否
+    }
+    try:
+        for index in range(len(wakeup_addr)):
+            r = requests.post(url=wakeup_addr[index], data=form_data)
+            print(r.text)
+    except:
+        print('图像识别主机通信失败！')
+
+
+def save_mark_images():
+    if ui.checkBox_saveImgs_mark.isChecked():
+        saveImgRun = 1  # 1 录图开启标志
+    else:
+        saveImgRun = 0  # 1 录图关闭标志
+    if ui.radioButton_ball.isChecked():
+        saveBackground = 0  # 0 有球录图标志
+        formatted = time.strftime("%m-%d %H", time.localtime())
+        save_path = '%s/%s/%s' % (ui.lineEdit_Start_Path.text(), formatted, term)
+    else:
+        saveBackground = 1  # 0 无球录图标志
+        formatted = time.strftime("%m-%d %H", time.localtime())
+        save_path = '%s/%s/%s' % (ui.lineEdit_background_Path.text(), formatted, term)
+    form_data = {
+        'saveImgRun': saveImgRun,
+        'requestType': 'saveImg',
+        'saveBackground': saveBackground,
+        'saveImgNum': '0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15',
+        # 'saveImgNum': '1',
+        # 'saveImgPath': r'\\%s\%s' % (local_ip[2], ui.lineEdit_saidao_Path.text()),
+        'saveImgPath': r'%s' % save_path,
+        'save_mark_image': '1'  # 是否保存记号图 1 是，0 否
     }
     try:
         for index in range(len(wakeup_addr)):
@@ -4027,7 +4059,7 @@ class PositionsLiveThread(QThread):
                         data = positions_live
                         z_ws.send(json.dumps(data))
                         # print(f"已发送数据: {data}")
-                    time.sleep(0.1)  # 每 0.05 秒发送一次
+                    time.sleep(0.1)  # 每 0.1 秒发送一次
                 except Exception as e:
                     print(f"发送数据时出错: {e}")
                     self.signal.emit(fail(f"发送数据时出错: {e}"))
@@ -4241,7 +4273,8 @@ class MapLabel(QLabel):
                               and self.positions[num][0] > len(self.path_points[0]) / 10 * 9):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为0秒
                         elif (round(time.time(), 2) - self.positions[num][5] > 1
-                              and self.positions[num][0] > len(self.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text())):
+                              and self.positions[num][0] > len(self.path_points[0]) / 10 * int(
+                                    ui.lineEdit_Map_Action.text())):
                             self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
                         else:
                             self.speed = 1
@@ -6726,6 +6759,7 @@ if __name__ == '__main__':
     ui.pushButton_test1.clicked.connect(my_test)
 
     ui.checkBox_saveImgs.checkStateChanged.connect(save_images)
+    ui.checkBox_saveImgs_mark.checkStateChanged.connect(save_mark_images)
     ui.checkBox_selectall.clicked.connect(sel_all)
     ui.checkBox_test.checkStateChanged.connect(edit_enable)
 

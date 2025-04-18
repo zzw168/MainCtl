@@ -502,8 +502,8 @@ class Ui_MainWindow(object):
 
         self.frame_6 = QFrame(self.frame_2)
         self.frame_6.setObjectName(u"frame_6")
-        self.frame_6.setMinimumSize(QSize(0, 120))
-        self.frame_6.setMaximumSize(QSize(16777215, 120))
+        self.frame_6.setMinimumSize(QSize(0, 130))
+        self.frame_6.setMaximumSize(QSize(16777215, 135))
         self.frame_6.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_71 = QGridLayout(self.frame_6)
@@ -547,23 +547,21 @@ class Ui_MainWindow(object):
 
         self.groupBox_10 = QGroupBox(self.frame_6)
         self.groupBox_10.setObjectName(u"groupBox_10")
-        self.groupBox_10.setMinimumSize(QSize(0, 100))
-        self.groupBox_10.setMaximumSize(QSize(180, 120))
+        self.groupBox_10.setMinimumSize(QSize(0, 130))
+        self.groupBox_10.setMaximumSize(QSize(180, 150))
         self.groupBox_10.setFont(font1)
         self.gridLayout_18 = QGridLayout(self.groupBox_10)
         self.gridLayout_18.setObjectName(u"gridLayout_18")
-        self.radioButton_noball = QRadioButton(self.groupBox_10)
-        self.radioButton_noball.setObjectName(u"radioButton_noball")
-        self.radioButton_noball.setMaximumSize(QSize(80, 16777215))
+        self.lineEdit_End_Num = QLineEdit(self.groupBox_10)
+        self.lineEdit_End_Num.setObjectName(u"lineEdit_End_Num")
+        self.lineEdit_End_Num.setMinimumSize(QSize(40, 18))
+        palette = QPalette()
+        self.lineEdit_End_Num.setPalette(palette)
+        self.lineEdit_End_Num.setFont(font1)
+        self.lineEdit_End_Num.setAutoFillBackground(False)
+        self.lineEdit_End_Num.setStyleSheet(u"")
 
-        self.gridLayout_18.addWidget(self.radioButton_noball, 0, 0, 2, 2)
-
-        self.radioButton_ball = QRadioButton(self.groupBox_10)
-        self.radioButton_ball.setObjectName(u"radioButton_ball")
-        self.radioButton_ball.setMinimumSize(QSize(80, 0))
-        self.radioButton_ball.setChecked(True)
-
-        self.gridLayout_18.addWidget(self.radioButton_ball, 0, 2, 1, 1)
+        self.gridLayout_18.addWidget(self.lineEdit_End_Num, 3, 4, 1, 1)
 
         self.checkBox_saveImgs = QCheckBox(self.groupBox_10)
         self.checkBox_saveImgs.setObjectName(u"checkBox_saveImgs")
@@ -580,17 +578,6 @@ class Ui_MainWindow(object):
 
         self.gridLayout_18.addWidget(self.checkBox_saveImgs_auto, 3, 0, 1, 2)
 
-        self.lineEdit_End_Num = QLineEdit(self.groupBox_10)
-        self.lineEdit_End_Num.setObjectName(u"lineEdit_End_Num")
-        self.lineEdit_End_Num.setMinimumSize(QSize(40, 18))
-        palette = QPalette()
-        self.lineEdit_End_Num.setPalette(palette)
-        self.lineEdit_End_Num.setFont(font1)
-        self.lineEdit_End_Num.setAutoFillBackground(False)
-        self.lineEdit_End_Num.setStyleSheet(u"")
-
-        self.gridLayout_18.addWidget(self.lineEdit_End_Num, 3, 4, 1, 1)
-
         self.lineEdit_GPS_Num = QLineEdit(self.groupBox_10)
         self.lineEdit_GPS_Num.setObjectName(u"lineEdit_GPS_Num")
         self.lineEdit_GPS_Num.setMinimumSize(QSize(40, 18))
@@ -601,6 +588,27 @@ class Ui_MainWindow(object):
         self.lineEdit_GPS_Num.setStyleSheet(u"")
 
         self.gridLayout_18.addWidget(self.lineEdit_GPS_Num, 2, 4, 1, 1)
+
+        self.radioButton_noball = QRadioButton(self.groupBox_10)
+        self.radioButton_noball.setObjectName(u"radioButton_noball")
+        self.radioButton_noball.setMaximumSize(QSize(80, 16777215))
+
+        self.gridLayout_18.addWidget(self.radioButton_noball, 0, 0, 2, 2)
+
+        self.radioButton_ball = QRadioButton(self.groupBox_10)
+        self.radioButton_ball.setObjectName(u"radioButton_ball")
+        self.radioButton_ball.setMinimumSize(QSize(80, 0))
+        self.radioButton_ball.setChecked(True)
+
+        self.gridLayout_18.addWidget(self.radioButton_ball, 0, 2, 1, 1)
+
+        self.checkBox_saveImgs_mark = QCheckBox(self.groupBox_10)
+        self.checkBox_saveImgs_mark.setObjectName(u"checkBox_saveImgs_mark")
+        self.checkBox_saveImgs_mark.setMinimumSize(QSize(110, 0))
+        self.checkBox_saveImgs_mark.setFont(font1)
+        self.checkBox_saveImgs_mark.setChecked(True)
+
+        self.gridLayout_18.addWidget(self.checkBox_saveImgs_mark, 4, 0, 1, 5)
 
 
         self.gridLayout_71.addWidget(self.groupBox_10, 0, 0, 2, 1)
@@ -3718,12 +3726,13 @@ class Ui_MainWindow(object):
         self.checkBox_map.setText(QCoreApplication.translate("MainWindow", u"\u5730\u56fe", None))
         self.pushButton_Cardreset.setText(QCoreApplication.translate("MainWindow", u"\u590d\u4f4d", None))
         self.groupBox_10.setTitle(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u4e3b\u673a\u5f55\u56fe\u64cd\u4f5c", None))
-        self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
-        self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
+        self.lineEdit_End_Num.setText(QCoreApplication.translate("MainWindow", u"5000", None))
         self.checkBox_saveImgs.setText(QCoreApplication.translate("MainWindow", u"GPS\u5f55\u56fe  \u6570\u91cf\uff1a", None))
         self.checkBox_saveImgs_auto.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u5f55\u56fe  \u6570\u91cf\uff1a", None))
-        self.lineEdit_End_Num.setText(QCoreApplication.translate("MainWindow", u"5000", None))
         self.lineEdit_GPS_Num.setText(QCoreApplication.translate("MainWindow", u"5000", None))
+        self.radioButton_noball.setText(QCoreApplication.translate("MainWindow", u"\u65e0\u7403", None))
+        self.radioButton_ball.setText(QCoreApplication.translate("MainWindow", u"\u6709\u7403", None))
+        self.checkBox_saveImgs_mark.setText(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u8bc6\u522b\u6807\u8bb0", None))
         self.pushButton_Backup_Camera.setText(QCoreApplication.translate("MainWindow", u"\u9009", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u6444\u50cf\u673a\uff1a  ", None))
         self.checkBox_Auto_Send.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8", None))
@@ -4152,7 +4161,7 @@ class Ui_MainWindow(object):
         self.lineEdit_end1_Path.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_end1_Path.setText(QCoreApplication.translate("MainWindow", u"D:/\u6570\u636e/\u7011\u5e03_\u7ec8\u70b9/obs", None))
-        self.label_101.setText(QCoreApplication.translate("MainWindow", u"\u8d77\u70b9\uff1a", None))
+        self.label_101.setText(QCoreApplication.translate("MainWindow", u"\u6807\u8bb0\u56fe\uff1a", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_Start_Path.setToolTip("")
 #endif // QT_CONFIG(tooltip)

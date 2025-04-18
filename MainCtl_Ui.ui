@@ -1164,13 +1164,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>120</height>
+                 <height>130</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>120</height>
+                 <height>135</height>
                 </size>
                </property>
                <property name="frameShape">
@@ -1281,13 +1281,13 @@
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
-                    <height>100</height>
+                    <height>130</height>
                    </size>
                   </property>
                   <property name="maximumSize">
                    <size>
                     <width>180</width>
-                    <height>120</height>
+                    <height>150</height>
                    </size>
                   </property>
                   <property name="font">
@@ -1301,32 +1301,36 @@
                    <string>识别主机录图操作</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_18">
-                   <item row="0" column="0" rowspan="2" colspan="2">
-                    <widget class="QRadioButton" name="radioButton_noball">
-                     <property name="maximumSize">
-                      <size>
-                       <width>80</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>无球</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="2">
-                    <widget class="QRadioButton" name="radioButton_ball">
+                   <item row="3" column="4">
+                    <widget class="QLineEdit" name="lineEdit_End_Num">
                      <property name="minimumSize">
                       <size>
-                       <width>80</width>
-                       <height>0</height>
+                       <width>40</width>
+                       <height>18</height>
                       </size>
                      </property>
-                     <property name="text">
-                      <string>有球</string>
+                     <property name="palette">
+                      <palette>
+                       <active/>
+                       <inactive/>
+                       <disabled/>
+                      </palette>
                      </property>
-                     <property name="checked">
-                      <bool>true</bool>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="autoFillBackground">
+                      <bool>false</bool>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true"/>
+                     </property>
+                     <property name="text">
+                      <string>5000</string>
                      </property>
                     </widget>
                    </item>
@@ -1373,8 +1377,8 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="4">
-                    <widget class="QLineEdit" name="lineEdit_End_Num">
+                   <item row="2" column="4">
+                    <widget class="QLineEdit" name="lineEdit_GPS_Num">
                      <property name="minimumSize">
                       <size>
                        <width>40</width>
@@ -1406,20 +1410,42 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="4">
-                    <widget class="QLineEdit" name="lineEdit_GPS_Num">
-                     <property name="minimumSize">
+                   <item row="0" column="0" rowspan="2" colspan="2">
+                    <widget class="QRadioButton" name="radioButton_noball">
+                     <property name="maximumSize">
                       <size>
-                       <width>40</width>
-                       <height>18</height>
+                       <width>80</width>
+                       <height>16777215</height>
                       </size>
                      </property>
-                     <property name="palette">
-                      <palette>
-                       <active/>
-                       <inactive/>
-                       <disabled/>
-                      </palette>
+                     <property name="text">
+                      <string>无球</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="2">
+                    <widget class="QRadioButton" name="radioButton_ball">
+                     <property name="minimumSize">
+                      <size>
+                       <width>80</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>有球</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="0" colspan="5">
+                    <widget class="QCheckBox" name="checkBox_saveImgs_mark">
+                     <property name="minimumSize">
+                      <size>
+                       <width>110</width>
+                       <height>0</height>
+                      </size>
                      </property>
                      <property name="font">
                       <font>
@@ -1428,14 +1454,11 @@
                        <bold>true</bold>
                       </font>
                      </property>
-                     <property name="autoFillBackground">
-                      <bool>false</bool>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true"/>
-                     </property>
                      <property name="text">
-                      <string>5000</string>
+                      <string>实时识别标记</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -7241,7 +7264,7 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>起点：</string>
+                   <string>标记图：</string>
                   </property>
                  </widget>
                 </item>
