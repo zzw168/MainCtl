@@ -1918,7 +1918,7 @@ class PlanBallNumThread(QThread):
                         s = z_ranking_time[index]
                         term_comment = s
                         term_status = 0
-                    time.sleep(0.5)
+                    time.sleep(0.3)
             else:
                 print("次数归0 失败！")
                 flg_start['card'] = False
@@ -2347,7 +2347,7 @@ class ScreenShotThread(QThread):
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
             self.signal.emit('核对完成')
-            # time.sleep(3)
+            time.sleep(2)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
             print('ObsEnd_Thread.screen_flg:%s' % ObsEnd_Thread.screen_flg, '~~~~~~~~~~~~~~~~~~~~~~')
 
