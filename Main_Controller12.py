@@ -2519,6 +2519,7 @@ class ShootThread(QThread):
                 time.sleep(2)
                 end_index = int(ui.lineEdit_end.text()) - 1
                 sc.GASetExtDoBit(end_index, 0)
+                sc.GASetExtDoBit(int(ui.lineEdit_shake.text()) - 1, 1)  # 打开震动
                 time_count = 0
                 while self.run_flg:
                     time.sleep(1)
@@ -2543,7 +2544,7 @@ class ShootThread(QThread):
                 for index in range(0, 16):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
-                        int(ui.lineEdit_shake.text()) - 1,
+                        # int(ui.lineEdit_shake.text()) - 1,    # 关闭震动
                         int(ui.lineEdit_end.text()) - 1,
                         int(ui.lineEdit_alarm.text()) - 1,
                         int(ui.lineEdit_start_count.text()) - 1,
@@ -4307,6 +4308,9 @@ class MapLabel(QLabel):
                 b = round(self.positions[i][0] / len(self.path_points[0]) * 100, 2)
                 if b < 1:
                     b = 0
+                elif (self.positions[i][3] >= max_lap_count - 1 # 最后一圈处理:
+                      and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
+                    b = 100
                 if self.bet_running:
                     ranking_time = int((time.time() - ranking_time_start) * 1000)
                 res.append(
