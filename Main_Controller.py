@@ -2519,6 +2519,7 @@ class ShootThread(QThread):
                 time.sleep(2)
                 end_index = int(ui.lineEdit_end.text()) - 1
                 sc.GASetExtDoBit(end_index, 0)
+                sc.GASetExtDoBit(int(ui.lineEdit_shake.text()) - 1, 1)  # 打开震动
                 time_count = 0
                 while self.run_flg:
                     time.sleep(1)
@@ -2543,7 +2544,7 @@ class ShootThread(QThread):
                 for index in range(0, 16):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
-                        int(ui.lineEdit_shake.text()) - 1,
+                        # int(ui.lineEdit_shake.text()) - 1,    # 关闭震动
                         int(ui.lineEdit_end.text()) - 1,
                         int(ui.lineEdit_alarm.text()) - 1,
                         int(ui.lineEdit_start_count.text()) - 1,
