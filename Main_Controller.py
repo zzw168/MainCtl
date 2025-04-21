@@ -4308,8 +4308,8 @@ class MapLabel(QLabel):
                 if self.bet_running:
                     ranking_time = int((time.time() - ranking_time_start) * 1000)
                 res.append(
-                    {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
-                     "b": b * 100, "t": ranking_time})
+                    {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b * 100,
+                     "b": int(b * 100), "t": ranking_time})
             positions_live = {
                 "raceTrackID": Track_number,
                 "term": term,
