@@ -502,7 +502,7 @@ def rtsp_save_image():
             res, value = sc.GAGetDiReverseCount()
             if res == 0:
                 num = int(value[0] / 2)
-                if num >= balls_count + 1:
+                if num >= balls_count:
                     cap = cv2.VideoCapture(rtsp_url)
                     if cap.isOpened():
                         ret, frame = cap.read()

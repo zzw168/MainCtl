@@ -502,7 +502,7 @@ def rtsp_save_image():
             res, value = sc.GAGetDiReverseCount()
             if res == 0:
                 num = int(value[0] / 2)
-                if num >= balls_count + 1:
+                if num >= balls_count:
                     cap = cv2.VideoCapture(rtsp_url)
                     if cap.isOpened():
                         ret, frame = cap.read()
@@ -583,6 +583,8 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][10] = 1
 
                 if (r_index > 0
+                        and (q_item[6] - ranking_array[r_index][6] <= area_limit
+                             or (ranking_array[r_index][6] < area_limit))  # 减少同色误判
                         and q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         for r_i in range(0, len(q_item)):
