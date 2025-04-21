@@ -4307,6 +4307,9 @@ class MapLabel(QLabel):
                 b = round(self.positions[i][0] / len(self.path_points[0]) * 100, 2)
                 if b < 1:
                     b = 0
+                elif (self.positions[i][3] >= max_lap_count - 1 # 最后一圈处理:
+                      and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
+                    b = 100
                 if self.bet_running:
                     ranking_time = int((time.time() - ranking_time_start) * 1000)
                 res.append(
