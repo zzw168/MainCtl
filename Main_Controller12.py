@@ -4304,12 +4304,14 @@ class MapLabel(QLabel):
         if self.picture_size == 860:
             for i in range(balls_count):
                 x, y = self.path_points[0][self.positions[i][0]]
-                b = round(self.positions[i][0] / len(self.path_points[0]), 4)
+                b = round(self.positions[i][0] / len(self.path_points[0]) * 100, 2)
+                if b < 1:
+                    b = 0
                 if self.bet_running:
                     ranking_time = int((time.time() - ranking_time_start) * 1000)
                 res.append(
                     {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
-                     "b": b * 100, "t": ranking_time})
+                     "b": int(b), "t": ranking_time})
             positions_live = {
                 "raceTrackID": Track_number,
                 "term": term,
