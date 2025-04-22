@@ -587,8 +587,9 @@ def deal_rank(integration_qiu_array):
                         #      or (ranking_array[r_index][6] < area_limit))  # 减少同色误判
                         and q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
-                        for r_i in range(0, len(q_item)):
-                            ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                        if ui.checkBox_First_Check.isChecked():
+                            for r_i in range(0, len(q_item)):
+                                ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                         ranking_array[r_index][10] = 1
                         ranking_array[r_index][9] = ranking_array[0][9]
                 replaced = True
@@ -3556,6 +3557,8 @@ def save_main_json():
             main_all['checkBox_Monitor_Vertica'] = ui.checkBox_Monitor_Vertica.isChecked()
             main_all['checkBox_Main_Horizontal'] = ui.checkBox_Main_Horizontal.isChecked()
             main_all['checkBox_Main_Vertica'] = ui.checkBox_Main_Vertica.isChecked()
+            main_all['checkBox_saveImgs_mark'] = ui.checkBox_saveImgs_mark.isChecked()
+            main_all['checkBox_First_Check'] = ui.checkBox_First_Check.isChecked()
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                 main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -3669,6 +3672,8 @@ def load_main_json():
         ui.checkBox_Monitor_Vertica.setChecked(main_all['checkBox_Monitor_Vertica'])
         ui.checkBox_Main_Horizontal.setChecked(main_all['checkBox_Main_Horizontal'])
         ui.checkBox_Main_Vertica.setChecked(main_all['checkBox_Main_Vertica'])
+        ui.checkBox_saveImgs_mark.setChecked(main_all['checkBox_saveImgs_mark'])
+        ui.checkBox_First_Check.setChecked(main_all['checkBox_First_Check'])
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -7179,6 +7184,8 @@ if __name__ == '__main__':
     ui.checkBox_Monitor_Vertica.checkStateChanged.connect(save_main_json)
     ui.checkBox_Main_Horizontal.checkStateChanged.connect(save_main_json)
     ui.checkBox_Main_Vertica.checkStateChanged.connect(save_main_json)
+    ui.checkBox_saveImgs_mark.checkStateChanged.connect(save_main_json)
+    ui.checkBox_First_Check.checkStateChanged.connect(save_main_json)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)
     ui.radioButton_music_background_2.clicked.connect(save_main_json)
