@@ -1327,8 +1327,8 @@ class ZUi(QMainWindow, Ui_MainWindow):
         menu = QMenu()
         item0 = menu.addAction("查看图片")
         item1 = menu.addAction("观看录像")
-        item2 = menu.addAction("发送赛果")
-        item3 = menu.addAction("取消当局")
+        # item2 = menu.addAction("发送赛果")
+        # item3 = menu.addAction("取消当局")
         item4 = menu.addAction("刷新")
 
         screenPos = tb_result.mapToGlobal(pos)
@@ -1340,10 +1340,10 @@ class ZUi(QMainWindow, Ui_MainWindow):
         if action == item1:
             exe_path = tb_result.item(row_num, 10).text()
             os.startfile(exe_path)
-        if action == item2:
-            send_end()
-        if action == item3:
-            cancel_end()
+        # if action == item2:
+        #     send_end()
+        # if action == item3:
+        #     cancel_end()
         if action == item4:
             pass
 
@@ -1629,7 +1629,8 @@ class ReStartThread(QThread):
             lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
             if lottery:
                 self.signal.emit(lottery)
-            save_mark_images()   # 录标记图
+            mark_msg = save_mark_images()  # 录标记图
+            self.signal.emit(mark_msg)
             if self.countdown.isdigit():
                 self.countdown = int(self.countdown)
             else:
@@ -1843,6 +1844,7 @@ class PlanBallNumThread(QThread):
                 continue
             print('正在接收运动卡输入信息！')
             # try:
+            time.sleep(3)
             res = sc.GASetDiReverseCount()  # 输入次数归0
             tcp_ranking_thread.sleep_time = 0.05  # 终点前端排名时间发送设置
             time_now = time.time()
@@ -2791,14 +2793,10 @@ class PlanCmdThread(QThread):
                                     and (map_label_big.map_action >=
                                          len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
-                                # 计球器
-                                if (map_label_big.map_action >=
-                                        len(map_label_big.path_points[0]) / 10 * 9):
-                                    if not ui.radioButton_stop_betting.isChecked():
-                                        PlanBallNum_Thread.run_flg = True  # 终点计数器线程
-
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
                                 sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                                # 计球器
+                                PlanBallNum_Thread.run_flg = True  # 终点计数器线程
                                 # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                                 # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                             # 轴运动
@@ -3988,8 +3986,12 @@ def save_mark_images():
         formatted = time.strftime("%m-%d %H", time.localtime())
         save_path = '%s/%s/%s' % (ui.lineEdit_background_Path.text(), formatted, term)
     if ui.checkBox_saveImgs_mark.isChecked():
-        saveImgRun = 1  # 1 录图开启标志
-        os.makedirs(save_path, exist_ok=True)
+        try:
+            os.makedirs(save_path, exist_ok=True)
+            saveImgRun = 1  # 1 录图开启标志
+        except:
+            print('录图服务链接失败！')
+            return fail('录图服务链接失败！')
     else:
         saveImgRun = 0  # 1 录图关闭标志
     form_data = {
@@ -4008,6 +4010,8 @@ def save_mark_images():
             print(r.text)
     except:
         print('图像识别主机通信失败！')
+        return fail('识别主机通信失败！')
+    return succeed('标记录图开启！')
 
 
 def save_start_images(saveImgRun):
@@ -4315,7 +4319,7 @@ class MapLabel(QLabel):
                 b = round(self.positions[i][0] / len(self.path_points[0]) * 100, 2)
                 if b < 1:
                     b = 0
-                elif (self.positions[i][3] >= max_lap_count - 1 # 最后一圈处理:
+                elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
                       and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
                     b = 100
                 if self.bet_running:
@@ -6113,14 +6117,16 @@ def red_line():
     if flg_start['card']:
         res, value = sc.GAGetDiReverseCount()
         print(res, value)
+        ui.textBrowser_save_msg.append('%s,%s' % (res, value))
+        scroll_to_bottom(ui.textBrowser_save_msg)
 
 
 def my_test():
     global term
     global z_ranking_res
-    cl_request.stop_stream()
+    # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
-    # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
+    OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
     # play_alarm()
     # PlanCmd_Thread.background_state = True
     # PlanCmd_Thread.run_flg = True
