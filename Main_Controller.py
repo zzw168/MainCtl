@@ -1844,6 +1844,7 @@ class PlanBallNumThread(QThread):
                 continue
             print('正在接收运动卡输入信息！')
             # try:
+            time.sleep(3)
             res = sc.GASetDiReverseCount()  # 输入次数归0
             tcp_ranking_thread.sleep_time = 0.05  # 终点前端排名时间发送设置
             time_now = time.time()
@@ -2792,14 +2793,10 @@ class PlanCmdThread(QThread):
                                     and (map_label_big.map_action >=
                                          len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
-                                # 计球器
-                                if (map_label_big.map_action >=
-                                        len(map_label_big.path_points[0]) / 10 * 9):
-                                    if not ui.radioButton_stop_betting.isChecked():
-                                        PlanBallNum_Thread.run_flg = True  # 终点计数器线程
-
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
                                 sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                                # 计球器
+                                PlanBallNum_Thread.run_flg = True  # 终点计数器线程
                                 # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                                 # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                             # 轴运动
@@ -4015,6 +4012,7 @@ def save_mark_images():
         print('图像识别主机通信失败！')
         return fail('识别主机通信失败！')
     return succeed('标记录图开启！')
+
 
 def save_start_images(saveImgRun):
     saveBackground = 0  # 0 有球录图标志
