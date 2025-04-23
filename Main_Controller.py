@@ -3992,8 +3992,8 @@ def save_mark_images():
             os.makedirs(save_path, exist_ok=True)
             saveImgRun = 1  # 1 录图开启标志
         except:
-            print('识别主机录图失败！')
-            return
+            print('录图服务链接失败！')
+            return fail('录图服务链接失败！')
     else:
         saveImgRun = 0  # 1 录图关闭标志
     form_data = {
@@ -4012,7 +4012,8 @@ def save_mark_images():
             print(r.text)
     except:
         print('图像识别主机通信失败！')
-
+        return fail('识别主机通信失败！')
+    return succeed('标记录图开启！')
 
 def save_start_images(saveImgRun):
     saveBackground = 0  # 0 有球录图标志
