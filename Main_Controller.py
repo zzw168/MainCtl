@@ -3988,8 +3988,12 @@ def save_mark_images():
         formatted = time.strftime("%m-%d %H", time.localtime())
         save_path = '%s/%s/%s' % (ui.lineEdit_background_Path.text(), formatted, term)
     if ui.checkBox_saveImgs_mark.isChecked():
-        saveImgRun = 1  # 1 录图开启标志
-        os.makedirs(save_path, exist_ok=True)
+        try:
+            os.makedirs(save_path, exist_ok=True)
+            saveImgRun = 1  # 1 录图开启标志
+        except:
+            print('识别主机录图失败！')
+            return
     else:
         saveImgRun = 0  # 1 录图关闭标志
     form_data = {
