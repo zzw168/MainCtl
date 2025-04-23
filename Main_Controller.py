@@ -1629,7 +1629,8 @@ class ReStartThread(QThread):
             lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
             if lottery:
                 self.signal.emit(lottery)
-            save_mark_images()  # 录标记图
+            mark_msg = save_mark_images()  # 录标记图
+            self.signal.emit(mark_msg)
             if self.countdown.isdigit():
                 self.countdown = int(self.countdown)
             else:
