@@ -1327,8 +1327,8 @@ class ZUi(QMainWindow, Ui_MainWindow):
         menu = QMenu()
         item0 = menu.addAction("查看图片")
         item1 = menu.addAction("观看录像")
-        item2 = menu.addAction("发送赛果")
-        item3 = menu.addAction("取消当局")
+        # item2 = menu.addAction("发送赛果")
+        # item3 = menu.addAction("取消当局")
         item4 = menu.addAction("刷新")
 
         screenPos = tb_result.mapToGlobal(pos)
@@ -1340,10 +1340,10 @@ class ZUi(QMainWindow, Ui_MainWindow):
         if action == item1:
             exe_path = tb_result.item(row_num, 10).text()
             os.startfile(exe_path)
-        if action == item2:
-            send_end()
-        if action == item3:
-            cancel_end()
+        # if action == item2:
+        #     send_end()
+        # if action == item3:
+        #     cancel_end()
         if action == item4:
             pass
 
@@ -1629,7 +1629,7 @@ class ReStartThread(QThread):
             lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
             if lottery:
                 self.signal.emit(lottery)
-            save_mark_images()   # 录标记图
+            save_mark_images()  # 录标记图
             if self.countdown.isdigit():
                 self.countdown = int(self.countdown)
             else:
@@ -4319,7 +4319,7 @@ class MapLabel(QLabel):
                 b = round(self.positions[i][0] / len(self.path_points[0]) * 100, 2)
                 if b < 1:
                     b = 0
-                elif (self.positions[i][3] >= max_lap_count - 1 # 最后一圈处理:
+                elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
                       and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
                     b = 100
                 if self.bet_running:
@@ -6117,14 +6117,16 @@ def red_line():
     if flg_start['card']:
         res, value = sc.GAGetDiReverseCount()
         print(res, value)
+        ui.textBrowser_save_msg.append('%s,%s' % (res, value))
+        scroll_to_bottom(ui.textBrowser_save_msg)
 
 
 def my_test():
     global term
     global z_ranking_res
-    cl_request.stop_stream()
+    # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
-    # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
+    OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
     # play_alarm()
     # PlanCmd_Thread.background_state = True
     # PlanCmd_Thread.run_flg = True
