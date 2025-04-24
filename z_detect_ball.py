@@ -46,7 +46,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
         if post_data['CameraType'][0] in ['obs', 'monitor']:
             model = self.models['obs'] if post_data['CameraType'][0] == 'obs' else self.models['monitor']
-            conf_num = 0.1 if post_data['CameraType'][0] == 'obs' else 0.1
+            conf_num = 0.1 if post_data['CameraType'][0] == 'obs' else 0.3
             np_array = np.frombuffer(base64.b64decode(post_data['img'][0].encode('ascii')), np.uint8)
             img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
 
@@ -67,7 +67,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     array = [int(r[0].item()), int(r[1].item()), int(r[2].item()), int(r[3].item()),
                              round(r[4].item(), 2), names[int(r[5].item())]]
                     qiu_array.append(array)
-
+            print(qiu_array)
             qiu_array = filter_max_value(qiu_array)
 
             if post_data['sort'][0] == '0':
@@ -78,7 +78,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 qiu_array.sort(key=lambda y: (y[1]), reverse=True)
             else:
                 qiu_array.sort(key=lambda y: (y[1]), reverse=False)
-
+            print(qiu_array)
             for array in qiu_array:
                 cv2.rectangle(img, (array[0], array[1]), (array[2], array[3]), color=color_rects[array[5]], thickness=5)
 
@@ -120,6 +120,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 if qiu_array[i][5] not in qiu_rank:
                     qiu_rank.append(qiu_array[i][5])
             qiu_rank = json.dumps(qiu_rank)
+            print(qiu_rank)
             # cv2 图片转换为图片字符串
             byte_encode = np.array(cv2.imencode('.jpg', img)[1]).tobytes()  # 转换为内存字节码
             # print(type(byte_encode))
@@ -133,13 +134,27 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
 def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球，则取置信度最高的球为准
     max_values = {}
+    lists_temp = [''] * len(lists)  # 存储位置重复的珠子
+    for i in range(len(lists)) :    # 查找位置重复的珠子
+        x, y, key = int(lists[i][0]), int(lists[i][1]), lists[i][5]
+        for item in lists:
+            if key != item[5] and abs(x - int(item[0])) < 7 and abs(y - int(item[1])) < 7:
+                lists_temp[i] = copy.deepcopy(lists[i])
+    for i in range(len(lists_temp)):    # 查找重复的珠子是否其他地方有相同颜色
+        if lists_temp[i] != '':
+            x, y, key = int(lists_temp[i][0]), int(lists_temp[i][1]), lists_temp[i][5]
+            for j in range(len(lists)):
+                if lists[j] != '' and key == lists[j][5] and (x != int(lists[j][0])) and (y != int(lists[j][1])):
+                    lists[i] = ''   # 如果该颜色珠子在其他地方也有相同颜色的，则把本珠子置空
+    print(lists)
     for sublist in lists:
-        value, key = sublist[4], sublist[5]
-        if key not in max_values or max_values[key] < value:
-            max_values[key] = copy.deepcopy(value)
+        if sublist != '':
+            value, key = sublist[4], sublist[5]
+            if key not in max_values or max_values[key] < value:
+                max_values[key] = copy.deepcopy(value)
     filtered_list = []
     for sublist in lists:
-        if sublist[4] == max_values[sublist[5]]:  # 选取置信度最大的球添加到修正后的队列
+        if sublist != '' and sublist[4] == max_values[sublist[5]]:  # 选取置信度最大的球添加到修正后的队列
             filtered_list.append(copy.deepcopy(sublist))
     return filtered_list
 
@@ -194,18 +209,18 @@ if __name__ == '__main__':
     color_rects = {'red': (0, 0, 255), 'green': (0, 255, 0), 'blue': (255, 0, 0),
                    'pink': (255, 0, 255), 'yellow': (0, 255, 255), 'black': (0, 0, 0),
                    'purple': (128, 0, 128), 'White': (255, 248, 248),
-                    'orange': (0, 165, 255), 'Brown': (19, 69, 139)
+                   'orange': (0, 165, 255), 'Brown': (19, 69, 139)
                    }
     color_num = {'yellow': '1',
-                'blue': '2',
-                'red': '3',
-                'purple': '4',
+                 'blue': '2',
+                 'red': '3',
+                 'purple': '4',
                  # 'orange': '9',
-                'green': '6',
+                 'green': '6',
                  # 'Brown': '10',
-                'black': '8',
-                'pink': '5',
-                'White': '7'}
+                 'black': '8',
+                 'pink': '5',
+                 'White': '7'}
     # color_ch = {'yellow': '黄',
     #             'blue': '蓝',
     #             'red': '红',

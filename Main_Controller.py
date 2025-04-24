@@ -2880,7 +2880,7 @@ class PlanCmdThread(QThread):
                                     self.signal.emit({'map_action': map_label_big.map_action})
                                     if (len(camera_points) > abs(int(float(plan_list[plan_index][14][0])))
                                             and (int(camera_points[abs(int(float(plan_list[plan_index][14][0])))]
-                                                     [cb_index + 1][0][0]) - 100
+                                                     [cb_index + 1][0][0])
                                                  < map_label_big.map_action)):
                                         break
                                     t_over += 1
