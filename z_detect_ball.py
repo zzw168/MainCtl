@@ -67,7 +67,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     array = [int(r[0].item()), int(r[1].item()), int(r[2].item()), int(r[3].item()),
                              round(r[4].item(), 2), names[int(r[5].item())]]
                     qiu_array.append(array)
-            print(qiu_array)
+            # print(qiu_array)
             qiu_array = filter_max_value(qiu_array)
 
             if post_data['sort'][0] == '0':
@@ -78,7 +78,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 qiu_array.sort(key=lambda y: (y[1]), reverse=True)
             else:
                 qiu_array.sort(key=lambda y: (y[1]), reverse=False)
-            print(qiu_array)
+            # print(qiu_array)
             for array in qiu_array:
                 cv2.rectangle(img, (array[0], array[1]), (array[2], array[3]), color=color_rects[array[5]], thickness=5)
 
@@ -140,13 +140,14 @@ def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球
         for item in lists:
             if key != item[5] and abs(x - int(item[0])) < 7 and abs(y - int(item[1])) < 7:
                 lists_temp[i] = copy.deepcopy(lists[i])
+    # print(lists_temp)
     for i in range(len(lists_temp)):    # 查找重复的珠子是否其他地方有相同颜色
         if lists_temp[i] != '':
             x, y, key = int(lists_temp[i][0]), int(lists_temp[i][1]), lists_temp[i][5]
             for j in range(len(lists)):
                 if lists[j] != '' and key == lists[j][5] and (x != int(lists[j][0])) and (y != int(lists[j][1])):
                     lists[i] = ''   # 如果该颜色珠子在其他地方也有相同颜色的，则把本珠子置空
-    print(lists)
+    # print(lists)
     for sublist in lists:
         if sublist != '':
             value, key = sublist[4], sublist[5]
