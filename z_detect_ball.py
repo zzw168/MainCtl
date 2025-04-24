@@ -46,7 +46,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
         if post_data['CameraType'][0] in ['obs', 'monitor']:
             model = self.models['obs'] if post_data['CameraType'][0] == 'obs' else self.models['monitor']
-            conf_num = 0.1 if post_data['CameraType'][0] == 'obs' else 0.3
+            conf_num = 0.3 if post_data['CameraType'][0] == 'obs' else 0.3
             np_array = np.frombuffer(base64.b64decode(post_data['img'][0].encode('ascii')), np.uint8)
             img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
 
