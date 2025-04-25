@@ -1838,6 +1838,7 @@ class PlanBallNumThread(QThread):
         global ball_sort
         global betting_end_time
         global lottery_term
+        global z_end_time
         while self.running:
             time.sleep(0.1)
             if (not self.run_flg) or (not flg_start['card']):
@@ -1864,13 +1865,17 @@ class PlanBallNumThread(QThread):
                             num = len(z_ranking_time)
                         if num > num_old:
                             for i in range(num):
+                                t = time.time()
+                                end_t = t - ranking_time_start
+                                z_end_time[i] = int(end_t * 1000)  # 记录结束时间
                                 if z_ranking_time[i] in ['TRAP', 'OUT', '']:
-                                    t = time.time()
-                                    z_ranking_time[i] = '%.2f' % (t - ranking_time_start)
+                                    z_ranking_time[i] = '%.2f' % end_t
+
                             if num == 1:
                                 betting_end_time = int(time.time())
                                 lottery_term[11] = str(betting_end_time)
-                                map_label_big.bet_running = False
+                            if num <= balls_count:
+                                map_label_big.bet_running[num - 1] = False
                             if num == balls_count:
                                 self.signal.emit('录终点图')
                             self.signal.emit(num)
@@ -2758,7 +2763,8 @@ class PlanCmdThread(QThread):
                                         self.signal.emit('音乐')
                                         Script_Thread.run_type = 'start'
                                         Script_Thread.run_flg = True  # 开始OBS的python脚本计时
-                                        map_label_big.bet_running = True
+                                        for i in range(balls_count):
+                                            map_label_big.bet_running[i] = True  # 开启每个球的计时
                                         ranking_time_start = time.time()  # 每个球的起跑时间
 
                             if (plan_list[plan_index][15][0].isdigit()
@@ -4006,7 +4012,7 @@ def save_mark_images():
     }
     try:
         for index in range(len(wakeup_addr)):
-            r = requests.post(url=wakeup_addr[index], data=form_data)
+            r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
             print(r.text)
     except:
         print('图像识别主机通信失败！')
@@ -4189,7 +4195,7 @@ class MapLabel(QLabel):
         self.step_length = step_length  # 步长
         self.ball_space = ball_space  # 球之间的距离（步数）
         self.ball_radius = ball_radius  # 像素
-        self.bet_running = False
+        self.bet_running = [False] * balls_count
         # 设置label的尺寸
         self.setMaximumSize(picture_size, picture_size)
         self.setPixmap(pixmap)
@@ -4231,7 +4237,7 @@ class MapLabel(QLabel):
         self.timer.start(self.flash_time)  # 每1秒更新一次
 
     def update_positions(self):
-        global positions_live, ranking_time
+        global positions_live, balls_ranking_time
         global z_ranking_res
         global ball_stop
         global pos_stop
@@ -4322,11 +4328,13 @@ class MapLabel(QLabel):
                 elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
                       and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
                     b = 100
-                if self.bet_running:
-                    ranking_time = int((time.time() - ranking_time_start) * 1000)
+                if self.bet_running[i]:
+                    balls_ranking_time[i] = int((time.time() - ranking_time_start) * 1000)
+                if b == 100 and z_end_time[i] != 0:
+                    balls_ranking_time[i] = z_end_time[i]
                 res.append(
                     {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
-                     "b": int(b), "t": ranking_time})
+                     "b": int(b), "t": balls_ranking_time[i]})
             positions_live = {
                 "raceTrackID": Track_number,
                 "term": term,
@@ -5491,6 +5499,7 @@ class ResetRankingThread(QThread):
         global balls_start
         global term_comment
         global init_array
+        global z_end_time
         # global previous_position
         while self.running:
             time.sleep(1)
@@ -5520,6 +5529,7 @@ class ResetRankingThread(QThread):
             z_ranking_res = z_ranking_res[:balls_count]
             z_ranking_end = z_ranking_res[:balls_count]
             z_ranking_time = [''] * balls_count  # 初始化网页排名时间
+            z_end_time = [0] * balls_count  # 记录结束时间
             tcp_ranking_thread.sleep_time = 0.1  # 重置排名数据包发送时间
             tcp_ranking_thread.run_flg = True  # 打开排名线程
             print('tcp_ranking_thread.run_flg = True~~~~~~~~~~~~')
@@ -6939,6 +6949,7 @@ if __name__ == '__main__':
     z_ranking_res = []  # 球号排名数组(发送给前端网页排名显示)
     z_ranking_end = []  # 结果排名数组(发送给前端网页排名显示)
     z_ranking_time = []  # 球号排名数组(发送给前端网页排名显示)
+    z_end_time = [0] * balls_count  # 记录结束时间
     ranking_time_start = time.time()  # 比赛开始时间
 
     init_ranking_table()  # 初始化排名数据表
@@ -7006,7 +7017,7 @@ if __name__ == '__main__':
     ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
     map_orbit = []  # 地图轨迹
     previous_channel = None  # 音效通道
-    ranking_time = 0  # 比赛进行时间
+    balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
     positions_live = {
         "raceTrackID": "D",
         "term": "5712844",

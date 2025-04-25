@@ -4178,7 +4178,7 @@ class MapLabel(QLabel):
         self.timer.start(self.flash_time)  # 每1秒更新一次
 
     def update_positions(self):
-        global positions_live, ranking_time
+        global positions_live, balls_ranking_time
         global z_ranking_res
         global ball_stop
         global pos_stop
@@ -6933,7 +6933,7 @@ if __name__ == '__main__':
     ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
     map_orbit = []  # 地图轨迹
     previous_channel = None  # 音效通道
-    ranking_time = 0  # 比赛进行时间
+    balls_ranking_time = 0  # 比赛进行时间
     positions_live = {
         "raceTrackID": "D",
         "term": "5712844",
