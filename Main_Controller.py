@@ -400,6 +400,10 @@ def obs_save_image():
                                                       '%s/%s.jpg' % (save_path, time.time()), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
+                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
+                        time.sleep(3)
+                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                        time.sleep(3)
                         sc.GASetDiReverseCount()  # 输入次数归0
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
@@ -3564,6 +3568,8 @@ def save_main_json():
             main_all['checkBox_Main_Vertica'] = ui.checkBox_Main_Vertica.isChecked()
             main_all['checkBox_saveImgs_mark'] = ui.checkBox_saveImgs_mark.isChecked()
             main_all['checkBox_First_Check'] = ui.checkBox_First_Check.isChecked()
+            main_all['comboBox_plan'] = ui.comboBox_plan.currentIndex()
+
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                 main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
@@ -4219,7 +4225,7 @@ class MapLabel(QLabel):
             for i in range(len(fcc_data)):
                 self.path_points.append([])
                 for p in fcc_data[i]["content"]:
-                    self.path_points[i].append((p['x'] * map_scale, p['y'] * map_scale))
+                    self.path_points[i].append((int(p['x'] * map_scale), int(p['y'] * map_scale)))
             self.path_points[0] = divide_path(self.path_points[0], self.step_length)
             print('地图长度:%s' % len(self.path_points[0]))
             if map_scale == 1:
@@ -4389,6 +4395,16 @@ class MapLabel(QLabel):
                     painter.drawEllipse(int(self.path_points[0][index][0]), int(self.path_points[0][index][1]),
                                         2, 2)
 
+            pen = QPen(QColor(0, 150, 255), 2)
+            painter.setPen(pen)
+            for i in range(1, len(self.path_points)):
+                if len(self.path_points[i]) >= 2:
+                    for j in range(len(self.path_points[i]) - 1):
+                        x1 = self.path_points[i][j][0]
+                        y1 = self.path_points[i][j][1]
+                        x2 = self.path_points[i][j + 1][0]
+                        y2 = self.path_points[i][j + 1][1]
+                        painter.drawLine(x1, y1, x2, y2)
         # 绘制每个小球
         for index_position in range(len(self.positions)):
             index = self.positions[index_position][0]  # 获取当前球的路径索引

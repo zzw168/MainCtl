@@ -5,14 +5,14 @@ import requests
 
 
 def send_detect_picture():
-    track_file = 'E:/saidao/image/rtsp_0.jpg'
+    track_file = 'E:/saidao/image/9678579.jpg'
     recognition_addr = "http://127.0.0.1:6066"  # 终点识别主机网址
     with open(track_file, 'rb') as file:
         img = base64.b64encode(file.read()).decode('ascii')
     form_data = {
         'CameraType': 'monitor',
         'img': str(img),
-        'sort': '0',  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+        'sort': '1',  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
     }
     try:
         res = requests.post(url=recognition_addr, data=form_data, timeout=5)

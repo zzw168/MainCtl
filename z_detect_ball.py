@@ -67,7 +67,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     array = [int(r[0].item()), int(r[1].item()), int(r[2].item()), int(r[3].item()),
                              round(r[4].item(), 2), names[int(r[5].item())]]
                     qiu_array.append(array)
-            # print(qiu_array)
+            print(qiu_array)
             qiu_array = filter_max_value(qiu_array)
 
             if post_data['sort'][0] == '0':

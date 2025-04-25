@@ -187,8 +187,8 @@ def divide_path(path_points, step_length):
 
         # 在当前段添加等分点
         for j in range(num_steps + 1):
-            x = p1[0] + j * step_length * unit_vector[0]
-            y = p1[1] + j * step_length * unit_vector[1]
+            x = int(p1[0] + j * step_length * unit_vector[0])
+            y = int(p1[1] + j * step_length * unit_vector[1])
             new_points.append((x, y))
 
     # 添加最后一个点
