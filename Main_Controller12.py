@@ -1867,7 +1867,8 @@ class PlanBallNumThread(QThread):
                             for i in range(num):
                                 t = time.time()
                                 end_t = t - ranking_time_start
-                                z_end_time[i] = int(end_t * 1000)  # 记录结束时间
+                                if z_end_time[i] == 0:
+                                    z_end_time[i] = int(end_t * 1000)  # 记录结束时间
                                 if z_ranking_time[i] in ['TRAP', 'OUT', '']:
                                     z_ranking_time[i] = '%.2f' % end_t
 
@@ -2714,14 +2715,14 @@ class PlanCmdThread(QThread):
                         break
                     if plan_list[plan_index][0] != '1':  # 是否勾选,且在圈数范围内
                         continue
-                    if (((((action_area[1] < int(float(plan_list[plan_index][1][0]))  # 循环运行圈数在设定圈数范围内
-                            and (float(plan_list[plan_index][1][0]) > 0) and cb_index == 0)  # 或者设定圈数的值为 0 时，最后一圈执行
+                    if ((((action_area[1] < int(float(plan_list[plan_index][1][0]))  # 循环运行圈数在设定圈数范围内
+                            and (float(plan_list[plan_index][1][0]) > 0) and cb_index != 1)
                            or (action_area[1] == int(float(plan_list[plan_index][1][0])) - 1  # 顺序运行圈数在设定圈数范围内
                                and (float(plan_list[plan_index][1][0]) > 0) and cb_index == 1)  # 或者设定圈数的值为 0 时，最后一圈执行
-                           or float(plan_list[plan_index][1][0]) == 0)
+                           or float(plan_list[plan_index][1][0]) == 0)  # 或者设定圈数的值为 0 时，最后一圈执行
                           and not self.background_state
                           and not self.ready_state
-                          and not self.end_state))
+                          and not self.end_state)
                             or (float(plan_list[plan_index][1][0]) == -1 and self.background_state)  # 背景动作
                             or (float(plan_list[plan_index][1][0]) == -3 and self.ready_state)  # 准备动作
                             or (float(plan_list[plan_index][1][0]) == -2 and self.end_state)):  # 结束动作动作
