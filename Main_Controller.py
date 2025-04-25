@@ -4006,7 +4006,7 @@ def save_mark_images():
     }
     try:
         for index in range(len(wakeup_addr)):
-            r = requests.post(url=wakeup_addr[index], data=form_data)
+            r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
             print(r.text)
     except:
         print('图像识别主机通信失败！')
