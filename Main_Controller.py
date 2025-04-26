@@ -400,10 +400,11 @@ def obs_save_image():
                                                       '%s/%s.jpg' % (save_path, time.time()), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
+                        time.sleep(1)
                         sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
-                        time.sleep(3)
+                        time.sleep(2)
                         sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
-                        time.sleep(3)
+                        time.sleep(2)
                         sc.GASetDiReverseCount()  # 输入次数归0
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
@@ -589,7 +590,7 @@ def deal_rank(integration_qiu_array):
                 if (r_index > 0
                         # and (q_item[6] - ranking_array[r_index][6] <= area_limit
                         #      or (ranking_array[r_index][6] < area_limit))  # 减少同色误判
-                        and q_item[6] <= (max_area_count - balls_count)):
+                        and (max_area_count - balls_count) * 0.7 <= q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         if ui.checkBox_First_Check.isChecked():
                             for r_i in range(0, len(q_item)):
@@ -2720,13 +2721,13 @@ class PlanCmdThread(QThread):
                     if plan_list[plan_index][0] != '1':  # 是否勾选,且在圈数范围内
                         continue
                     if ((((action_area[1] < int(float(plan_list[plan_index][1][0]))  # 循环运行圈数在设定圈数范围内
-                            and (float(plan_list[plan_index][1][0]) > 0) and cb_index != 1)
-                           or (action_area[1] == int(float(plan_list[plan_index][1][0])) - 1  # 顺序运行圈数在设定圈数范围内
-                               and (float(plan_list[plan_index][1][0]) > 0) and cb_index == 1)  # 或者设定圈数的值为 0 时，最后一圈执行
-                           or float(plan_list[plan_index][1][0]) == 0)  # 或者设定圈数的值为 0 时，最后一圈执行
-                          and not self.background_state
-                          and not self.ready_state
-                          and not self.end_state)
+                           and (float(plan_list[plan_index][1][0]) > 0) and cb_index != 1)
+                          or (action_area[1] == int(float(plan_list[plan_index][1][0])) - 1  # 顺序运行圈数在设定圈数范围内
+                              and (float(plan_list[plan_index][1][0]) > 0) and cb_index == 1)  # 或者设定圈数的值为 0 时，最后一圈执行
+                          or float(plan_list[plan_index][1][0]) == 0)  # 或者设定圈数的值为 0 时，最后一圈执行
+                         and not self.background_state
+                         and not self.ready_state
+                         and not self.end_state)
                             or (float(plan_list[plan_index][1][0]) == -1 and self.background_state)  # 背景动作
                             or (float(plan_list[plan_index][1][0]) == -3 and self.ready_state)  # 准备动作
                             or (float(plan_list[plan_index][1][0]) == -2 and self.end_state)):  # 结束动作动作
