@@ -563,8 +563,8 @@ def deal_rank(integration_qiu_array):
                         and ranking_array[r_index][9] < max_lap_count - 1):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
                     if result_count >= max_area_count - area_limit - balls_count:
-                        ranking_array[r_index][9] += 1
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
+                        ranking_array[r_index][9] += 1
                         if ranking_array[r_index][9] > max_lap_count - 1:
                             ranking_array[r_index][9] = max_lap_count - 1
 
@@ -5600,7 +5600,7 @@ class CheckFileThread(QThread):
             path2 = ui.lineEdit_upload_Path.text()
             path3 = ui.lineEdit_end1_Path.text()
             path4 = ui.lineEdit_end2_Path.text()
-            path_mark = ui.lineEdit_Start_Path.text()
+            # path_mark = ui.lineEdit_Start_Path.text()
             folder_name = os.path.basename(path1)
             folder_path = os.path.join(os.path.dirname(path2), folder_name).replace("\\", "/")
             gps_num = 5000
@@ -5626,8 +5626,8 @@ class CheckFileThread(QThread):
                 limit_folder_size(video_part, max_files=800)  # 限制文件夹数量
             if os.path.exists('D:/ApowerREC'):
                 limit_folder_size('D:/ApowerREC', max_files=30)  # 限制文件夹数量
-            if os.path.exists(path_mark):
-                limit_folder_count(path_mark, max_folders=60)  # 限制文件夹数量
+            # if os.path.exists(path_mark):
+            #     limit_folder_count(path_mark, max_folders=60)  # 限制文件夹数量
 
             if ui.lineEdit_login.text() == 'zzw':
                 if not ui.frame_zzw_1.isEnabled():
