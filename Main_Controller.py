@@ -2530,13 +2530,19 @@ class ShootThread(QThread):
                     for col in range(0, max_lap_count):
                         ball_sort[row].append([])
                 balls_start = 0  # 起点球数
-                sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
-                shoot_index = int(ui.lineEdit_shoot.text()) - 1
-                sc.GASetExtDoBit(shoot_index, 1)
+                if ui.lineEdit_start.text() != '':
+                    sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
+                if ui.lineEdit_shake.text() != '':
+                    shoot_index = int(ui.lineEdit_shoot.text()) - 1
+                    sc.GASetExtDoBit(shoot_index, 1)
                 time.sleep(2)
                 end_index = int(ui.lineEdit_end.text()) - 1
-                sc.GASetExtDoBit(end_index, 0)
-                sc.GASetExtDoBit(int(ui.lineEdit_shake.text()) - 1, 1)  # 打开震动
+                if not ui.checkBox_end_2.isChecked():
+                    sc.GASetExtDoBit(end_index, 0)
+                else:
+                    sc.GASetExtDoBit(end_index, 1)
+                if ui.lineEdit_shake.text() != '':
+                    sc.GASetExtDoBit(int(ui.lineEdit_shake.text()) - 1, 1)  # 打开震动
                 time_count = 0
                 while self.run_flg:
                     time.sleep(1)
@@ -2722,9 +2728,10 @@ class PlanCmdThread(QThread):
                     if plan_list[plan_index][0] != '1':  # 是否勾选,且在圈数范围内
                         continue
                     if ((((action_area[1] < int(float(plan_list[plan_index][1][0]))  # 循环运行圈数在设定圈数范围内
-                           and (float(plan_list[plan_index][1][0]) > 0) and cb_index != 1)
+                           and (float(plan_list[plan_index][1][0]) > 0) and cb_index == 2)
                           or (action_area[1] == int(float(plan_list[plan_index][1][0])) - 1  # 顺序运行圈数在设定圈数范围内
-                              and (float(plan_list[plan_index][1][0]) > 0) and cb_index == 1)  # 或者设定圈数的值为 0 时，最后一圈执行
+                              and (float(plan_list[plan_index][1][0]) > 0)
+                              and cb_index in [0, 1])  # 或者设定圈数的值为 0 时，最后一圈执行
                           or float(plan_list[plan_index][1][0]) == 0)  # 或者设定圈数的值为 0 时，最后一圈执行
                          and not self.background_state
                          and not self.ready_state
@@ -5820,7 +5827,6 @@ def organ_shoot():  # 弹射开关
     try:
         index = int(ui.lineEdit_shoot.text()) - 1
         if (ui.checkBox_shoot.isChecked()
-                or ui.checkBox_shoot1.isChecked()
                 or ui.checkBox_shoot_1.isChecked()):
             sc.GASetExtDoBit(index, 1)
         else:
@@ -5866,7 +5872,7 @@ def organ_start():  # 开启开关
         return
     try:
         index = int(ui.lineEdit_start.text()) - 1
-        if ui.checkBox_start.isChecked() or ui.checkBox_start_2.isChecked():
+        if ui.checkBox_start.isChecked():
             sc.GASetExtDoBit(index, 1)
         else:
             sc.GASetExtDoBit(index, 0)
@@ -5881,22 +5887,7 @@ def organ_end():  # 结束开关
         return
     try:
         index = int(ui.lineEdit_end.text()) - 1
-        if ui.checkBox_end.isChecked() or ui.checkBox_end_2.isChecked():
-            sc.GASetExtDoBit(index, 1)
-        else:
-            sc.GASetExtDoBit(index, 0)
-    except:
-        print('运动卡电压输出错误！')
-        ui.textBrowser_msg.append(fail('运动卡电压输出错误！'))
-        flg_start['card'] = False
-
-
-def organ_shake():  # 震动开关
-    if not flg_start['card']:
-        return
-    try:
-        index = int(ui.lineEdit_shake.text()) - 1
-        if ui.checkBox_shake.isChecked():
+        if ui.checkBox_end.isChecked():
             sc.GASetExtDoBit(index, 1)
         else:
             sc.GASetExtDoBit(index, 0)
@@ -6816,16 +6807,12 @@ if __name__ == '__main__':
     ui.checkBox_test.checkStateChanged.connect(edit_enable)
 
     ui.checkBox_shoot.checkStateChanged.connect(organ_shoot)
-    ui.checkBox_shoot1.checkStateChanged.connect(organ_shoot)
     ui.checkBox_shoot_1.checkStateChanged.connect(organ_shoot)
     ui.checkBox_shoot2.checkStateChanged.connect(organ_shoot2)
     ui.checkBox_shoot3.checkStateChanged.connect(organ_shoot3)
     ui.checkBox_start.checkStateChanged.connect(organ_start)
-    ui.checkBox_start_2.checkStateChanged.connect(organ_start)
     ui.checkBox_end.checkStateChanged.connect(organ_end)
-    ui.checkBox_end_2.checkStateChanged.connect(organ_end)
     ui.checkBox_start_count.checkStateChanged.connect(organ_start_count)
-    ui.checkBox_shake.checkStateChanged.connect(organ_shake)
     ui.checkBox_alarm_2.checkStateChanged.connect(organ_alarm)
     ui.checkBox_switch.checkStateChanged.connect(organ_number)
 
