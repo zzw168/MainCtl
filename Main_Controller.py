@@ -590,6 +590,7 @@ def deal_rank(integration_qiu_array):
                 if (r_index > 0
                         # and (q_item[6] - ranking_array[r_index][6] <= area_limit
                         #      or (ranking_array[r_index][6] < area_limit))  # 减少同色误判
+                        and ranking_array[0][6] >= (max_area_count - balls_count) * 0.7
                         and (max_area_count - balls_count) * 0.7 <= q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         if ui.checkBox_First_Check.isChecked():
