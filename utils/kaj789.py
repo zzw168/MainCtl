@@ -43,12 +43,16 @@ def test_server(Track_number='I'):
             return False
     except requests.exceptions.Timeout:
         print("请求超时")
+        return False
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return False
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return False
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return False
 
 def get_term(Track_number='M'):  # 取期号
     try:
@@ -60,15 +64,19 @@ def get_term(Track_number='M'):  # 取期号
             return response.json()
         else:
             print('获取期号失败！')
-            return None
+            return 'error'
     except requests.exceptions.Timeout:
         print("请求超时")
+        return 'error'
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return 'error'
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return 'error'
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return 'error'
 
 
 def post_start(term, betting_start_time, starting_Position='8,7,6,5,4,3,2,1', Track_number='I'):  # 开始比赛
@@ -83,12 +91,16 @@ def post_start(term, betting_start_time, starting_Position='8,7,6,5,4,3,2,1', Tr
         return response.text
     except requests.exceptions.Timeout:
         print("请求超时")
+        return 'error'
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return 'error'
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return 'error'
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return 'error'
 
 
 def post_end(term, betting_end_time, status=1, Track_number='I'):  # 结束比赛
@@ -102,12 +114,16 @@ def post_end(term, betting_end_time, status=1, Track_number='I'):  # 结束比�
         return response.text
     except requests.exceptions.Timeout:
         print("请求超时")
+        return 'error'
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return 'error'
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return 'error'
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return 'error'
 
 def post_result(term, betting_end_time, result_data='', Track_number='I'):  # 发送赛果
     try:
@@ -134,12 +150,16 @@ def post_result(term, betting_end_time, result_data='', Track_number='I'):  # �
         return response.text
     except requests.exceptions.Timeout:
         print("请求超时")
+        return 'error'
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return 'error'
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return 'error'
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return 'error'
 
 
 def post_upload(term, img_path, Track_number='I'):  # 上传图片
@@ -154,12 +174,16 @@ def post_upload(term, img_path, Track_number='I'):  # 上传图片
         return response.text
     except requests.exceptions.Timeout:
         print("请求超时")
+        return 'error'
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return 'error'
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return 'error'
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return 'error'
 
 
 def post_marble_results(term, comments='Invalid Term', Track_number='I'):  # 比赛异常，上传这个结果取消比赛
@@ -180,12 +204,16 @@ def post_marble_results(term, comments='Invalid Term', Track_number='I'):  # 比
         return response.text
     except requests.exceptions.Timeout:
         print("请求超时")
+        return 'error'
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return 'error'
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return 'error'
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return 'error'
 
 
 def get_marble_settings():  # 取得当前整体开盘情况
@@ -201,12 +229,16 @@ def get_marble_settings():  # 取得当前整体开盘情况
             return None
     except requests.exceptions.Timeout:
         print("请求超时")
+        return 'error'
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return 'error'
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return 'error'
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return 'error'
 
 
 def post_aiupload(term, ai_img_path, Track_number='I'):
@@ -219,12 +251,16 @@ def post_aiupload(term, ai_img_path, Track_number='I'):
         return response.text
     except requests.exceptions.Timeout:
         print("请求超时")
+        return 'error'
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return 'error'
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return 'error'
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return 'error'
 
 
 def get_stream(Track_number='M'):
@@ -242,12 +278,16 @@ def get_stream(Track_number='M'):
             return False
     except requests.exceptions.Timeout:
         print("请求超时")
+        return False
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return False
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return False
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return False
 
 
 def post_status(status=True, Track_number='M'):  # 发送开盘封盘状态，开盘了才能正常进行操作
@@ -259,12 +299,16 @@ def post_status(status=True, Track_number='M'):  # 发送开盘封盘状态，�
         return response.text
     except requests.exceptions.Timeout:
         print("请求超时")
+        return 'error'
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
+        return 'error'
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
+        return 'error'
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return 'error'
 
 
 if __name__ == '__main__':
