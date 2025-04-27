@@ -4422,6 +4422,7 @@ class MapLabel(QLabel):
                         x2 = self.path_points[i][j + 1][0]
                         y2 = self.path_points[i][j + 1][1]
                         painter.drawLine(x1, y1, x2, y2)
+        painter.setPen('black')
         # 绘制每个小球
         for index_position in range(len(self.positions)):
             index = self.positions[index_position][0]  # 获取当前球的路径索引
