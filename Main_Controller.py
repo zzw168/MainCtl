@@ -2131,41 +2131,38 @@ class ObsEndThread(QThread):
                 result_data["timings"] = json.dumps(data_temp)
                 lottery_term[12] = json.dumps(result_data)
                 print(lottery_term[12])
-                try:
-                    res_end = post_end(term=term, betting_end_time=betting_end_time,
-                                       status=term_status,
-                                       Track_number=Track_number)  # 发送游戏结束信号给服务器
-                    if res_end == 'OK':
-                        res_result = post_result(term=term, betting_end_time=betting_end_time,
-                                                 result_data=result_data,
-                                                 Track_number=Track_number)  # 发送最终排名给服务器
-                        if res_result == 'OK':
-                            lottery_term[6] = "发送成功"
-                        else:
-                            lottery_term[6] = "发送失败"
-                        if os.path.exists(lottery_term[9]):
-                            res_upload = post_upload(term=term, img_path=lottery_term[9],
-                                                     Track_number=Track_number)  # 上传结果图片
-                            if res_upload == 'OK':
-                                lottery_term[7] = "上传成功"
-                            else:
-                                lottery_term[7] = "上传失败"
-                        if term_comment != '':
-                            res_marble_results = post_marble_results(term=term,
-                                                                     comments=term_comment,
-                                                                     Track_number=Track_number)  # 上传备注信息
-                            if str(term) in res_marble_results:
-                                lottery_term[8] = term_comment
-                            else:
-                                lottery_term[8] = "备注失败"
-                            term_comment = ''
+                res_end = post_end(term=term, betting_end_time=betting_end_time,
+                                   status=term_status,
+                                   Track_number=Track_number)  # 发送游戏结束信号给服务器
+                if res_end == 'OK':
+                    res_result = post_result(term=term, betting_end_time=betting_end_time,
+                                             result_data=result_data,
+                                             Track_number=Track_number)  # 发送最终排名给服务器
+                    if res_result == 'OK':
+                        lottery_term[6] = "发送成功"
                     else:
-                        send_flg = False
-                except:
+                        lottery_term[6] = "发送失败"
+                    if os.path.exists(lottery_term[9]):
+                        res_upload = post_upload(term=term, img_path=lottery_term[9],
+                                                 Track_number=Track_number)  # 上传结果图片
+                        if res_upload == 'OK':
+                            lottery_term[7] = "上传成功"
+                        else:
+                            lottery_term[7] = "上传失败"
+                    if term_comment != '':
+                        res_marble_results = post_marble_results(term=term,
+                                                                 comments=term_comment,
+                                                                 Track_number=Track_number)  # 上传备注信息
+                        if str(term) in res_marble_results:
+                            lottery_term[8] = term_comment
+                        else:
+                            lottery_term[8] = "备注失败"
+                        term_comment = ''
+                else:
                     send_flg = False
                     self.signal.emit(fail('上传结果错误！'))
                     print('上传结果错误！')
-                ReStart_Thread.start_flg = False  # 比赛结束标志
+                ReStart_Thread.start_flg = False  # 比赛结束标志,添加比赛总用时
                 lottery_term[2] = str(int(time.time() - ranking_time_start))
             if send_flg:
                 lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
