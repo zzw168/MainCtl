@@ -166,6 +166,7 @@
     "lineEdit_Cycle": "4",
     "checkBox_Cycle": false,
     "checkBox_saveImgs_mark": false,
+    "checkBox_end_2": false,
     "checkBox_First_Check": true,
     "checkBox_Monitor_Horizontal": false,
     "checkBox_Monitor_Vertica": false,
