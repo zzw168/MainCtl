@@ -395,12 +395,13 @@ def obs_save_image():
             res, value = sc.GAGetDiReverseCount()
             if res == 0:
                 num = int(value[0] / 2)
-                if num >= balls_count:
+                if num >= balls_count or ui.checkBox_saveImgs_auto.isChecked():
+                    time.sleep(1)
                     cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
                                                       '%s/%s.jpg' % (save_path, time.time()), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
-                        time.sleep(1)
+                        time.sleep(2)
                         sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
                         time.sleep(2)
                         sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
@@ -507,7 +508,7 @@ def rtsp_save_image():
             res, value = sc.GAGetDiReverseCount()
             if res == 0:
                 num = int(value[0] / 2)
-                if num >= balls_count:
+                if num >= balls_count or ui.checkBox_saveImgs_auto.isChecked():
                     cap = cv2.VideoCapture(rtsp_url)
                     if cap.isOpened():
                         ret, frame = cap.read()
@@ -1140,6 +1141,10 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
         point = (x, y)
         if cap_num in area_Code.keys():
             for area in area_Code[cap_num]:
+                if (area['area_code'] == 1  # 防止起点和终点区域冲突
+                        and map_label_big.map_action >=
+                        len(map_label_big.path_points[0]) * 0.1):
+                    continue
                 pts = np.array(area['coordinates'], np.int32)
                 res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
                 if res > -1 and len(ball) <= 9:
@@ -2519,6 +2524,7 @@ class ShootThread(QThread):
             print('弹射上珠线程！')
             self.signal.emit(succeed("正在弹射上珠。。。"))
             try:
+                map_label_big.map_action = 0
                 ranking_array = []  # 排名数组
                 for row in range(0, len(init_array)):
                     ranking_array.append([])
@@ -2728,10 +2734,10 @@ class PlanCmdThread(QThread):
                     if plan_list[plan_index][0] != '1':  # 是否勾选,且在圈数范围内
                         continue
                     if ((((action_area[1] < int(float(plan_list[plan_index][1][0]))  # 循环运行圈数在设定圈数范围内
-                           and (float(plan_list[plan_index][1][0]) > 0) and cb_index == 2)
+                           and (float(plan_list[plan_index][1][0]) > 0) and cb_index == 0)
                           or (action_area[1] == int(float(plan_list[plan_index][1][0])) - 1  # 顺序运行圈数在设定圈数范围内
                               and (float(plan_list[plan_index][1][0]) > 0)
-                              and cb_index in [0, 1])  # 或者设定圈数的值为 0 时，最后一圈执行
+                              and cb_index in [2, 1])  # 或者设定圈数的值为 0 时，最后一圈执行
                           or float(plan_list[plan_index][1][0]) == 0)  # 或者设定圈数的值为 0 时，最后一圈执行
                          and not self.background_state
                          and not self.ready_state
@@ -3578,6 +3584,7 @@ def save_main_json():
             main_all['checkBox_saveImgs_mark'] = ui.checkBox_saveImgs_mark.isChecked()
             main_all['checkBox_First_Check'] = ui.checkBox_First_Check.isChecked()
             main_all['comboBox_plan'] = ui.comboBox_plan.currentIndex()
+            main_all['checkBox_end_2'] = ui.checkBox_end_2.isChecked()
 
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
@@ -3694,6 +3701,7 @@ def load_main_json():
         ui.checkBox_Main_Vertica.setChecked(main_all['checkBox_Main_Vertica'])
         ui.checkBox_saveImgs_mark.setChecked(main_all['checkBox_saveImgs_mark'])
         ui.checkBox_First_Check.setChecked(main_all['checkBox_First_Check'])
+        ui.checkBox_end_2.setChecked(main_all['checkBox_end_2'])
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
