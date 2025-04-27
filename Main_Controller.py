@@ -560,8 +560,7 @@ def deal_rank(integration_qiu_array):
                     for i in range(len(ranking_array)):
                         ranking_array[i][9] = max_lap_count - 1
 
-                if (q_item[6] < ranking_array[r_index][6] < max_area_count + 1
-                        and ranking_array[r_index][9] < max_lap_count - 1):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
+                if q_item[6] < ranking_array[r_index][6] < max_area_count + 1:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
                     if result_count >= max_area_count - area_limit - balls_count:
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
@@ -2167,7 +2166,7 @@ class ObsEndThread(QThread):
             if send_flg:
                 lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             else:
-                lottery_term[3] = '未结束'
+                lottery_term[3] = '未发送'
                 betting_loop_flg = False
             lottery2json()  # 保存数据
             self.signal.emit(succeed('第%s期 结束！' % term))
@@ -2533,7 +2532,7 @@ class ShootThread(QThread):
                     for col in range(0, max_lap_count):
                         ball_sort[row].append([])
                 balls_start = 0  # 起点球数
-                if ui.lineEdit_start.text() != '0':
+                if not ui.checkBox_end_2.isChecked():
                     sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                 if ui.lineEdit_shake.text() != '0':
                     shoot_index = int(ui.lineEdit_shoot.text()) - 1
