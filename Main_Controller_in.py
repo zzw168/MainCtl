@@ -2167,7 +2167,7 @@ class ObsEndThread(QThread):
             if send_flg:
                 lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             else:
-                lottery_term[3] = '未结束'
+                lottery_term[3] = '未发送'
                 betting_loop_flg = False
             lottery2json()  # 保存数据
             self.signal.emit(succeed('第%s期 结束！' % term))
@@ -2533,7 +2533,7 @@ class ShootThread(QThread):
                     for col in range(0, max_lap_count):
                         ball_sort[row].append([])
                 balls_start = 0  # 起点球数
-                if ui.lineEdit_start.text() != '0':
+                if not ui.checkBox_end_2.isChecked():
                     sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                 if ui.lineEdit_shake.text() != '0':
                     shoot_index = int(ui.lineEdit_shoot.text()) - 1
