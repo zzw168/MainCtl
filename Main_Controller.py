@@ -2536,9 +2536,9 @@ class ShootThread(QThread):
                     for col in range(0, max_lap_count):
                         ball_sort[row].append([])
                 balls_start = 0  # 起点球数
-                if ui.lineEdit_start.text() != '':
+                if ui.lineEdit_start.text() != '0':
                     sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
-                if ui.lineEdit_shake.text() != '':
+                if ui.lineEdit_shake.text() != '0':
                     shoot_index = int(ui.lineEdit_shoot.text()) - 1
                     sc.GASetExtDoBit(shoot_index, 1)
                 time.sleep(2)
@@ -2547,7 +2547,7 @@ class ShootThread(QThread):
                     sc.GASetExtDoBit(end_index, 0)
                 else:
                     sc.GASetExtDoBit(end_index, 1)
-                if ui.lineEdit_shake.text() != '':
+                if ui.lineEdit_shake.text() != '0':
                     sc.GASetExtDoBit(int(ui.lineEdit_shake.text()) - 1, 1)  # 打开震动
                 time_count = 0
                 while self.run_flg:
