@@ -3960,7 +3960,7 @@ def wakeup_server():
         except:
             print('图像识别主机通信失败！')
             flg_start['ai'] = False
-        time.sleep(300)
+        time.sleep(30)
 
 
 def stop_server():  # 关闭识别服务器
