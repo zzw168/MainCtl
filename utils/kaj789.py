@@ -54,6 +54,7 @@ def test_server(Track_number='I'):
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
         return False
 
+
 def get_term(Track_number='M'):  # 取期号
     try:
         GET_term_url = '/v2/forecast/%s' % Track_number  # 取得期号，开始时间，结束时间，运行时长
@@ -125,13 +126,15 @@ def post_end(term, betting_end_time, status=1, Track_number='I'):  # 结束比�
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
         return 'error'
 
+
 def post_result(term, betting_end_time, result_data='', Track_number='I'):  # 发送赛果
     try:
         POST_result_url = '/result'
         if result_data != '':
             POST_result_data = result_data
         else:
-            POST_result_data = {"raceTrackID": Track_number, "term": str(term), "actualResultOpeningTime": betting_end_time,
+            POST_result_data = {"raceTrackID": Track_number, "term": str(term),
+                                "actualResultOpeningTime": betting_end_time,
                                 "result": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
                                 "timings": json.dumps([
                                     {"pm": 1, "id": 1, "time": 120.11},
@@ -143,7 +146,9 @@ def post_result(term, betting_end_time, result_data='', Track_number='I'):  # �
                                     {"pm": 7, "id": 7, "time": 129.35},
                                     {"pm": 8, "id": 8, "time": 130.98},
                                     {"pm": 9, "id": 9, "time": 130.99},
-                                    {"pm": 10, "id": 10, "time": 131.22}])}
+                                    {"pm": 10, "id": 10, "time": 131.22}]),
+                                "lapTime": 65.33
+                                }
         print(POST_result_data)
         response = requests.post('%s%s' % (url, POST_result_url), headers=headers, json=POST_result_data, timeout=10)
         print('result:', response.text)

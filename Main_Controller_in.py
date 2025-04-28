@@ -2121,7 +2121,9 @@ class ObsEndThread(QThread):
                 result_data = {"raceTrackID": Track_number, "term": str(term),
                                "actualResultOpeningTime": betting_end_time,
                                "result": z_ranking_end[0:balls_count],
-                               "timings": "[]"}
+                               "timings": "[]",
+                               "lapTime": lapTime}
+                self.signal.emit("lapTime:%s" % lapTime)
                 data_temp = []
                 for index in range(balls_count):
                     if is_natural_num(z_ranking_time[index]):
@@ -4267,6 +4269,7 @@ class MapLabel(QLabel):
         global z_ranking_res
         global ball_stop
         global pos_stop
+        global lapTime
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
             self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间, 路线, 方向]
@@ -4333,6 +4336,13 @@ class MapLabel(QLabel):
         if ranking_array and ranking_array[0][6] < max_area_count - 2 and ranking_array[0][10] == 0:
             self.positions.sort(key=lambda x: (-x[3], -x[0]))
             z_ranking_res = [ball[2] for ball in self.positions]
+
+        # 第一圈时间
+        if ((ranking_array[0][9] == 0)
+                and (ranking_array[0][6] >= max_area_count - balls_count
+                     or self.positions[0][0] >= len(self.path_points[0]) - 100)
+        ):
+            lapTime = round(time.time() - ranking_time_start, 2)
 
         # 更新实时触发位置
         for i in range(len(self.positions)):
@@ -5537,6 +5547,7 @@ class ResetRankingThread(QThread):
         global term_comment
         global init_array
         global z_end_time
+        global lapTime
         # global previous_position
         while self.running:
             time.sleep(1)
@@ -5572,6 +5583,7 @@ class ResetRankingThread(QThread):
             print('tcp_ranking_thread.run_flg = True~~~~~~~~~~~~')
             map_label_big.map_action = 0
             term_comment = ''
+            lapTime = 0
             alarm_worker.toggle_enablesignal.emit(False)
             if not ui.checkBox_test.isChecked():
                 activate_browser()  # 刷新OBS中排名浏览器
@@ -6946,6 +6958,7 @@ if __name__ == '__main__':
     term_status = 1  # 赛事状态（丢球）
     term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
     term_comment = ''
+    lapTime = 0
     result_data = {"raceTrackID": Track_number, "term": str(term), "actualResultOpeningTime": betting_end_time,
                    "result": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
                    "timings": json.dumps([
@@ -6958,7 +6971,8 @@ if __name__ == '__main__':
                        {"pm": 7, "id": 7, "time": 129.35},
                        {"pm": 8, "id": 8, "time": 130.98},
                        {"pm": 9, "id": 9, "time": 130.99},
-                       {"pm": 10, "id": 10, "time": 131.22}])}
+                       {"pm": 10, "id": 10, "time": 131.22}]),
+                   "lapTime": 65.33}
     load_main_json()
     load_ballsort_json()
     load_area()  # 初始化区域划分
