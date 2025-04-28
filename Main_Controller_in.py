@@ -2276,6 +2276,7 @@ class ScreenShotThread(QThread):
                 continue
             print('截图结果识别运行！')
             self.signal.emit(succeed('截图结果识别运行！'))
+            time.sleep(1)
             ObsEnd_Thread.screen_flg = False  # 结算页标志1
             obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
