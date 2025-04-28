@@ -1146,8 +1146,9 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
         if cap_num in area_Code.keys():
             for area in area_Code[cap_num]:
                 if (area['area_code'] == 1  # 防止起点和终点区域冲突
-                        and map_label_big.map_action >=
-                        len(map_label_big.path_points[0]) * 0.1):
+                        and ui.checkBox_end_2.isChecked()
+                        and map_label_big.map_action >
+                        len(map_label_big.path_points[0]) * 0.2):
                     continue
                 pts = np.array(area['coordinates'], np.int32)
                 res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
