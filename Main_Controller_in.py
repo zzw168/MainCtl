@@ -2663,9 +2663,9 @@ class AxisThread(QThread):
                     sc.card_update()
                     axis_reset = False
                     self.signal.emit(succeed('轴复位完成！'))
-                    for index in range(0, 16):
-                        sc.GASetExtDoBit(index, 0)
-                    self.signal.emit(succeed('所有机关已关闭！'))
+                    # for index in range(0, 16):
+                    #     sc.GASetExtDoBit(index, 0)
+                    # self.signal.emit(succeed('所有机关已关闭！'))
             except:
                 print("轴复位出错！")
                 flg_start['s485'] = False
@@ -2753,7 +2753,7 @@ class PlanCmdThread(QThread):
                                 else:  # 不带负号即开启机关
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if (plan_list[plan_index][12][0] == ui.lineEdit_start_count.text()
-                                        and not self.background_state):  # '9'倒数机关打开
+                                        and not (self.background_state or self.end_state)):  # '9'倒数机关打开
                                     ranking_array = []  # 排名数组
                                     for row in range(balls_count):
                                         ranking_array.append([])
@@ -5650,6 +5650,8 @@ class CheckFileThread(QThread):
                     ui.checkBox_Pass_Recognition_Start.setEnabled(True)
                     ui.checkBox_Pass_Ranking_Twice.setEnabled(True)
                     ui.lineEdit_balls_auto.setEnabled(True)
+                    ui.groupBox_6.setEnabled(True)
+                    ui.frame_13.setEnabled(True)
             else:
                 if ui.frame_zzw_1.isEnabled():
                     ui.frame_zzw_1.setEnabled(False)
@@ -5659,6 +5661,8 @@ class CheckFileThread(QThread):
                     ui.checkBox_Pass_Recognition_Start.setEnabled(False)
                     ui.checkBox_Pass_Ranking_Twice.setEnabled(False)
                     ui.lineEdit_balls_auto.setEnabled(False)
+                    ui.groupBox_6.setEnabled(False)
+                    ui.frame_13.setEnabled(False)
 
 
 def CheckFile_signal_accept(msg):
