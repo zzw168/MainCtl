@@ -1,8 +1,8 @@
 from PIL import Image
 
 # 打开 PNG 图片
-png_path = "icon.png"  # 替换为你的 PNG 文件路径
-ico_path = "icon.ico"  # 输出 ICO 文件路径
+png_path = "diary.png"  # 替换为你的 PNG 文件路径
+ico_path = "diary.ico"  # 输出 ICO 文件路径
 
 # 读取并转换
 img = Image.open(png_path)

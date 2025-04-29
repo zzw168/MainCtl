@@ -344,6 +344,11 @@ def get_picture(scence_current):
                 img = base64.b64encode(buffer).decode("utf-8")
             else:
                 img = resp.image_data[22:]
+
+            if os.path.exists(ui.lineEdit_end1_Path.text()):
+                img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time()))
+                str2image_file(img, img_file)  # 保存图片
+
             form_data = {
                 'CameraType': 'obs',
                 'img': img,
@@ -352,11 +357,11 @@ def get_picture(scence_current):
             try:
                 res = requests.post(url=recognition_addr, data=form_data, timeout=8)
                 r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
-                # r_img = r_list[0]
-                # if os.path.exists(ui.lineEdit_upload_Path.text()):
-                #     image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_upload_Path.text(), lottery_term[0]), 'wb')
-                #     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-                #     image_json.close()
+                r_img = r_list[0]
+                if os.path.exists(ui.lineEdit_end1_Path.text()):
+                    image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0]), 'wb')
+                    image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+                    image_json.close()
                 flg_start['ai_end'] = True
                 return r_list
             except:
@@ -378,9 +383,7 @@ def get_picture(scence_current):
             else:
                 flg_start['obs'] = False
                 return ['', '[1]', 'obs']
-    # if os.path.exists(ui.lineEdit_upload_Path.text()):
-    #     img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_upload_Path.text(), lottery_term[0], int(time.time()))
-    #     str2image_file(img, img_file)  # 保存图片
+
 
 
 def obs_save_image():
@@ -445,6 +448,7 @@ def get_rtsp(rt_url):
     if cap.isOpened():
         for i in range(3):
             ret = False
+            frame = ''
             for j in range(10):
                 ret, frame = cap.read()
 
@@ -464,6 +468,11 @@ def get_rtsp(rt_url):
                     if success:
                         # 将 JPEG 数据转换为 Base64 字符串
                         jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
+                        if os.path.exists(ui.lineEdit_end2_Path.text()):
+                            img_file = '%s/rtsp_%s_%s.jpg' % (
+                            ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+                            str2image_file(jpg_base64, img_file)  # 保存图片
+
                         form_data = {
                             'CameraType': 'monitor',
                             'img': jpg_base64,
@@ -471,11 +480,11 @@ def get_rtsp(rt_url):
                         }
                         res = requests.post(url=recognition_addr, data=form_data, timeout=8)
                         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
-                        # r_img = r_list[0]
-                        # if os.path.exists(ui.lineEdit_upload_Path.text()):
-                        #     image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_upload_Path.text(), lottery_term[0]), 'wb')
-                        #     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-                        #     image_json.close()
+                        r_img = r_list[0]
+                        if os.path.exists(ui.lineEdit_end2_Path.text()):
+                            image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]), 'wb')
+                            image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+                            image_json.close()
                         flg_start['ai_end'] = True
                         cap.release()
                         return r_list
@@ -6202,6 +6211,7 @@ def my_test():
     # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
     OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
+    # get_rtsp('rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101')
     # play_alarm()
     # PlanCmd_Thread.background_state = True
     # PlanCmd_Thread.run_flg = True
