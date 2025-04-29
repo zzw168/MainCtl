@@ -8,6 +8,7 @@ from PySide6.QtGui import QPainter, QBrush, QColor, QPen, QShowEvent
 from PySide6.QtWidgets import (
     QApplication, QTableWidgetItem, QComboBox, QDialog, QMenu, QAbstractButton, QPushButton, QMessageBox
 )
+from functools import partial
 
 import sys
 
@@ -19,9 +20,16 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.labels = []
-        self.Track_number = 'L'
+        self.Track_number = 'M'
+        file = "main_config.json"
+        if os.path.exists(file):
+            f = open(file, 'r', encoding='utf-8')
+            main_all = json.load(f)
+            f.close()
+            self.Track_number = main_all['Track_number']
         self.kaj789_thread = threading.Thread(target=self.resend_end, args=(self.Track_number, 'post_end', 1),
                                               daemon=True)
+
         """global rtsp_save_t
     if not self.kaj789_thread.is_alive():
         self.kaj789_thread = threading.Thread(target=self.resend_end, args=(self.Track_number, 'post_end', 1),
@@ -117,8 +125,8 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         menu = QMenu()
         item0 = menu.addAction("查看图片")
         item1 = menu.addAction("观看录像")
-        # item2 = menu.addAction("发送赛果")
-        # item3 = menu.addAction("取消当局")
+        item2 = menu.addAction("发送备注")
+        item3 = menu.addAction("取消当局")
         item4 = menu.addAction("刷新")
 
         screenPos = tb_kaj789.mapToGlobal(pos)
@@ -130,27 +138,20 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         if action == item1:
             exe_path = tb_kaj789.item(row_num, 10).text()
             os.startfile(exe_path)
-        # if action == item2:
-        #     row = tb_kaj789.currentRow()
-        #     if tb_kaj789.item(row, 8).text() == '':
-        #         # self.resend_end(term_status=1, Track_number=self.Track_number)
-        #         if not self.kaj789_thread.is_alive():
-        #             self.kaj789_thread = threading.Thread(target=self.resend_end,
-        #                                                   args=(self.Track_number, 'post_end', 1),
-        #                                                   daemon=True)
-        #             self.kaj789_thread.start()
-        #     else:
-        #         if not self.kaj789_thread.is_alive():
-        #             self.kaj789_thread = threading.Thread(target=self.resend_end,
-        #                                                   args=(self.Track_number, 'post_end', 0),
-        #                                                   daemon=True)
-        #             self.kaj789_thread.start()
-        # if action == item3:
-        #     if not self.kaj789_thread.is_alive():
-        #         self.kaj789_thread = threading.Thread(target=self.resend_end,
-        #                                               args=(self.Track_number, 'post_end', 2),
-        #                                               daemon=True)
-        #         self.kaj789_thread.start()
+        if action == item2:
+            row = tb_kaj789.currentRow()
+            if tb_kaj789.item(row, 8).text() != '':
+                if not self.kaj789_thread.is_alive():
+                    self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                          args=(self.Track_number, '', 0),
+                                                          daemon=True)
+                    self.kaj789_thread.start()
+        if action == item3:
+            if not self.kaj789_thread.is_alive():
+                self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                      args=(self.Track_number, 'post_end', 2),
+                                                      daemon=True)
+                self.kaj789_thread.start()
         if action == item4:
             pass
 
@@ -158,7 +159,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         """ 在备注列（第5列）点击后显示 ComboBox """
         if col == 8:  # 备注列索引为 4
             combo = QComboBox()
-            combo.addItems(['Invalid Term', 'TRAP', 'OUT', ''])  # 选项
+            combo.addItems(['TRAP', 'OUT', ''])  # 选项
             combo.setCurrentText(
                 self.tableWidget_Results.item(row, col).text() if self.tableWidget_Results.item(row, col) else "")
 
@@ -206,17 +207,16 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             for row in range(len(lottery_list)):
                 for col in range(len(lottery_list[row])):
                     lottery_kaj789[col] = lottery_list[row][col]
-                data2table(self.tableWidget_Results, lottery_kaj789, self.labels)
+                self.data2table(self.tableWidget_Results, lottery_kaj789, self.labels)
         # except Exception as e:
         #     print(f"读取错误: {e}")
 
-    def resend_end(self, Track_number, run_type='post_end', term_status=1):
+    def resend_end(self, Track_number, run_type='', term_status=1):
         tb_kaj789 = self.tableWidget_Results
         row = tb_kaj789.currentRow()
         term = tb_kaj789.item(row, 0).text()
         betting_end_time = tb_kaj789.item(row, 11).text()
         result_data = json.loads(tb_kaj789.item(row, 12).text())
-        # result_data = 'json.loads(tb_kaj789.item(row, 12))'
         img_path = tb_kaj789.item(row, 9).text()
         term_comment = tb_kaj789.item(row, 8).text()
         print(term, betting_end_time, result_data, img_path, term_comment)
@@ -238,13 +238,19 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                 res_result = post_result(term, betting_end_time, result_data,
                                          Track_number)  # 发送最终排名给服务器
                 if res_result == 'OK':
-                    run_type = 'post_upload'
+                    # run_type = 'post_upload'
+                    src_widget = tb_kaj789.cellWidget(row, 6)
+                    if src_widget:  # 删除存在的按钮
+                        tb_kaj789.removeCellWidget(row, 6)
                     tb_kaj789.item(row, 6).setText('补发成功')
                 else:
                     continue
             if run_type == 'post_upload' and os.path.exists(img_path):
                 res_upload = post_upload(term, img_path, Track_number)  # 上传结果图片
                 if res_upload == 'OK':
+                    src_widget = tb_kaj789.cellWidget(row, 7)
+                    if src_widget:  # 删除存在的按钮
+                        tb_kaj789.removeCellWidget(row, 7)
                     tb_kaj789.item(row, 7).setText('补传成功')
                 else:
                     continue
@@ -289,75 +295,107 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             for row in range(len(data) - 1, -1, -1):
                 f.write(json.dumps(data[row]) + "\n")
 
-# from PySide6.QtWidgets import QTableWidgetItem, QPushButton, QMessageBox
-# from PySide6.QtCore import Qt
-from functools import partial
 
-def handle_failure(row, col):
-    msg_box = QMessageBox()
-    msg_box.setIcon(QMessageBox.Warning)
-    msg_box.setWindowTitle("操作失败")
-    msg_box.setText(f"第 {row + 1} 行，第 {col + 1} 列 检测到失败。\n你想执行什么操作？")
-    retry_btn = msg_box.addButton("重试", QMessageBox.AcceptRole)
-    ignore_btn = msg_box.addButton("忽略", QMessageBox.RejectRole)
-    msg_box.exec()
+    def handle_failure(self, tb_kaj789, row, col):
+        msg_box = QMessageBox()
+        msg_box.setIcon(QMessageBox.Information)
+        msg_box.setWindowTitle("第 %s 赛道 补发操作" % self.Track_number)
+        if col == 6:
+            text = '补发 第%s期 排名结果！' % tb_kaj789.item(row, 0).text()
+        elif col == 7:
+            text = '补传 第%s期 结果图片！' % tb_kaj789.item(row, 0).text()
+        else:
+            text = '补发 第%s期 备注！'  % tb_kaj789.item(row, 0).text()
+        msg_box.setText(text)
+        retry_btn = msg_box.addButton("确认(Ok)", QMessageBox.AcceptRole)
+        ignore_btn = msg_box.addButton("取消(Cancel)", QMessageBox.RejectRole)
+        msg_box.exec()
 
-    if msg_box.clickedButton() == retry_btn:
-        print(f"✅ 重试：行 {row + 1} 列 {col + 1}")
-    elif msg_box.clickedButton() == ignore_btn:
-        print(f"🚫 忽略：行 {row + 1} 列 {col + 1}")
-
-def data2table(tb_result, lottery_t, labels):
-    row_count = tb_result.rowCount()
-    col_count = tb_result.columnCount()
-    tb_result.setRowCount(row_count + 1)
-
-    labels.insert(0, str(lottery_t[0]))
-    tb_result.setVerticalHeaderLabels(labels)
-    tb_result.verticalHeaderItem(len(labels) - 1).setTextAlignment(Qt.AlignCenter)
-
-    # 插入空行
-    for col in range(col_count):
-        item = QTableWidgetItem('')
-        item.setTextAlignment(Qt.AlignCenter)
-        tb_result.setItem(row_count, col, item)
-
-    # 表格数据下移
-    if row_count > 0:
-        for row in range(row_count, 0, -1):
-            for col in range(col_count):
-                src_item = tb_result.item(row - 1, col)
-                if src_item:
-                    target_item = tb_result.item(row, col)
-                    if target_item is None:
-                        target_item = QTableWidgetItem()
-                        target_item.setTextAlignment(Qt.AlignCenter)
-                        tb_result.setItem(row, col, target_item)
-                    target_item.setText(src_item.text())
+        if msg_box.clickedButton() == retry_btn:
+            print(f"✅ 重试：行 {row + 1} 列 {col + 1}")
+            if col == 6:
+                row = tb_kaj789.currentRow()
+                if tb_kaj789.item(row, 8).text() == '':
+                    if not self.kaj789_thread.is_alive():
+                        self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                              args=(self.Track_number, 'post_end', 1),
+                                                              daemon=True)
+                        self.kaj789_thread.start()
                 else:
-                    tb_result.setItem(row, col, QTableWidgetItem(''))
-
-                src_widget = tb_result.cellWidget(row - 1, col)
+                    if not self.kaj789_thread.is_alive():
+                        self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                              args=(self.Track_number, 'post_end', 0),
+                                                              daemon=True)
+                        self.kaj789_thread.start()
+            elif col == 7:
+                if not self.kaj789_thread.is_alive():
+                    self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                          args=(self.Track_number, 'post_upload', 0),
+                                                          daemon=True)
+                    self.kaj789_thread.start()
+            else:
+                src_widget = tb_kaj789.cellWidget(row, col)
                 if src_widget:  # 删除存在的按钮
-                    tb_result.removeCellWidget(row - 1, col)
+                    tb_kaj789.removeCellWidget(row, col)
 
-    # 设置新行内容
-    for col_index, value in enumerate(lottery_t):
-        if tb_result.item(0, col_index):
-            tb_result.item(0, col_index).setText(str(value))
+        elif msg_box.clickedButton() == ignore_btn:
+            print(f"🚫 忽略：行 {row + 1} 列 {col + 1}")
 
-    # 遍历整个表格，将"失败"变为按钮
-    for row in range(tb_result.rowCount()):
-        for col in range(tb_result.columnCount()):
-            item = tb_result.item(row, col)
-            # widget = tb_result.cellWidget(row, col)
-            # if widget is None and item and '成功' in item.text():
-            if item and '成功' in item.text():
-                button = QPushButton("成功")
-                button.setStyleSheet("color: red; font-weight: bold;")
-                # button.clicked.connect(partial(handle_failure, row, col))
-                tb_result.setCellWidget(row, col, button)
 
+    def data2table(self, tb_result, lottery_t, labels):
+        row_count = tb_result.rowCount()
+        col_count = tb_result.columnCount()
+        tb_result.setRowCount(row_count + 1)
+
+        labels.insert(0, str(lottery_t[0]))
+        tb_result.setVerticalHeaderLabels(labels)
+        tb_result.verticalHeaderItem(len(labels) - 1).setTextAlignment(Qt.AlignCenter)
+
+        # 插入空行
+        for col in range(col_count):
+            item = QTableWidgetItem('')
+            item.setTextAlignment(Qt.AlignCenter)
+            tb_result.setItem(row_count, col, item)
+
+        # 表格数据下移
+        if row_count > 0:
+            for row in range(row_count, 0, -1):
+                for col in range(col_count):
+                    src_item = tb_result.item(row - 1, col)
+                    if src_item:
+                        target_item = tb_result.item(row, col)
+                        if target_item is None:
+                            target_item = QTableWidgetItem()
+                            target_item.setTextAlignment(Qt.AlignCenter)
+                            tb_result.setItem(row, col, target_item)
+                        target_item.setText(src_item.text())
+                    else:
+                        tb_result.setItem(row, col, QTableWidgetItem(''))
+
+                    src_widget = tb_result.cellWidget(row - 1, col)
+                    if src_widget:  # 删除存在的按钮
+                        tb_result.removeCellWidget(row - 1, col)
+
+        # 设置新行内容
+        for col_index, value in enumerate(lottery_t):
+            if tb_result.item(0, col_index):
+                tb_result.item(0, col_index).setText(str(value))
+
+        # 遍历整个表格，将"失败"变为按钮
+        for row in range(tb_result.rowCount()):
+            for col in range(tb_result.columnCount()):
+                item = tb_result.item(row, col)
+                if col in [6,7] and item and '失败' in item.text():
+                    if col == 6:
+                        text = '补发赛果'
+                    elif col == 7:
+                        text = '补传图片'
+                    else:
+                        text = '补发'
+                    button = QPushButton(text)
+                    button.setStyleSheet("color: red; font-weight: bold;")
+                    button.clicked.connect(partial(self.handle_failure, tb_result, row, col))
+                    tb_result.setCellWidget(row, col, button)
 
 
 if __name__ == '__main__':
