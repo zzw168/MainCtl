@@ -1910,8 +1910,8 @@ class PlanBallNumThread(QThread):
                                 lottery_term[11] = str(betting_end_time)
                             if num <= balls_count:
                                 map_label_big.bet_running[num - 1] = False
-                            if num == balls_count:
-                                self.signal.emit('录终点图')
+                            # if num == balls_count:
+                            #     self.signal.emit('录终点图')
                             self.signal.emit(num)
                             num_old = num
                         if num > balls_count - 2 and screen_sort:
@@ -2056,7 +2056,7 @@ class ObsEndThread(QThread):
                 self.signal.emit('比赛计时')
                 continue
             print('结算页面运行！')
-            self.signal.emit('录图结束')
+            # self.signal.emit('录图结束')
             send_flg = True  # 发送赛果成功标志
             save_path = '%s' % ui.lineEdit_upload_Path.text()
             if os.path.exists(save_path):
