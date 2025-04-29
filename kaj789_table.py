@@ -6,8 +6,9 @@ from tkinter import messagebox
 from PySide6.QtCore import Qt, QEvent
 from PySide6.QtGui import QPainter, QBrush, QColor, QPen, QShowEvent
 from PySide6.QtWidgets import (
-    QApplication, QTableWidgetItem, QComboBox, QDialog, QMenu, QAbstractButton
+    QApplication, QTableWidgetItem, QComboBox, QDialog, QMenu, QAbstractButton, QPushButton, QMessageBox
 )
+
 import sys
 
 from kaj789_Ui import Ui_Dialog_Kaj789_Ui
@@ -192,22 +193,22 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         file = "./terms/%s" % selected_file
         if not selected_file.endswith(".json"):
             return
-        try:
-            if os.path.exists(file):
-                lottery_list = []
-                lottery_kaj789 = [''] * 15
-                self.labels = []
-                self.tableWidget_Results.setRowCount(0)
-                with open(file, "r", encoding="utf-8") as f:
-                    for line in f:
-                        print(json.loads(line))  # 逐行解析 JSON
-                        lottery_list.append(json.loads(line))
-                for row in range(len(lottery_list)):
-                    for col in range(len(lottery_list[row])):
-                        lottery_kaj789[col] = lottery_list[row][col]
-                    lottery_data2table(self.tableWidget_Results, lottery_kaj789, self.labels)
-        except Exception as e:
-            print(f"读取错误: {e}")
+        # try:
+        if os.path.exists(file):
+            lottery_list = []
+            lottery_kaj789 = [''] * 15
+            self.labels = []
+            self.tableWidget_Results.setRowCount(0)
+            with open(file, "r", encoding="utf-8") as f:
+                for line in f:
+                    print(json.loads(line))  # 逐行解析 JSON
+                    lottery_list.append(json.loads(line))
+            for row in range(len(lottery_list)):
+                for col in range(len(lottery_list[row])):
+                    lottery_kaj789[col] = lottery_list[row][col]
+                data2table(self.tableWidget_Results, lottery_kaj789, self.labels)
+        # except Exception as e:
+        #     print(f"读取错误: {e}")
 
     def resend_end(self, Track_number, run_type='post_end', term_status=1):
         tb_kaj789 = self.tableWidget_Results
@@ -288,8 +289,25 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             for row in range(len(data) - 1, -1, -1):
                 f.write(json.dumps(data[row]) + "\n")
 
+# from PySide6.QtWidgets import QTableWidgetItem, QPushButton, QMessageBox
+# from PySide6.QtCore import Qt
+from functools import partial
 
-def lottery_data2table(tb_result, lottery_t, labels):  # 赛事入表
+def handle_failure(row, col):
+    msg_box = QMessageBox()
+    msg_box.setIcon(QMessageBox.Warning)
+    msg_box.setWindowTitle("操作失败")
+    msg_box.setText(f"第 {row + 1} 行，第 {col + 1} 列 检测到失败。\n你想执行什么操作？")
+    retry_btn = msg_box.addButton("重试", QMessageBox.AcceptRole)
+    ignore_btn = msg_box.addButton("忽略", QMessageBox.RejectRole)
+    msg_box.exec()
+
+    if msg_box.clickedButton() == retry_btn:
+        print(f"✅ 重试：行 {row + 1} 列 {col + 1}")
+    elif msg_box.clickedButton() == ignore_btn:
+        print(f"🚫 忽略：行 {row + 1} 列 {col + 1}")
+
+def data2table(tb_result, lottery_t, labels):
     row_count = tb_result.rowCount()
     col_count = tb_result.columnCount()
     tb_result.setRowCount(row_count + 1)
@@ -298,16 +316,48 @@ def lottery_data2table(tb_result, lottery_t, labels):  # 赛事入表
     tb_result.setVerticalHeaderLabels(labels)
     tb_result.verticalHeaderItem(len(labels) - 1).setTextAlignment(Qt.AlignCenter)
 
-    for col in range(0, col_count):
+    # 插入空行
+    for col in range(col_count):
         item = QTableWidgetItem('')
         item.setTextAlignment(Qt.AlignCenter)
         tb_result.setItem(row_count, col, item)
-    if row_count > 0:  # 下移表格
+
+    # 表格数据下移
+    if row_count > 0:
         for row in range(row_count, 0, -1):
-            for col in range(0, col_count):
-                tb_result.item(row, col).setText(tb_result.item(row - 1, col).text())
-    for index, value in enumerate(lottery_t):
-        tb_result.item(0, index).setText(str(value))
+            for col in range(col_count):
+                src_item = tb_result.item(row - 1, col)
+                if src_item:
+                    target_item = tb_result.item(row, col)
+                    if target_item is None:
+                        target_item = QTableWidgetItem()
+                        target_item.setTextAlignment(Qt.AlignCenter)
+                        tb_result.setItem(row, col, target_item)
+                    target_item.setText(src_item.text())
+                else:
+                    tb_result.setItem(row, col, QTableWidgetItem(''))
+
+                src_widget = tb_result.cellWidget(row - 1, col)
+                if src_widget:  # 删除存在的按钮
+                    tb_result.removeCellWidget(row - 1, col)
+
+    # 设置新行内容
+    for col_index, value in enumerate(lottery_t):
+        if tb_result.item(0, col_index):
+            tb_result.item(0, col_index).setText(str(value))
+
+    # 遍历整个表格，将"失败"变为按钮
+    for row in range(tb_result.rowCount()):
+        for col in range(tb_result.columnCount()):
+            item = tb_result.item(row, col)
+            # widget = tb_result.cellWidget(row, col)
+            # if widget is None and item and '成功' in item.text():
+            if item and '成功' in item.text():
+                button = QPushButton("成功")
+                button.setStyleSheet("color: red; font-weight: bold;")
+                # button.clicked.connect(partial(handle_failure, row, col))
+                tb_result.setCellWidget(row, col, button)
+
 
 
 if __name__ == '__main__':
