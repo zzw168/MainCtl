@@ -440,10 +440,14 @@ def get_rtsp(rt_url):
     #     requests.get(ip_address)
     # except:
     #     return ['', '[1]', 'monitor']
-    cap = cv2.VideoCapture(rt_url)
+    cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
+    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
     if cap.isOpened():
         for i in range(3):
-            ret, frame = cap.read()
+            ret = False
+            for j in range(10):
+                ret, frame = cap.read()
+
             if ret:
                 try:
                     if len(area_Code['net']) > 0:
@@ -509,9 +513,12 @@ def rtsp_save_image():
             if res == 0:
                 num = int(value[0] / 2)
                 if num >= balls_count or ui.checkBox_saveImgs_auto.isChecked():
-                    cap = cv2.VideoCapture(rtsp_url)
+                    cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
+                    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
                     if cap.isOpened():
-                        ret, frame = cap.read()
+                        ret = False
+                        for i in range(10):
+                            ret, frame = cap.read()
                         cap.release()
                         if ret:
                             f = '%s/%s.jpg' % (save_path, int(time.time()))
@@ -1145,7 +1152,8 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
         point = (x, y)
         if cap_num in area_Code.keys():
             for area in area_Code[cap_num]:
-                if (area['area_code'] == 1  # 防止起点和终点区域冲突
+                if (map_label_big.map_action and map_label_big.path_points
+                        and area['area_code'] == 1  # 防止起点和终点区域冲突
                         and ui.checkBox_end_2.isChecked()
                         and map_label_big.map_action >
                         len(map_label_big.path_points[0]) * 0.2):
