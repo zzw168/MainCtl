@@ -116,8 +116,8 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         menu = QMenu()
         item0 = menu.addAction("查看图片")
         item1 = menu.addAction("观看录像")
-        item2 = menu.addAction("发送赛果")
-        item3 = menu.addAction("取消当局")
+        # item2 = menu.addAction("发送赛果")
+        # item3 = menu.addAction("取消当局")
         item4 = menu.addAction("刷新")
 
         screenPos = tb_kaj789.mapToGlobal(pos)
@@ -129,27 +129,27 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         if action == item1:
             exe_path = tb_kaj789.item(row_num, 10).text()
             os.startfile(exe_path)
-        if action == item2:
-            row = tb_kaj789.currentRow()
-            if tb_kaj789.item(row, 8).text() == '':
-                # self.resend_end(term_status=1, Track_number=self.Track_number)
-                if not self.kaj789_thread.is_alive():
-                    self.kaj789_thread = threading.Thread(target=self.resend_end,
-                                                          args=(self.Track_number, 'post_end', 1),
-                                                          daemon=True)
-                    self.kaj789_thread.start()
-            else:
-                if not self.kaj789_thread.is_alive():
-                    self.kaj789_thread = threading.Thread(target=self.resend_end,
-                                                          args=(self.Track_number, 'post_end', 0),
-                                                          daemon=True)
-                    self.kaj789_thread.start()
-        if action == item3:
-            if not self.kaj789_thread.is_alive():
-                self.kaj789_thread = threading.Thread(target=self.resend_end,
-                                                      args=(self.Track_number, 'post_end', 2),
-                                                      daemon=True)
-                self.kaj789_thread.start()
+        # if action == item2:
+        #     row = tb_kaj789.currentRow()
+        #     if tb_kaj789.item(row, 8).text() == '':
+        #         # self.resend_end(term_status=1, Track_number=self.Track_number)
+        #         if not self.kaj789_thread.is_alive():
+        #             self.kaj789_thread = threading.Thread(target=self.resend_end,
+        #                                                   args=(self.Track_number, 'post_end', 1),
+        #                                                   daemon=True)
+        #             self.kaj789_thread.start()
+        #     else:
+        #         if not self.kaj789_thread.is_alive():
+        #             self.kaj789_thread = threading.Thread(target=self.resend_end,
+        #                                                   args=(self.Track_number, 'post_end', 0),
+        #                                                   daemon=True)
+        #             self.kaj789_thread.start()
+        # if action == item3:
+        #     if not self.kaj789_thread.is_alive():
+        #         self.kaj789_thread = threading.Thread(target=self.resend_end,
+        #                                               args=(self.Track_number, 'post_end', 2),
+        #                                               daemon=True)
+        #         self.kaj789_thread.start()
         if action == item4:
             pass
 

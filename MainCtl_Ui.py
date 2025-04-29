@@ -2489,7 +2489,8 @@ class Ui_MainWindow(object):
         self.lineEdit_alarm.setObjectName(u"lineEdit_alarm")
         self.lineEdit_alarm.setMinimumSize(QSize(0, 0))
         self.lineEdit_alarm.setFont(font6)
-        self.lineEdit_alarm.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.lineEdit_alarm.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.lineEdit_alarm.setCursorPosition(1)
         self.lineEdit_alarm.setReadOnly(False)
 
         self.gridLayout_58.addWidget(self.lineEdit_alarm, 2, 3, 1, 1)
@@ -4062,7 +4063,7 @@ class Ui_MainWindow(object):
         self.lineEdit_shoot_3.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_shoot_3.setText(QCoreApplication.translate("MainWindow", u"6", None))
-        self.checkBox_end_2.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u5347\u964d\uff1a", None))
+        self.checkBox_end_2.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\u8d77\u70b9\uff1a", None))
         self.checkBox_shoot3.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c043\uff1a", None))
         self.groupBox_26.setTitle(QCoreApplication.translate("MainWindow", u"\u4e3b\u9898\u97f3\u8bbe\u7f6e", None))
         self.radioButton_music_background_1.setText(QCoreApplication.translate("MainWindow", u"\u80cc\u666f\u97f3\u4e501\uff1a", None))

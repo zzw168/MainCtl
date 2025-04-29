@@ -29,7 +29,7 @@ from Speed_Ui import Ui_Dialog_Set_Speed
 from TrapBallDlg_Ui import Ui_Dialog_TrapBall
 from utils import tool_unit
 from utils.SportCard_unit import *
-from kaj789_table import Kaj789Ui, lottery_data2table
+from kaj789_table import Kaj789Ui
 from utils.tool_unit import *
 from utils.Serial485_unit import *
 from MainCtl_Ui import *
@@ -5188,6 +5188,25 @@ def get_lottery_term():  # 创建开奖记录
         return False
 
 
+def lottery_data2table(tb_result, lottery_t, _labels):  # 赛事入表
+    row_count = tb_result.rowCount()
+    col_count = tb_result.columnCount()
+    tb_result.setRowCount(row_count + 1)
+
+    _labels.insert(0, str(lottery_t[0]))
+    tb_result.setVerticalHeaderLabels(_labels)
+    tb_result.verticalHeaderItem(len(_labels) - 1).setTextAlignment(Qt.AlignCenter)
+
+    for col in range(0, col_count):
+        item = QTableWidgetItem('')
+        item.setTextAlignment(Qt.AlignCenter)
+        tb_result.setItem(row_count, col, item)
+    if row_count > 0:  # 下移表格
+        for row in range(row_count, 0, -1):
+            for col in range(0, col_count):
+                tb_result.item(row, col).setText(tb_result.item(row - 1, col).text())
+    for index, value in enumerate(lottery_t):
+        tb_result.item(0, index).setText(str(value))
 """
     运动卡开启线程
 """
