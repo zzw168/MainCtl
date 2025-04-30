@@ -130,6 +130,9 @@ def interpolate_y_from_x(polyline, x_value):
     :param x_value: float，目标 x
     :return: float，插值得到的 y
     """
+    if not polyline or len(polyline) < 2:
+        return None  # 或 raise ValueError("点数不足以插值")
+
     points = sorted(polyline, key=lambda p: p[0])  # 确保按 x 排序
     x_vals = [p[0] for p in points]
     y_vals = [p[1] for p in points]
@@ -145,6 +148,9 @@ def interpolate_x_from_y(polyline, y_value):
     :param y_value: float，目标 y
     :return: float，插值得到的 x
     """
+    if not polyline or len(polyline) < 2:
+        return None  # 或 raise ValueError("点数不足以插值")
+
     points = sorted(polyline, key=lambda p: p[1])  # 按 y 值排序
     y_vals = [p[1] for p in points]
     x_vals = [p[0] for p in points]

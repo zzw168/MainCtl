@@ -4357,7 +4357,7 @@ class MapLabel(QLabel):
             z_ranking_res = [ball[2] for ball in self.positions]
 
         # 第一圈时间
-        if ((ranking_array[0][9] == 0)
+        if (ranking_array and (ranking_array[0][9] == 0)
                 and (ranking_array[0][6] >= max_area_count - balls_count
                      or self.positions[0][0] >= len(self.path_points[0]) - 100)
         ):
@@ -4461,9 +4461,13 @@ class MapLabel(QLabel):
                 x, y = self.path_points[0][index]
                 if self.positions[index_position][6] != 0:  # 分岔路线
                     if self.positions[index_position][7] < 10:  # 小于10是X轴
-                        y = interpolate_y_from_x(self.path_points[self.positions[index_position][6]], x)
+                        y1 = interpolate_y_from_x(self.path_points[self.positions[index_position][6]], x)
+                        if math.isfinite(y1):
+                            y = y1
                     else:
-                        x = interpolate_x_from_y(self.path_points[self.positions[index_position][6]], y)
+                        x1 = interpolate_x_from_y(self.path_points[self.positions[index_position][6]], y)
+                        if math.isfinite(x1):
+                            x = x1
                 # 设置球的颜色
                 painter.setBrush(QBrush(self.color_names[self.positions[index_position][1]], Qt.SolidPattern))
                 # 绘制球
@@ -6209,9 +6213,12 @@ def red_line():
 def my_test():
     global term
     global z_ranking_res
+    global ranking_array
+    print(ranking_array)
+    ranking_array[7][8] = 1
     # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
-    OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
+    # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
     # get_rtsp('rtsp://admin:123456@192.168.0.29:554/Streaming/Channels/101')
     # play_alarm()
     # PlanCmd_Thread.background_state = True
