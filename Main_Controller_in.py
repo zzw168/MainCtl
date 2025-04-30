@@ -4255,6 +4255,7 @@ class MapLabel(QLabel):
                             'Brown': QColor(139, 69, 19)}
 
         self.path_points = []
+        self.path_direction = []
         if os.path.exists(map_data[1]):
             with open(map_data[1], 'r', encoding='utf-8') as fcc_file:
                 fcc_data = json.load(fcc_file)
@@ -4264,10 +4265,12 @@ class MapLabel(QLabel):
                 map_scale = picture_size / int(map_data[2])  # 缩放比例
             for i in range(len(fcc_data)):
                 self.path_points.append([])
+                self.path_direction.append(int(fcc_data[i]["labels"]["labelName"]))
                 for p in fcc_data[i]["content"]:
                     self.path_points[i].append((int(p['x'] * map_scale), int(p['y'] * map_scale)))
             self.path_points[0] = divide_path(self.path_points[0], self.step_length)
             print('地图长度:%s' % len(self.path_points[0]))
+            print(self.path_direction, '方向~~~~~')
             if map_scale == 1:
                 map_orbit = self.path_points[0]
 
@@ -4309,7 +4312,7 @@ class MapLabel(QLabel):
                             self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
                             self.positions[num][3] = ranking_array[num][9]  # 圈数
                             self.positions[num][6] = ranking_array[num][8]  # 路线标志
-                            self.positions[num][7] = ranking_array[num][7]  # 方向标志
+                            self.positions[num][7] = self.path_direction[ranking_array[num][8]]  # 方向标志
                             if self.positions[num][4] != p:
                                 self.positions[num][4] = p
                                 self.positions[num][5] = round(time.time(), 2)
@@ -6219,7 +6222,6 @@ def my_test():
     global ranking_array
     print(ranking_array)
     ranking_array[7][8] = 2
-    ranking_array[7][7] = 1
     # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
     # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
