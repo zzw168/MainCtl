@@ -4460,14 +4460,17 @@ class MapLabel(QLabel):
             if index in range(len(self.path_points[0])):
                 x, y = self.path_points[0][index]
                 if self.positions[index_position][6] != 0:  # 分岔路线
-                    if self.positions[index_position][7] < 10:  # 小于10是X轴
-                        y1 = interpolate_y_from_x(self.path_points[self.positions[index_position][6]], x)
-                        if math.isfinite(y1):
-                            y = y1
-                    else:
-                        x1 = interpolate_x_from_y(self.path_points[self.positions[index_position][6]], y)
-                        if math.isfinite(x1):
-                            x = x1
+                    try:
+                        if self.positions[index_position][7] < 10:  # 小于10是X轴
+                            y1 = interpolate_y_from_x(self.path_points[self.positions[index_position][6]], x)
+                            if math.isfinite(y1):
+                                y = y1
+                        else:
+                            x1 = interpolate_x_from_y(self.path_points[self.positions[index_position][6]], y)
+                            if math.isfinite(x1):
+                                x = x1
+                    except:
+                        print('坐标转换出错~！')
                 # 设置球的颜色
                 painter.setBrush(QBrush(self.color_names[self.positions[index_position][1]], Qt.SolidPattern))
                 # 绘制球
@@ -6215,7 +6218,8 @@ def my_test():
     global z_ranking_res
     global ranking_array
     print(ranking_array)
-    ranking_array[7][8] = 1
+    ranking_array[7][8] = 2
+    ranking_array[7][7] = 1
     # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
     # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg

@@ -122,41 +122,69 @@ def is_natural_num(z):
     except ValueError:
         return False
 
-
 def interpolate_y_from_x(polyline, x_value):
-    """
-    给定 polyline 和某个 x 值，返回对应的 y 值（通过线性插值）
-    :param polyline: list of (x, y)
-    :param x_value: float，目标 x
-    :return: float，插值得到的 y
-    """
-    if not polyline or len(polyline) < 2:
-        return None  # 或 raise ValueError("点数不足以插值")
+    if len(polyline) < 2:
+        return None
 
-    points = sorted(polyline, key=lambda p: p[0])  # 确保按 x 排序
+    # 去重处理
+    seen = {}
+    for x, y in polyline:
+        if x not in seen:
+            seen[x] = y
+    points = sorted(seen.items())  # 去重后按 x 排序
+
     x_vals = [p[0] for p in points]
     y_vals = [p[1] for p in points]
 
-    interpolator = interp1d(x_vals, y_vals, bounds_error=False, fill_value="extrapolate")
-    return float(interpolator(x_value))
+    if len(x_vals) < 2:
+        return None
 
+    try:
+        interpolator = interp1d(x_vals, y_vals, bounds_error=False, fill_value="extrapolate")
+        result = float(interpolator(x_value))
+        if not math.isfinite(result):
+            return None
+        return result
+    except Exception as e:
+        print(f"插值异常: {e}")
+        return None
+
+from scipy.interpolate import interp1d
+import math
 
 def interpolate_x_from_y(polyline, y_value):
     """
     给定 polyline 和某个 y 值，返回对应的 x 值（通过线性插值）
     :param polyline: list of (x, y)
     :param y_value: float，目标 y
-    :return: float，插值得到的 x
+    :return: float 或 None，插值得到的 x
     """
-    if not polyline or len(polyline) < 2:
-        return None  # 或 raise ValueError("点数不足以插值")
+    if len(polyline) < 2:
+        return None
 
-    points = sorted(polyline, key=lambda p: p[1])  # 按 y 值排序
-    y_vals = [p[1] for p in points]
-    x_vals = [p[0] for p in points]
+    # 去重：确保 y 不重复，否则 interp1d 会报错
+    seen = {}
+    for x, y in polyline:
+        if y not in seen:
+            seen[y] = x
+    points = sorted(seen.items())  # 现在是 (y, x)
 
-    interpolator = interp1d(y_vals, x_vals, bounds_error=False, fill_value="extrapolate")
-    return float(interpolator(y_value))
+    y_vals = [p[0] for p in points]
+    x_vals = [p[1] for p in points]
+
+    if len(y_vals) < 2:
+        return None
+
+    try:
+        interpolator = interp1d(y_vals, x_vals, bounds_error=False, fill_value="extrapolate")
+        result = float(interpolator(y_value))
+        if not math.isfinite(result):
+            return None
+        return result
+    except Exception as e:
+        print(f"插值异常: {e}")
+        return None
+
 
 
 def divide_path(path_points, step_length):
