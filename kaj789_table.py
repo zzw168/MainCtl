@@ -139,19 +139,28 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             exe_path = tb_kaj789.item(row_num, 10).text()
             os.startfile(exe_path)
         if action == item2:
-            row = tb_kaj789.currentRow()
-            if tb_kaj789.item(row, 8).text() != '':
-                if not self.kaj789_thread.is_alive():
-                    self.kaj789_thread = threading.Thread(target=self.resend_end,
-                                                          args=(self.Track_number, '', 0),
-                                                          daemon=True)
-                    self.kaj789_thread.start()
+            if tb_kaj789.item(row_num, 8).text() != '':
+                res = QMessageBox.warning(self, '提示', '是否重发备注信息！',
+                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+                if res == QMessageBox.Yes:
+                    if not self.kaj789_thread.is_alive():
+                        self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                              args=(self.Track_number, '', 0),
+                                                              daemon=True)
+                        self.kaj789_thread.start()
         if action == item3:
-            if not self.kaj789_thread.is_alive():
-                self.kaj789_thread = threading.Thread(target=self.resend_end,
-                                                      args=(self.Track_number, 'post_end', 2),
-                                                      daemon=True)
-                self.kaj789_thread.start()
+            if '未' in tb_kaj789.item(row_num, 3).text():
+                res = QMessageBox.warning(self, '提示', '是否取消当局！',
+                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
+                if res == QMessageBox.Yes:
+                    if not self.kaj789_thread.is_alive():
+                        self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                              args=(self.Track_number, 'post_end', 2),
+                                                              daemon=True)
+                        self.kaj789_thread.start()
+            else:
+                QMessageBox.warning(self, '提示', '比赛已结束，不能取消当局！请联系服务器管理人员！',
+                                          QMessageBox.Ok)
         if action == item4:
             pass
 
@@ -232,13 +241,18 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                         term_comment = 'Invalid Term'
                         tb_kaj789.item(row, 8).setText(term_comment)
                         tb_kaj789.item(row, 3).setText('已取消')
+                    src_widget = tb_kaj789.cellWidget(row, 3)
+                    if src_widget:  # 删除存在的按钮
+                        tb_kaj789.removeCellWidget(row, 3)
+                    tb_kaj789.item(row, 3).setText('补发成功')
                 else:
                     continue
             if run_type == 'post_result':
                 res_result = post_result(term, betting_end_time, result_data,
                                          Track_number)  # 发送最终排名给服务器
                 if res_result == 'OK':
-                    # run_type = 'post_upload'
+                    if tb_kaj789.item(row, 7).text() == '':
+                        run_type = 'post_upload'
                     src_widget = tb_kaj789.cellWidget(row, 6)
                     if src_widget:  # 删除存在的按钮
                         tb_kaj789.removeCellWidget(row, 6)
@@ -295,7 +309,6 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
             for row in range(len(data) - 1, -1, -1):
                 f.write(json.dumps(data[row]) + "\n")
 
-
     def handle_failure(self, tb_kaj789, row, col):
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Information)
@@ -305,7 +318,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         elif col == 7:
             text = '补传 第%s期 结果图片！' % tb_kaj789.item(row, 0).text()
         else:
-            text = '补发 第%s期 备注！'  % tb_kaj789.item(row, 0).text()
+            text = '发送 第%s期 结束信号！' % tb_kaj789.item(row, 0).text()
         msg_box.setText(text)
         retry_btn = msg_box.addButton("确认(Ok)", QMessageBox.AcceptRole)
         ignore_btn = msg_box.addButton("取消(Cancel)", QMessageBox.RejectRole)
@@ -313,7 +326,7 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
 
         if msg_box.clickedButton() == retry_btn:
             print(f"✅ 重试：行 {row + 1} 列 {col + 1}")
-            if col == 6:
+            if col == 3:
                 row = tb_kaj789.currentRow()
                 if tb_kaj789.item(row, 8).text() == '':
                     if not self.kaj789_thread.is_alive():
@@ -327,6 +340,12 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
                                                               args=(self.Track_number, 'post_end', 0),
                                                               daemon=True)
                         self.kaj789_thread.start()
+            elif col == 6:
+                if not self.kaj789_thread.is_alive():
+                    self.kaj789_thread = threading.Thread(target=self.resend_end,
+                                                          args=(self.Track_number, 'post_result', 0),
+                                                          daemon=True)
+                    self.kaj789_thread.start()
             elif col == 7:
                 if not self.kaj789_thread.is_alive():
                     self.kaj789_thread = threading.Thread(target=self.resend_end,
@@ -340,7 +359,6 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
 
         elif msg_box.clickedButton() == ignore_btn:
             print(f"🚫 忽略：行 {row + 1} 列 {col + 1}")
-
 
     def data2table(self, tb_result, lottery_t, labels):
         row_count = tb_result.rowCount()
@@ -385,7 +403,8 @@ class Kaj789Ui(QDialog, Ui_Dialog_Kaj789_Ui):
         for row in range(tb_result.rowCount()):
             for col in range(tb_result.columnCount()):
                 item = tb_result.item(row, col)
-                if col in [6,7] and item and '失败' in item.text():
+                if (col in [3, 6, 7] and item
+                        and ('失败' in item.text() or '未' in item.text())):
                     if col == 6:
                         text = '补发赛果'
                     elif col == 7:

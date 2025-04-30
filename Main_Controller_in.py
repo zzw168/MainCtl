@@ -1972,6 +1972,7 @@ class PlanBallNumThread(QThread):
             if screen_sort:
                 term_comment = term_comments[1]
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
+            lottery_term[8] = term_comment
             ObsEnd_Thread.ball_flg = True  # 结算页标志2
             print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
@@ -2191,7 +2192,7 @@ class ObsEndThread(QThread):
             if send_flg:
                 lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             else:
-                lottery_term[3] = '未发送'
+                lottery_term[3] = '未结束'
                 betting_loop_flg = False
             lottery2json()  # 保存数据
             self.signal.emit(succeed('第%s期 结束！' % term))
