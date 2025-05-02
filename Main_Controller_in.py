@@ -1572,6 +1572,7 @@ class ReStartThread(QThread):
 
     def run(self) -> None:
         global term
+        global term_test
         global betting_start_time
         global betting_end_time
         global action_area
@@ -1647,7 +1648,8 @@ class ReStartThread(QThread):
                     self.run_flg = False
                     continue
             else:
-                term = str(int(term) + 1)
+                term_test = str(int(term_test) + 1)
+                term = term_test
                 self.signal.emit('测试期号')
                 self.countdown = ui.lineEdit_Time_Restart_Ranking.text()
 
@@ -7006,6 +7008,7 @@ if __name__ == '__main__':
     five_axis = [1, 1, 1, 1, 1]
     five_key = [1, 1, 1, 1, 1]
     term = '8000'  # 期号
+    term_test = '8000'  # 期号
     betting_start_time = 0  # 比赛预定开始时间
     betting_end_time = int(time.time())  # 比赛预定结束时间
     stream_url = ''  # 流链接
