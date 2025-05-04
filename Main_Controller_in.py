@@ -5626,6 +5626,7 @@ class ResetRankingThread(QThread):
             time.sleep(1)
             if not self.run_flg:
                 continue
+            Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
             init_array = init_array[:balls_count]
             ranking_array = []  # 排名数组
             for row in range(balls_count):
