@@ -574,7 +574,8 @@ def deal_rank(integration_qiu_array):
                 if (ranking_array[0][6] >= max_area_count - balls_count
                         and ranking_array[0][9] >= max_lap_count - 1):
                     for i in range(len(ranking_array)):
-                        ranking_array[i][9] = max_lap_count - 1
+                        if ranking_array[i][6] != max_area_count - balls_count:
+                            ranking_array[i][9] = max_lap_count - 1
 
                 if ((not ui.checkBox_end_2.isChecked()
                      and q_item[6] < ranking_array[r_index][6] < max_area_count - balls_count + 1)
@@ -611,14 +612,15 @@ def deal_rank(integration_qiu_array):
                 if (r_index > 0
                         # and (q_item[6] - ranking_array[r_index][6] <= area_limit
                         #      or (ranking_array[r_index][6] < area_limit))  # 减少同色误判
-                        and ranking_array[0][6] >= (max_area_count - balls_count) * 0.7
-                        and (max_area_count - balls_count) * 0.7 <= q_item[6] <= (max_area_count - balls_count)):
+                        # and ranking_array[0][6] >= (max_area_count - balls_count) * 0.7
+                        and q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         if ui.checkBox_First_Check.isChecked():
                             for r_i in range(0, len(q_item)):
                                 ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                        if ranking_array[r_index][6] != max_area_count - balls_count:
+                            ranking_array[r_index][9] = ranking_array[0][9]
                         ranking_array[r_index][10] = 1
-                        ranking_array[r_index][9] = ranking_array[0][9]
                 replaced = True
                 break
         if not replaced:
@@ -1681,7 +1683,7 @@ class ReStartThread(QThread):
                         if not reset_ranking_Thread.run_flg:
                             reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                         ready_flg = False
-                    ball_sort[1][0] = []
+                    # ball_sort[1][0] = []
                 ranking_time_start = time.time()
                 time.sleep(1)
                 self.signal.emit(t)
@@ -2299,6 +2301,7 @@ class ScreenShotThread(QThread):
                 continue
             print('截图结果识别运行！')
             self.signal.emit(succeed('截图结果识别运行！'))
+            # sc.GASetExtDoBit(int(ui.lineEdit_shake.text()) - 1, 0)  # 关闭震动
             time.sleep(1)
             ObsEnd_Thread.screen_flg = False  # 结算页标志1
             obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源

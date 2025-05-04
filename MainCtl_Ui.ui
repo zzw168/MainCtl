@@ -3911,7 +3911,7 @@
                   </attribute>
                   <column>
                    <property name="text">
-                    <string>音效</string>
+                    <string>AI提示词</string>
                    </property>
                   </column>
                   <column>
@@ -7654,7 +7654,7 @@
                <property name="maximumSize">
                 <size>
                  <width>600</width>
-                 <height>230</height>
+                 <height>260</height>
                 </size>
                </property>
                <property name="font">
@@ -7668,22 +7668,59 @@
                 <string>网络设置</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_32">
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_82">
+                <item row="0" column="4">
+                 <widget class="QLineEdit" name="lineEdit_UdpServer_Port">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
+                    <pointsize>10</pointsize>
                     <bold>false</bold>
                    </font>
                   </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
                   <property name="text">
-                   <string>前端终点服务器地址：</string>
+                   <string>19734</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="3">
-                 <widget class="QLabel" name="label_30">
+                <item row="2" column="4">
+                 <widget class="QLineEdit" name="lineEdit_result_tcpServer_port">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>8888</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="1" colspan="4">
+                 <widget class="QLineEdit" name="lineEdit_recognition_addr">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>http://127.0.0.1:6066</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3">
+                 <widget class="QLabel" name="label_19">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -7693,6 +7730,65 @@
                   </property>
                   <property name="text">
                    <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" colspan="2">
+                 <widget class="QLabel" name="label_31">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>前端排名服务器地址：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="4">
+                 <widget class="QLineEdit" name="lineEdit_TcpServer_Port">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>9999</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="0">
+                 <widget class="QLabel" name="label_46">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>OBS脚本网址：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0" colspan="2">
+                 <widget class="QLabel" name="label_17">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>UDP接收服务器地址：</string>
                   </property>
                  </widget>
                 </item>
@@ -7713,8 +7809,42 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="3">
-                 <widget class="QLabel" name="label_19">
+                <item row="5" column="2" colspan="3">
+                 <widget class="QLineEdit" name="lineEdit_wakeup_addr">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>['http://192.168.0.110:8080']</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="8" column="1" colspan="4">
+                 <widget class="QLineEdit" name="lineEdit_obs_script_addr">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>http://127.0.0.1:8899</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3">
+                 <widget class="QLabel" name="label_30">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -7724,6 +7854,40 @@
                   </property>
                   <property name="text">
                    <string>:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_82">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>前端终点服务器地址：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QLineEdit" name="lineEdit_UdpServer_ip">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>0.0.0.0</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -7767,25 +7931,8 @@
                   </property>
                  </widget>
                 </item>
-                <item row="8" column="1" colspan="4">
-                 <widget class="QLineEdit" name="lineEdit_obs_script_addr">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>http://127.0.0.1:8899</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="5" column="0" colspan="2">
-                 <widget class="QLabel" name="label_34">
+                <item row="7" column="0">
+                 <widget class="QLabel" name="label_45">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -7794,66 +7941,12 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>唤醒识别服务器网址：</string>
+                   <string>终点识别主机网址：</string>
                   </property>
                  </widget>
                 </item>
-                <item row="5" column="2" colspan="3">
-                 <widget class="QLineEdit" name="lineEdit_wakeup_addr">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>['http://192.168.0.110:8080']</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QLineEdit" name="lineEdit_UdpServer_ip">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>0.0.0.0</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="4">
-                 <widget class="QLineEdit" name="lineEdit_TcpServer_Port">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>9999</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="8" column="0">
-                 <widget class="QLabel" name="label_46">
+                <item row="2" column="3">
+                 <widget class="QLabel" name="label_92">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -7862,41 +7955,7 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>OBS脚本网址：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="4">
-                 <widget class="QLineEdit" name="lineEdit_UdpServer_Port">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>19734</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="7" column="1" colspan="4">
-                 <widget class="QLineEdit" name="lineEdit_recognition_addr">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>http://127.0.0.1:6066</string>
+                   <string>:</string>
                   </property>
                  </widget>
                 </item>
@@ -7914,8 +7973,8 @@
                   </property>
                  </widget>
                 </item>
-                <item row="7" column="0">
-                 <widget class="QLabel" name="label_45">
+                <item row="5" column="0" colspan="2">
+                 <widget class="QLabel" name="label_34">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -7924,12 +7983,26 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>终点识别主机网址：</string>
+                   <string>唤醒识别服务器网址：</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="4">
-                 <widget class="QLineEdit" name="lineEdit_result_tcpServer_port">
+                <item row="9" column="0">
+                 <widget class="QLabel" name="label_76">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Ai解说 服务网址：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="9" column="1" colspan="4">
+                 <widget class="QLineEdit" name="lineEdit_Ai_addr">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
@@ -7941,49 +8014,7 @@
                    <string/>
                   </property>
                   <property name="text">
-                   <string>8888</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0" colspan="2">
-                 <widget class="QLabel" name="label_31">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>前端排名服务器地址：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0" colspan="2">
-                 <widget class="QLabel" name="label_17">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>UDP接收服务器地址：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="3">
-                 <widget class="QLabel" name="label_92">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>:</string>
+                   <string>http://127.0.0.1:8082</string>
                   </property>
                  </widget>
                 </item>

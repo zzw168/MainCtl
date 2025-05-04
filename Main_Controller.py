@@ -37,6 +37,7 @@ from utils.pingpong_socket import *
 from utils.z_json2txt import *
 from utils.z_MySql import *
 from utils.kaj789 import *
+from utils.Ai_send import send_data
 
 "************************************OBS_开始****************************************"
 """
@@ -975,8 +976,6 @@ def tcpsignal_accept(msg):
     # print(msg)
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
-    ui.textBrowser_background_data.append(msg)
-    scroll_to_bottom(ui.textBrowser_background_data)
 
 
 class DealUdpThread(QThread):
@@ -1279,7 +1278,10 @@ class ZUi(QMainWindow, Ui_MainWindow):
         tb_ai.horizontalHeader().resizeSection(3, 80)
         tb_ai.horizontalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
         tb_ai.verticalHeader().setStyleSheet("QHeaderView::section{background:rgb(245,245,245);}")
-        tb_ai.setColumnHidden(0, True)
+        tb_ai.setColumnHidden(1, True)
+        tb_ai.setColumnHidden(2, True)
+        tb_ai.setColumnHidden(3, True)
+        tb_ai.setColumnHidden(4, True)
 
         tb_step = self.tableWidget_Step
         tb_step.horizontalHeader().resizeSection(0, 30)
@@ -1681,15 +1683,11 @@ class ReStartThread(QThread):
                         if not reset_ranking_Thread.run_flg:
                             reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                         ready_flg = False
-                    ball_sort[1][0] = []
+                    # ball_sort[1][0] = []
                 ranking_time_start = time.time()
                 time.sleep(1)
                 self.signal.emit(t)
             if self.run_flg:
-                # reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
-                # while reset_ranking_Thread.run_flg:
-                #     print('reset_ranking_Thread.run_flg', '~~~~~~~~~~~')
-                #     time.sleep(1)
                 for index in range(0, 16):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
@@ -1699,7 +1697,12 @@ class ReStartThread(QThread):
                         int(ui.lineEdit_start_count.text()) - 1,
                     ]:
                         sc.GASetExtDoBit(index, 1)
-                OrganCycle_Thread.run_flg = True
+                OrganCycle_Thread.run_flg = True  # 开启定时机关
+                Audio_Thread.run_flg = True  # 开启音频播放线程
+                result = send_data("START", ui.lineEdit_Ai_addr.text())
+                print(f"服务器响应: {result}")  # 开启AI解说服务
+                if result:
+                    Ai_Thread.run_flg = True  # 开启AI播放线程
                 while PlanCmd_Thread.run_flg:
                     print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                     time.sleep(1)
@@ -1977,8 +1980,6 @@ class PlanBallNumThread(QThread):
             lottery_term[8] = term_comment
             ObsEnd_Thread.ball_flg = True  # 结算页标志2
             print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
-            Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-            Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
             # main_music_worker.toggle_enablesignal.emit(False)
             # except:
             #     print("接收运动卡输入 运行出错！")
@@ -2059,6 +2060,10 @@ class ObsEndThread(QThread):
                 self.signal.emit('比赛计时')
                 continue
             print('结算页面运行！')
+            Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
+            Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+            ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+            print(f"服务器响应: {ai_res}")  # 停止AI解说服务
             # self.signal.emit('录图结束')
             send_flg = True  # 发送赛果成功标志
             save_path = '%s' % ui.lineEdit_upload_Path.text()
@@ -2742,8 +2747,6 @@ class PlanCmdThread(QThread):
             if not self.run_flg:
                 continue
             if flg_start['card'] and action_area[1] < max_lap_count:
-                Audio_Thread.run_flg = True  # 开启音频播放线程
-                Ai_Thread.run_flg = True  # 开启AI播放线程
                 self.signal.emit(succeed("运动流程：开始！"))
                 self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
                 cb_index = ui.comboBox_plan.currentIndex()
@@ -3564,6 +3567,7 @@ def save_main_json():
             main_all['rtsp_url'] = ui.lineEdit_rtsp_url.text()
             main_all['recognition_addr'] = ui.lineEdit_recognition_addr.text()
             main_all['obs_script_addr'] = ui.lineEdit_obs_script_addr.text()
+            main_all['lineEdit_Ai_addr'] = ui.lineEdit_Ai_addr.text()
             main_all['tcpServer_addr'][1] = ui.lineEdit_TcpServer_Port.text()
             main_all['result_tcpServer_addr'][1] = ui.lineEdit_result_tcpServer_port.text()
             main_all['udpServer_addr'][1] = ui.lineEdit_UdpServer_Port.text()
@@ -3681,6 +3685,7 @@ def load_main_json():
         ui.lineEdit_rtsp_url.setText(main_all['rtsp_url'])
         ui.lineEdit_recognition_addr.setText(main_all['recognition_addr'])
         ui.lineEdit_obs_script_addr.setText(main_all['obs_script_addr'])
+        ui.lineEdit_Ai_addr.setText(main_all['lineEdit_Ai_addr'])
         ui.lineEdit_TcpServer_Port.setText(main_all['tcpServer_addr'][1])
         ui.lineEdit_result_tcpServer_port.setText(main_all['result_tcpServer_addr'][1])
         ui.lineEdit_UdpServer_Port.setText(main_all['udpServer_addr'][1])
@@ -3856,7 +3861,6 @@ def card_close_all():
             sc.GASetExtDoBit(index, 0)
     ui.textBrowser.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
-    ui.textBrowser_background_data.append(succeed('已经关闭所有机关！'))
 
 
 def end_all():
@@ -3887,7 +3891,6 @@ def card_on_off_all():
                 sc.GASetExtDoBit(index, 0)
     ui.textBrowser.append(succeed('已经关闭所有机关！'))
     ui.textBrowser_msg.append(succeed('已经关闭所有机关！'))
-    ui.textBrowser_background_data.append(succeed('已经关闭所有机关！'))
 
 
 # 实时轴位置入表
@@ -4091,9 +4094,9 @@ def save_start_images(saveImgRun):
 
 def json_txt():
     if json_to_txt():
-        ui.textBrowser_background_data.append(succeed('区域文件转TXT成功！'))
+        ui.textBrowser_save_msg.append(succeed('区域文件转TXT成功！'))
     else:
-        ui.textBrowser_background_data.append(fail('区域文件转TXT失败！'))
+        ui.textBrowser_save_msg.append(fail('区域文件转TXT失败！'))
 
 
 "****************************************卫星图_开始***********************************************"
@@ -4887,8 +4890,9 @@ class AudioThread(QThread):
                     print(sound_file, sound_times, sound_delay)
                     # 加载音效
                     sound_effect = pygame.mixer.Sound(sound_file)
-                    sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
                     sound_effect.set_volume(sound_volume)
+                    sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
+
                     area_old = copy.deepcopy(action_area)
                     print('Audio~~~~~~~~~~~~~', area_old, audio_points[index][plan_index][0][0], action_area[0])
                     break
@@ -4929,15 +4933,8 @@ class AiThread(QThread):
                         and (area_old != action_area)
                         and (ai_points[index][plan_index][0][0] == action_area[0])):
                     tb_ai = ui.tableWidget_Ai
-                    sound_file = tb_ai.item(index - 1, 0).text()
-                    sound_times = int(tb_ai.item(index - 1, 1).text())
-                    sound_delay = int(tb_ai.item(index - 1, 2).text())
-                    sound_volume = float(tb_ai.item(index - 1, 3).text())
-                    print(sound_file, sound_times, sound_delay)
-                    # 加载音效
-                    sound_effect = pygame.mixer.Sound(sound_file)
-                    sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
-                    sound_effect.set_volume(sound_volume)
+                    text = tb_ai.item(index - 1, 0).text()
+                    send_data(text, ui.lineEdit_Ai_addr.text())  # 发送AI解说提示词
                     area_old = copy.deepcopy(action_area)
                     print('Ai~~~~~~~~~~~~~', area_old, ai_points[index][plan_index][0][0], action_area[0])
                     break
@@ -6907,7 +6904,6 @@ if __name__ == '__main__':
 
     ui.textBrowser.textChanged.connect(lambda: clean_browser(ui.textBrowser))
     ui.textBrowser_msg.textChanged.connect(lambda: clean_browser(ui.textBrowser_msg))
-    ui.textBrowser_background_data.textChanged.connect(lambda: clean_browser(ui.textBrowser_background_data))
 
     """
         OBS 处理
@@ -7247,6 +7243,7 @@ if __name__ == '__main__':
     ui.lineEdit_rtsp_url.editingFinished.connect(save_main_json)
     ui.lineEdit_recognition_addr.editingFinished.connect(save_main_json)
     ui.lineEdit_obs_script_addr.editingFinished.connect(save_main_json)
+    ui.lineEdit_Ai_addr.editingFinished.connect(save_main_json)
     ui.lineEdit_cardNo.editingFinished.connect(save_main_json)
     ui.lineEdit_CardNo.editingFinished.connect(save_main_json)
     ui.lineEdit_s485_Axis_No.editingFinished.connect(save_main_json)
