@@ -1,5 +1,6 @@
 import copy
 import json
+import os.path
 import re
 import subprocess
 import sys
@@ -1012,6 +1013,8 @@ class DealUdpThread(QThread):
             if len(array_data) < 1:
                 continue
             # print(array_data)
+            if Audio_Thread and Audio_Thread.run_flg:  # 保存UDP数据
+                ranking_data_save(array_data)
             if len(array_data[0]) < 7:
                 self.signal.emit(fail('array_data:%s < 7数据错误！' % array_data[0]))
                 print('array_data < 7数据错误！', array_data[0])
@@ -1206,6 +1209,14 @@ def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球
         if sublist[4] == max_values[sublist[5]]:  # 选取置信度最大的球添加到修正后的队列
             filtered_list.append(copy.deepcopy(sublist))
     return filtered_list
+
+
+def ranking_data_save(array_data):
+    global ranking_save
+    for i in range(len(array_data)):
+        if array_data[i][5] in ranking_save.keys():
+            ranking_save[array_data[i][5]].append(array_data[i])
+    print(ranking_save)
 
 
 "************************************图像识别_结束****************************************"
@@ -1981,6 +1992,10 @@ class PlanBallNumThread(QThread):
             print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
             Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+            # 写入 JSON 文件
+            if os.path.exists('D:\数据\复盘'):
+                with open("D:\数据\复盘\%s.json" % term, "w", encoding="utf-8") as f:
+                    json.dump(ranking_save, f, indent=4, ensure_ascii=False)
             # main_music_worker.toggle_enablesignal.emit(False)
             # except:
             #     print("接收运动卡输入 运行出错！")
@@ -5605,6 +5620,7 @@ class ResetRankingThread(QThread):
         global init_array
         global z_end_time
         global lapTime
+        global ranking_save
         # global previous_position
         while self.running:
             time.sleep(1)
@@ -5641,6 +5657,16 @@ class ResetRankingThread(QThread):
             map_label_big.map_action = 0
             term_comment = ''
             lapTime = 0
+            ranking_save = {'yellow': [],
+                    'blue': [],
+                    'red': [],
+                    'purple': [],
+                    'orange': [],
+                    'green': [],
+                    'Brown': [],
+                    'black': [],
+                    'pink': [],
+                    'White': [], }
             alarm_worker.toggle_enablesignal.emit(False)
             if not ui.checkBox_test.isChecked():
                 activate_browser()  # 刷新OBS中排名浏览器
@@ -6968,6 +6994,16 @@ if __name__ == '__main__':
     balls_count = 8  # 运行球数
     balls_start = 0  # 起点球数量
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
+    ranking_save = {'yellow': [],
+                    'blue': [],
+                    'red': [],
+                    'purple': [],
+                    'orange': [],
+                    'green': [],
+                    'Brown': [],
+                    'black': [],
+                    'pink': [],
+                    'White': [], }
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "roadPart", "lapCount", "visible"]
     ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
     ball_stop = False
