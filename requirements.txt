@@ -11,3 +11,4 @@ PyInstaller
 pillow
 psutil
 pymysql
+scipy

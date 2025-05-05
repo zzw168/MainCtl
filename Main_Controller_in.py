@@ -1677,8 +1677,6 @@ class ReStartThread(QThread):
             lottery = get_lottery_term()  # 获取了开盘时间后开盘写表
             if lottery:
                 self.signal.emit(lottery)
-            mark_msg = save_mark_images()  # 录标记图
-            self.signal.emit(mark_msg)
             if self.countdown.isdigit():
                 self.countdown = int(self.countdown)
             else:
@@ -1717,6 +1715,8 @@ class ReStartThread(QThread):
                     print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                     time.sleep(1)
                 PlanCmd_Thread.run_flg = True
+                mark_msg = save_mark_images()  # 录标记图
+                self.signal.emit(mark_msg)
 
             print("循环启动！")
             self.run_flg = False
@@ -1992,6 +1992,7 @@ class PlanBallNumThread(QThread):
             print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
             Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+            save_images()   # 关闭标记录图
             # 写入 JSON 文件
             if os.path.exists('D:\数据\复盘'):
                 with open("D:\数据\复盘\%s.json" % term, "w", encoding="utf-8") as f:
