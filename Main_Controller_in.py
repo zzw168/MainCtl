@@ -2802,16 +2802,16 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if (plan_list[plan_index][12][0] == ui.lineEdit_start_count.text()
                                         and not (self.background_state or self.end_state)):  # '9'倒数机关打开
-                                    ranking_array = []  # 排名数组
-                                    for row in range(balls_count):
-                                        ranking_array.append([])
-                                        for col in range(0, len(init_array[row])):
-                                            ranking_array[row].append(init_array[row][col])
-                                    ball_sort = []  # 位置寄存器
-                                    for row in range(0, max_area_count + 1):
-                                        ball_sort.append([])
-                                        for col in range(0, max_lap_count):
-                                            ball_sort[row].append([])
+                                    # ranking_array = []  # 排名数组
+                                    # for row in range(balls_count):
+                                    #     ranking_array.append([])
+                                    #     for col in range(0, len(init_array[row])):
+                                    #         ranking_array[row].append(init_array[row][col])
+                                    # ball_sort = []  # 位置寄存器
+                                    # for row in range(0, max_area_count + 1):
+                                    #     ball_sort.append([])
+                                    #     for col in range(0, max_lap_count):
+                                    #         ball_sort[row].append([])
                                     lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                     self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
