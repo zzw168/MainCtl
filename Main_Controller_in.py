@@ -20,6 +20,7 @@ from PySide6.QtWidgets import QMenu, QMessageBox, QFileDialog, \
 
 import obsws_python as obs
 import pygame
+from queue import Queue
 
 from BallsNumDlg_Ui import Ui_Dialog_BallsNum
 from Camera_Ui import Ui_Camera_Dialog
@@ -1000,10 +1001,11 @@ class DealUdpThread(QThread):
         global balls_start
         data_res = []
         while self.running:
-            if data_res == udp_thread.data_res:
+            data = udp_thread.data_queue.get()  # 阻塞直到有数据
+            if data_res == data:
                 time.sleep(0.01)
                 continue
-            data_res = copy.deepcopy(udp_thread.data_res)  # str转换list
+            data_res = data
             self.signal.emit(data_res)
             array_data = []
             for i_ in range(0, len(data_res)):  # data_res[0] 是时间戳差值 ms
@@ -1058,7 +1060,7 @@ class UdpThread(QThread):
         super(UdpThread, self).__init__()
         self.run_flg = True
         self.running = True
-        self.data_res = []
+        self.data_queue = Queue()
 
     def stop(self):
         self.run_flg = False
@@ -1082,7 +1084,7 @@ class UdpThread(QThread):
                 data_res = eval(res)  # str转换list
                 if not isinstance(data_res, list):
                     continue
-                self.data_res = data_res
+                self.data_queue.put(data_res)
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
                 self.signal.emit("UDP数据接收出错:%s" % e)
@@ -1929,7 +1931,7 @@ class PlanBallNumThread(QThread):
                             #     self.signal.emit('录终点图')
                             self.signal.emit(num)
                             num_old = num
-                        if num in [3, 4, 5] and not ObsShot_Thread.run_flg:
+                        if num in [3, 4, 5, 6] and not ObsShot_Thread.run_flg:
                             ObsShot_Thread.run_flg = True
                         if (num > balls_count - 2 and screen_sort
                                 and not ObsShot_Thread.run_flg):
@@ -5044,9 +5046,19 @@ class AiThread(QThread):
                         and (ai_points[index][plan_index][0][0] == action_area[0])):
                     tb_ai = ui.tableWidget_Ai
                     text = tb_ai.item(index - 1, 0).text()
+                    rank_temp = {}  # 球号:排名
+                    for i, item in enumerate(z_ranking_res):
+                        rank_temp[item] = i + 1
+                    sorted_dict = dict(sorted(rank_temp.items()))
+                    for i in sorted_dict.keys():
+                        if i == 1:
+                            text = '%s_%s,0|' % (text, sorted_dict[i])
+                        else:
+                            text = '%s%s,0|' % (text, sorted_dict[i])
+
+                    print(text)
                     send_data(text, ui.lineEdit_Ai_addr.text())  # 发送AI解说提示词
                     area_old = copy.deepcopy(action_area)
-                    print('Ai~~~~~~~~~~~~~', area_old, ai_points[index][plan_index][0][0], action_area[0])
                     break
 
 
@@ -7186,6 +7198,7 @@ if __name__ == '__main__':
     # 1. Udp 接收数据 14
     try:
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1024 * 1024 * 10)  # 10MB 缓冲
         udp_thread = UdpThread()
         udp_thread.signal.connect(udpsignal_accept)
         udp_thread.start()

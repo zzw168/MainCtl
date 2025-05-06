@@ -20,7 +20,7 @@ def read_race_data(filename):
 # 发送数据到服务器
 def send_data(data, url ="http://192.168.0.240:8082"):
     try:
-        response = requests.post(url, data=data.encode('utf-8'))
+        response = requests.post(url, data=data.encode('utf-8'), timeout= 3)
         if response.status_code == 200:
             print(f"成功发送数据: {data[:50]}...")
             return response.text
