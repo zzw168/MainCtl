@@ -1930,9 +1930,7 @@ class PlanBallNumThread(QThread):
                             #     self.signal.emit('录终点图')
                             self.signal.emit(num)
                             num_old = num
-                        if num == 3 and not ObsShot_Thread.run_flg:
-                            ObsShot_Thread.run_flg = True
-                        if num == 5 and not ObsShot_Thread.run_flg:
+                        if num in [3, 4, 5] and not ObsShot_Thread.run_flg:
                             ObsShot_Thread.run_flg = True
                         if (num > balls_count - 2 and screen_sort
                                 and not ObsShot_Thread.run_flg):
