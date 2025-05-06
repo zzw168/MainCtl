@@ -1216,7 +1216,7 @@ def ranking_data_save(array_data):
     for i in range(len(array_data)):
         if array_data[i][5] in ranking_save.keys():
             ranking_save[array_data[i][5]].append(array_data[i])
-    print(ranking_save)
+    # print(ranking_save)
 
 
 "************************************图像识别_结束****************************************"
@@ -1887,6 +1887,7 @@ class PlanBallNumThread(QThread):
         global betting_end_time
         global lottery_term
         global z_end_time
+        global ranking_save
         while self.running:
             time.sleep(0.1)
             if (not self.run_flg) or (not flg_start['card']):
@@ -1929,7 +1930,12 @@ class PlanBallNumThread(QThread):
                             #     self.signal.emit('录终点图')
                             self.signal.emit(num)
                             num_old = num
-                        if num > balls_count - 2 and screen_sort:
+                        if num == 3 and not ObsShot_Thread.run_flg:
+                            ObsShot_Thread.run_flg = True
+                        if num == 5 and not ObsShot_Thread.run_flg:
+                            ObsShot_Thread.run_flg = True
+                        if (num > balls_count - 2 and screen_sort
+                                and not ObsShot_Thread.run_flg):
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
                         if num >= balls_count:
@@ -1992,11 +1998,29 @@ class PlanBallNumThread(QThread):
             print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
             Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-            save_images()   # 关闭标记录图
+            save_images()  # 关闭标记录图
             # 写入 JSON 文件
+            temp = copy.deepcopy(ranking_save)
+
+            # 转换所有 np.float32 为 float
+            def convert(o):
+                if isinstance(o, np.float32):
+                    return float(o)
+                raise TypeError(f"Object of type {type(o)} is not JSON serializable")
+
             if os.path.exists('D:\数据\复盘'):
                 with open("D:\数据\复盘\%s.json" % term, "w", encoding="utf-8") as f:
-                    json.dump(ranking_save, f, indent=4, ensure_ascii=False)
+                    json.dump(temp, f, indent=4, ensure_ascii=False, default=convert)
+            ranking_save = {'yellow': [],
+                            'blue': [],
+                            'red': [],
+                            'purple': [],
+                            'orange': [],
+                            'green': [],
+                            'Brown': [],
+                            'black': [],
+                            'pink': [],
+                            'White': [], }
             # main_music_worker.toggle_enablesignal.emit(False)
             # except:
             #     print("接收运动卡输入 运行出错！")
@@ -2478,6 +2502,70 @@ def ScreenShotsignal_accept(msg):
 
 # except:
 #     print('OBS 操作失败！')
+
+
+'''
+    ObsShotThread(QThread) 摄像头运动方案线程
+'''
+
+
+class ObsShotThread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(ObsShotThread, self).__init__()
+        self.plan_obs = '0'  # [开关,场景名称]
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        while self.running:
+            time.sleep(0.5)
+            if not self.run_flg:
+                continue
+            print('OBS运行')
+            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
+            if obs_res:
+                obs_list = eval(obs_res[1])
+                obs_num = len(obs_list)
+                if obs_num > 2:
+                    # print(obs_list)
+                    for i in range(0, obs_num):
+                        for j in range(0, len(ranking_array)):
+                            if ranking_array[j][5] == obs_list[i]:
+                                ranking_array[j][6] = max_area_count
+                                ranking_array[j][9] = max_lap_count - 1
+                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                        if len(ball_sort[max_area_count][max_lap_count - 1]) < balls_count:
+                            ball_sort[max_area_count][max_lap_count - 1].append('')
+                        ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
+                    color_to_num(ranking_array)
+                    self.signal.emit(obs_res)
+            self.run_flg = False
+
+
+def ObsShotsignal_accept(msg):
+    if isinstance(msg, list):
+        if len(msg) < 2 or msg[0] == '':
+            return
+        img = msg[0]
+        pixmap = QPixmap()
+        pixmap.loadFromData(img)
+        pixmap = pixmap.scaled(pixmap.width() / 2, pixmap.height() / 2, Qt.KeepAspectRatio, Qt.SmoothTransformation);
+
+        if msg[2] == 'obs':
+            painter = QPainter(pixmap)
+            painter.setFont(QFont("Arial", 50, QFont.Bold))  # 设置字体
+            painter.setPen(QColor(255, 0, 0))  # 设定颜色（红色）
+            painter.drawText(10, 60, "1")  # (x, y, "文本")
+            painter.end()  # 结束绘制
+            main_camera_ui.label_picture.setPixmap(pixmap)
+            ui.label_main_picture.setPixmap(pixmap)
 
 
 '''
@@ -2987,6 +3075,7 @@ class PlanCmdThread(QThread):
 
                 # 背景模式不循环
                 if self.background_state or self.ready_state or self.end_state:
+                    Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                     self.background_state = False
                     self.ready_state = False
                     self.run_flg = False
@@ -3010,6 +3099,7 @@ class PlanCmdThread(QThread):
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断情况下的动作
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
                     print('另外开关~~~~~~~~~')
+                    Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
                     # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
@@ -3029,6 +3119,7 @@ class PlanCmdThread(QThread):
             else:  # 运行出错，或者超出圈数，流程完成时执行
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                    Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                     # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                 self.signal.emit(succeed("运动流程：完成！"))
@@ -5660,15 +5751,15 @@ class ResetRankingThread(QThread):
             term_comment = ''
             lapTime = 0
             ranking_save = {'yellow': [],
-                    'blue': [],
-                    'red': [],
-                    'purple': [],
-                    'orange': [],
-                    'green': [],
-                    'Brown': [],
-                    'black': [],
-                    'pink': [],
-                    'White': [], }
+                            'blue': [],
+                            'red': [],
+                            'purple': [],
+                            'orange': [],
+                            'green': [],
+                            'Brown': [],
+                            'black': [],
+                            'pink': [],
+                            'White': [], }
             alarm_worker.toggle_enablesignal.emit(False)
             if not ui.checkBox_test.isChecked():
                 activate_browser()  # 刷新OBS中排名浏览器
@@ -6846,6 +6937,10 @@ if __name__ == '__main__':
     ScreenShot_Thread = ScreenShotThread()  # 终点截图识别线程 6
     ScreenShot_Thread.signal.connect(ScreenShotsignal_accept)
     ScreenShot_Thread.start()
+
+    ObsShot_Thread = ObsShotThread()  # 终点截图识别线程 6
+    ObsShot_Thread.signal.connect(ObsShotsignal_accept)
+    ObsShot_Thread.start()
 
     ObsEnd_Thread = ObsEndThread()  # 终点截图识别线程 6
     ObsEnd_Thread.signal.connect(ObsEndsignal_accept)
