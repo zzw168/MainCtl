@@ -1701,7 +1701,7 @@ class ReStartThread(QThread):
                         if not reset_ranking_Thread.run_flg:
                             reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                         ready_flg = False
-                    # ball_sort[1][0] = []
+                    ball_sort[1][0] = []
                 ranking_time_start = time.time()
                 time.sleep(1)
                 self.signal.emit(t)
