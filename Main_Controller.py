@@ -20,6 +20,7 @@ from PySide6.QtWidgets import QMenu, QMessageBox, QFileDialog, \
 
 import obsws_python as obs
 import pygame
+from queue import Queue
 
 from BallsNumDlg_Ui import Ui_Dialog_BallsNum
 from Camera_Ui import Ui_Camera_Dialog
@@ -992,7 +993,6 @@ class DealUdpThread(QThread):
     def stop(self):
         self.run_flg = False
         self.running = False  # 修改标志位，线程优雅退出
-        udp_socket.close()
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
@@ -1000,10 +1000,15 @@ class DealUdpThread(QThread):
         global balls_start
         data_res = []
         while self.running:
-            if data_res == udp_thread.data_res:
+            try:
+                data = udp_thread.data_queue.get(timeout=5)  # 阻塞直到有数据
+            except:
+                print("超时，无数据")
+                continue
+            if data_res == data:
                 time.sleep(0.01)
                 continue
-            data_res = copy.deepcopy(udp_thread.data_res)  # str转换list
+            data_res = data
             self.signal.emit(data_res)
             array_data = []
             for i_ in range(0, len(data_res)):  # data_res[0] 是时间戳差值 ms
@@ -1058,7 +1063,7 @@ class UdpThread(QThread):
         super(UdpThread, self).__init__()
         self.run_flg = True
         self.running = True
-        self.data_res = []
+        self.data_queue = Queue()
 
     def stop(self):
         self.run_flg = False
@@ -1082,7 +1087,7 @@ class UdpThread(QThread):
                 data_res = eval(res)  # str转换list
                 if not isinstance(data_res, list):
                     continue
-                self.data_res = data_res
+                self.data_queue.put(data_res)
             except Exception as e:
                 print("UDP数据接收出错:%s" % e)
                 self.signal.emit("UDP数据接收出错:%s" % e)
@@ -1587,7 +1592,6 @@ class ReStartThread(QThread):
 
     def run(self) -> None:
         global term
-        global term_test
         global betting_start_time
         global betting_end_time
         global action_area
@@ -1663,8 +1667,11 @@ class ReStartThread(QThread):
                     self.run_flg = False
                     continue
             else:
-                term_test = str(int(term_test) + 1)
-                term = term_test
+                # 获取当前时间的时间戳
+                now = time.localtime()
+
+                # 格式化时间为字符串，例如：2025-05-06 14:30:15
+                term = time.strftime("%m%d%H%M%S", now)
                 self.signal.emit('测试期号')
                 self.countdown = ui.lineEdit_Time_Restart_Ranking.text()
 
@@ -1694,7 +1701,7 @@ class ReStartThread(QThread):
                         if not reset_ranking_Thread.run_flg:
                             reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                         ready_flg = False
-                    # ball_sort[1][0] = []
+                    ball_sort[1][0] = []
                 ranking_time_start = time.time()
                 time.sleep(1)
                 self.signal.emit(t)
@@ -1713,7 +1720,7 @@ class ReStartThread(QThread):
                     print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                     time.sleep(1)
                 PlanCmd_Thread.run_flg = True
-                result = send_data("START", ui.lineEdit_Ai_addr.text())
+                # result = send_data("START", ui.lineEdit_Ai_addr.text())
                 mark_msg = save_mark_images()  # 录标记图
                 self.signal.emit(mark_msg)
 
@@ -1906,7 +1913,7 @@ class PlanBallNumThread(QThread):
             if res == 0:
                 while self.run_flg:
                     res, value = sc.GAGetDiReverseCount()
-                    print(res, value)
+                    # print(res, value)
                     if res == 0:
                         num = int(value[0] / 2)
                         if num > len(z_ranking_time):
@@ -1929,7 +1936,10 @@ class PlanBallNumThread(QThread):
                             #     self.signal.emit('录终点图')
                             self.signal.emit(num)
                             num_old = num
-                        if num in [3, 4, 5] and not ObsShot_Thread.run_flg:
+                        if (ui.checkBox_main_camera_set.isChecked()
+                                and num in [3, 4, 5, 6]
+                                and not ObsShot_Thread.run_flg):
+                            print(num, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', num)
                             ObsShot_Thread.run_flg = True
                         if (num > balls_count - 2 and screen_sort
                                 and not ObsShot_Thread.run_flg):
@@ -1995,6 +2005,8 @@ class PlanBallNumThread(QThread):
             print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
             Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+            # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+            # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
             save_images()  # 关闭标记录图
             # 写入 JSON 文件
             temp = copy.deepcopy(ranking_save)
@@ -2100,8 +2112,8 @@ class ObsEndThread(QThread):
             print('结算页面运行！')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
             Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-            ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-            print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+            # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+            # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
             # self.signal.emit('录图结束')
             send_flg = True  # 发送赛果成功标志
             save_path = '%s' % ui.lineEdit_upload_Path.text()
@@ -2348,17 +2360,6 @@ class ScreenShotThread(QThread):
             if obs_res:
                 obs_list = eval(obs_res[1])
                 main_Camera = camera_to_num(obs_list)
-                if len(obs_list) > 2 and ui.checkBox_main_camera_set.isChecked():
-                    # print(obs_list)
-                    for i in range(0, len(obs_list)):
-                        for j in range(0, len(ranking_array)):
-                            if ranking_array[j][5] == obs_list[i]:
-                                ranking_array[j][6] = max_area_count
-                                ranking_array[j][9] = max_lap_count - 1
-                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                        ball_sort[max_area_count][max_lap_count - 1].append('')
-                        ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
-                    color_to_num(ranking_array)
                 self.signal.emit(obs_res)
 
             monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
@@ -2423,17 +2424,17 @@ class ScreenShotThread(QThread):
             for i in range(max_lap_count):
                 temp_lap.append([])
             ball_sort.append(temp_lap)
+            ranking_temp = copy.deepcopy(ranking_array)
             for i in range(0, len(camera_list)):
-                for j in range(0, len(ranking_array)):
-                    if ranking_array[j][5] == camera_list[i]:
+                for j in range(0, len(ranking_temp)):
+                    if ranking_temp[j][5] == camera_list[i]:
                         if i < balls_count - 1:
-                            ranking_array[j][6] = max_area_count + 1
-                        ranking_array[j][9] = max_lap_count - 1
-                        ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
+                            ranking_temp[j][6] = max_area_count + 1
+                        ranking_temp[j][9] = max_lap_count - 1
                 if len(ball_sort[max_area_count + 1][max_lap_count - 1]) - 1 < i:
                     ball_sort[max_area_count + 1][max_lap_count - 1].append('')
                 ball_sort[max_area_count + 1][max_lap_count - 1][i] = camera_list[i]
-            color_to_num(ranking_array)
+            ranking_array = copy.deepcopy(ranking_temp)
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
             self.signal.emit('核对完成')
@@ -2524,6 +2525,7 @@ class ObsShotThread(QThread):
         self.quit()  # 退出线程事件循环
 
     def run(self) -> None:
+        global ranking_array
         while self.running:
             time.sleep(0.5)
             if not self.run_flg:
@@ -2535,16 +2537,17 @@ class ObsShotThread(QThread):
                 obs_num = len(obs_list)
                 if obs_num > 2:
                     # print(obs_list)
+                    ranking_temp = copy.deepcopy(ranking_array)
                     for i in range(0, obs_num):
-                        for j in range(0, len(ranking_array)):
-                            if ranking_array[j][5] == obs_list[i]:
-                                ranking_array[j][6] = max_area_count
-                                ranking_array[j][9] = max_lap_count - 1
-                                ranking_array[j], ranking_array[i] = ranking_array[i], ranking_array[j]
-                        if len(ball_sort[max_area_count][max_lap_count - 1]) < balls_count:
-                            ball_sort[max_area_count][max_lap_count - 1].append('')
-                        ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
-                    color_to_num(ranking_array)
+                        if len(ball_sort[max_area_count - i][max_lap_count - 1]) < 1:
+                            ball_sort[max_area_count - i][max_lap_count - 1].append('')
+                        ball_sort[max_area_count - i][max_lap_count - 1][0] = obs_list[i]
+                        for j in range(0, len(ranking_temp)):
+                            if ranking_temp[j][5] == obs_list[i]:
+                                ranking_temp[j][6] = max_area_count - i
+                                ranking_temp[j][9] = max_lap_count - 1
+                                break
+                    ranking_array = copy.deepcopy(ranking_temp)
                     self.signal.emit(obs_res)
             self.run_flg = False
 
@@ -2850,7 +2853,7 @@ class PlanCmdThread(QThread):
                 continue
             if flg_start['card'] and action_area[1] < max_lap_count:
                 Audio_Thread.run_flg = True  # 开启音频播放线程
-                Ai_Thread.run_flg = True  # 开启AI播放线程
+                # Ai_Thread.run_flg = True  # 开启AI播放线程
                 self.signal.emit(succeed("运动流程：开始！"))
                 self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
                 cb_index = ui.comboBox_plan.currentIndex()
@@ -3077,6 +3080,8 @@ class PlanCmdThread(QThread):
                 if self.background_state or self.ready_state or self.end_state:
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                     Ai_Thread.run_flg = False  # 停止卫星图Ai解说线程
+                    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
                     self.background_state = False
                     self.ready_state = False
                     self.run_flg = False
@@ -3102,6 +3107,8 @@ class PlanCmdThread(QThread):
                     print('另外开关~~~~~~~~~')
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                     Ai_Thread.run_flg = False  # 停止卫星图Ai解说线程  # 停止卫星图音效播放线程
+                    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
                     # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
@@ -3123,6 +3130,8 @@ class PlanCmdThread(QThread):
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                     Ai_Thread.run_flg = False  # 停止卫星图Ai解说线程
+                    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
                     # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                 self.signal.emit(succeed("运动流程：完成！"))
@@ -3724,6 +3733,7 @@ def save_main_json():
             main_all['checkBox_First_Check'] = ui.checkBox_First_Check.isChecked()
             main_all['comboBox_plan'] = ui.comboBox_plan.currentIndex()
             main_all['checkBox_end_2'] = ui.checkBox_end_2.isChecked()
+            main_all['checkBox_main_camera_set'] = ui.checkBox_main_camera_set.isChecked()
 
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
@@ -3842,6 +3852,7 @@ def load_main_json():
         ui.checkBox_saveImgs_mark.setChecked(main_all['checkBox_saveImgs_mark'])
         ui.checkBox_First_Check.setChecked(main_all['checkBox_First_Check'])
         ui.checkBox_end_2.setChecked(main_all['checkBox_end_2'])
+        ui.checkBox_main_camera_set.setChecked(main_all['checkBox_main_camera_set'])
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -3941,6 +3952,8 @@ def cmd_stop():
     ReStart_Thread.run_flg = False  # 停止循环
     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
     Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
     tcp_result_thread.send_type = ''  # 退出结果页面循环
     sc.card_stop()  # 立即停止
 
@@ -4243,7 +4256,7 @@ class PositionsLiveThread(QThread):
                     time.sleep(0.1)  # 每 0.1 秒发送一次
                 except Exception as e:
                     print(f"发送数据时出错: {e}")
-                    self.signal.emit(fail(f"发送数据时出错: {e}"))
+                    # self.signal.emit(fail(f"发送数据时出错: {e}"))
                     break  # 退出循环，触发 on_close
 
         while self.running:
@@ -5044,9 +5057,19 @@ class AiThread(QThread):
                         and (ai_points[index][plan_index][0][0] == action_area[0])):
                     tb_ai = ui.tableWidget_Ai
                     text = tb_ai.item(index - 1, 0).text()
+                    rank_temp = {}  # 球号:排名
+                    for i, item in enumerate(z_ranking_res):
+                        rank_temp[item] = i + 1
+                    sorted_dict = dict(sorted(rank_temp.items()))
+                    for i in sorted_dict.keys():
+                        if i == 1:
+                            text = '%s_%s,0|' % (text, sorted_dict[i])
+                        else:
+                            text = '%s%s,0|' % (text, sorted_dict[i])
+
+                    print(text)
                     send_data(text, ui.lineEdit_Ai_addr.text())  # 发送AI解说提示词
                     area_old = copy.deepcopy(action_area)
-                    print('Ai~~~~~~~~~~~~~', area_old, ai_points[index][plan_index][0][0], action_area[0])
                     break
 
 
@@ -6345,9 +6368,7 @@ def my_test():
     global term
     global z_ranking_res
     global ranking_array
-    print(ranking_array)
-    ranking_array[7][8] = -2
-    ranking_array[7][6] = 36
+    ObsShot_Thread.run_flg = True
     # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
     # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
@@ -6480,6 +6501,7 @@ class ZApp(QApplication):
             OrganCycle_Thread.stop()
             deal_udp_thread.stop()
             CheckFile_Thread.stop()
+            ObsShot_Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -6488,30 +6510,57 @@ class ZApp(QApplication):
         """等待所有线程退出。"""
         try:
             PlanCmd_Thread.wait()  # 运动方案线程
+            print('PlanCmd_Thread')
             PlanObs_Thread.wait()  # OBS切换线程
+            print('PlanObs_Thread')
             PlanCam_Thread.wait()  # 镜头切换线程
+            print('PlanCam_Thread')
             PlanBallNum_Thread.wait()  # 计球器线程
+            print('PlanBallNum_Thread')
             tcp_ranking_thread.wait()  # 前端排名线程
+            print('tcp_ranking_thread')
             tcp_result_thread.wait()  # 前端结果线程
-            udp_thread.wait()  # 处理udp数据线程
+            print('tcp_result_thread')
             Update_Thread.wait()  # 更新排名数据表线程
+            print('Update_Thread')
             TestStatus_Thread.wait()  # 测试各功能状态线程
+            print('TestStatus_Thread')
             Axis_Thread.wait()  # 五轴复位线程
+            print('Axis_Thread')
             Pos_Thread.wait()  # 龙门架坐标线程
+            print('Pos_Thread')
             ReStart_Thread.wait()  # 重启方案线程
+            print('ReStart_Thread')
             Audio_Thread.wait()  # 音效方案线程
+            print('Audio_Thread')
             Ai_Thread.wait()  # AI方案线程
+            print('Ai_Thread')
             listener.join()  # 键盘监听线程
+            print('listener')
             ScreenShot_Thread.wait()  # 摄像头排名识别线程
+            print('ScreenShot_Thread')
             ObsEnd_Thread.wait()  # 推送结果到前端线程
+            print('ObsEnd_Thread')
             Shoot_Thread.wait()  # 弹射上珠线程
+            print('Shoot_Thread')
             positions_live_thread.wait()  # 发送实时位置到服务器线程
+            print('positions_live_thread')
             Script_Thread.wait()  # OBS计时脚本线程
+            print('Script_Thread')
             Kaj789_Thread.wait()  # 开奖王线程（补发结果数据）
+            print('Kaj789_Thread')
             reset_ranking_Thread.wait()  # 初始化数据线程
+            print('reset_ranking_Thread')
             CheckFile_Thread.wait()  # 检查文件线程
+            print('CheckFile_Thread')
             OrganCycle_Thread.wait()  # 机关循环
+            print('OrganCycle_Thread')
             deal_udp_thread.wait()  # 机关循环
+            print('deal_udp_thread')
+            udp_thread.wait()  # 处理udp数据线程
+            print('udp_thread')
+            ObsShot_Thread.wait()  # 终点截图识别
+            print('ObsShot_Thread')
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -7141,7 +7190,6 @@ if __name__ == '__main__':
     five_axis = [1, 1, 1, 1, 1]
     five_key = [1, 1, 1, 1, 1]
     term = '8000'  # 期号
-    term_test = '8000'  # 期号
     betting_start_time = 0  # 比赛预定开始时间
     betting_end_time = int(time.time())  # 比赛预定结束时间
     stream_url = ''  # 流链接
@@ -7432,6 +7480,7 @@ if __name__ == '__main__':
     ui.checkBox_Main_Vertica.checkStateChanged.connect(save_main_json)
     ui.checkBox_saveImgs_mark.checkStateChanged.connect(save_main_json)
     ui.checkBox_First_Check.checkStateChanged.connect(save_main_json)
+    ui.checkBox_main_camera_set.checkStateChanged.connect(save_main_json)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)
     ui.radioButton_music_background_2.clicked.connect(save_main_json)

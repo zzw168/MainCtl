@@ -2535,7 +2535,6 @@ class ObsShotThread(QThread):
             if obs_res:
                 obs_list = eval(obs_res[1])
                 obs_num = len(obs_list)
-                print(obs_list, '~~~~~~~~~~~~~~~~~~~~')
                 if obs_num > 2:
                     # print(obs_list)
                     ranking_temp = copy.deepcopy(ranking_array)
@@ -7235,7 +7234,6 @@ if __name__ == '__main__':
     # 1. Udp 接收数据 14
     try:
         udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1024 * 1024 * 10)  # 10MB 缓冲
         udp_thread = UdpThread()
         udp_thread.signal.connect(udpsignal_accept)
         udp_thread.start()
