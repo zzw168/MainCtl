@@ -2957,7 +2957,7 @@ class PlanCmdThread(QThread):
                                     ai_text = tb_ai.item(int(plan_list[plan_index][17][0]) - 1, 0).text()
                                     rank_temp = {}  # 球号:排名
                                     for i, item in enumerate(z_ranking_res):
-                                        rank_temp[item] = i + 1
+                                        rank_temp[item] = balls_count - i
                                     sorted_dict = dict(sorted(rank_temp.items()))
                                     for i in sorted_dict.keys():
                                         if i == 1:
@@ -5082,7 +5082,7 @@ class AiThread(QThread):
                     text = tb_ai.item(index - 1, 0).text()
                     rank_temp = {}  # 球号:排名
                     for i, item in enumerate(z_ranking_res):
-                        rank_temp[item] = i + 1
+                        rank_temp[item] = balls_count - i
                     sorted_dict = dict(sorted(rank_temp.items()))
                     for i in sorted_dict.keys():
                         if i == 1:
@@ -6393,7 +6393,20 @@ def my_test():
     global term
     global z_ranking_res
     global ranking_array
-    ObsShot_Thread.run_flg = True
+    print("发送比赛开始标记...")
+    result = send_data("START", 'http://192.168.0.250:8082')
+    print(f"服务器响应: {result}")
+    time.sleep(10)
+    ai_text = '路段_90度弯_5,0|7,0|6,0|8,0|4,0|3,0|2,0|1,0|'
+    # send_data(text, 'http://192.168.0.250:8082')  # 发送AI解说提示词
+    t = threading.Thread(target=send_data, args=(ai_text, 'http://192.168.0.250:8082'),
+                         daemon=True)
+    t.start()
+    # 发送结束标记
+    print("发送比赛结束标记...")
+    time.sleep(30)
+    result = send_data("STOP", 'http://192.168.0.250:8082')
+    print(f"服务器响应: {result}")
     # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
     # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
