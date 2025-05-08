@@ -2652,6 +2652,11 @@
             </column>
             <column>
              <property name="text">
+              <string>Ai</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
               <string>OBS画面</string>
              </property>
             </column>

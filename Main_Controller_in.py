@@ -2949,6 +2949,27 @@ class PlanCmdThread(QThread):
                                     except:
                                         print('音效加载失败！~~~~~')
 
+                            if (plan_list[plan_index][17][0].isdigit()
+                                    and int(plan_list[plan_index][17][0]) > 0):  # 播放Ai
+                                tb_ai = ui.tableWidget_Ai
+                                ai_row_count = tb_ai.rowCount()
+                                if int(plan_list[plan_index][17][0]) - 1 < ai_row_count:
+                                    ai_text = tb_ai.item(int(plan_list[plan_index][17][0]) - 1, 0).text()
+                                    rank_temp = {}  # 球号:排名
+                                    for i, item in enumerate(z_ranking_res):
+                                        rank_temp[item] = i + 1
+                                    sorted_dict = dict(sorted(rank_temp.items()))
+                                    for i in sorted_dict.keys():
+                                        if i == 1:
+                                            ai_text = '%s_%s,0|' % (ai_text, sorted_dict[i])
+                                        else:
+                                            ai_text = '%s%s,0|' % (ai_text, sorted_dict[i])
+
+                                    print(ai_text)
+                                    t = threading.Thread(target=send_data, args=(ai_text, ui.lineEdit_Ai_addr.text()),
+                                                         daemon=True)
+                                    t.start()
+
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
                                     and not self.ready_state
