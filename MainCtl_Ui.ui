@@ -181,6 +181,9 @@
                <layout class="QGridLayout" name="gridLayout_9">
                 <item row="0" column="0">
                  <widget class="QRadioButton" name="radioButton_start_betting">
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>开盘</string>
                   </property>
@@ -188,6 +191,9 @@
                 </item>
                 <item row="1" column="0">
                  <widget class="QRadioButton" name="radioButton_stop_betting">
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>封盘</string>
                   </property>
@@ -195,6 +201,9 @@
                 </item>
                 <item row="2" column="0">
                  <widget class="QRadioButton" name="radioButton_test_game">
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
+                  </property>
                   <property name="text">
                    <string>模拟</string>
                   </property>

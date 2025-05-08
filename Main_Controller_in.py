@@ -1937,7 +1937,7 @@ class PlanBallNumThread(QThread):
                             self.signal.emit(num)
                             num_old = num
                         if (ui.checkBox_main_camera_set.isChecked()
-                                and num in [3, 4, 5, 6]
+                                and num in [3, 5]
                                 and not ObsShot_Thread.run_flg):
                             print(num, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', num)
                             ObsShot_Thread.run_flg = True
@@ -1998,6 +1998,8 @@ class PlanBallNumThread(QThread):
 
             tcp_ranking_thread.sleep_time = 0.1  # 恢复正常前端排名数据包发送频率
             if screen_sort:
+                while ScreenShot_Thread.run_flg:
+                    time.sleep(1)
                 term_comment = term_comments[1]
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
             lottery_term[8] = term_comment
@@ -2231,7 +2233,7 @@ class ObsEndThread(QThread):
                             lottery_term[7] = "上传成功"
                         else:
                             lottery_term[7] = "上传失败"
-                    if term_comment != '':
+                    if term_comment != '' and term_status != 1:
                         res_marble_results = post_marble_results(term=term,
                                                                  comments=term_comment,
                                                                  Track_number=Track_number)  # 上传备注信息
@@ -5733,6 +5735,7 @@ class ResetRankingThread(QThread):
         global z_end_time
         global lapTime
         global ranking_save
+        global balls_ranking_time
         # global previous_position
         while self.running:
             time.sleep(1)
@@ -5770,6 +5773,7 @@ class ResetRankingThread(QThread):
             map_label_big.map_action = 0
             term_comment = ''
             lapTime = 0
+            balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
             ranking_save = {'yellow': [],
                             'blue': [],
                             'red': [],

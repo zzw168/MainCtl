@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'MainCtl_Ui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -107,16 +107,19 @@ class Ui_MainWindow(object):
         self.gridLayout_9.setObjectName(u"gridLayout_9")
         self.radioButton_start_betting = QRadioButton(self.groupBox)
         self.radioButton_start_betting.setObjectName(u"radioButton_start_betting")
+        self.radioButton_start_betting.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_9.addWidget(self.radioButton_start_betting, 0, 0, 1, 1)
 
         self.radioButton_stop_betting = QRadioButton(self.groupBox)
         self.radioButton_stop_betting.setObjectName(u"radioButton_stop_betting")
+        self.radioButton_stop_betting.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
         self.gridLayout_9.addWidget(self.radioButton_stop_betting, 1, 0, 1, 1)
 
         self.radioButton_test_game = QRadioButton(self.groupBox)
         self.radioButton_test_game.setObjectName(u"radioButton_test_game")
+        self.radioButton_test_game.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.radioButton_test_game.setChecked(True)
 
         self.gridLayout_9.addWidget(self.radioButton_test_game, 2, 0, 1, 1)
@@ -622,11 +625,11 @@ class Ui_MainWindow(object):
         self.groupBox_term.setMinimumSize(QSize(0, 200))
         palette2 = QPalette()
         brush = QBrush(QColor(255, 0, 0, 255))
-        brush.setStyle(Qt.SolidPattern)
-        palette2.setBrush(QPalette.Active, QPalette.Window, brush)
-        palette2.setBrush(QPalette.Inactive, QPalette.Window, brush)
-        palette2.setBrush(QPalette.Disabled, QPalette.Base, brush)
-        palette2.setBrush(QPalette.Disabled, QPalette.Window, brush)
+        brush.setStyle(Qt.BrushStyle.SolidPattern)
+        palette2.setBrush(QPalette.ColorGroup.Active, QPalette.ColorRole.Window, brush)
+        palette2.setBrush(QPalette.ColorGroup.Inactive, QPalette.ColorRole.Window, brush)
+        palette2.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Base, brush)
+        palette2.setBrush(QPalette.ColorGroup.Disabled, QPalette.ColorRole.Window, brush)
         self.groupBox_term.setPalette(palette2)
         self.groupBox_term.setAutoFillBackground(False)
         self.groupBox_term.setStyleSheet(u"")
