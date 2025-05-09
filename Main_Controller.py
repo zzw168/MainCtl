@@ -29,6 +29,7 @@ from OrganDlg_Ui import Ui_Dialog_Organ
 from ResultDlg_Ui import Ui_Dialog_Result
 from Speed_Ui import Ui_Dialog_Set_Speed
 from TrapBallDlg_Ui import Ui_Dialog_TrapBall
+from UdpData_Ui import Ui_Dialog_UdpData
 from utils import tool_unit
 from utils.SportCard_unit import *
 from kaj789_table import Kaj789Ui
@@ -4000,7 +4001,7 @@ def card_start():
 
 def card_reset():
     global axis_reset
-    axis_reset = True
+    axis_reset = False
     Axis_Thread.run_flg = True
 
 
@@ -4022,12 +4023,15 @@ def card_close_all():
 
 
 def end_all():
+    global axis_reset
     res = QMessageBox.warning(z_window, '提示', '是否关闭直播，和所有机关！',
                               QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
     print(res)
     if res == QMessageBox.Yes:
-        card_reset()
-        card_close_all()
+        axis_reset = True
+        Axis_Thread.run_flg = True
+        for index in range(0, 16):
+            sc.GASetExtDoBit(index, 0)
         if flg_start['live']:
             cl_request.stop_stream()
 
@@ -6866,6 +6870,14 @@ def balls_continue_btn():
     BallsNum_ui.hide()
 
 
+class UdpDataUi(QDialog, Ui_Dialog_UdpData):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def setupUi(self, z_dialog):
+        super().setupUi(z_dialog)
+
+
 class MapUi(QDialog, Ui_Dialog_Map):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -6936,6 +6948,9 @@ if __name__ == '__main__':
     ui = ZUi()
     ui.setupUi(z_window)
     z_window.show()
+
+    UdpData_ui = UdpDataUi(z_window)
+    UdpData_ui.setupUi(UdpData_ui)
 
     Map_ui = MapUi(z_window)
     Map_ui.setupUi(Map_ui)

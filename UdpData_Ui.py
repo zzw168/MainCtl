@@ -18,16 +18,16 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
 from PySide6.QtWidgets import (QApplication, QDialog, QGridLayout, QGroupBox,
     QSizePolicy, QTextBrowser, QWidget)
 
-class Ui_Dialog_Map(object):
-    def setupUi(self, Dialog_Map):
-        if not Dialog_Map.objectName():
-            Dialog_Map.setObjectName(u"Dialog_Map")
-        Dialog_Map.resize(660, 441)
-        Dialog_Map.setMinimumSize(QSize(370, 400))
-        Dialog_Map.setMaximumSize(QSize(16777215, 16777215))
-        self.gridLayout = QGridLayout(Dialog_Map)
+class Ui_Dialog_UdpData(object):
+    def setupUi(self, Dialog_UdpData):
+        if not Dialog_UdpData.objectName():
+            Dialog_UdpData.setObjectName(u"Dialog_UdpData")
+        Dialog_UdpData.resize(660, 441)
+        Dialog_UdpData.setMinimumSize(QSize(370, 400))
+        Dialog_UdpData.setMaximumSize(QSize(16777215, 16777215))
+        self.gridLayout = QGridLayout(Dialog_UdpData)
         self.gridLayout.setObjectName(u"gridLayout")
-        self.groupBox_14 = QGroupBox(Dialog_Map)
+        self.groupBox_14 = QGroupBox(Dialog_UdpData)
         self.groupBox_14.setObjectName(u"groupBox_14")
         self.groupBox_14.setMinimumSize(QSize(350, 380))
         self.groupBox_14.setMaximumSize(QSize(16777215, 16777215))
@@ -48,13 +48,13 @@ class Ui_Dialog_Map(object):
         self.gridLayout.addWidget(self.groupBox_14, 0, 0, 1, 1)
 
 
-        self.retranslateUi(Dialog_Map)
+        self.retranslateUi(Dialog_UdpData)
 
-        QMetaObject.connectSlotsByName(Dialog_Map)
+        QMetaObject.connectSlotsByName(Dialog_UdpData)
     # setupUi
 
-    def retranslateUi(self, Dialog_Map):
-        Dialog_Map.setWindowTitle(QCoreApplication.translate("Dialog_Map", u"\u536b\u661f\u56fe", None))
-        self.groupBox_14.setTitle(QCoreApplication.translate("Dialog_Map", u"\u536b\u661f\u56fe", None))
+    def retranslateUi(self, Dialog_UdpData):
+        Dialog_UdpData.setWindowTitle(QCoreApplication.translate("Dialog_UdpData", u"\u536b\u661f\u56fe", None))
+        self.groupBox_14.setTitle(QCoreApplication.translate("Dialog_UdpData", u"\u536b\u661f\u56fe", None))
     # retranslateUi
 

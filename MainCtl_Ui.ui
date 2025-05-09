@@ -1253,23 +1253,19 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="0" colspan="2">
-                    <widget class="QCheckBox" name="checkBox_saveImgs">
+                   <item row="0" column="2">
+                    <widget class="QRadioButton" name="radioButton_ball">
                      <property name="minimumSize">
                       <size>
-                       <width>110</width>
+                       <width>80</width>
                        <height>0</height>
                       </size>
                      </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>true</bold>
-                      </font>
-                     </property>
                      <property name="text">
-                      <string>GPS录图  数量：</string>
+                      <string>有球</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -1329,6 +1325,26 @@
                      </property>
                     </widget>
                    </item>
+                   <item row="2" column="0" colspan="2">
+                    <widget class="QCheckBox" name="checkBox_saveImgs">
+                     <property name="minimumSize">
+                      <size>
+                       <width>110</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>true</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>GPS录图  数量：</string>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="0" column="0" rowspan="2" colspan="2">
                     <widget class="QRadioButton" name="radioButton_noball">
                      <property name="maximumSize">
@@ -1339,22 +1355,6 @@
                      </property>
                      <property name="text">
                       <string>无球</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="2">
-                    <widget class="QRadioButton" name="radioButton_ball">
-                     <property name="minimumSize">
-                      <size>
-                       <width>80</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>有球</string>
-                     </property>
-                     <property name="checked">
-                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -1395,7 +1395,7 @@
                   <property name="maximumSize">
                    <size>
                     <width>165</width>
-                    <height>50</height>
+                    <height>80</height>
                    </size>
                   </property>
                   <property name="font">
@@ -1409,19 +1409,6 @@
                    <string>终点摄像头</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_70">
-                   <item row="0" column="0">
-                    <widget class="QCheckBox" name="checkBox_main_camera">
-                     <property name="maximumSize">
-                      <size>
-                       <width>100</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>主摄</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="0" column="1">
                     <widget class="QCheckBox" name="checkBox_monitor_cam">
                      <property name="maximumSize">
@@ -1435,7 +1422,20 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="2">
+                   <item row="0" column="0">
+                    <widget class="QCheckBox" name="checkBox_main_camera">
+                     <property name="maximumSize">
+                      <size>
+                       <width>100</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>主摄</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
                     <widget class="QCheckBox" name="checkBox_map">
                      <property name="maximumSize">
                       <size>
@@ -1445,6 +1445,19 @@
                      </property>
                      <property name="text">
                       <string>地图</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QCheckBox" name="checkBox_udpdata">
+                     <property name="maximumSize">
+                      <size>
+                       <width>100</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>数据</string>
                      </property>
                     </widget>
                    </item>
