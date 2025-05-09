@@ -165,6 +165,7 @@
     "lineEdit_Map_Action": "8",
     "lineEdit_Cycle": "4",
     "checkBox_Cycle": false,
+    "checkBox_Ai": true,
     "checkBox_main_camera_set": false,
     "checkBox_saveImgs_mark": false,
     "checkBox_end_2": false,

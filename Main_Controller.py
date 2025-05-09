@@ -1720,7 +1720,9 @@ class ReStartThread(QThread):
                     print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                     time.sleep(1)
                 PlanCmd_Thread.run_flg = True
-                # result = send_data("START", ui.lineEdit_Ai_addr.text())
+                if ui.checkBox_Ai.isChecked():
+                    result = send_data("START", ui.lineEdit_Ai_addr.text())
+                    print(f"服务器响应: {result}")
                 mark_msg = save_mark_images()  # 录标记图
                 self.signal.emit(mark_msg)
 
@@ -1937,7 +1939,7 @@ class PlanBallNumThread(QThread):
                             self.signal.emit(num)
                             num_old = num
                         if (ui.checkBox_main_camera_set.isChecked()
-                                and num in [3, 4, 5, 6]
+                                and num in [3, 5]
                                 and not ObsShot_Thread.run_flg):
                             print(num, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', num)
                             ObsShot_Thread.run_flg = True
@@ -1998,15 +2000,18 @@ class PlanBallNumThread(QThread):
 
             tcp_ranking_thread.sleep_time = 0.1  # 恢复正常前端排名数据包发送频率
             if screen_sort:
+                while ScreenShot_Thread.run_flg:
+                    time.sleep(1)
                 term_comment = term_comments[1]
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
             lottery_term[8] = term_comment
             ObsEnd_Thread.ball_flg = True  # 结算页标志2
             print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-            Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-            # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-            # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+            if ui.checkBox_Ai.isChecked():
+                Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+                ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                print(f"服务器响应: {ai_res}")  # 停止AI解说服务
             save_images()  # 关闭标记录图
             # 写入 JSON 文件
             temp = copy.deepcopy(ranking_save)
@@ -2111,10 +2116,11 @@ class ObsEndThread(QThread):
                 continue
             print('结算页面运行！')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-            Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-            # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-            # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
-            # self.signal.emit('录图结束')
+            if ui.checkBox_Ai.isChecked():
+                Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+                ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+            self.signal.emit('录图结束')
             send_flg = True  # 发送赛果成功标志
             save_path = '%s' % ui.lineEdit_upload_Path.text()
             if os.path.exists(save_path):
@@ -2231,7 +2237,7 @@ class ObsEndThread(QThread):
                             lottery_term[7] = "上传成功"
                         else:
                             lottery_term[7] = "上传失败"
-                    if term_comment != '':
+                    if term_comment != '' and term_status != 1:
                         res_marble_results = post_marble_results(term=term,
                                                                  comments=term_comment,
                                                                  Track_number=Track_number)  # 上传备注信息
@@ -2947,6 +2953,27 @@ class PlanCmdThread(QThread):
                                     except:
                                         print('音效加载失败！~~~~~')
 
+                            if (ui.checkBox_Ai.isChecked() and plan_list[plan_index][17][0].isdigit()
+                                    and int(plan_list[plan_index][17][0]) > 0):  # 播放Ai
+                                tb_ai = ui.tableWidget_Ai
+                                ai_row_count = tb_ai.rowCount()
+                                if int(plan_list[plan_index][17][0]) - 1 < ai_row_count:
+                                    ai_text = tb_ai.item(int(plan_list[plan_index][17][0]) - 1, 0).text()
+                                    rank_temp = {}  # 球号:排名
+                                    for i, item in enumerate(z_ranking_res):
+                                        rank_temp[item] = balls_count - i
+                                    sorted_dict = dict(sorted(rank_temp.items()))
+                                    for i in sorted_dict.keys():
+                                        if i == 1:
+                                            ai_text = '%s_%s,0|' % (ai_text, sorted_dict[i])
+                                        else:
+                                            ai_text = '%s%s,0|' % (ai_text, sorted_dict[i])
+
+                                    print(ai_text)
+                                    t = threading.Thread(target=send_data, args=(ai_text, ui.lineEdit_Ai_addr.text()),
+                                                         daemon=True)
+                                    t.start()
+
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
                                     and not self.ready_state
@@ -3079,9 +3106,10 @@ class PlanCmdThread(QThread):
                 # 背景模式不循环
                 if self.background_state or self.ready_state or self.end_state:
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-                    Ai_Thread.run_flg = False  # 停止卫星图Ai解说线程
-                    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-                    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+                    if ui.checkBox_Ai.isChecked():
+                        Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+                        ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                        print(f"服务器响应: {ai_res}")  # 停止AI解说服务
                     self.background_state = False
                     self.ready_state = False
                     self.run_flg = False
@@ -3106,9 +3134,10 @@ class PlanCmdThread(QThread):
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
                     print('另外开关~~~~~~~~~')
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-                    Ai_Thread.run_flg = False  # 停止卫星图Ai解说线程  # 停止卫星图音效播放线程
-                    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-                    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+                    if ui.checkBox_Ai.isChecked():
+                        Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+                        ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                        print(f"服务器响应: {ai_res}")  # 停止AI解说服务
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
                     # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
@@ -3129,9 +3158,10 @@ class PlanCmdThread(QThread):
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-                    Ai_Thread.run_flg = False  # 停止卫星图Ai解说线程
-                    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-                    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+                    if ui.checkBox_Ai.isChecked():
+                        Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+                        ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                        print(f"服务器响应: {ai_res}")  # 停止AI解说服务
                     # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                 self.signal.emit(succeed("运动流程：完成！"))
@@ -3734,6 +3764,7 @@ def save_main_json():
             main_all['comboBox_plan'] = ui.comboBox_plan.currentIndex()
             main_all['checkBox_end_2'] = ui.checkBox_end_2.isChecked()
             main_all['checkBox_main_camera_set'] = ui.checkBox_main_camera_set.isChecked()
+            main_all['checkBox_Ai'] = ui.checkBox_Ai.isChecked()
 
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
@@ -3853,6 +3884,7 @@ def load_main_json():
         ui.checkBox_First_Check.setChecked(main_all['checkBox_First_Check'])
         ui.checkBox_end_2.setChecked(main_all['checkBox_end_2'])
         ui.checkBox_main_camera_set.setChecked(main_all['checkBox_main_camera_set'])
+        ui.checkBox_Ai.setChecked(main_all['checkBox_Ai'])
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -3951,9 +3983,10 @@ def cmd_stop():
     PlanCmd_Thread.run_flg = False  # 停止运动
     ReStart_Thread.run_flg = False  # 停止循环
     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-    Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+    if ui.checkBox_Ai.isChecked():
+        Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+        ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+        print(f"服务器响应: {ai_res}")  # 停止AI解说服务
     tcp_result_thread.send_type = ''  # 退出结果页面循环
     sc.card_stop()  # 立即停止
 
@@ -5059,7 +5092,7 @@ class AiThread(QThread):
                     text = tb_ai.item(index - 1, 0).text()
                     rank_temp = {}  # 球号:排名
                     for i, item in enumerate(z_ranking_res):
-                        rank_temp[item] = i + 1
+                        rank_temp[item] = balls_count - i
                     sorted_dict = dict(sorted(rank_temp.items()))
                     for i in sorted_dict.keys():
                         if i == 1:
@@ -5733,6 +5766,7 @@ class ResetRankingThread(QThread):
         global z_end_time
         global lapTime
         global ranking_save
+        global balls_ranking_time
         # global previous_position
         while self.running:
             time.sleep(1)
@@ -5770,6 +5804,7 @@ class ResetRankingThread(QThread):
             map_label_big.map_action = 0
             term_comment = ''
             lapTime = 0
+            balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
             ranking_save = {'yellow': [],
                             'blue': [],
                             'red': [],
@@ -6368,7 +6403,20 @@ def my_test():
     global term
     global z_ranking_res
     global ranking_array
-    ObsShot_Thread.run_flg = True
+    print("发送比赛开始标记...")
+    result = send_data("START", 'http://192.168.0.250:8082')
+    print(f"服务器响应: {result}")
+    time.sleep(10)
+    ai_text = '路段_90度弯_5,0|7,0|6,0|8,0|4,0|3,0|2,0|1,0|'
+    # send_data(text, 'http://192.168.0.250:8082')  # 发送AI解说提示词
+    t = threading.Thread(target=send_data, args=(ai_text, 'http://192.168.0.250:8082'),
+                         daemon=True)
+    t.start()
+    # 发送结束标记
+    print("发送比赛结束标记...")
+    time.sleep(30)
+    result = send_data("STOP", 'http://192.168.0.250:8082')
+    print(f"服务器响应: {result}")
     # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
     # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
@@ -7481,6 +7529,7 @@ if __name__ == '__main__':
     ui.checkBox_saveImgs_mark.checkStateChanged.connect(save_main_json)
     ui.checkBox_First_Check.checkStateChanged.connect(save_main_json)
     ui.checkBox_main_camera_set.checkStateChanged.connect(save_main_json)
+    ui.checkBox_Ai.checkStateChanged.connect(save_main_json)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)
     ui.radioButton_music_background_2.clicked.connect(save_main_json)
