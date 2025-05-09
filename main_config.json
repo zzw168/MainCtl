@@ -161,7 +161,7 @@
         ]
     ],
     "lineEdit_alarm": "14",
-    "comboBox_plan": 0,
+    "comboBox_plan": 1,
     "lineEdit_Map_Action": "8",
     "lineEdit_Cycle": "4",
     "checkBox_Cycle": false,
@@ -212,7 +212,7 @@
         "./mp3/07_冰原背景音乐3.mp3"
     ],
     "obs_script_addr": "http://127.0.0.1:8899",
-    "lineEdit_Ai_addr": "http://127.0.0.1:8082",
+    "lineEdit_Ai_addr": "http://192.168.0.250:8082",
     "pushButton_start_game": true,
     "recognition_addr": "http://127.0.0.1:6066",
     "result_tcpServer_addr": [
