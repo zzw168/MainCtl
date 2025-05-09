@@ -3965,6 +3965,7 @@ def cmd_run():
         PlanCmd_Thread.run_flg = True
 
 
+
 def cmd_loop():
     global betting_loop_flg
     if ui.radioButton_stop_betting.isChecked():
