@@ -6763,6 +6763,11 @@ def map_hide_event(event):
     event.accept()
 
 
+def udpdata_hide_event(event):
+    ui.checkBox_udpdata.setChecked(False)
+    event.accept()
+
+
 def main_cam_change():
     if ui.checkBox_main_camera.isChecked():
         MainCameraDialog.show()
@@ -6782,6 +6787,14 @@ def map_change():
         Map_ui.show()
     else:
         Map_ui.hide()
+
+
+def udpdata_change():
+    if ui.checkBox_udpdata.isChecked():
+        print('~~~~~~~~~~~~~~~~')
+        UdpData_ui.show()
+    else:
+        UdpData_ui.hide()
 
 
 "************************************ResultDlg_Ui*********************************************"
@@ -6951,6 +6964,7 @@ if __name__ == '__main__':
 
     UdpData_ui = UdpDataUi(z_window)
     UdpData_ui.setupUi(UdpData_ui)
+    UdpData_ui.hideEvent = udpdata_hide_event
 
     Map_ui = MapUi(z_window)
     Map_ui.setupUi(Map_ui)
@@ -7479,6 +7493,7 @@ if __name__ == '__main__':
     ui.checkBox_main_camera.checkStateChanged.connect(main_cam_change)
     ui.checkBox_monitor_cam.checkStateChanged.connect(monitor_cam_change)
     ui.checkBox_map.checkStateChanged.connect(map_change)
+    ui.checkBox_udpdata.checkStateChanged.connect(udpdata_change)
 
     set_result_class()
 
