@@ -1112,8 +1112,8 @@ def udpsignal_accept(msg):
     else:
         if '错误' in msg:
             ui.textBrowser_msg.append(msg)
-        if ui.checkBox_ShowUdp.isChecked():
-            ui.textBrowser_background_data.append(str(msg))
+        if UdpData_ui.isVisible() and ReStart_Thread.start_flg:
+            UdpData_ui.textBrowser.append(str(msg))
 
 
 def load_area():  # 载入位置文件初始化区域列表
@@ -1640,10 +1640,10 @@ class ReStartThread(QThread):
                 continue
             ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
+            self.start_flg = True
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
-                    self.start_flg = True
                     term = response['term']
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
@@ -5717,7 +5717,7 @@ def kaj789_signal_accept(msg):
 
 def send_end():
     global term_status
-    if ReStart_Thread.start_flg:
+    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
         messagebox.showinfo("敬告", "比赛未结束，进行补发！")
         return
     Kaj789_Thread.run_type = 'post_end'
@@ -5728,7 +5728,7 @@ def cancel_end():
     global term_status
     global term_comment
     global betting_loop_flg
-    if ReStart_Thread.start_flg:
+    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
         messagebox.showinfo("取消当局", "当前开盘中，不能直接取消比赛，如需强制取消，请点击封盘！")
         return
     response = messagebox.askquestion("取消当局", "取消当局，你确定吗？")
@@ -6263,7 +6263,7 @@ def stop_betting():
     global betting_loop_flg
     global term_status
     global term_comment
-    if ReStart_Thread.start_flg:
+    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
         response = messagebox.askquestion("取消当局", "比赛进行中，是否取消当局？")
         print(response)  # "yes" / "no"
         if "yes" in response:
@@ -6286,7 +6286,7 @@ def stop_betting():
 
 
 def test_betting():
-    if ReStart_Thread.start_flg:
+    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
         messagebox.showinfo("敬告", "当前开盘中，不能更改比赛状态！")
         ui.radioButton_start_betting.setChecked(True)
         return
