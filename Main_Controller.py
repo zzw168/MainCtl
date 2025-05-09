@@ -2859,7 +2859,8 @@ class PlanCmdThread(QThread):
                 continue
             if flg_start['card'] and action_area[1] < max_lap_count:
                 Audio_Thread.run_flg = True  # 开启音频播放线程
-                # Ai_Thread.run_flg = True  # 开启AI播放线程
+                if ui.checkBox_Ai.isChecked():
+                    Ai_Thread.run_flg = True  # 开启AI播放线程
                 self.signal.emit(succeed("运动流程：开始！"))
                 self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
                 cb_index = ui.comboBox_plan.currentIndex()
