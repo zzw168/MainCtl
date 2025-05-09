@@ -5615,7 +5615,7 @@ class Kaj789Thread(QThread):
                         if term_comment == '':
                             lottery2json()  # 保存数据
                             break
-                if term_comment != '':
+                if term_comment != '' and term_status != 1:
                     res_marble_results = post_marble_results(term=term,
                                                              comments=term_comment,
                                                              Track_number=Track_number)  # 上传备注信息

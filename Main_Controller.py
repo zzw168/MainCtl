@@ -1112,8 +1112,9 @@ def udpsignal_accept(msg):
     else:
         if '错误' in msg:
             ui.textBrowser_msg.append(msg)
-        if UdpData_ui.isVisible() and ReStart_Thread.start_flg:
+        if UdpData_ui.isVisible():
             UdpData_ui.textBrowser.append(str(msg))
+            scroll_to_bottom(UdpData_ui.textBrowser)
 
 
 def load_area():  # 载入位置文件初始化区域列表
@@ -1640,10 +1641,10 @@ class ReStartThread(QThread):
                 continue
             ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
-            self.start_flg = True
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
+                    self.start_flg = True
                     term = response['term']
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
@@ -2205,8 +2206,7 @@ class ObsEndThread(QThread):
                                "actualResultOpeningTime": betting_end_time,
                                "result": z_ranking_end[0:balls_count],
                                "timings": "[]",
-                               "lapTime": lapTime}
-                self.signal.emit("lapTime:%s" % lapTime)
+                               "lapTime": abs(lapTimes[0])}
                 data_temp = []
                 for index in range(balls_count):
                     if is_natural_num(z_ranking_time[index]):
@@ -3966,7 +3966,6 @@ def cmd_run():
         PlanCmd_Thread.run_flg = True
 
 
-
 def cmd_loop():
     global betting_loop_flg
     if ui.radioButton_stop_betting.isChecked():
@@ -4458,7 +4457,7 @@ class MapLabel(QLabel):
         global z_ranking_res
         global ball_stop
         global pos_stop
-        global lapTime
+        global lapTimes
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
             self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间, 路线, 方向]
@@ -4529,12 +4528,23 @@ class MapLabel(QLabel):
             z_ranking_res = [ball[2] for ball in self.positions]
 
         # 第一圈时间
-        if (ranking_array and (ranking_array[0][9] == 0)
-                and (ranking_array[0][6] >= max_area_count - balls_count
-                     or self.positions[0][0] >= len(self.path_points[0]) - 100)
-        ):
-            lapTime = round(time.time() - ranking_time_start, 2)
+        # if (ranking_array and (ranking_array[0][9] == 0)
+        #         and (ranking_array[0][6] >= max_area_count - balls_count
+        #              or self.positions[0][0] >= len(self.path_points[0]) - 100)
+        # ):
+        #     lapTime = round(time.time() - ranking_time_start, 2)
 
+        if ranking_array:
+            for i in range(balls_count):
+                if (ranking_array[i][9] == 0  # 第0圈
+                        and (ranking_array[0][6] >= max_area_count - balls_count
+                             or self.positions[0][0] >= len(self.path_points[0]) - 100)):
+                    if lapTimes[i] == 0:
+                        lapTimes[i] = round(time.time() - ranking_time_start, 2)
+                        Kaj789_Thread.run_type = 'post_lapTime'
+                        Kaj789_Thread.position = i
+                        Kaj789_Thread.lapTime = lapTimes[i]
+                        Kaj789_Thread.run_flg = True
         # 更新实时触发位置
         for i in range(len(self.positions)):
             if ((self.positions[i][0] - self.map_action < len(self.path_points[0]) / 3)
@@ -4549,6 +4559,17 @@ class MapLabel(QLabel):
         if self.picture_size == 860:
             for i in range(balls_count):
                 x, y = self.path_points[0][self.positions[i][0]]
+                if self.positions[i][6] != 0:  # 分岔路线
+                    if 0 < self.positions[i][7] < 10:  # 小于10是X轴
+                        y1 = interpolate_y_from_x(self.path_points[self.positions[i][6]], x)
+                        if math.isfinite(y1):
+                            y = y1
+                    elif self.positions[i][7] > 10:    # 大于10是Y轴
+                        x1 = interpolate_x_from_y(self.path_points[self.positions[i][6]], y)
+                        if math.isfinite(x1):
+                            x = x1
+                    elif self.positions[i][7] < 0:     # 小于0是 一个点
+                        x, y = self.path_points[self.positions[i][6]][0]
                 b = round(self.positions[i][0] / len(self.path_points[0]) * 100, 2)
                 if b < 1:
                     b = 0
@@ -4636,11 +4657,11 @@ class MapLabel(QLabel):
                         y1 = interpolate_y_from_x(self.path_points[self.positions[index_position][6]], x)
                         if math.isfinite(y1):
                             y = y1
-                    elif self.positions[index_position][7] > 10:
+                    elif self.positions[index_position][7] > 10:    # 大于10是Y轴
                         x1 = interpolate_x_from_y(self.path_points[self.positions[index_position][6]], y)
                         if math.isfinite(x1):
                             x = x1
-                    elif self.positions[index_position][7] < 0:
+                    elif self.positions[index_position][7] < 0:     # 小于0是 一个点
                         x, y = self.path_points[self.positions[index_position][6]][0]
 
                 # 设置球的颜色
@@ -5563,6 +5584,8 @@ class Kaj789Thread(QThread):
         self.run_flg = False
         self.running = True
         self.run_type = ''
+        self.position = 0
+        self.lapTime = 0
 
     def stop(self):
         self.run_flg = False
@@ -5631,7 +5654,7 @@ class Kaj789Thread(QThread):
                         if term_comment == '':
                             lottery2json()  # 保存数据
                             break
-                if term_comment != '':
+                if term_comment != '' and term_status != 1:
                     res_marble_results = post_marble_results(term=term,
                                                              comments=term_comment,
                                                              Track_number=Track_number)  # 上传备注信息
@@ -5641,7 +5664,12 @@ class Kaj789Thread(QThread):
                         lottery2json()  # 保存数据
                     term_comment = ''
                     break
-
+                if self.run_type == 'post_lapTime':
+                    res_lapTime = post_lapTime(term=term, position=1, lapTime=0, Track_number=Track_number)
+                    if res_lapTime != 'OK':
+                        continue
+                    else:
+                        print('OK')
             self.run_flg = False
 
 
@@ -6497,6 +6525,15 @@ def clean_browser(textBrowser):
         textBrowser.setPlainText("\n".join(lines[-50:]))
 
 
+def clean_data_browser(textBrowser):
+    # 获取所有行
+    lines = textBrowser.toPlainText().split("\n")
+    if len(lines) > 2000:
+        # 只保留最后 max_lines 行
+        textBrowser.clear()
+        textBrowser.setPlainText("\n".join(lines[-50:]))
+
+
 # 滚动到 textBrowser 末尾
 def scroll_to_bottom(text_browser: QTextBrowser):
     # 获取 QTextCursor 并移动到文档结尾
@@ -7157,6 +7194,7 @@ if __name__ == '__main__':
     ui.tableWidget_Step.itemChanged.connect(table_change)
 
     ui.textBrowser.textChanged.connect(lambda: clean_browser(ui.textBrowser))
+    UdpData_ui.textBrowser.textChanged.connect(lambda: clean_data_browser(UdpData_ui.textBrowser))
     ui.textBrowser_msg.textChanged.connect(lambda: clean_browser(ui.textBrowser_msg))
     ui.textBrowser_background_data.textChanged.connect(lambda: clean_browser(ui.textBrowser_background_data))
 
@@ -7279,6 +7317,7 @@ if __name__ == '__main__':
     term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
     term_comment = ''
     lapTime = 0
+    lapTimes = [0.0] * balls_count
     result_data = {"raceTrackID": Track_number, "term": str(term), "actualResultOpeningTime": betting_end_time,
                    "result": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
                    "timings": json.dumps([

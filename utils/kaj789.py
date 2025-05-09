@@ -190,6 +190,29 @@ def post_upload(term, img_path, Track_number='I'):  # 上传图片
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
         return 'error'
 
+def post_lapTime(term, position, lapTime, Track_number='I'):  # 上传图片
+    try:
+        # upload_url = 'https://marble-api.hyypgs.com'
+        POST_lapTime_url = '/lapTime'
+        POST_lapTime_data = {"raceTrackID": Track_number, "term": str(term), "position": position,
+                         "lapTime": lapTime}  # 发送每种颜色珠子一圈的时间
+        print(POST_lapTime_data)
+        response = requests.post('%s%s' % (url, POST_lapTime_url), headers=headers, json=POST_lapTime_data, timeout=5)
+        print('lapTime:', response.text)
+        return response.text
+    except requests.exceptions.Timeout:
+        print("请求超时")
+        return 'error'
+    except requests.exceptions.ConnectionError:
+        print("网络连接错误")
+        return 'error'
+    except requests.exceptions.HTTPError as err:
+        print(f"HTTP 错误: {err}")
+        return 'error'
+    except requests.exceptions.RequestException as err:
+        print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
+        return 'error'
+
 
 def post_marble_results(term, comments='Invalid Term', Track_number='I'):  # 比赛异常，上传这个结果取消比赛
     try:
