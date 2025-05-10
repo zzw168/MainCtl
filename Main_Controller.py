@@ -2261,7 +2261,7 @@ class ObsEndThread(QThread):
                     print('上传结果错误！')
                 ReStart_Thread.start_flg = False  # 比赛结束标志,添加比赛总用时
                 lottery_term[2] = str(int(time.time() - ranking_time_start))
-            if send_flg:
+            if send_flg and not ui.radioButton_stop_betting.isChecked():
                 lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             else:
                 lottery_term[3] = '未结束'
