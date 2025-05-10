@@ -2567,7 +2567,7 @@ class ObsShotThread(QThread):
                         ball_sort[max_area_count - i][max_lap_count - 1][0] = obs_list[i]
                         for j in range(0, len(ranking_temp)):
                             if ranking_temp[j][5] == obs_list[i]:
-                                ranking_temp[j][6] = max_area_count - i
+                                ranking_temp[j][6] = max_area_count
                                 ranking_temp[j][9] = max_lap_count - 1
                                 break
                     ranking_array = copy.deepcopy(ranking_temp)
