@@ -571,6 +571,7 @@ def deal_action():
 def deal_rank(integration_qiu_array):
     global ranking_array
     global lapTimes
+    global lapTimes_thread
     area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
     for r_index in range(0, len(ranking_array)):
         replaced = False
@@ -592,11 +593,11 @@ def deal_rank(integration_qiu_array):
                     if result_count >= max_area_count - area_limit - balls_count:
                         if (ranking_array[r_index][9] == 0  # 第0圈
                                 and lapTimes[r_index] == 0):
-                                lapTimes[r_index] = round(time.time() - ranking_time_start, 2)
-                                Kaj789_Thread.run_type = 'post_lapTime'
-                                Kaj789_Thread.position = r_index
-                                Kaj789_Thread.lapTime = lapTimes[r_index]
-                                Kaj789_Thread.run_flg = True
+                            lapTimes[r_index] = round(time.time() - ranking_time_start, 2)
+                            lapTimes_thread[r_index] = threading.Thread(target=post_lapTime,
+                                                                        args=(term, r_index + 1, lapTimes[r_index], Track_number),
+                                                                        daemon=True)
+                            lapTimes_thread[r_index].start()
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
                         ranking_array[r_index][9] += 1
                         if ranking_array[r_index][9] > max_lap_count - 1:
@@ -2012,7 +2013,6 @@ class PlanBallNumThread(QThread):
             if screen_sort:
                 while ScreenShot_Thread.run_flg:
                     time.sleep(1)
-                term_comment = term_comments[1]
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
             lottery_term[8] = term_comment
             ObsEnd_Thread.ball_flg = True  # 结算页标志2
@@ -2214,7 +2214,7 @@ class ObsEndThread(QThread):
                                "actualResultOpeningTime": betting_end_time,
                                "result": z_ranking_end[0:balls_count],
                                "timings": "[]",
-                               "lapTime": abs(lapTimes[0])} #1
+                               "lapTime": abs(lapTimes[0])}
                 data_temp = []
                 for index in range(balls_count):
                     if is_natural_num(z_ranking_time[index]):
@@ -2261,7 +2261,7 @@ class ObsEndThread(QThread):
                     print('上传结果错误！')
                 ReStart_Thread.start_flg = False  # 比赛结束标志,添加比赛总用时
                 lottery_term[2] = str(int(time.time() - ranking_time_start))
-            if send_flg and not ui.radioButton_stop_betting.isChecked():
+            if send_flg:
                 lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             else:
                 lottery_term[3] = '未结束'
@@ -3680,18 +3680,21 @@ def plan_refresh():  # 刷新方案列表
                 item.setTextAlignment(Qt.AlignCenter)
                 # item.setFlags(QtCore.Qt.ItemFlag(63))   # 单元格可编辑
                 tb_step.setItem(num, col, item)
-    for index in range(len(camera_points)):  # 卫星图刷新
-        num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
-        camera_points[index][0].move(*camera_points[index][num][1])  # 设置初始位置
-        # camera_points[index][0].show()
-    for index in range(len(audio_points)):  # 卫星图刷新
-        num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
-        audio_points[index][0].move(*audio_points[index][num][1])  # 设置初始位置
-        # audio_points[index][0].show()
-    for index in range(len(ai_points)):  # 卫星图刷新
-        num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
-        ai_points[index][0].move(*ai_points[index][num][1])  # 设置初始位置
-        # ai_points[index][0].show()
+    if camera_points:
+        for index in range(len(camera_points)):  # 卫星图刷新
+            num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
+            camera_points[index][0].move(*camera_points[index][num][1])  # 设置初始位置
+            # camera_points[index][0].show()
+    if audio_points:
+        for index in range(len(audio_points)):  # 卫星图刷新
+            num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
+            audio_points[index][0].move(*audio_points[index][num][1])  # 设置初始位置
+            # audio_points[index][0].show()
+    if camera_points:
+        for index in range(len(ai_points)):  # 卫星图刷新
+            num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
+            ai_points[index][0].move(*ai_points[index][num][1])  # 设置初始位置
+            # ai_points[index][0].show()
     save_main_json()
 
 
@@ -4467,6 +4470,7 @@ class MapLabel(QLabel):
         global ball_stop
         global pos_stop
         global lapTimes
+        global lapTimes_thread
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
             self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间, 路线, 方向]
@@ -4547,13 +4551,13 @@ class MapLabel(QLabel):
             for i in range(balls_count):
                 if (ranking_array[i][9] == 0  # 第0圈
                         and (ranking_array[i][6] >= max_area_count - balls_count
-                             or self.positions[i][0] >= len(self.path_points[i]) - 100)):
+                             or self.positions[i][0] >= len(self.path_points[0]) - 100)):
                     if lapTimes[i] == 0:
                         lapTimes[i] = round(time.time() - ranking_time_start, 2)
-                        Kaj789_Thread.run_type = 'post_lapTime'
-                        Kaj789_Thread.position = i
-                        Kaj789_Thread.lapTime = lapTimes[i]
-                        Kaj789_Thread.run_flg = True
+                        lapTimes_thread[i] = threading.Thread(target=post_lapTime,
+                                                              args=(term, i + 1, lapTimes[i], Track_number),
+                                                              daemon=True)
+                        lapTimes_thread[i].start()
         # 更新实时触发位置
         for i in range(len(self.positions)):
             if ((self.positions[i][0] - self.map_action < len(self.path_points[0]) / 3)
@@ -4573,11 +4577,11 @@ class MapLabel(QLabel):
                         y1 = interpolate_y_from_x(self.path_points[self.positions[i][6]], x)
                         if math.isfinite(y1):
                             y = y1
-                    elif self.positions[i][7] > 10:    # 大于10是Y轴
+                    elif self.positions[i][7] > 10:  # 大于10是Y轴
                         x1 = interpolate_x_from_y(self.path_points[self.positions[i][6]], y)
                         if math.isfinite(x1):
                             x = x1
-                    elif self.positions[i][7] < 0:     # 小于0是 一个点
+                    elif self.positions[i][7] < 0:  # 小于0是 一个点
                         x, y = self.path_points[self.positions[i][6]][0]
                 b = round(self.positions[i][0] / len(self.path_points[0]) * 100, 2)
                 if b < 1:
@@ -4666,11 +4670,11 @@ class MapLabel(QLabel):
                         y1 = interpolate_y_from_x(self.path_points[self.positions[index_position][6]], x)
                         if math.isfinite(y1):
                             y = y1
-                    elif self.positions[index_position][7] > 10:    # 大于10是Y轴
+                    elif self.positions[index_position][7] > 10:  # 大于10是Y轴
                         x1 = interpolate_x_from_y(self.path_points[self.positions[index_position][6]], y)
                         if math.isfinite(x1):
                             x = x1
-                    elif self.positions[index_position][7] < 0:     # 小于0是 一个点
+                    elif self.positions[index_position][7] < 0:  # 小于0是 一个点
                         x, y = self.path_points[self.positions[index_position][6]][0]
 
                 # 设置球的颜色
@@ -5674,11 +5678,12 @@ class Kaj789Thread(QThread):
                     term_comment = ''
                     break
                 if self.run_type == 'post_lapTime':
-                    res_lapTime = post_lapTime(term=term, position=self.position, lapTime=self.lapTime, Track_number=Track_number)
+                    res_lapTime = post_lapTime(term=term, position=self.position, lapTime=self.lapTime,
+                                               Track_number=Track_number)
                     if res_lapTime != 'OK':
                         continue
                     else:
-                        print('OK')
+                        break
             self.run_flg = False
 
 
@@ -7329,6 +7334,7 @@ if __name__ == '__main__':
     term_comment = ''
     lapTime = 0
     lapTimes = [0.0] * balls_count
+    lapTimes_thread = [''] * balls_count
     result_data = {"raceTrackID": Track_number, "term": str(term), "actualResultOpeningTime": betting_end_time,
                    "result": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
                    "timings": json.dumps([
