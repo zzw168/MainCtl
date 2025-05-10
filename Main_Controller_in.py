@@ -29,6 +29,7 @@ from OrganDlg_Ui import Ui_Dialog_Organ
 from ResultDlg_Ui import Ui_Dialog_Result
 from Speed_Ui import Ui_Dialog_Set_Speed
 from TrapBallDlg_Ui import Ui_Dialog_TrapBall
+from UdpData_Ui import Ui_Dialog_UdpData
 from utils import tool_unit
 from utils.SportCard_unit import *
 from kaj789_table import Kaj789Ui
@@ -1111,8 +1112,9 @@ def udpsignal_accept(msg):
     else:
         if '错误' in msg:
             ui.textBrowser_msg.append(msg)
-        if ui.checkBox_ShowUdp.isChecked():
-            ui.textBrowser_background_data.append(str(msg))
+        if UdpData_ui.isVisible():
+            UdpData_ui.textBrowser.append(str(msg))
+            scroll_to_bottom(UdpData_ui.textBrowser)
 
 
 def load_area():  # 载入位置文件初始化区域列表
@@ -1720,7 +1722,9 @@ class ReStartThread(QThread):
                     print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                     time.sleep(1)
                 PlanCmd_Thread.run_flg = True
-                # result = send_data("START", ui.lineEdit_Ai_addr.text())
+                if ui.checkBox_Ai.isChecked():
+                    result = send_data("START", ui.lineEdit_Ai_addr.text())
+                    print(f"服务器响应: {result}")
                 mark_msg = save_mark_images()  # 录标记图
                 self.signal.emit(mark_msg)
 
@@ -2006,9 +2010,10 @@ class PlanBallNumThread(QThread):
             ObsEnd_Thread.ball_flg = True  # 结算页标志2
             print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-            Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-            # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-            # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+            if ui.checkBox_Ai.isChecked():
+                Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+                ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                print(f"服务器响应: {ai_res}")  # 停止AI解说服务
             save_images()  # 关闭标记录图
             # 写入 JSON 文件
             temp = copy.deepcopy(ranking_save)
@@ -2113,10 +2118,11 @@ class ObsEndThread(QThread):
                 continue
             print('结算页面运行！')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-            Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-            # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-            # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
-            # self.signal.emit('录图结束')
+            if ui.checkBox_Ai.isChecked():
+                Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+                ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+            self.signal.emit('录图结束')
             send_flg = True  # 发送赛果成功标志
             save_path = '%s' % ui.lineEdit_upload_Path.text()
             if os.path.exists(save_path):
@@ -2855,7 +2861,8 @@ class PlanCmdThread(QThread):
                 continue
             if flg_start['card'] and action_area[1] < max_lap_count:
                 Audio_Thread.run_flg = True  # 开启音频播放线程
-                # Ai_Thread.run_flg = True  # 开启AI播放线程
+                if ui.checkBox_Ai.isChecked():
+                    Ai_Thread.run_flg = True  # 开启AI播放线程
                 self.signal.emit(succeed("运动流程：开始！"))
                 self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
                 cb_index = ui.comboBox_plan.currentIndex()
@@ -2949,7 +2956,7 @@ class PlanCmdThread(QThread):
                                     except:
                                         print('音效加载失败！~~~~~')
 
-                            if (plan_list[plan_index][17][0].isdigit()
+                            if (ui.checkBox_Ai.isChecked() and plan_list[plan_index][17][0].isdigit()
                                     and int(plan_list[plan_index][17][0]) > 0):  # 播放Ai
                                 tb_ai = ui.tableWidget_Ai
                                 ai_row_count = tb_ai.rowCount()
@@ -3102,9 +3109,10 @@ class PlanCmdThread(QThread):
                 # 背景模式不循环
                 if self.background_state or self.ready_state or self.end_state:
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-                    Ai_Thread.run_flg = False  # 停止卫星图Ai解说线程
-                    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-                    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+                    if ui.checkBox_Ai.isChecked():
+                        Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+                        ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                        print(f"服务器响应: {ai_res}")  # 停止AI解说服务
                     self.background_state = False
                     self.ready_state = False
                     self.run_flg = False
@@ -3129,9 +3137,10 @@ class PlanCmdThread(QThread):
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
                     print('另外开关~~~~~~~~~')
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-                    Ai_Thread.run_flg = False  # 停止卫星图Ai解说线程  # 停止卫星图音效播放线程
-                    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-                    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+                    if ui.checkBox_Ai.isChecked():
+                        Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+                        ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                        print(f"服务器响应: {ai_res}")  # 停止AI解说服务
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
                     # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
@@ -3152,9 +3161,10 @@ class PlanCmdThread(QThread):
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
                     sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-                    Ai_Thread.run_flg = False  # 停止卫星图Ai解说线程
-                    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-                    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+                    if ui.checkBox_Ai.isChecked():
+                        Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+                        ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+                        print(f"服务器响应: {ai_res}")  # 停止AI解说服务
                     # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                 self.signal.emit(succeed("运动流程：完成！"))
@@ -3757,6 +3767,7 @@ def save_main_json():
             main_all['comboBox_plan'] = ui.comboBox_plan.currentIndex()
             main_all['checkBox_end_2'] = ui.checkBox_end_2.isChecked()
             main_all['checkBox_main_camera_set'] = ui.checkBox_main_camera_set.isChecked()
+            main_all['checkBox_Ai'] = ui.checkBox_Ai.isChecked()
 
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
@@ -3876,6 +3887,7 @@ def load_main_json():
         ui.checkBox_First_Check.setChecked(main_all['checkBox_First_Check'])
         ui.checkBox_end_2.setChecked(main_all['checkBox_end_2'])
         ui.checkBox_main_camera_set.setChecked(main_all['checkBox_main_camera_set'])
+        ui.checkBox_Ai.setChecked(main_all['checkBox_Ai'])
         for index in range(1, 4):
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
@@ -3974,9 +3986,10 @@ def cmd_stop():
     PlanCmd_Thread.run_flg = False  # 停止运动
     ReStart_Thread.run_flg = False  # 停止循环
     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-    Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
-    # ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
-    # print(f"服务器响应: {ai_res}")  # 停止AI解说服务
+    if ui.checkBox_Ai.isChecked():
+        Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
+        ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
+        print(f"服务器响应: {ai_res}")  # 停止AI解说服务
     tcp_result_thread.send_type = ''  # 退出结果页面循环
     sc.card_stop()  # 立即停止
 
@@ -3988,7 +4001,7 @@ def card_start():
 
 def card_reset():
     global axis_reset
-    axis_reset = True
+    axis_reset = False
     Axis_Thread.run_flg = True
 
 
@@ -4010,12 +4023,15 @@ def card_close_all():
 
 
 def end_all():
+    global axis_reset
     res = QMessageBox.warning(z_window, '提示', '是否关闭直播，和所有机关！',
                               QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
     print(res)
     if res == QMessageBox.Yes:
-        card_reset()
-        card_close_all()
+        axis_reset = True
+        Axis_Thread.run_flg = True
+        for index in range(0, 16):
+            sc.GASetExtDoBit(index, 0)
         if flg_start['live']:
             cl_request.stop_stream()
 
@@ -4513,12 +4529,23 @@ class MapLabel(QLabel):
             z_ranking_res = [ball[2] for ball in self.positions]
 
         # 第一圈时间
-        if (ranking_array and (ranking_array[0][9] == 0)
-                and (ranking_array[0][6] >= max_area_count - balls_count
-                     or self.positions[0][0] >= len(self.path_points[0]) - 100)
-        ):
-            lapTime = round(time.time() - ranking_time_start, 2)
+        # if (ranking_array and (ranking_array[0][9] == 0)
+        #         and (ranking_array[0][6] >= max_area_count - balls_count
+        #              or self.positions[0][0] >= len(self.path_points[0]) - 100)
+        # ):
+        #     lapTime = round(time.time() - ranking_time_start, 2)
 
+        if ranking_array:
+            for i in range(balls_count):
+                if (ranking_array[i][9] == 0  # 第0圈
+                        and (ranking_array[0][6] >= max_area_count - balls_count
+                             or self.positions[0][0] >= len(self.path_points[0]) - 100)):
+                    if lapTimes[i] == 0:
+                        lapTimes[i] = round(time.time() - ranking_time_start, 2)
+                        Kaj789_Thread.run_type = 'post_lapTime'
+                        Kaj789_Thread.position = i
+                        Kaj789_Thread.lapTime = lapTimes[i]
+                        Kaj789_Thread.run_flg = True
         # 更新实时触发位置
         for i in range(len(self.positions)):
             if ((self.positions[i][0] - self.map_action < len(self.path_points[0]) / 3)
@@ -4533,6 +4560,17 @@ class MapLabel(QLabel):
         if self.picture_size == 860:
             for i in range(balls_count):
                 x, y = self.path_points[0][self.positions[i][0]]
+                if self.positions[i][6] != 0:  # 分岔路线
+                    if 0 < self.positions[i][7] < 10:  # 小于10是X轴
+                        y1 = interpolate_y_from_x(self.path_points[self.positions[i][6]], x)
+                        if math.isfinite(y1):
+                            y = y1
+                    elif self.positions[i][7] > 10:    # 大于10是Y轴
+                        x1 = interpolate_x_from_y(self.path_points[self.positions[i][6]], y)
+                        if math.isfinite(x1):
+                            x = x1
+                    elif self.positions[i][7] < 0:     # 小于0是 一个点
+                        x, y = self.path_points[self.positions[i][6]][0]
                 b = round(self.positions[i][0] / len(self.path_points[0]) * 100, 2)
                 if b < 1:
                     b = 0
@@ -4620,11 +4658,11 @@ class MapLabel(QLabel):
                         y1 = interpolate_y_from_x(self.path_points[self.positions[index_position][6]], x)
                         if math.isfinite(y1):
                             y = y1
-                    elif self.positions[index_position][7] > 10:
+                    elif self.positions[index_position][7] > 10:    # 大于10是Y轴
                         x1 = interpolate_x_from_y(self.path_points[self.positions[index_position][6]], y)
                         if math.isfinite(x1):
                             x = x1
-                    elif self.positions[index_position][7] < 0:
+                    elif self.positions[index_position][7] < 0:     # 小于0是 一个点
                         x, y = self.path_points[self.positions[index_position][6]][0]
 
                 # 设置球的颜色
@@ -5547,6 +5585,8 @@ class Kaj789Thread(QThread):
         self.run_flg = False
         self.running = True
         self.run_type = ''
+        self.position = 0
+        self.lapTime = 0
 
     def stop(self):
         self.run_flg = False
@@ -5625,7 +5665,12 @@ class Kaj789Thread(QThread):
                         lottery2json()  # 保存数据
                     term_comment = ''
                     break
-
+                if self.run_type == 'post_lapTime':
+                    res_lapTime = post_lapTime(term=term, position=1, lapTime=0, Track_number=Track_number)
+                    if res_lapTime != 'OK':
+                        continue
+                    else:
+                        print('OK')
             self.run_flg = False
 
 
@@ -5701,7 +5746,7 @@ def kaj789_signal_accept(msg):
 
 def send_end():
     global term_status
-    if ReStart_Thread.start_flg:
+    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
         messagebox.showinfo("敬告", "比赛未结束，进行补发！")
         return
     Kaj789_Thread.run_type = 'post_end'
@@ -5712,7 +5757,7 @@ def cancel_end():
     global term_status
     global term_comment
     global betting_loop_flg
-    if ReStart_Thread.start_flg:
+    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
         messagebox.showinfo("取消当局", "当前开盘中，不能直接取消比赛，如需强制取消，请点击封盘！")
         return
     response = messagebox.askquestion("取消当局", "取消当局，你确定吗？")
@@ -6247,7 +6292,7 @@ def stop_betting():
     global betting_loop_flg
     global term_status
     global term_comment
-    if ReStart_Thread.start_flg:
+    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
         response = messagebox.askquestion("取消当局", "比赛进行中，是否取消当局？")
         print(response)  # "yes" / "no"
         if "yes" in response:
@@ -6270,7 +6315,7 @@ def stop_betting():
 
 
 def test_betting():
-    if ReStart_Thread.start_flg:
+    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
         messagebox.showinfo("敬告", "当前开盘中，不能更改比赛状态！")
         ui.radioButton_start_betting.setChecked(True)
         return
@@ -6476,6 +6521,15 @@ def clean_browser(textBrowser):
     # 获取所有行
     lines = textBrowser.toPlainText().split("\n")
     if len(lines) > 100:
+        # 只保留最后 max_lines 行
+        textBrowser.clear()
+        textBrowser.setPlainText("\n".join(lines[-50:]))
+
+
+def clean_data_browser(textBrowser):
+    # 获取所有行
+    lines = textBrowser.toPlainText().split("\n")
+    if len(lines) > 2000:
         # 只保留最后 max_lines 行
         textBrowser.clear()
         textBrowser.setPlainText("\n".join(lines[-50:]))
@@ -6747,6 +6801,11 @@ def map_hide_event(event):
     event.accept()
 
 
+def udpdata_hide_event(event):
+    ui.checkBox_udpdata.setChecked(False)
+    event.accept()
+
+
 def main_cam_change():
     if ui.checkBox_main_camera.isChecked():
         MainCameraDialog.show()
@@ -6766,6 +6825,14 @@ def map_change():
         Map_ui.show()
     else:
         Map_ui.hide()
+
+
+def udpdata_change():
+    if ui.checkBox_udpdata.isChecked():
+        print('~~~~~~~~~~~~~~~~')
+        UdpData_ui.show()
+    else:
+        UdpData_ui.hide()
 
 
 "************************************ResultDlg_Ui*********************************************"
@@ -6854,6 +6921,14 @@ def balls_continue_btn():
     BallsNum_ui.hide()
 
 
+class UdpDataUi(QDialog, Ui_Dialog_UdpData):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+    def setupUi(self, z_dialog):
+        super().setupUi(z_dialog)
+
+
 class MapUi(QDialog, Ui_Dialog_Map):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -6924,6 +6999,10 @@ if __name__ == '__main__':
     ui = ZUi()
     ui.setupUi(z_window)
     z_window.show()
+
+    UdpData_ui = UdpDataUi(z_window)
+    UdpData_ui.setupUi(UdpData_ui)
+    UdpData_ui.hideEvent = udpdata_hide_event
 
     Map_ui = MapUi(z_window)
     Map_ui.setupUi(Map_ui)
@@ -7116,6 +7195,7 @@ if __name__ == '__main__':
     ui.tableWidget_Step.itemChanged.connect(table_change)
 
     ui.textBrowser.textChanged.connect(lambda: clean_browser(ui.textBrowser))
+    UdpData_ui.textBrowser.textChanged.connect(lambda: clean_data_browser(UdpData_ui.textBrowser))
     ui.textBrowser_msg.textChanged.connect(lambda: clean_browser(ui.textBrowser_msg))
     ui.textBrowser_background_data.textChanged.connect(lambda: clean_browser(ui.textBrowser_background_data))
 
@@ -7238,6 +7318,7 @@ if __name__ == '__main__':
     term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
     term_comment = ''
     lapTime = 0
+    lapTimes = [0.0] * balls_count
     result_data = {"raceTrackID": Track_number, "term": str(term), "actualResultOpeningTime": betting_end_time,
                    "result": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
                    "timings": json.dumps([
@@ -7452,6 +7533,7 @@ if __name__ == '__main__':
     ui.checkBox_main_camera.checkStateChanged.connect(main_cam_change)
     ui.checkBox_monitor_cam.checkStateChanged.connect(monitor_cam_change)
     ui.checkBox_map.checkStateChanged.connect(map_change)
+    ui.checkBox_udpdata.checkStateChanged.connect(udpdata_change)
 
     set_result_class()
 
@@ -7519,6 +7601,7 @@ if __name__ == '__main__':
     ui.checkBox_saveImgs_mark.checkStateChanged.connect(save_main_json)
     ui.checkBox_First_Check.checkStateChanged.connect(save_main_json)
     ui.checkBox_main_camera_set.checkStateChanged.connect(save_main_json)
+    ui.checkBox_Ai.checkStateChanged.connect(save_main_json)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)
     ui.radioButton_music_background_2.clicked.connect(save_main_json)
