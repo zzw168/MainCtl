@@ -5807,6 +5807,7 @@ class ResetRankingThread(QThread):
         global init_array
         global z_end_time
         global lapTime
+        global lapTimes
         global ranking_save
         global balls_ranking_time
         # global previous_position
@@ -5846,6 +5847,7 @@ class ResetRankingThread(QThread):
             map_label_big.map_action = 0
             term_comment = ''
             lapTime = 0
+            lapTimes = [0.0] * balls_count
             balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
             ranking_save = {'yellow': [],
                             'blue': [],
