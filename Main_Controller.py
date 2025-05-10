@@ -2266,7 +2266,8 @@ class ObsEndThread(QThread):
             else:
                 lottery_term[3] = '未结束'
                 betting_loop_flg = False
-            lottery2json()  # 保存数据
+            if not ui.radioButton_stop_betting.isChecked():
+                lottery2json()  # 保存数据
             self.signal.emit(succeed('第%s期 结束！' % term))
 
             if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
