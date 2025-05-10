@@ -408,11 +408,18 @@ def obs_save_image():
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
                         time.sleep(2)
-                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
-                        time.sleep(2)
-                        sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
-                        time.sleep(2)
-                        sc.GASetDiReverseCount()  # 输入次数归0
+                        if int(ui.lineEdit_end.text()) > 0:
+                            sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
+                            time.sleep(2)
+                            sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                            time.sleep(2)
+                            sc.GASetDiReverseCount()  # 输入次数归0
+                        else:
+                            sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
+                            time.sleep(2)
+                            sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 0)  # 打开终点开关
+                            time.sleep(2)
+                            sc.GASetDiReverseCount()  # 输入次数归0
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
             time.sleep(1)
@@ -586,7 +593,7 @@ def deal_rank(integration_qiu_array):
                 if ((not ui.checkBox_end_2.isChecked()
                      and q_item[6] < ranking_array[r_index][6] < max_area_count - balls_count + 1)
                         or (ui.checkBox_end_2.isChecked()
-                            and ranking_array[r_index][9] < max_lap_count - 1
+                            and ranking_array[r_index][9] < max_lap_count - 1   # 防止跨圈误判
                             and q_item[6] < ranking_array[r_index][
                                 6] < max_area_count + 1)):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
@@ -1721,7 +1728,7 @@ class ReStartThread(QThread):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
                         int(ui.lineEdit_shake.text()) - 1,
-                        int(ui.lineEdit_end.text()) - 1,
+                        abs(int(ui.lineEdit_end.text())) - 1,
                         int(ui.lineEdit_alarm.text()) - 1,
                         int(ui.lineEdit_start_count.text()) - 1,
                     ]:
@@ -2693,11 +2700,17 @@ class ShootThread(QThread):
                     shoot_index = int(ui.lineEdit_shoot.text()) - 1
                     sc.GASetExtDoBit(shoot_index, 1)
                 time.sleep(2)
-                end_index = int(ui.lineEdit_end.text()) - 1
-                if not ui.checkBox_end_2.isChecked():
-                    sc.GASetExtDoBit(end_index, 0)
+                end_index = abs(int(ui.lineEdit_end.text())) - 1
+                if int(ui.lineEdit_end.text()) > 0:
+                    if not ui.checkBox_end_2.isChecked():
+                        sc.GASetExtDoBit(end_index, 0)
+                    else:
+                        sc.GASetExtDoBit(end_index, 1)
                 else:
-                    sc.GASetExtDoBit(end_index, 1)
+                    if not ui.checkBox_end_2.isChecked():
+                        sc.GASetExtDoBit(end_index, 1)
+                    else:
+                        sc.GASetExtDoBit(end_index, 0)
                 if ui.lineEdit_shake.text() != '0':
                     sc.GASetExtDoBit(int(ui.lineEdit_shake.text()) - 1, 1)  # 打开震动
                 time_count = 0
@@ -2725,7 +2738,7 @@ class ShootThread(QThread):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
                         # int(ui.lineEdit_shake.text()) - 1,    # 关闭震动
-                        int(ui.lineEdit_end.text()) - 1,
+                        abs(int(ui.lineEdit_end.text())) - 1,
                         int(ui.lineEdit_alarm.text()) - 1,
                         int(ui.lineEdit_start_count.text()) - 1,
                     ]:
@@ -2993,7 +3006,7 @@ class PlanCmdThread(QThread):
                                          len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
-                                sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                                sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
                                 # 计球器
                                 PlanBallNum_Thread.run_flg = True  # 终点计数器线程
                                 # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
@@ -3133,7 +3146,7 @@ class PlanCmdThread(QThread):
                                 if index not in [int(ui.lineEdit_shoot.text()) - 1,
                                                  int(ui.lineEdit_start.text()) - 1,
                                                  int(ui.lineEdit_shake.text()) - 1,
-                                                 int(ui.lineEdit_end.text()) - 1,
+                                                 abs(int(ui.lineEdit_end.text())) - 1,
                                                  int(ui.lineEdit_alarm.text()) - 1,
                                                  int(ui.lineEdit_start_count.text()) - 1,
                                                  ]:
@@ -3149,7 +3162,7 @@ class PlanCmdThread(QThread):
                         Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
                         ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
                         print(f"服务器响应: {ai_res}")  # 停止AI解说服务
-                    sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                    sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
                     # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                     # main_music_worker.toggle_enablesignal.emit(False)
@@ -3167,7 +3180,7 @@ class PlanCmdThread(QThread):
                         map_label_big.map_action = 0
             else:  # 运行出错，或者超出圈数，流程完成时执行
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
-                    sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+                    sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                     if ui.checkBox_Ai.isChecked():
                         Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
@@ -4024,7 +4037,7 @@ def card_close_all():
             # int(ui.lineEdit_shoot.text()) - 1,
             int(ui.lineEdit_start.text()) - 1,
             int(ui.lineEdit_shake.text()) - 1,
-            int(ui.lineEdit_end.text()) - 1,
+            abs(int(ui.lineEdit_end.text())) - 1,
             int(ui.lineEdit_alarm.text()) - 1,
             int(ui.lineEdit_start_count.text()) - 1,
         ]:
@@ -4054,7 +4067,7 @@ def card_on_off_all():
         if index not in [int(ui.lineEdit_shoot.text()) - 1,
                          int(ui.lineEdit_start.text()) - 1,
                          int(ui.lineEdit_shake.text()) - 1,
-                         int(ui.lineEdit_end.text()) - 1,
+                         abs(int(ui.lineEdit_end.text())) - 1,
                          int(ui.lineEdit_alarm.text()) - 1,
                          int(ui.lineEdit_start_count.text()) - 1,
                          ]:
@@ -6194,7 +6207,7 @@ def organ_end():  # 结束开关
     if not flg_start['card']:
         return
     try:
-        index = int(ui.lineEdit_end.text()) - 1
+        index = abs(int(ui.lineEdit_end.text())) - 1
         if ui.checkBox_end.isChecked():
             sc.GASetExtDoBit(index, 1)
         else:
