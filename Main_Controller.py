@@ -570,6 +570,7 @@ def deal_action():
 # 处理排名
 def deal_rank(integration_qiu_array):
     global ranking_array
+    global lapTimes
     area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
     for r_index in range(0, len(ranking_array)):
         replaced = False
@@ -589,6 +590,13 @@ def deal_rank(integration_qiu_array):
                                 6] < max_area_count + 1)):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
                     if result_count >= max_area_count - area_limit - balls_count:
+                        if (ranking_array[r_index][9] == 0  # 第0圈
+                                and lapTimes[r_index] == 0):
+                                lapTimes[r_index] = round(time.time() - ranking_time_start, 2)
+                                Kaj789_Thread.run_type = 'post_lapTime'
+                                Kaj789_Thread.position = r_index
+                                Kaj789_Thread.lapTime = lapTimes[r_index]
+                                Kaj789_Thread.run_flg = True
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
                         ranking_array[r_index][9] += 1
                         if ranking_array[r_index][9] > max_lap_count - 1:
@@ -2206,7 +2214,7 @@ class ObsEndThread(QThread):
                                "actualResultOpeningTime": betting_end_time,
                                "result": z_ranking_end[0:balls_count],
                                "timings": "[]",
-                               "lapTime": abs(lapTimes[0])}
+                               "lapTime": abs(lapTimes[0])} #1
                 data_temp = []
                 for index in range(balls_count):
                     if is_natural_num(z_ranking_time[index]):
@@ -4537,8 +4545,8 @@ class MapLabel(QLabel):
         if ranking_array:
             for i in range(balls_count):
                 if (ranking_array[i][9] == 0  # 第0圈
-                        and (ranking_array[0][6] >= max_area_count - balls_count
-                             or self.positions[0][0] >= len(self.path_points[0]) - 100)):
+                        and (ranking_array[i][6] >= max_area_count - balls_count
+                             or self.positions[i][0] >= len(self.path_points[i]) - 100)):
                     if lapTimes[i] == 0:
                         lapTimes[i] = round(time.time() - ranking_time_start, 2)
                         Kaj789_Thread.run_type = 'post_lapTime'
@@ -5665,7 +5673,7 @@ class Kaj789Thread(QThread):
                     term_comment = ''
                     break
                 if self.run_type == 'post_lapTime':
-                    res_lapTime = post_lapTime(term=term, position=1, lapTime=0, Track_number=Track_number)
+                    res_lapTime = post_lapTime(term=term, position=self.position, lapTime=self.lapTime, Track_number=Track_number)
                     if res_lapTime != 'OK':
                         continue
                     else:
