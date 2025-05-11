@@ -4563,6 +4563,7 @@ class MapLabel(QLabel):
                                 x, y = self.path_points[self.positions[num][6]][0]
                         self.positions[num][8] = x
                         self.positions[num][9] = y
+        # print(self.positions)
         # 模拟排名
         if ranking_array and ranking_array[0][6] < max_area_count - 2 and ranking_array[0][10] == 0:
             self.positions.sort(key=lambda a: (-a[3], -a[0]))
@@ -4673,41 +4674,41 @@ class MapLabel(QLabel):
         painter.setPen('black')
         # 绘制每个小球
         for index_position in range(len(self.positions)):
-            index = self.positions[index_position][0]  # 获取当前球的路径索引
-            if index in range(len(self.path_points[0])):
-                x = self.positions[index][8]
-                y = self.positions[index][9]
+            # index = self.positions[index_position][0]  # 获取当前球的路径索引
+            # if index in range(len(self.path_points[0])):
+            x = self.positions[index_position][8]
+            y = self.positions[index_position][9]
 
-                # 设置球的颜色
-                painter.setBrush(QBrush(self.color_names[self.positions[index_position][1]], Qt.SolidPattern))
-                # 绘制球
-                painter.drawEllipse(int(x - self.ball_radius), int(y - self.ball_radius),
-                                    self.ball_radius * 2, self.ball_radius * 2)
-                if self.picture_size == 860:
-                    if str(self.positions[index_position][2]) == '7':
-                        font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
-                        painter.setFont(font)
-                        painter.setPen('black')
-                        painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
-                                         str(self.positions[index_position][2]))
-                    elif str(self.positions[index_position][2]) == '1':
-                        font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
-                        painter.setFont(font)
-                        painter.setPen('gray')
-                        painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
-                                         str(self.positions[index_position][2]))
-                    elif str(self.positions[index_position][2]) == '10':
-                        font = QFont("Arial", 11, QFont.Bold)  # 字体：Arial，大小：16，加粗
-                        painter.setFont(font)
-                        painter.setPen('black')
-                        painter.drawText(int(x - self.ball_radius / 2 - 4), int(y + self.ball_radius / 2),
-                                         str(self.positions[index_position][2]))
-                    else:
-                        font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
-                        painter.setFont(font)
-                        painter.setPen('white')
-                        painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
-                                         str(self.positions[index_position][2]))
+            # 设置球的颜色
+            painter.setBrush(QBrush(self.color_names[self.positions[index_position][1]], Qt.SolidPattern))
+            # 绘制球
+            painter.drawEllipse(int(x - self.ball_radius), int(y - self.ball_radius),
+                                self.ball_radius * 2, self.ball_radius * 2)
+            if self.picture_size == 860:
+                if str(self.positions[index_position][2]) == '7':
+                    font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
+                    painter.setFont(font)
+                    painter.setPen('black')
+                    painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
+                                     str(self.positions[index_position][2]))
+                elif str(self.positions[index_position][2]) == '1':
+                    font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
+                    painter.setFont(font)
+                    painter.setPen('gray')
+                    painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
+                                     str(self.positions[index_position][2]))
+                elif str(self.positions[index_position][2]) == '10':
+                    font = QFont("Arial", 11, QFont.Bold)  # 字体：Arial，大小：16，加粗
+                    painter.setFont(font)
+                    painter.setPen('black')
+                    painter.drawText(int(x - self.ball_radius / 2 - 4), int(y + self.ball_radius / 2),
+                                     str(self.positions[index_position][2]))
+                else:
+                    font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
+                    painter.setFont(font)
+                    painter.setPen('white')
+                    painter.drawText(int(x - self.ball_radius / 2), int(y + self.ball_radius / 2),
+                                     str(self.positions[index_position][2]))
 
     def mouseReleaseEvent(self, event: QMouseEvent):
         """释放鼠标时停止拖动"""
