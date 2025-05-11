@@ -5770,7 +5770,7 @@ def kaj789_signal_accept(msg):
 
 def send_end():
     global term_status
-    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
+    if ReStart_Thread.start_flg:
         messagebox.showinfo("敬告", "比赛未结束，进行补发！")
         return
     Kaj789_Thread.run_type = 'post_end'
@@ -5781,7 +5781,7 @@ def cancel_end():
     global term_status
     global term_comment
     global betting_loop_flg
-    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
+    if ReStart_Thread.start_flg:
         messagebox.showinfo("取消当局", "当前开盘中，不能直接取消比赛，如需强制取消，请点击封盘！")
         return
     response = messagebox.askquestion("取消当局", "取消当局，你确定吗？")
@@ -6316,7 +6316,7 @@ def stop_betting():
     global betting_loop_flg
     global term_status
     global term_comment
-    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
+    if ReStart_Thread.start_flg:
         response = messagebox.askquestion("取消当局", "比赛进行中，是否取消当局？")
         print(response)  # "yes" / "no"
         if "yes" in response:
@@ -6339,7 +6339,7 @@ def stop_betting():
 
 
 def test_betting():
-    if ReStart_Thread.start_flg and ui.radioButton_start_betting.isChecked():
+    if ReStart_Thread.start_flg:
         messagebox.showinfo("敬告", "当前开盘中，不能更改比赛状态！")
         ui.radioButton_start_betting.setChecked(True)
         return
