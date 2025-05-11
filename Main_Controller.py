@@ -4470,8 +4470,8 @@ class MapLabel(QLabel):
         self.flash_time = flash_time
         self.positions = []  # 每个球的当前位置索引
         for num in range(balls_count):
-            self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0])
-            # [位置索引, 顔色, 號碼, 圈數, 实际位置, 停留时间, 路线, 方向]
+            self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0, 0, 0])
+            # [位置索引, 顔色, 號碼, 圈數, 实际位置, 停留时间, 路线, 方向, x, y]
         # 创建定时器，用于定时更新球的位置
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_positions)  # 定时触发更新
@@ -4486,9 +4486,9 @@ class MapLabel(QLabel):
         global lapTimes_thread
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
-            self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间, 路线, 方向]
+            self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间, 路线, 方向, x, y]
             for num in range(balls_count):
-                self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0])
+                self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0, 0, 0])
         for num in range(0, balls_count):
             if len(ranking_array) >= balls_count and ranking_array[num][5] in self.color_names.keys():
                 area_num = max_area_count - balls_count  # 跟踪区域数量
@@ -4548,18 +4548,26 @@ class MapLabel(QLabel):
                         for color_index in range(len(init_array)):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
+
+                        x, y = self.path_points[0][self.positions[num][0]]
+                        if self.positions[num][6] != 0:  # 分岔路线
+                            if 0 < self.positions[num][7] < 10:  # 小于10是X轴
+                                y1 = interpolate_y_from_x(self.path_points[self.positions[num][6]], x)
+                                if math.isfinite(y1):
+                                    y = y1
+                            elif self.positions[num][7] > 10:  # 大于10是Y轴
+                                x1 = interpolate_x_from_y(self.path_points[self.positions[num][6]], y)
+                                if math.isfinite(x1):
+                                    x = x1
+                            elif self.positions[num][7] < 0:  # 小于0是 一个点
+                                x, y = self.path_points[self.positions[num][6]][0]
+                        self.positions[num][8] = x
+                        self.positions[num][9] = y
         # 模拟排名
         if ranking_array and ranking_array[0][6] < max_area_count - 2 and ranking_array[0][10] == 0:
-            self.positions.sort(key=lambda x: (-x[3], -x[0]))
+            self.positions.sort(key=lambda a: (-a[3], -a[0]))
             z_ranking_res = [ball[2] for ball in self.positions]
-
-        # 第一圈时间
-        # if (ranking_array and (ranking_array[0][9] == 0)
-        #         and (ranking_array[0][6] >= max_area_count - balls_count
-        #              or self.positions[0][0] >= len(self.path_points[0]) - 100)
-        # ):
-        #     lapTime = round(time.time() - ranking_time_start, 2)
-
+        # 各个珠子一圈时间
         if ranking_array:
             for i in range(balls_count):
                 if (ranking_array[i][9] == 0  # 第0圈
@@ -4567,8 +4575,8 @@ class MapLabel(QLabel):
                              or self.positions[i][0] >= len(self.path_points[0]) - 100)):
                     if lapTimes[i] == 0:
                         lapTimes[i] = round(time.time() - ranking_time_start, 2)
-                        lapTimes_thread[i] = threading.Thread(target=post_lapTime,
-                                                              args=(term, i + 1, lapTimes[i], Track_number),
+                        lapTimes_thread[i] = threading.Thread(target=post_lap_time,
+                                                              args=(i + 1, lapTimes[i]),
                                                               daemon=True)
                         lapTimes_thread[i].start()
         # 更新实时触发位置
@@ -4584,18 +4592,8 @@ class MapLabel(QLabel):
         res = []
         if self.picture_size == 860:
             for i in range(balls_count):
-                x, y = self.path_points[0][self.positions[i][0]]
-                if self.positions[i][6] != 0:  # 分岔路线
-                    if 0 < self.positions[i][7] < 10:  # 小于10是X轴
-                        y1 = interpolate_y_from_x(self.path_points[self.positions[i][6]], x)
-                        if math.isfinite(y1):
-                            y = y1
-                    elif self.positions[i][7] > 10:  # 大于10是Y轴
-                        x1 = interpolate_x_from_y(self.path_points[self.positions[i][6]], y)
-                        if math.isfinite(x1):
-                            x = x1
-                    elif self.positions[i][7] < 0:  # 小于0是 一个点
-                        x, y = self.path_points[self.positions[i][6]][0]
+                x = self.positions[i][8]
+                y = self.positions[i][9]
                 b = round(self.positions[i][0] / len(self.path_points[0]) * 100, 2)
                 if b < 1:
                     b = 0
@@ -4677,18 +4675,8 @@ class MapLabel(QLabel):
         for index_position in range(len(self.positions)):
             index = self.positions[index_position][0]  # 获取当前球的路径索引
             if index in range(len(self.path_points[0])):
-                x, y = self.path_points[0][index]
-                if self.positions[index_position][6] != 0:  # 分岔路线
-                    if 0 < self.positions[index_position][7] < 10:  # 小于10是X轴
-                        y1 = interpolate_y_from_x(self.path_points[self.positions[index_position][6]], x)
-                        if math.isfinite(y1):
-                            y = y1
-                    elif self.positions[index_position][7] > 10:  # 大于10是Y轴
-                        x1 = interpolate_x_from_y(self.path_points[self.positions[index_position][6]], y)
-                        if math.isfinite(x1):
-                            x = x1
-                    elif self.positions[index_position][7] < 0:  # 小于0是 一个点
-                        x, y = self.path_points[self.positions[index_position][6]][0]
+                x = self.positions[index][8]
+                y = self.positions[index][9]
 
                 # 设置球的颜色
                 painter.setBrush(QBrush(self.color_names[self.positions[index_position][1]], Qt.SolidPattern))
@@ -5602,6 +5590,15 @@ def OrganCycle_signal_accept(msg):
     scroll_to_bottom(ui.textBrowser_msg)
 
 
+def post_lap_time(position, lapTime):
+    for i in range(5):
+        res_lapTime = post_lapTime(term=term, position=position, lapTime=lapTime,
+                                   Track_number=Track_number)
+        if res_lapTime != 'OK':
+            continue
+        else:
+            break
+
 class Kaj789Thread(QThread):
     signal = Signal(object)
 
@@ -5825,7 +5822,6 @@ class ResetRankingThread(QThread):
         global term_comment
         global init_array
         global z_end_time
-        global lapTime
         global lapTimes
         global ranking_save
         global balls_ranking_time
@@ -5865,7 +5861,6 @@ class ResetRankingThread(QThread):
             print('tcp_ranking_thread.run_flg = True~~~~~~~~~~~~')
             map_label_big.map_action = 0
             term_comment = ''
-            lapTime = 0
             lapTimes = [0.0] * balls_count
             balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
             ranking_save = {'yellow': [],
@@ -7345,7 +7340,6 @@ if __name__ == '__main__':
     term_status = 1  # 赛事状态（丢球）
     term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
     term_comment = ''
-    lapTime = 0
     lapTimes = [0.0] * balls_count
     lapTimes_thread = [''] * balls_count
     result_data = {"raceTrackID": Track_number, "term": str(term), "actualResultOpeningTime": betting_end_time,
