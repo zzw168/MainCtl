@@ -42,6 +42,13 @@ from utils.z_MySql import *
 from utils.kaj789 import *
 from utils.Ai_send import send_data
 
+import concurrent.futures
+import cv2
+import base64
+import os
+import time
+import requests
+
 "************************************OBS_开始****************************************"
 """
     OBS callback 回调函数
@@ -447,71 +454,139 @@ def obs_script_request():
 
 
 # 获取网络摄像头图片
-def get_rtsp(rt_url):
-    # try:
-    #     ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
-    #     requests.get(ip_address)
-    # except:
-    #     return ['', '[1]', 'monitor']
-    cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
-    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-    if cap.isOpened():
-        for i in range(3):
-            ret = False
-            frame = ''
-            for j in range(10):
-                ret, frame = cap.read()
+# def get_rtsp(rt_url):
+#     # try:
+#     #     ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
+#     #     requests.get(ip_address)
+#     # except:
+#     #     return ['', '[1]', 'monitor']
+#     cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
+#     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+#     if cap.isOpened():
+#         for i in range(3):
+#             ret = False
+#             frame = ''
+#             for j in range(10):
+#                 ret, frame = cap.read()
+#
+#             if ret:
+#                 try:
+#                     if len(area_Code['net']) > 0:
+#                         # 获取裁剪区域坐标
+#                         area = area_Code['net'][0]['coordinates']
+#                         x1, x2 = area[0][0], area[1][0]
+#                         y1, y2 = area[1][1], area[2][1]
+#                         frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
+#                         if ui.checkBox_Monitor_Horizontal.isChecked():
+#                             frame = cv2.flip(frame, 1)  # 水平翻转图片
+#                         if ui.checkBox_Monitor_Vertica.isChecked():
+#                             frame = cv2.flip(frame, 0)  # 垂直翻转图片
+#                     success, jpeg_data = cv2.imencode('.jpg', frame)
+#                     if success:
+#                         # 将 JPEG 数据转换为 Base64 字符串
+#                         jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
+#                         if os.path.exists(ui.lineEdit_end2_Path.text()):
+#                             img_file = '%s/rtsp_%s_%s.jpg' % (
+#                                 ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+#                             str2image_file(jpg_base64, img_file)  # 保存图片
+#
+#                         form_data = {
+#                             'CameraType': 'monitor',
+#                             'img': jpg_base64,
+#                             'sort': ui.lineEdit_monitor_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+#                         }
+#                         res = requests.post(url=recognition_addr, data=form_data, timeout=8)
+#                         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
+#                         r_img = r_list[0]
+#                         if os.path.exists(ui.lineEdit_end2_Path.text()):
+#                             image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
+#                                               'wb')
+#                             image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+#                             image_json.close()
+#                         flg_start['ai_end'] = True
+#                         cap.release()
+#                         return r_list
+#                     else:
+#                         print("jpg_base64 转换错误！")
+#                         continue
+#                 except:
+#                     print("图片错误或识别服务器未开启！")
+#                     continue
+#             else:
+#                 print("无法读取视频帧")
+#                 continue
+#     else:
+#         print(f'无法打开摄像头')
+#     cap.release()
+#     return ['', '[1]', 'monitor']
+def get_rtsp(r_url, timeout=20):
+    def inner_get_rtsp(rt_url):
+        cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
+        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+        if cap.isOpened():
+            for i in range(3):
+                ret = False
+                frame = ''
+                for j in range(10):
+                    ret, frame = cap.read()
 
-            if ret:
-                try:
-                    if len(area_Code['net']) > 0:
-                        # 获取裁剪区域坐标
-                        area = area_Code['net'][0]['coordinates']
-                        x1, x2 = area[0][0], area[1][0]
-                        y1, y2 = area[1][1], area[2][1]
-                        frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
-                        if ui.checkBox_Monitor_Horizontal.isChecked():
-                            frame = cv2.flip(frame, 1)  # 水平翻转图片
-                        if ui.checkBox_Monitor_Vertica.isChecked():
-                            frame = cv2.flip(frame, 0)  # 垂直翻转图片
-                    success, jpeg_data = cv2.imencode('.jpg', frame)
-                    if success:
-                        # 将 JPEG 数据转换为 Base64 字符串
-                        jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
-                        if os.path.exists(ui.lineEdit_end2_Path.text()):
-                            img_file = '%s/rtsp_%s_%s.jpg' % (
-                                ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
-                            str2image_file(jpg_base64, img_file)  # 保存图片
+                if ret:
+                    try:
+                        if len(area_Code['net']) > 0:
+                            area = area_Code['net'][0]['coordinates']
+                            x1, x2 = area[0][0], area[1][0]
+                            y1, y2 = area[1][1], area[2][1]
+                            frame = frame[y1:y2, x1:x2]
+                            if ui.checkBox_Monitor_Horizontal.isChecked():
+                                frame = cv2.flip(frame, 1)
+                            if ui.checkBox_Monitor_Vertica.isChecked():
+                                frame = cv2.flip(frame, 0)
 
-                        form_data = {
-                            'CameraType': 'monitor',
-                            'img': jpg_base64,
-                            'sort': ui.lineEdit_monitor_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
-                        }
-                        res = requests.post(url=recognition_addr, data=form_data, timeout=8)
-                        r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
-                        r_img = r_list[0]
-                        if os.path.exists(ui.lineEdit_end2_Path.text()):
-                            image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
-                                              'wb')
-                            image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-                            image_json.close()
-                        flg_start['ai_end'] = True
-                        cap.release()
-                        return r_list
-                    else:
-                        print("jpg_base64 转换错误！")
+                        success, jpeg_data = cv2.imencode('.jpg', frame)
+                        if success:
+                            jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
+                            if os.path.exists(ui.lineEdit_end2_Path.text()):
+                                img_file = '%s/rtsp_%s_%s.jpg' % (
+                                    ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+                                str2image_file(jpg_base64, img_file)
+
+                            form_data = {
+                                'CameraType': 'monitor',
+                                'img': jpg_base64,
+                                'sort': ui.lineEdit_monitor_sort.text(),
+                            }
+                            res = requests.post(url=recognition_addr, data=form_data, timeout=8)
+                            r_list = eval(res.text)
+                            r_img = r_list[0]
+                            if os.path.exists(ui.lineEdit_end2_Path.text()):
+                                with open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]), 'wb') as f:
+                                    f.write(r_img)
+                            flg_start['ai_end'] = True
+                            cap.release()
+                            return r_list
+                        else:
+                            print("jpg_base64 转换错误！")
+                            continue
+                    except Exception as e:
+                        print("图片处理或识别异常：", e)
                         continue
-                except:
-                    print("图片错误或识别服务器未开启！")
+                else:
+                    print("无法读取视频帧")
                     continue
-            else:
-                print("无法读取视频帧")
-                continue
-    else:
-        print(f'无法打开摄像头')
-    cap.release()
-    return ['', '[1]', 'monitor']
+        else:
+            print('无法打开摄像头')
+        cap.release()
+        return ['', '[1]', 'monitor']
+
+    # 添加超时控制
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future = executor.submit(inner_get_rtsp, r_url)
+        try:
+            return future.result(timeout=timeout)
+        except concurrent.futures.TimeoutError:
+            print(f'⛔ get_rtsp 超时（>{timeout}s），自动放弃！')
+            return ['', '[1]', 'monitor']
+
 
 
 def rtsp_save_image():
@@ -1680,7 +1755,7 @@ class ReStartThread(QThread):
                     else:
                         self.countdown = str(self.countdown)
                 else:  # 封盘模式，退出循环
-                    tcp_result_thread.send_type = 'time'
+                    # tcp_result_thread.send_type = 'time'
                     self.signal.emit('error')
                     self.run_flg = False
                     continue
@@ -1983,7 +2058,7 @@ class PlanBallNumThread(QThread):
                             if time_num > 1:
                                 time_old = time.time()
                                 sec_ += 1
-                                for i in range(max_area_count, max_area_count - balls_count, -1):
+                                for i in range(max_area_count - 1, max_area_count - balls_count, -1):
                                     for j in range(balls_count):
                                         if ranking_array[j][6] == i:
                                             ball_sort[i][max_lap_count - 1] = []
@@ -2275,13 +2350,14 @@ class ObsEndThread(QThread):
                 betting_loop_flg = False
             if not ui.radioButton_stop_betting.isChecked():
                 lottery2json()  # 保存数据
-            self.signal.emit(succeed('第%s期 结束！' % term))
 
             if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
                 betting_loop_flg = False
 
             if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
                 betting_loop_flg = False
+
+            self.signal.emit(succeed('第%s期 结束！' % term))
 
             if betting_loop_flg:
                 while PlanCmd_Thread.run_flg:
@@ -2294,7 +2370,6 @@ class ObsEndThread(QThread):
                 PlanCmd_Thread.end_state = True  # 运行背景
                 PlanCmd_Thread.run_flg = True
                 auto_shoot()  # 自动上珠
-                self.run_flg = False
 
             self.screen_flg = False
             self.ball_flg = False
@@ -2442,7 +2517,7 @@ class ScreenShotThread(QThread):
             camera_list = []
             for i in range(balls_count):
                 camera_list.append(init_array[z_ranking_end[i] - 1][5])
-            ball_sort[max_area_count][max_lap_count - 1] = []
+            # ball_sort[max_area_count][max_lap_count - 1] = []
             temp_lap = []
             for i in range(max_lap_count):
                 temp_lap.append([])
@@ -3006,7 +3081,10 @@ class PlanCmdThread(QThread):
                                          len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
                                     and (action_area[1] >= max_lap_count - 1)):  # 到达最后一圈终点前区域，则打开终点及相应机关
                                 # 最后几个动作内，打开终点开关，关闭闸门，关闭弹射
-                                sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
+                                if int(ui.lineEdit_end.text()) > 0:
+                                    sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
+                                else:
+                                    sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 0)  # 打开终点开关
                                 # 计球器
                                 PlanBallNum_Thread.run_flg = True  # 终点计数器线程
                                 # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
@@ -3162,7 +3240,10 @@ class PlanCmdThread(QThread):
                         Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
                         ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
                         print(f"服务器响应: {ai_res}")  # 停止AI解说服务
-                    sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
+                    if int(ui.lineEdit_end.text()) > 0:
+                        sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
+                    else:
+                        sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 0)  # 打开终点开关
                     # sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
                     # sc.GASetExtDoBit(int(ui.lineEdit_shoot.text()) - 1, 0)  # 关闭弹射
                     # main_music_worker.toggle_enablesignal.emit(False)
@@ -3180,7 +3261,10 @@ class PlanCmdThread(QThread):
                         map_label_big.map_action = 0
             else:  # 运行出错，或者超出圈数，流程完成时执行
                 if not ui.checkBox_test.isChecked():  # 非测试模式，流程结束始终关闭闸门
-                    sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
+                    if int(ui.lineEdit_end.text()) > 0:
+                        sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
+                    else:
+                        sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 0)  # 打开终点开关
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                     if ui.checkBox_Ai.isChecked():
                         Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
@@ -7291,7 +7375,7 @@ if __name__ == '__main__':
                     'White': [], }
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "roadPart", "lapCount", "visible"]
     ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
-    ball_stop = False
+    ball_stop = False   # 保留卡珠信号
     pos_stop = []  # 每个球的停止位置索引
 
     # 初始化数据
