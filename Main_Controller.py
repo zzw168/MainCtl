@@ -4326,7 +4326,7 @@ def save_mark_images():
         save_path = '%s/%s/%s' % (ui.lineEdit_background_Path.text(), formatted, term)
     if ui.checkBox_saveImgs_mark.isChecked():
         try:
-            os.makedirs(save_path, exist_ok=True)
+            # os.makedirs(save_path, exist_ok=True)
             saveImgRun = 1  # 1 录图开启标志
         except:
             print('录图服务链接失败！')
