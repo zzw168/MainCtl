@@ -559,7 +559,8 @@ def get_rtsp(r_url, timeout=20):
                             r_list = eval(res.text)
                             r_img = r_list[0]
                             if os.path.exists(ui.lineEdit_end2_Path.text()):
-                                with open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]), 'wb') as f:
+                                with open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
+                                          'wb') as f:
                                     f.write(r_img)
                             flg_start['ai_end'] = True
                             cap.release()
@@ -586,7 +587,6 @@ def get_rtsp(r_url, timeout=20):
         except concurrent.futures.TimeoutError:
             print(f'⛔ get_rtsp 超时（>{timeout}s），自动放弃！')
             return ['', '[1]', 'monitor']
-
 
 
 def rtsp_save_image():
@@ -654,6 +654,7 @@ def deal_rank(integration_qiu_array):
     global ranking_array
     global lapTimes
     global lapTimes_thread
+    global ranking_check
     area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
     for r_index in range(0, len(ranking_array)):
         replaced = False
@@ -668,7 +669,7 @@ def deal_rank(integration_qiu_array):
                 if ((not ui.checkBox_end_2.isChecked()
                      and q_item[6] < ranking_array[r_index][6] < max_area_count - balls_count + 1)
                         or (ui.checkBox_end_2.isChecked()
-                            and ranking_array[r_index][9] < max_lap_count - 1   # 防止跨圈误判
+                            and ranking_array[r_index][9] < max_lap_count - 1  # 防止跨圈误判
                             and q_item[6] < ranking_array[r_index][
                                 6] < max_area_count + 1)):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_array[r_index][6] - q_item[6]
@@ -677,7 +678,8 @@ def deal_rank(integration_qiu_array):
                                 and lapTimes[r_index] == 0):
                             lapTimes[r_index] = round(time.time() - ranking_time_start, 2)
                             lapTimes_thread[r_index] = threading.Thread(target=post_lapTime,
-                                                                        args=(term, r_index + 1, lapTimes[r_index], Track_number),
+                                                                        args=(term, r_index + 1, lapTimes[r_index],
+                                                                              Track_number),
                                                                         daemon=True)
                             lapTimes_thread[r_index].start()
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
@@ -710,12 +712,18 @@ def deal_rank(integration_qiu_array):
                         # and ranking_array[0][6] >= (max_area_count - balls_count) * 0.7
                         and q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
-                        if ui.checkBox_First_Check.isChecked():
-                            for r_i in range(0, len(q_item)):
-                                ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                        if ranking_check[q_item[5]] == -1:
+                            ranking_check[q_item[5]] = q_item[6]  # 记录珠子区域
                         if ranking_array[r_index][6] != max_area_count - balls_count:
                             ranking_array[r_index][9] = ranking_array[0][9]
                         ranking_array[r_index][10] = 1
+                # 检测是否误判(如果珠子持续向前，则非误判，排进排名)
+                if (ui.checkBox_First_Check.isChecked()
+                        and ranking_check[q_item[5]] != -1
+                        and q_item[6] > ranking_check[q_item[5]]):
+                    for r_i in range(0, len(q_item)):
+                        ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                    ranking_check[q_item[5]] = -1
                 replaced = True
                 break
         if not replaced:
@@ -5685,6 +5693,7 @@ def post_lap_time(position, lapTime):
         else:
             break
 
+
 class Kaj789Thread(QThread):
     signal = Signal(object)
 
@@ -5911,7 +5920,7 @@ class ResetRankingThread(QThread):
         global lapTimes
         global ranking_save
         global balls_ranking_time
-        # global previous_position
+        global ranking_check
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -5949,6 +5958,16 @@ class ResetRankingThread(QThread):
             term_comment = ''
             lapTimes = [0.0] * balls_count
             balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
+            ranking_check = {'yellow': -1,
+                             'blue': -1,
+                             'red': -1,
+                             'purple': -1,
+                             'orange': -1,
+                             'green': -1,
+                             'Brown': -1,
+                             'black': -1,
+                             'pink': -1,
+                             'White': -1, }
             ranking_save = {'yellow': [],
                             'blue': [],
                             'red': [],
@@ -7364,7 +7383,17 @@ if __name__ == '__main__':
     balls_count = 8  # 运行球数
     balls_start = 0  # 起点球数量
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
-    ranking_save = {'yellow': [],
+    ranking_check = {'yellow': -1,  # 头名检测是否误判
+                     'blue': -1,
+                     'red': -1,
+                     'purple': -1,
+                     'orange': -1,
+                     'green': -1,
+                     'Brown': -1,
+                     'black': -1,
+                     'pink': -1,
+                     'White': -1, }
+    ranking_save = {'yellow': [],  # 保存实时数据
                     'blue': [],
                     'red': [],
                     'purple': [],
@@ -7376,7 +7405,7 @@ if __name__ == '__main__':
                     'White': [], }
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "roadPart", "lapCount", "visible"]
     ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
-    ball_stop = False   # 保留卡珠信号
+    ball_stop = False  # 保留卡珠信号
     pos_stop = []  # 每个球的停止位置索引
 
     # 初始化数据
