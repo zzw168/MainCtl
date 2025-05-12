@@ -1769,9 +1769,10 @@ class ReStartThread(QThread):
                 self.countdown = ui.lineEdit_Time_Restart_Ranking.text()
 
             print('tcp_result_thread.send_type~~~~~', tcp_result_thread.send_type)
-            tcp_result_thread.send_type = ''  # 退出结果页面循环
-            while tcp_result_thread.send_type != '':
-                time.sleep(1)
+            if tcp_result_thread.send_type == 'updata':
+                tcp_result_thread.send_type = ''  # 退出结果页面循环
+                while tcp_result_thread.send_type != '':
+                    time.sleep(1)
             tcp_result_thread.send_type = 'time'  # 发送新期号,结束TCP_RESULT线程
             Script_Thread.run_type = 'term'
             Script_Thread.run_flg = True  # 发送期号到OBS的python脚本
