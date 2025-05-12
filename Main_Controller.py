@@ -719,6 +719,7 @@ def deal_rank(integration_qiu_array):
                         ranking_array[r_index][10] = 1
                 # 检测是否误判(如果珠子持续向前，则非误判，排进排名)
                 if (ui.checkBox_First_Check.isChecked()
+                        and q_item[6] <= (max_area_count - balls_count)
                         and ranking_check[q_item[5]] != -1
                         and q_item[6] > ranking_check[q_item[5]]):
                     for r_i in range(0, len(q_item)):
@@ -2397,20 +2398,21 @@ def ObsEndsignal_accept(msg):
             t = int(time.time() - ranking_time_start)
             ui.label_time_count.setText(str(t))
     elif '期 结束！' in msg:
-        tb_result = ui.tableWidget_Results
-        row_count = tb_result.rowCount()
-        col_count = tb_result.columnCount()
-        if row_count > 0:
-            for i in range(2, col_count):
-                item = tb_result.item(0, i)
-                if item is None:
-                    item = QTableWidgetItem()
-                    tb_result.setItem(0, i, item)
-                item.setText(str(lottery_term[i]))
-                item.setTextAlignment(Qt.AlignCenter)
-                if i == 3:
-                    item.setForeground(QColor("red") if lottery_term[i] == "未结束" else QColor("green"))
-            tb_result.viewport().update()
+        if not ui.radioButton_stop_betting.isChecked():
+            tb_result = ui.tableWidget_Results
+            row_count = tb_result.rowCount()
+            col_count = tb_result.columnCount()
+            if row_count > 0:
+                for i in range(2, col_count):
+                    item = tb_result.item(0, i)
+                    if item is None:
+                        item = QTableWidgetItem()
+                        tb_result.setItem(0, i, item)
+                    item.setText(str(lottery_term[i]))
+                    item.setTextAlignment(Qt.AlignCenter)
+                    if i == 3:
+                        item.setForeground(QColor("red") if lottery_term[i] == "未结束" else QColor("green"))
+                tb_result.viewport().update()
         if not betting_loop_flg:
             ui.radioButton_stop_betting.click()  # 封盘
             if ui.checkBox_end_BlackScreen.isChecked():
