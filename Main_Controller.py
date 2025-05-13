@@ -721,7 +721,8 @@ def deal_rank(integration_qiu_array):
                 if (ui.checkBox_First_Check.isChecked()
                         and q_item[6] <= (max_area_count - balls_count)
                         and ranking_check[q_item[5]] != -1
-                        and q_item[6] > ranking_check[q_item[5]]):
+                        and q_item[6] > ranking_check[q_item[5]]
+                        and q_item[6] - ranking_check[q_item[5]] < area_limit):
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_check[q_item[5]] = -1
