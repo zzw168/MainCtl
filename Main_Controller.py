@@ -727,7 +727,8 @@ def deal_rank(integration_qiu_array):
                         and 0 < q_item[6] - ranking_check[q_item[5]][0] < area_limit):
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                    ranking_check[q_item[5]] = -1
+                    ranking_check[q_item[5]][0] = -1
+                    ranking_check[q_item[5]][1] = -1
                 replaced = True
                 break
         if not replaced:
@@ -1132,16 +1133,16 @@ class DealUdpThread(QThread):
                 array_data = filter_max_value(array_data)  # 结束时，以置信度为准
             else:
                 array_data = filter_max_value(array_data)  # 在平时球位置追踪，前面为准
-            if array_data is None or len(array_data) < 1:
+            if not array_data or len(array_data) < 1:
                 continue
             array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
-            if array_data is None or len(array_data) < 1:
+            if not array_data or len(array_data) < 1:
                 continue
             if len(array_data[0]) < 8:
                 self.signal.emit(fail('array_data:%s < 8数据错误！' % array_data[0]))
                 print('array_data < 8数据错误！', array_data[0])
                 continue
-            if array_data is None or len(array_data) < 1:
+            if not array_data or len(array_data) < 1:
                 continue
             # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
             deal_rank(array_data)
@@ -1276,7 +1277,7 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
         point = (x, y)
         if cap_num in area_Code.keys():
             for area in area_Code[cap_num]:
-                if (map_label_big.map_action and map_label_big.path_points
+                if (map_label_big and map_label_big.map_action and map_label_big.path_points
                         and area['area_code'] == 1  # 防止起点和终点区域冲突
                         and ui.checkBox_end_2.isChecked()
                         and map_label_big.map_action >
@@ -2559,7 +2560,7 @@ class ScreenShotThread(QThread):
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
             self.signal.emit('核对完成')
-            time.sleep(2)
+            time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
             print('ObsEnd_Thread.screen_flg:%s' % ObsEnd_Thread.screen_flg, '~~~~~~~~~~~~~~~~~~~~~~')
 
