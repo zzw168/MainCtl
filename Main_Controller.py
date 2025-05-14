@@ -660,7 +660,7 @@ def deal_rank(integration_qiu_array):
         replaced = False
         for q_item in integration_qiu_array:
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
-                if (ranking_array[0][6] >= max_area_count - balls_count # 头名进港,所有珠子变为最后一圈
+                if (ranking_array[0][6] >= max_area_count - balls_count  # 头名进港,所有珠子变为最后一圈
                         and ranking_array[0][9] >= max_lap_count - 1):
                     for i in range(len(ranking_array)):
                         if ranking_array[i][6] != max_area_count - balls_count:
@@ -682,7 +682,9 @@ def deal_rank(integration_qiu_array):
                                                                               Track_number),
                                                                         daemon=True)
                             lapTimes_thread[r_index].start()
-                        ranking_check[ranking_array[r_index][5]] = [-1, -1] # 换圈复位记号
+                        if r_index == 0:
+                            for i in range(len(ranking_array)):
+                                ranking_check[ranking_array[i][5]] = [-1, -1]  # 换圈复位记号
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
                         ranking_array[r_index][9] += 1
                         if ranking_array[r_index][9] > max_lap_count - 1:
@@ -690,13 +692,18 @@ def deal_rank(integration_qiu_array):
 
                 if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
                     or (max_area_count - balls_count >= q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
-                        and 0 <= q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
+                        and (0 <= q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
+                             or (ranking_check[q_item[5]][0] != -1
+                                 and ranking_check[q_item[5]][1] == ranking_array[r_index][9]
+                                 and 0 < q_item[6] - ranking_check[q_item[5]][0] < area_limit)
+                                 and ui.checkBox_First_Check.isChecked())
                     )  # 处理除终点排名位置的条件
                     or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
                         and 0 <= q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
                         and ranking_array[r_index][9] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     write_ok = True
+                    ranking_check[q_item[5]] = [-1, -1]
                     for i in range(len(ranking_array)):
                         if ((abs(q_item[0] - ranking_array[i][0]) <= 7)  # 不能和前一个球的位置重叠
                                 and (abs(q_item[1] - ranking_array[i][1]) <= 7)):  # 避免误判两种颜色
@@ -720,15 +727,15 @@ def deal_rank(integration_qiu_array):
                             ranking_array[r_index][9] = ranking_array[0][9]
                         ranking_array[r_index][10] = 1
                 # 检测是否误判(如果珠子持续向前，则非误判，排进排名)
-                if (ui.checkBox_First_Check.isChecked()
-                        and q_item[6] <= (max_area_count - balls_count)
-                        and ranking_check[q_item[5]][0] != -1
-                        and ranking_check[q_item[5]][1] == ranking_array[r_index][9]
-                        and 0 < q_item[6] - ranking_check[q_item[5]][0] < area_limit):
-                    for r_i in range(0, len(q_item)):
-                        ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                    ranking_check[q_item[5]][0] = -1
-                    ranking_check[q_item[5]][1] = -1
+                # if (ui.checkBox_First_Check.isChecked()
+                #         and q_item[6] <= (max_area_count - balls_count)
+                #         and ranking_check[q_item[5]][0] != -1
+                #         and ranking_check[q_item[5]][1] == ranking_array[r_index][9]
+                #         and 0 < q_item[6] - ranking_check[q_item[5]][0] < area_limit):
+                #     for r_i in range(0, len(q_item)):
+                #         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                #     ranking_check[q_item[5]][0] = -1
+                #     ranking_check[q_item[5]][1] = -1
                 replaced = True
                 break
         if not replaced:
