@@ -660,13 +660,13 @@ def deal_rank(integration_qiu_array):
         replaced = False
         for q_item in integration_qiu_array:
             if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
-                if (ranking_array[0][6] >= max_area_count - balls_count
+                if (ranking_array[0][6] >= max_area_count - balls_count # 头名进港,所有珠子变为最后一圈
                         and ranking_array[0][9] >= max_lap_count - 1):
                     for i in range(len(ranking_array)):
                         if ranking_array[i][6] != max_area_count - balls_count:
                             ranking_array[i][9] = max_lap_count - 1
 
-                if ((not ui.checkBox_end_2.isChecked()
+                if ((not ui.checkBox_end_2.isChecked()  # 圈数处理
                      and q_item[6] < ranking_array[r_index][6] < max_area_count - balls_count + 1)
                         or (ui.checkBox_end_2.isChecked()
                             and ranking_array[r_index][9] < max_lap_count - 1  # 防止跨圈误判
@@ -682,6 +682,7 @@ def deal_rank(integration_qiu_array):
                                                                               Track_number),
                                                                         daemon=True)
                             lapTimes_thread[r_index].start()
+                        ranking_check[ranking_array[r_index][5]] = [-1, -1] # 换圈复位记号
                         ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
                         ranking_array[r_index][9] += 1
                         if ranking_array[r_index][9] > max_lap_count - 1:
@@ -712,17 +713,18 @@ def deal_rank(integration_qiu_array):
                         # and ranking_array[0][6] >= (max_area_count - balls_count) * 0.7
                         and q_item[6] <= (max_area_count - balls_count)):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
-                        if ranking_check[q_item[5]] == -1:
-                            ranking_check[q_item[5]] = q_item[6]  # 记录珠子区域
+                        if ranking_check[q_item[5]][0] == -1 and ranking_check[q_item[5]][1] == -1:
+                            ranking_check[q_item[5]][0] = q_item[6]  # 记录珠子区域
+                            ranking_check[q_item[5]][1] = ranking_array[r_index][9]  # 记录珠子圈数
                         if ranking_array[r_index][6] != max_area_count - balls_count:
                             ranking_array[r_index][9] = ranking_array[0][9]
                         ranking_array[r_index][10] = 1
                 # 检测是否误判(如果珠子持续向前，则非误判，排进排名)
                 if (ui.checkBox_First_Check.isChecked()
                         and q_item[6] <= (max_area_count - balls_count)
-                        and ranking_check[q_item[5]] != -1
-                        and q_item[6] > ranking_check[q_item[5]]
-                        and q_item[6] - ranking_check[q_item[5]] < area_limit):
+                        and ranking_check[q_item[5]][0] != -1
+                        and ranking_check[q_item[5]][1] == ranking_array[r_index][9]
+                        and 0 < q_item[6] - ranking_check[q_item[5]][0] < area_limit):
                     for r_i in range(0, len(q_item)):
                         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                     ranking_check[q_item[5]] = -1
@@ -1073,9 +1075,10 @@ class TcpResultThread(QThread):
                                 ws.send(json.dumps(data_list))
                     except Exception as e:
                         print("pingpong_result_1 错误：%s" % e)
-                        # self.signal.emit("pingpong 错误：%s" % e)
+                        self.signal.emit("tcp_result_1 错误：%s" % e)
             except Exception as e:
                 print("pingpong_result_2 错误：%s" % e)
+                self.signal.emit("tcp_result_2 错误：%s" % e)
 
 
 def tcpsignal_accept(msg):
@@ -1725,6 +1728,12 @@ class ReStartThread(QThread):
             PlanCmd_Thread.background_state = True  # 运行背景
             PlanCmd_Thread.run_flg = True
             self.signal.emit('过场动画')
+            # if ui.checkBox_end_2.isChecked():   # 如果终点起点一起，则把上局结果放进1号区域
+            #     for i in range(len(camera_list)):
+            #         if len(ball_sort[1][0]) - 1 < i:
+            #             ball_sort[1][0].append('')
+            #         ball_sort[1][0][i] = camera_list[i]
+            # else:
             if ui.checkBox_shoot_0.isChecked():
                 Shoot_Thread.run_flg = True
                 while Shoot_Thread.run_flg:
@@ -1740,6 +1749,7 @@ class ReStartThread(QThread):
                 time.sleep(1)
             if not self.run_flg:
                 continue
+            # if not ui.checkBox_end_2.isChecked():
             ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
@@ -2458,6 +2468,7 @@ class ScreenShotThread(QThread):
         global term_status
         global term_comment
         global main_Camera, monitor_Camera, fit_Camera
+        global camera_list
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -5961,16 +5972,16 @@ class ResetRankingThread(QThread):
             term_comment = ''
             lapTimes = [0.0] * balls_count
             balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
-            ranking_check = {'yellow': -1,
-                             'blue': -1,
-                             'red': -1,
-                             'purple': -1,
-                             'orange': -1,
-                             'green': -1,
-                             'Brown': -1,
-                             'black': -1,
-                             'pink': -1,
-                             'White': -1, }
+            ranking_check = {'yellow': [-1, -1],
+                             'blue': [-1, -1],
+                             'red': [-1, -1],
+                             'purple': [-1, -1],
+                             'orange': [-1, -1],
+                             'green': [-1, -1],
+                             'Brown': [-1, -1],
+                             'black': [-1, -1],
+                             'pink': [-1, -1],
+                             'White': [-1, -1], }
             ranking_save = {'yellow': [],
                             'blue': [],
                             'red': [],
@@ -7386,16 +7397,16 @@ if __name__ == '__main__':
     balls_count = 8  # 运行球数
     balls_start = 0  # 起点球数量
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
-    ranking_check = {'yellow': -1,  # 头名检测是否误判
-                     'blue': -1,
-                     'red': -1,
-                     'purple': -1,
-                     'orange': -1,
-                     'green': -1,
-                     'Brown': -1,
-                     'black': -1,
-                     'pink': -1,
-                     'White': -1, }
+    ranking_check = {'yellow': [-1, -1],  # 头名检测是否误判 [区域, 圈数]
+                     'blue': [-1, -1],
+                     'red': [-1, -1],
+                     'purple': [-1, -1],
+                     'orange': [-1, -1],
+                     'green': [-1, -1],
+                     'Brown': [-1, -1],
+                     'black': [-1, -1],
+                     'pink': [-1, -1],
+                     'White': [-1, -1], }
     ranking_save = {'yellow': [],  # 保存实时数据
                     'blue': [],
                     'red': [],
@@ -7634,6 +7645,7 @@ if __name__ == '__main__':
     monitor_Camera = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 监控镜头结果
     fit_Camera = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # 两个镜头的对比
     perfect_Camera = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # 完美情况
+    camera_list = []  # 上局结果
 
     main_camera_layout = QVBoxLayout(ui.widget_camera_sony)
     main_camera_layout.setContentsMargins(0, 9, 0, 0)
