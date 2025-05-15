@@ -270,6 +270,7 @@ def activate_browser():  # 程序开始，刷新浏览器
                 lottery_term[9] = '截图失败'
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
+                messagebox.showinfo("注意", "OBS 链接失败！")
                 index = int(ui.lineEdit_alarm.text()) - 1
                 sc.GASetExtDoBit(index, 0)
 
@@ -395,6 +396,7 @@ def get_picture(scence_current):
                 continue
             else:
                 flg_start['obs'] = False
+                messagebox.showinfo("注意", "OBS 链接失败！")
                 index = int(ui.lineEdit_alarm.text()) - 1
                 sc.GASetExtDoBit(index, 0)
                 return ['', '[1]', 'obs']
@@ -2266,6 +2268,7 @@ class ObsEndThread(QThread):
                             lottery_term[9] = '截图失败'
                             print('OBS 截图操作失败！')
                             self.signal.emit(fail('OBS 截图操作失败！'))
+                            messagebox.showinfo("注意", "OBS 链接失败！")
                             index = int(ui.lineEdit_alarm.text()) - 1
                             sc.GASetExtDoBit(index, 0)
                             flg_start['obs'] = False
@@ -2293,6 +2296,7 @@ class ObsEndThread(QThread):
                     else:
                         print('OBS 切换操作失败！')
                         self.signal.emit(fail('OBS 切换操作失败！'))
+                        messagebox.showinfo("注意", "OBS 链接失败！")
                         index = int(ui.lineEdit_alarm.text()) - 1
                         sc.GASetExtDoBit(index, 0)
                         flg_start['obs'] = False
@@ -2320,6 +2324,7 @@ class ObsEndThread(QThread):
                     else:
                         print('OBS 关闭录像失败！')
                         self.signal.emit(fail('OBS 关闭录像失败！'))
+                        messagebox.showinfo("注意", "OBS 链接失败！")
                         index = int(ui.lineEdit_alarm.text()) - 1
                         sc.GASetExtDoBit(index, 0)
                         flg_start['obs'] = False
