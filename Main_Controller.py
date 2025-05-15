@@ -460,15 +460,15 @@ def obs_script_request():
 #     #     requests.get(ip_address)
 #     # except:
 #     #     return ['', '[1]', 'monitor']
-#     cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
-#     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+#     # cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
+#     cap = cv2.VideoCapture(rt_url)
+#     # cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
 #     if cap.isOpened():
 #         for i in range(3):
-#             ret = False
-#             frame = ''
-#             for j in range(10):
-#                 ret, frame = cap.read()
-#
+#             # ret = False
+#             # frame = ''
+#             # for j in range(10):
+#             ret, frame = cap.read()
 #             if ret:
 #                 try:
 #                     if len(area_Code['net']) > 0:
@@ -527,7 +527,7 @@ def get_rtsp(r_url, timeout=20):
             for i in range(3):
                 ret = False
                 frame = ''
-                for j in range(10):
+                for j in range(3):
                     ret, frame = cap.read()
 
                 if ret:
@@ -696,7 +696,7 @@ def deal_rank(integration_qiu_array):
                              or (ranking_check[q_item[5]][0] != -1
                                  and ranking_check[q_item[5]][1] == ranking_array[r_index][9]
                                  and 0 < q_item[6] - ranking_check[q_item[5]][0] < area_limit)
-                                 and ui.checkBox_First_Check.isChecked())
+                             and ui.checkBox_First_Check.isChecked())
                     )  # 处理除终点排名位置的条件
                     or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
                         and 0 <= q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
@@ -723,7 +723,8 @@ def deal_rank(integration_qiu_array):
                         if ranking_check[q_item[5]][0] == -1 and ranking_check[q_item[5]][1] == -1:
                             ranking_check[q_item[5]][0] = q_item[6]  # 记录珠子区域
                             ranking_check[q_item[5]][1] = ranking_array[r_index][9]  # 记录珠子圈数
-                        if ranking_array[r_index][6] != max_area_count - balls_count:
+                        if (ranking_array[r_index][6] != max_area_count - balls_count
+                                and ranking_array[r_index][6] <= q_item[6]):
                             ranking_array[r_index][9] = ranking_array[0][9]
                         ranking_array[r_index][10] = 1
                 # 检测是否误判(如果珠子持续向前，则非误判，排进排名)
@@ -2075,8 +2076,7 @@ class PlanBallNumThread(QThread):
                         #     break
                         elif time.time() - time_now > int(ui.lineEdit_end_count_ball.text()):
                             # 超时则跳出循环计球
-                            if (ui.checkBox_Pass_Ranking_Twice.isChecked()
-                                    or ui.radioButton_stop_betting.isChecked()):
+                            if ui.checkBox_Pass_Ranking_Twice.isChecked():
                                 self.run_flg = False
                             self.signal.emit('人工检查')
                             time.sleep(1)
@@ -4710,7 +4710,10 @@ class MapLabel(QLabel):
             for i in range(balls_count):
                 x = self.positions[i][8]
                 y = self.positions[i][9]
-                b = round(self.positions[i][0] / len(self.path_points[0]) * 100, 2)
+                if self.positions[i][3] < 1:
+                    b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2, 2)
+                else:
+                    b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2 + 50, 2)
                 if b < 1:
                     b = 0
                 elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
@@ -5897,17 +5900,20 @@ def cancel_end():
     global term_status
     global term_comment
     global betting_loop_flg
-    if ReStart_Thread.start_flg:
-        messagebox.showinfo("取消当局", "当前开盘中，不能直接取消比赛，如需强制取消，请点击封盘！")
-        return
-    response = messagebox.askquestion("取消当局", "取消当局，你确定吗？")
+    # if ReStart_Thread.start_flg:
+    #     messagebox.showinfo("取消当局", "当前开盘中，不能直接取消比赛，如需强制取消，请点击封盘！")
+    #     return
+    response = messagebox.askquestion("取消当局", "确保没上传国结果才能取消当局，你确定吗？")
     print(response)  # "yes" / "no"
     if "yes" in response:
         term_status = 2
         term_comment = term_comments[0]
         Kaj789_Thread.run_type = 'post_end'
         Kaj789_Thread.run_flg = True
-        betting_loop_flg = False
+        betting_loop_flg = False  # 停止循环
+        ReStart_Thread.start_flg = False  # 停止比赛
+        while Kaj789_Thread.run_flg:
+            time.sleep(1)
         ui.radioButton_stop_betting.click()
     # res = post_marble_results(term, 'Invalid Term', Track_number)
     # if 'Invalid Term' in res:
