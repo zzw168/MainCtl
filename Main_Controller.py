@@ -5219,7 +5219,10 @@ class AudioThread(QThread):
                     sound_effect.set_volume(sound_volume)
                     sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
 
-                    time.sleep(sound_delay)
+                    for i in range(sound_delay):
+                        if not self.run_flg:
+                            break
+                        time.sleep(1)
                     pygame.mixer.music.set_volume(volume)
 
                     area_old = copy.deepcopy(action_area)
