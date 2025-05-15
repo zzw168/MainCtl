@@ -270,6 +270,8 @@ def activate_browser():  # 程序开始，刷新浏览器
                 lottery_term[9] = '截图失败'
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
+                index = int(ui.lineEdit_alarm.text()) - 1
+                sc.GASetExtDoBit(index, 0)
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -393,6 +395,8 @@ def get_picture(scence_current):
                 continue
             else:
                 flg_start['obs'] = False
+                index = int(ui.lineEdit_alarm.text()) - 1
+                sc.GASetExtDoBit(index, 0)
                 return ['', '[1]', 'obs']
 
 
@@ -1715,6 +1719,7 @@ class ReStartThread(QThread):
         global ranking_time_start
         global cl_request
         global pos_stop
+        global camera_list
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -1737,20 +1742,12 @@ class ReStartThread(QThread):
             PlanCmd_Thread.background_state = True  # 运行背景
             PlanCmd_Thread.run_flg = True
             self.signal.emit('过场动画')
-            # if ui.checkBox_end_2.isChecked():   # 如果终点起点一起，则把上局结果放进1号区域
-            #     for i in range(len(camera_list)):
-            #         if len(ball_sort[1][0]) - 1 < i:
-            #             ball_sort[1][0].append('')
-            #         ball_sort[1][0][i] = camera_list[i]
-            # else:
+
             if ui.checkBox_shoot_0.isChecked():
                 Shoot_Thread.run_flg = True
                 while Shoot_Thread.run_flg:
                     print('等待上珠结束~~~~~~~')
                     time.sleep(1)
-                    # if (balls_start >= balls_count
-                    #         or balls_start >= int(ui.lineEdit_balls_auto.text())):
-                    #     break
                     if not ui.checkBox_shoot_0.isChecked():
                         break
             while PlanCmd_Thread.run_flg:
@@ -1758,8 +1755,10 @@ class ReStartThread(QThread):
                 time.sleep(1)
             if not self.run_flg:
                 continue
-            # if not ui.checkBox_end_2.isChecked():
-            ball_sort[1][0] = []
+            if ui.checkBox_end_2.isChecked():
+                ball_sort[1][0] = copy.deepcopy(camera_list)
+            else:
+                ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
                 response = get_term(Track_number)
@@ -2267,6 +2266,8 @@ class ObsEndThread(QThread):
                             lottery_term[9] = '截图失败'
                             print('OBS 截图操作失败！')
                             self.signal.emit(fail('OBS 截图操作失败！'))
+                            index = int(ui.lineEdit_alarm.text()) - 1
+                            sc.GASetExtDoBit(index, 0)
                             flg_start['obs'] = False
             for i in range(5):
                 try:
@@ -2292,6 +2293,8 @@ class ObsEndThread(QThread):
                     else:
                         print('OBS 切换操作失败！')
                         self.signal.emit(fail('OBS 切换操作失败！'))
+                        index = int(ui.lineEdit_alarm.text()) - 1
+                        sc.GASetExtDoBit(index, 0)
                         flg_start['obs'] = False
             for i in range(5):
                 try:
@@ -2317,6 +2320,8 @@ class ObsEndThread(QThread):
                     else:
                         print('OBS 关闭录像失败！')
                         self.signal.emit(fail('OBS 关闭录像失败！'))
+                        index = int(ui.lineEdit_alarm.text()) - 1
+                        sc.GASetExtDoBit(index, 0)
                         flg_start['obs'] = False
 
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
@@ -2378,7 +2383,10 @@ class ObsEndThread(QThread):
                 lottery_term[3] = '未结束'
                 betting_loop_flg = False
             if not ui.radioButton_stop_betting.isChecked():
-                lottery2json()  # 保存数据
+                try:
+                    lottery2json()  # 保存数据
+                except:
+                    self.signal.emit(fail('本地数据保存失败！'))
 
             if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
                 betting_loop_flg = False
