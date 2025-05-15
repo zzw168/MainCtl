@@ -5212,10 +5212,15 @@ class AudioThread(QThread):
                     sound_delay = int(tb_audio.item(index - 1, 2).text())
                     sound_volume = float(tb_audio.item(index - 1, 3).text())
                     print(sound_file, sound_times, sound_delay)
+                    volume = pygame.mixer.music.get_volume()
+                    pygame.mixer.music.set_volume(volume / 2)
                     # 加载音效
                     sound_effect = pygame.mixer.Sound(sound_file)
                     sound_effect.set_volume(sound_volume)
                     sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
+
+                    time.sleep(sound_delay)
+                    pygame.mixer.music.set_volume(volume)
 
                     area_old = copy.deepcopy(action_area)
                     print('Audio~~~~~~~~~~~~~', area_old, audio_points[index][plan_index][0][0], action_area[0])
