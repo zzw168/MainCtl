@@ -8175,7 +8175,7 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>orange</string>
+                      <string>pink</string>
                      </property>
                      <property name="readOnly">
                       <bool>false</bool>
@@ -8336,7 +8336,7 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>White</string>
+                      <string/>
                      </property>
                      <property name="readOnly">
                       <bool>false</bool>
@@ -8585,7 +8585,7 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>Brown</string>
+                      <string>White</string>
                      </property>
                      <property name="readOnly">
                       <bool>false</bool>
@@ -8742,7 +8742,7 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>pink</string>
+                      <string/>
                      </property>
                      <property name="readOnly">
                       <bool>false</bool>
@@ -8847,7 +8847,7 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>橙</string>
+                      <string>粉</string>
                      </property>
                     </widget>
                    </item>
@@ -8893,7 +8893,7 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>棕</string>
+                      <string>白</string>
                      </property>
                     </widget>
                    </item>
@@ -8939,7 +8939,7 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>粉</string>
+                      <string/>
                      </property>
                     </widget>
                    </item>
@@ -8962,7 +8962,7 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>白</string>
+                      <string/>
                      </property>
                     </widget>
                    </item>

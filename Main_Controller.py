@@ -3924,7 +3924,7 @@ def save_main_json():
             for index in range(1, 4):
                 main_all['music_%s' % index][1] = getattr(ui, 'lineEdit_music_%s' % index).text()
                 main_all['music_%s' % index][0] = getattr(ui, 'radioButton_music_background_%s' % index).isChecked()
-            for index in range(1, 11):
+            for index in range(1, balls_count + 1):
                 eng = getattr(ui, 'lineEdit_Color_Eng_%s' % index).text()
                 ch = getattr(ui, 'lineEdit_Color_Ch_%s' % index).text()
                 main_all['init_array'][index - 1][5] = eng
@@ -4044,13 +4044,14 @@ def load_main_json():
             getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
             getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
             getattr(ui, 'radioButton_music_background_%s' % index).setChecked(main_all['music_%s' % index][0])
-        for index in range(1, 11):
+        for index in range(1, balls_count + 1):
             eng = main_all['init_array'][index - 1][5]
             ch = main_all['color_ch'][eng]
             getattr(ui, 'lineEdit_Color_Eng_%s' % index).setText(eng)
             getattr(ui, 'lineEdit_Color_Ch_%s' % index).setText(ch)
         # 赋值变量
-        init_array = main_all['init_array']
+        init_array = copy.deepcopy(main_all['init_array'])
+        print(init_array)
         color_ch = main_all['color_ch']
         udpServer_addr = (main_all['udpServer_addr'][0], int(main_all['udpServer_addr'][1]))
         tcpServer_addr = (main_all['tcpServer_addr'][0], int(main_all['tcpServer_addr'][1]))
@@ -5975,7 +5976,7 @@ class ResetRankingThread(QThread):
             if not self.run_flg:
                 continue
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-            init_array = init_array[:balls_count]
+            init_array = copy.deepcopy(init_array[:balls_count])
             ranking_array = []  # 排名数组
             for row in range(balls_count):
                 ranking_array.append([])
@@ -5995,9 +5996,12 @@ class ResetRankingThread(QThread):
                         else:
                             con_data[row][col] = 0
             action_area = [0, 0, 0]  # 初始化触发区域
-            z_ranking_res = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]  # 初始化网页排名
-            z_ranking_res = z_ranking_res[:balls_count]
-            z_ranking_end = z_ranking_res[:balls_count]
+            z_ranking_res = []
+            z_ranking_end = []
+            for i in range(1, balls_count + 1):
+                z_ranking_res.append(i)  # 初始化网页排名
+                z_ranking_end.append(i)  # 初始化终点排名
+            print(z_ranking_res)
             z_ranking_time = [''] * balls_count  # 初始化网页排名时间
             z_end_time = [0] * balls_count  # 记录结束时间
             tcp_ranking_thread.sleep_time = 0.1  # 重置排名数据包发送时间
@@ -6441,6 +6445,7 @@ def res2end():
         for index, item in enumerate(s):
             getattr(ui, 'lineEdit_result_%s' % index).setText(item)
         Send_Result_End = True
+        ObsEnd_Thread.ball_flg = True
         ui.checkBox_alarm.setChecked(False)
 
 
