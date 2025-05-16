@@ -720,11 +720,7 @@ def deal_rank(integration_qiu_array):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                         ranking_array[r_index][10] = 1
 
-                if (r_index > 0
-                        # and (q_item[6] - ranking_array[r_index][6] <= area_limit
-                        #      or (ranking_array[r_index][6] < area_limit))  # 减少同色误判
-                        # and ranking_array[0][6] >= (max_area_count - balls_count) * 0.7
-                        and q_item[6] <= (max_area_count - balls_count)):
+                if r_index > 0 and q_item[6] <= (max_area_count - balls_count):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         if ranking_check[q_item[5]][0] == -1 and ranking_check[q_item[5]][1] == -1:
                             ranking_check[q_item[5]][0] = q_item[6]  # 记录珠子区域
@@ -733,16 +729,6 @@ def deal_rank(integration_qiu_array):
                                 and ranking_array[r_index][6] <= q_item[6]):
                             ranking_array[r_index][9] = ranking_array[0][9]
                         ranking_array[r_index][10] = 1
-                # 检测是否误判(如果珠子持续向前，则非误判，排进排名)
-                # if (ui.checkBox_First_Check.isChecked()
-                #         and q_item[6] <= (max_area_count - balls_count)
-                #         and ranking_check[q_item[5]][0] != -1
-                #         and ranking_check[q_item[5]][1] == ranking_array[r_index][9]
-                #         and 0 < q_item[6] - ranking_check[q_item[5]][0] < area_limit):
-                #     for r_i in range(0, len(q_item)):
-                #         ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                #     ranking_check[q_item[5]][0] = -1
-                #     ranking_check[q_item[5]][1] = -1
                 replaced = True
                 break
         if not replaced:
@@ -4185,7 +4171,8 @@ def end_all():
         axis_reset = True
         Axis_Thread.run_flg = True
         for index in range(0, 16):
-            sc.GASetExtDoBit(index, 0)
+            if index != abs(int(ui.lineEdit_end.text())) - 1:
+                sc.GASetExtDoBit(index, 0)
         if flg_start['live']:
             cl_request.stop_stream()
 
@@ -6462,11 +6449,14 @@ def res2end():
     global Send_Result_End
     s = ui.lineEdit_Send_Result.text().split('_')
     if len(s) == balls_count:
-        for index, item in enumerate(s):
-            getattr(ui, 'lineEdit_result_%s' % index).setText(item)
-        Send_Result_End = True
-        ObsEnd_Thread.ball_flg = True
-        ui.checkBox_alarm.setChecked(False)
+        response = messagebox.askquestion("提交赛果", "是否立即提交赛果结束比赛？")
+        print(response)  # "yes" / "no"
+        if "yes" in response:
+            for index, item in enumerate(s):
+                getattr(ui, 'lineEdit_result_%s' % index).setText(item)
+            Send_Result_End = True
+            ObsEnd_Thread.ball_flg = True
+            ui.checkBox_alarm.setChecked(False)
 
 
 def result2end():
