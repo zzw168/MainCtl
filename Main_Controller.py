@@ -823,8 +823,9 @@ def color_to_num(res):  # 按最新排名排列数组
 
 
 def camera_to_num(res):  # 按最新排名排列数组
-    camera_response = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    camera_response = camera_response[:balls_count]
+    camera_response = []
+    for i in range(1, balls_count + 1):
+        camera_response.append(i)
     arr_res = []
     for r in res:
         for arr in range(0, len(init_array)):
