@@ -270,9 +270,9 @@ def activate_browser():  # 程序开始，刷新浏览器
                 lottery_term[9] = '截图失败'
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
-                messagebox.showinfo("注意", "OBS 链接失败！")
                 index = int(ui.lineEdit_alarm.text()) - 1
                 sc.GASetExtDoBit(index, 1)
+                messagebox.showinfo("注意", "OBS 链接失败！")
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -396,9 +396,9 @@ def get_picture(scence_current):
                 continue
             else:
                 flg_start['obs'] = False
-                messagebox.showinfo("注意", "OBS 链接失败！")
                 index = int(ui.lineEdit_alarm.text()) - 1
                 sc.GASetExtDoBit(index, 1)
+                messagebox.showinfo("注意", "OBS 链接失败！")
                 return ['', '[1]', 'obs']
 
 
@@ -2255,9 +2255,9 @@ class ObsEndThread(QThread):
                             lottery_term[9] = '截图失败'
                             print('OBS 截图操作失败！')
                             self.signal.emit(fail('OBS 截图操作失败！'))
-                            messagebox.showinfo("注意", "OBS 链接失败！")
                             index = int(ui.lineEdit_alarm.text()) - 1
                             sc.GASetExtDoBit(index, 1)
+                            messagebox.showinfo("注意", "OBS 链接失败！")
                             flg_start['obs'] = False
             for i in range(5):
                 try:
@@ -2283,9 +2283,9 @@ class ObsEndThread(QThread):
                     else:
                         print('OBS 切换操作失败！')
                         self.signal.emit(fail('OBS 切换操作失败！'))
-                        messagebox.showinfo("注意", "OBS 链接失败！")
                         index = int(ui.lineEdit_alarm.text()) - 1
                         sc.GASetExtDoBit(index, 1)
+                        messagebox.showinfo("注意", "OBS 链接失败！")
                         flg_start['obs'] = False
             for i in range(5):
                 try:
@@ -2311,9 +2311,9 @@ class ObsEndThread(QThread):
                     else:
                         print('OBS 关闭录像失败！')
                         self.signal.emit(fail('OBS 关闭录像失败！'))
-                        messagebox.showinfo("注意", "OBS 链接失败！")
                         index = int(ui.lineEdit_alarm.text()) - 1
                         sc.GASetExtDoBit(index, 1)
+                        messagebox.showinfo("注意", "OBS 链接失败！")
                         flg_start['obs'] = False
 
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
@@ -4317,10 +4317,10 @@ def check_black_screen():
             for index in range(len(wakeup_addr)):
                 r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
                 print(r.text)  # 返回1 是正常，返回2 是黑屏
-                if r == 2:
-                    messagebox.showinfo("注意", "%s 识别主机黑屏！" % wakeup_addr[index])
+                if r == '2':
                     index = int(ui.lineEdit_alarm.text()) - 1
                     sc.GASetExtDoBit(index, 1)
+                    messagebox.showinfo("注意", "%s 识别主机黑屏！" % wakeup_addr[index])
         except:
             print('图像识别主机通信失败！')
             flg_start['ai'] = False
@@ -6630,20 +6630,9 @@ def my_test():
     global term
     global z_ranking_res
     global ranking_array
-    print("发送比赛开始标记...")
-    result = send_data("START", 'http://192.168.0.250:8082')
-    print(f"服务器响应: {result}")
-    time.sleep(10)
-    ai_text = '路段_90度弯_5,0|7,0|6,0|8,0|4,0|3,0|2,0|1,0|'
-    # send_data(text, 'http://192.168.0.250:8082')  # 发送AI解说提示词
-    t = threading.Thread(target=send_data, args=(ai_text, 'http://192.168.0.250:8082'),
-                         daemon=True)
-    t.start()
-    # 发送结束标记
-    print("发送比赛结束标记...")
-    time.sleep(30)
-    result = send_data("STOP", 'http://192.168.0.250:8082')
-    print(f"服务器响应: {result}")
+    messagebox.showinfo("注意", "识别主机黑屏！")
+    index = int(ui.lineEdit_alarm.text()) - 1
+    sc.GASetExtDoBit(index, 1)
     # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
     # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg

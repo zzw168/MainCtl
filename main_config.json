@@ -135,7 +135,7 @@
             0
         ]
     ],
-    "lineEdit_alarm": "14",
+    "lineEdit_alarm": "1",
     "comboBox_plan": 1,
     "lineEdit_Map_Action": "8",
     "lineEdit_Cycle": "4",
@@ -195,8 +195,8 @@
         "8888"
     ],
     "rtsp_url": "rtsp://admin:123456@192.168.0.34:554/Streaming/Channels/101",
-    "s485_Axis_No": "COM22",
-    "s485_Cam_No": "COM23",
+    "s485_Axis_No": "COM27",
+    "s485_Cam_No": "COM28",
     "scene_name": "现场",
     "sony_sort": "0",
     "source_end": "终点1",
