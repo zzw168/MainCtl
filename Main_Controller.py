@@ -272,7 +272,7 @@ def activate_browser():  # 程序开始，刷新浏览器
                 flg_start['obs'] = False
                 messagebox.showinfo("注意", "OBS 链接失败！")
                 index = int(ui.lineEdit_alarm.text()) - 1
-                sc.GASetExtDoBit(index, 0)
+                sc.GASetExtDoBit(index, 1)
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -398,7 +398,7 @@ def get_picture(scence_current):
                 flg_start['obs'] = False
                 messagebox.showinfo("注意", "OBS 链接失败！")
                 index = int(ui.lineEdit_alarm.text()) - 1
-                sc.GASetExtDoBit(index, 0)
+                sc.GASetExtDoBit(index, 1)
                 return ['', '[1]', 'obs']
 
 
@@ -2271,7 +2271,7 @@ class ObsEndThread(QThread):
                             self.signal.emit(fail('OBS 截图操作失败！'))
                             messagebox.showinfo("注意", "OBS 链接失败！")
                             index = int(ui.lineEdit_alarm.text()) - 1
-                            sc.GASetExtDoBit(index, 0)
+                            sc.GASetExtDoBit(index, 1)
                             flg_start['obs'] = False
             for i in range(5):
                 try:
@@ -2299,7 +2299,7 @@ class ObsEndThread(QThread):
                         self.signal.emit(fail('OBS 切换操作失败！'))
                         messagebox.showinfo("注意", "OBS 链接失败！")
                         index = int(ui.lineEdit_alarm.text()) - 1
-                        sc.GASetExtDoBit(index, 0)
+                        sc.GASetExtDoBit(index, 1)
                         flg_start['obs'] = False
             for i in range(5):
                 try:
@@ -2327,7 +2327,7 @@ class ObsEndThread(QThread):
                         self.signal.emit(fail('OBS 关闭录像失败！'))
                         messagebox.showinfo("注意", "OBS 链接失败！")
                         index = int(ui.lineEdit_alarm.text()) - 1
-                        sc.GASetExtDoBit(index, 0)
+                        sc.GASetExtDoBit(index, 1)
                         flg_start['obs'] = False
 
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
@@ -4293,7 +4293,7 @@ def wakeup_server():
     while True:
         try:
             for index in range(len(wakeup_addr)):
-                r = requests.post(url=wakeup_addr[index], data=form_data)
+                r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
                 print(r.text)
                 if r == 'ok':
                     flg_start['ai'] = True
@@ -4312,13 +4312,32 @@ def stop_server():  # 关闭识别服务器
     try:
         cmd_stop()
         for index in range(len(wakeup_addr)):
-            r = requests.post(url=wakeup_addr[index], data=form_data)
+            r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
             print(r.text)
             if r == 'ok':
                 flg_start['ai'] = False
     except:
         print('图像识别主机通信失败！')
         flg_start['ai'] = False
+
+
+def check_black_screen():
+    form_data = {
+        'requestType': 'get_run_toggle',
+    }
+    while True:
+        try:
+            for index in range(len(wakeup_addr)):
+                r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
+                print(r.text)  # 返回1 是正常，返回2 是黑屏
+                if r == 2:
+                    messagebox.showinfo("注意", "%s 识别主机黑屏！" % wakeup_addr[index])
+                    index = int(ui.lineEdit_alarm.text()) - 1
+                    sc.GASetExtDoBit(index, 1)
+        except:
+            print('图像识别主机通信失败！')
+            flg_start['ai'] = False
+        time.sleep(10)
 
 
 def save_images():
@@ -4402,7 +4421,7 @@ def save_start_images(saveImgRun):
     }
     try:
         for index in range(len(wakeup_addr)):
-            r = requests.post(url=wakeup_addr[index], data=form_data)
+            r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
             print(r.text)
     except:
         print('图像识别主机通信失败！')
@@ -7572,6 +7591,10 @@ if __name__ == '__main__':
     # 唤醒图像识别主机线程 17
     wakeup_ser = threading.Thread(target=wakeup_server, daemon=True)
     wakeup_ser.start()
+
+    # 测试黑屏线程 18
+    check_screen = threading.Thread(target=check_black_screen, daemon=True)
+    check_screen.start()
 
     # 启动 HTTPServer 接收外部命令控制本程序 18
     httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
