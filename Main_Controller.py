@@ -2019,7 +2019,7 @@ class PlanBallNumThread(QThread):
                 continue
             print('正在接收运动卡输入信息！')
             # try:
-            time.sleep(3)
+            time.sleep(4)
             res = sc.GASetDiReverseCount()  # 输入次数归0
             tcp_ranking_thread.sleep_time = 0.05  # 终点前端排名时间发送设置
             time_now = time.time()
