@@ -2034,7 +2034,7 @@ class PlanBallNumThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     # print(res, value)
                     if res == 0:
-                        num = int(value[0] / 2)
+                        num = math.ceil(value[0] / 2)   # 小数进一
                         if num > len(z_ranking_time):
                             num = len(z_ranking_time)
                         if num > num_old:
@@ -4785,6 +4785,7 @@ class MapLabel(QLabel):
                         p = int(len(self.path_points[0]) * (ranking_array[num][6] / area_num))
                         if p < len(self.path_points[0]):
                             pos_stop[num][0] = p
+                            pos_stop[num][8], pos_stop[num][9] = self.path_points[0][pos_stop[num][0]]
             TrapBall_ui.trap_flg = False
         if ball_stop:
             if len(pos_stop) == len(self.positions):
@@ -6473,7 +6474,9 @@ def res2end():
             for index, item in enumerate(s):
                 getattr(ui, 'lineEdit_result_%s' % index).setText(item)
             Send_Result_End = True
+            PlanBallNum_Thread.run_flg = False
             ObsEnd_Thread.ball_flg = True
+            TrapBall_ui.hide()
             ui.checkBox_alarm.setChecked(False)
 
 
