@@ -5960,6 +5960,10 @@ def cancel_end():
         Kaj789_Thread.run_flg = True
         betting_loop_flg = False  # 停止循环
         ReStart_Thread.start_flg = False  # 停止比赛
+
+        PlanBallNum_Thread.run_flg = False  # 停止计球
+        TrapBall_ui.hide()  # 关闭卡珠窗口
+
         while Kaj789_Thread.run_flg:
             time.sleep(1)
         ui.radioButton_stop_betting.click()
