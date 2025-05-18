@@ -273,8 +273,8 @@ def activate_browser():  # 程序开始，刷新浏览器
                 index = int(ui.lineEdit_alarm.text()) - 1
                 sc.GASetExtDoBit(index, 1)
                 msgbox = threading.Thread(target=messagebox.showinfo,
-                                 args=("注意", "OBS 链接失败！"),
-                                 daemon=True)
+                                          args=("注意", "OBS 链接失败！"),
+                                          daemon=True)
                 msgbox.start()
 
 
@@ -2034,7 +2034,7 @@ class PlanBallNumThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     # print(res, value)
                     if res == 0:
-                        num = math.ceil(value[0] / 2)   # 小数进一
+                        num = math.ceil(value[0] / 2)  # 小数进一
                         if num > len(z_ranking_time):
                             num = len(z_ranking_time)
                         if num > num_old:
@@ -2064,7 +2064,7 @@ class PlanBallNumThread(QThread):
                                 and not ObsShot_Thread.run_flg):
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
-                        if num >= balls_count:
+                        if num >= balls_count or z_ranking_time[balls_count - 1] != '':
                             break
                         # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
                         #     break
@@ -3044,16 +3044,17 @@ class PlanCmdThread(QThread):
                                     sc.GASetExtDoBit(abs(int(float(plan_list[plan_index][12][0]))) - 1, 1)
                                 if (plan_list[plan_index][12][0] == ui.lineEdit_start_count.text()
                                         and not (self.background_state or self.end_state)):  # '9'倒数机关打开
-                                    # ranking_array = []  # 排名数组
-                                    # for row in range(balls_count):
-                                    #     ranking_array.append([])
-                                    #     for col in range(0, len(init_array[row])):
-                                    #         ranking_array[row].append(init_array[row][col])
-                                    # ball_sort = []  # 位置寄存器
-                                    # for row in range(0, max_area_count + 1):
-                                    #     ball_sort.append([])
-                                    #     for col in range(0, max_lap_count):
-                                    #         ball_sort[row].append([])
+                                    if ui.checkBox_Start_Flash.isChecked():
+                                        ranking_array = []  # 排名数组
+                                        for row in range(balls_count):
+                                            ranking_array.append([])
+                                            for col in range(0, len(init_array[row])):
+                                                ranking_array[row].append(init_array[row][col])
+                                        ball_sort = []  # 位置寄存器
+                                        for row in range(0, max_area_count + 1):
+                                            ball_sort.append([])
+                                            for col in range(0, max_lap_count):
+                                                ball_sort[row].append([])
                                     lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                     self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
@@ -3918,6 +3919,7 @@ def save_main_json():
             main_all['checkBox_Main_Vertica'] = ui.checkBox_Main_Vertica.isChecked()
             main_all['checkBox_saveImgs_mark'] = ui.checkBox_saveImgs_mark.isChecked()
             main_all['checkBox_First_Check'] = ui.checkBox_First_Check.isChecked()
+            main_all['checkBox_Start_Flash'] = ui.checkBox_Start_Flash.isChecked()
             main_all['comboBox_plan'] = ui.comboBox_plan.currentIndex()
             main_all['checkBox_end_2'] = ui.checkBox_end_2.isChecked()
             main_all['checkBox_main_camera_set'] = ui.checkBox_main_camera_set.isChecked()
@@ -4039,6 +4041,7 @@ def load_main_json():
         ui.checkBox_Main_Vertica.setChecked(main_all['checkBox_Main_Vertica'])
         ui.checkBox_saveImgs_mark.setChecked(main_all['checkBox_saveImgs_mark'])
         ui.checkBox_First_Check.setChecked(main_all['checkBox_First_Check'])
+        ui.checkBox_Start_Flash.setChecked(main_all['checkBox_Start_Flash'])
         ui.checkBox_end_2.setChecked(main_all['checkBox_end_2'])
         ui.checkBox_main_camera_set.setChecked(main_all['checkBox_main_camera_set'])
         ui.checkBox_Ai.setChecked(main_all['checkBox_Ai'])
@@ -7824,6 +7827,7 @@ if __name__ == '__main__':
     ui.checkBox_Main_Vertica.checkStateChanged.connect(save_main_json)
     ui.checkBox_saveImgs_mark.checkStateChanged.connect(save_main_json)
     ui.checkBox_First_Check.checkStateChanged.connect(save_main_json)
+    ui.checkBox_Start_Flash.checkStateChanged.connect(save_main_json)
     ui.checkBox_main_camera_set.checkStateChanged.connect(save_main_json)
     ui.checkBox_Ai.checkStateChanged.connect(save_main_json)
 
