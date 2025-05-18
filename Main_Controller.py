@@ -1851,6 +1851,7 @@ class ReStartThread(QThread):
 
 def restartsignal_accept(msg):
     global labels
+    global ball_stop
     if isinstance(msg, bool):
         lottery_data2table(ui.tableWidget_Results, lottery_term, labels)
         ui.lineEdit_Main_Camera.setText('')
@@ -1870,7 +1871,7 @@ def restartsignal_accept(msg):
     elif '卡珠' in msg:
         t = int(time.time() - ball_stop_time)
         ui.label_time_count.setText(str(t))
-        if t > 60:
+        if 63 > t > 60:
             sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
             msgbox = threading.Thread(target=messagebox.showinfo,
                                       args=("注意", "请点击开始比赛！（Start Game!）"),
