@@ -2064,7 +2064,8 @@ class PlanBallNumThread(QThread):
                                 and not ObsShot_Thread.run_flg):
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
-                        if num >= balls_count or z_ranking_time[balls_count - 1] != '':
+                        if (num >= balls_count
+                                or z_ranking_time[balls_count - 1] not in ['TRAP', 'OUT', '']):
                             break
                         # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
                         #     break
