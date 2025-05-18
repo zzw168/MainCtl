@@ -1717,6 +1717,8 @@ class ReStartThread(QThread):
         global camera_list
         while self.running:
             time.sleep(1)
+            if ball_stop:
+                self.signal.emit('卡珠倒数')
             if not self.run_flg:
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
@@ -1865,6 +1867,15 @@ def restartsignal_accept(msg):
         row_count = tb_result.rowCount()
         if row_count > 0:
             tb_result.item(0, 2).setText(str(msg))
+    elif '卡珠' in msg:
+        t = int(time.time() - ball_stop_time)
+        ui.label_time_count.setText(str(t))
+        if t > 60:
+            sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
+            msgbox = threading.Thread(target=messagebox.showinfo,
+                                      args=("注意", "请点击开始比赛！（Start Game!）"),
+                                      daemon=True)
+            msgbox.start()
     elif '比赛开始失败' in msg:
         ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(msg)
@@ -4639,6 +4650,7 @@ class MapLabel(QLabel):
         global positions_live, balls_ranking_time
         global z_ranking_res
         global ball_stop
+        global ball_stop_time
         global pos_stop
         global lapTimes
         global lapTimes_thread
@@ -4779,6 +4791,7 @@ class MapLabel(QLabel):
         # 保留卡珠位置
         if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
             ball_stop = True
+            ball_stop_time = time.time()
         if TrapBall_ui.trap_flg:
             pos_stop = copy.deepcopy(self.positions)
             for num in range(0, balls_count):
@@ -7495,6 +7508,7 @@ if __name__ == '__main__':
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "roadPart", "lapCount", "visible"]
     ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
     ball_stop = False  # 保留卡珠信号
+    ball_stop_time = time.time()  # 保留卡珠时间
     pos_stop = []  # 每个球的停止位置索引
 
     # 初始化数据
