@@ -2224,6 +2224,7 @@ class ObsEndThread(QThread):
         global result_data
         global betting_loop_flg
         global balls_start
+        global betting_end_time
         while self.running:
             time.sleep(1)
             if not (self.screen_flg and self.ball_flg):
@@ -2237,6 +2238,8 @@ class ObsEndThread(QThread):
                 print(f"服务器响应: {ai_res}")  # 停止AI解说服务
             self.signal.emit('录图结束')
             send_flg = True  # 发送赛果成功标志
+            betting_end_time = int(time.time())
+            lottery_term[11] = str(betting_end_time)
             save_path = '%s' % ui.lineEdit_upload_Path.text()
             if os.path.exists(save_path):
                 lottery_term[9] = '%s/%s.jpg' % (save_path, term)
@@ -2483,7 +2486,6 @@ class ScreenShotThread(QThread):
     def run(self) -> None:
         global ball_sort
         global lottery_term
-        global betting_end_time
         global Send_Result_End
         global z_ranking_end
         global z_ranking_res
@@ -2579,8 +2581,6 @@ class ScreenShotThread(QThread):
                     ball_sort[max_area_count + 1][max_lap_count - 1].append('')
                 ball_sort[max_area_count + 1][max_lap_count - 1][i] = camera_list[i]
             ranking_array = copy.deepcopy(ranking_temp)
-            betting_end_time = int(time.time())
-            lottery_term[11] = str(betting_end_time)
             self.signal.emit('核对完成')
             time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
