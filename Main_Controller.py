@@ -5827,6 +5827,7 @@ class Kaj789Thread(QThread):
                         else:
                             break
                     else:
+                        lottery_term[3] = '未发送'
                         continue
                 if self.run_type == 'post_result':
                     res_result = post_result(term=term, betting_end_time=betting_end_time,
@@ -5837,11 +5838,13 @@ class Kaj789Thread(QThread):
                         self.run_type = 'post_upload'
                         self.signal.emit({'post_result': res_result})
                     else:
+                        lottery_term[6] = "发送失败"
                         continue
                 if self.run_type == 'post_upload' and os.path.exists(lottery_term[9]):
                     res_upload = post_upload(term=term, img_path=lottery_term[9],
                                              Track_number=Track_number)  # 上传结果图片
                     if res_upload != 'OK':
+                        lottery_term[7] = "上传失败"
                         continue
                     else:
                         lottery_term[7] = "上传成功"
@@ -5944,8 +5947,9 @@ def send_end():
     if ReStart_Thread.start_flg:
         messagebox.showinfo("敬告", "比赛未结束，进行补发！")
         return
-    Kaj789_Thread.run_type = 'post_end'
-    Kaj789_Thread.run_flg = True
+    if ('未' in lottery_term[3]) or ('失败' in lottery_term[6]):
+        Kaj789_Thread.run_type = 'post_end'
+        Kaj789_Thread.run_flg = True
 
 
 def cancel_end():
