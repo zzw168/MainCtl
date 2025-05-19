@@ -1713,7 +1713,6 @@ class ReStartThread(QThread):
         global ball_stop
         global ranking_time_start
         global cl_request
-        global pos_stop
         global camera_list
         while self.running:
             time.sleep(1)
@@ -1725,7 +1724,6 @@ class ReStartThread(QThread):
             ready_flg = True  # 准备动作开启信号
             ball_stop = False  # 保留卡珠信号
             TrapBall_ui.trap_flg = False  # 卡珠标记
-            pos_stop = []  # 重置停留位置
             try:
                 cl_request.disconnect()  # 断开重连 OBS
                 time.sleep(0.5)
@@ -2031,7 +2029,7 @@ class PlanBallNumThread(QThread):
                 continue
             print('正在接收运动卡输入信息！')
             # try:
-            time.sleep(4)
+            time.sleep(3)
             res = sc.GASetDiReverseCount()  # 输入次数归0
             tcp_ranking_thread.sleep_time = 0.05  # 终点前端排名时间发送设置
             time_now = time.time()
@@ -2068,10 +2066,11 @@ class PlanBallNumThread(QThread):
                             self.signal.emit(num)
                             num_old = num
                         if (ui.checkBox_main_camera_set.isChecked()
-                                and num in [3, 5]
-                                and not ObsShot_Thread.run_flg):
+                                and num <= balls_count - 2):
                             print(num, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', num)
                             ObsShot_Thread.run_flg = True
+                        else:
+                            ObsShot_Thread.run_flg = False
                         if (num > balls_count - 2 and screen_sort
                                 and not ObsShot_Thread.run_flg):
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
@@ -2107,6 +2106,7 @@ class PlanBallNumThread(QThread):
                         self.signal.emit(fail("运动板x输入通信出错！"))
                     time.sleep(0.01)
                 try:
+                    ObsShot_Thread.run_flg = False
                     index = int(ui.lineEdit_alarm.text()) - 1
                     sc.GASetExtDoBit(index, 0)
                 except:
@@ -2684,48 +2684,23 @@ class ObsShotThread(QThread):
     def run(self) -> None:
         global ranking_array
         while self.running:
-            time.sleep(0.5)
+            time.sleep(0.2)
             if not self.run_flg:
                 continue
-            print('OBS运行')
-            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
-            if obs_res:
-                obs_list = eval(obs_res[1])
-                obs_num = len(obs_list)
-                if obs_num > 2:
-                    # print(obs_list)
-                    ranking_temp = copy.deepcopy(ranking_array)
-                    for i in range(0, obs_num):
-                        if len(ball_sort[max_area_count - i][max_lap_count - 1]) < 1:
-                            ball_sort[max_area_count - i][max_lap_count - 1].append('')
-                        ball_sort[max_area_count - i][max_lap_count - 1][0] = obs_list[i]
-                        for j in range(0, len(ranking_temp)):
-                            if ranking_temp[j][5] == obs_list[i]:
-                                ranking_temp[j][6] = max_area_count
-                                ranking_temp[j][9] = max_lap_count - 1
-                                break
-                    ranking_array = copy.deepcopy(ranking_temp)
-                    self.signal.emit(obs_res)
-            self.run_flg = False
+            ranking_temp = copy.deepcopy(ranking_array)
+            for i in range(0, balls_count):
+                if ranking_temp[i][6] >= max_area_count - balls_count:
+                    if len(ball_sort[max_area_count - balls_count][max_lap_count - 1]) < balls_count:
+                        ball_sort[max_area_count - balls_count][max_lap_count - 1].append('')
+                    ball_sort[max_area_count - balls_count][max_lap_count - 1][i] = ranking_temp[i][5]
+                    ranking_temp[i][6] = max_area_count - balls_count
+            ranking_array = copy.deepcopy(ranking_temp)
+            self.signal.emit(ball_sort[max_area_count - balls_count][max_lap_count - 1])
 
 
 def ObsShotsignal_accept(msg):
-    if isinstance(msg, list):
-        if len(msg) < 2 or msg[0] == '':
-            return
-        img = msg[0]
-        pixmap = QPixmap()
-        pixmap.loadFromData(img)
-        pixmap = pixmap.scaled(pixmap.width() / 2, pixmap.height() / 2, Qt.KeepAspectRatio, Qt.SmoothTransformation);
-
-        if msg[2] == 'obs':
-            painter = QPainter(pixmap)
-            painter.setFont(QFont("Arial", 50, QFont.Bold))  # 设置字体
-            painter.setPen(QColor(255, 0, 0))  # 设定颜色（红色）
-            painter.drawText(10, 60, "1")  # (x, y, "文本")
-            painter.end()  # 结束绘制
-            main_camera_ui.label_picture.setPixmap(pixmap)
-            ui.label_main_picture.setPixmap(pixmap)
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 
 '''
@@ -4604,6 +4579,7 @@ class MapLabel(QLabel):
         self.ball_space = ball_space  # 球之间的距离（步数）
         self.ball_radius = ball_radius  # 像素
         self.bet_running = [False] * balls_count
+        self.pos_stop = []  # 每个球的停止位置索引
         # 设置label的尺寸
         self.setMaximumSize(picture_size, picture_size)
         self.setPixmap(pixmap)
@@ -4652,7 +4628,6 @@ class MapLabel(QLabel):
         global z_ranking_res
         global ball_stop
         global ball_stop_time
-        global pos_stop
         global lapTimes
         global lapTimes_thread
         # 更新每个小球的位置
@@ -4719,7 +4694,8 @@ class MapLabel(QLabel):
                         for color_index in range(len(init_array)):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
-
+                        if num > 0 and self.positions[num][0] == self.positions[num - 1][0]:    # 禁止重叠
+                            self.positions[num][0] = self.positions[num][0] - self.ball_space
                         x, y = self.path_points[0][self.positions[num][0]]
                         if self.positions[num][6] != 0:  # 分岔路线
                             if 0 < self.positions[num][7] < 10:  # 小于10是X轴
@@ -4794,20 +4770,20 @@ class MapLabel(QLabel):
             ball_stop = True
             ball_stop_time = time.time()
         if TrapBall_ui.trap_flg:
-            pos_stop = copy.deepcopy(self.positions)
+            self.pos_stop = copy.deepcopy(self.positions)
             for num in range(0, balls_count):
-                for i in range(len(pos_stop)):  # 排序
-                    if pos_stop[i][1] == ranking_array[num][5]:
-                        pos_stop[i], pos_stop[num] = pos_stop[num], pos_stop[i]
+                for i in range(len(self.pos_stop)):  # 排序
+                    if self.pos_stop[i][1] == ranking_array[num][5]:
+                        self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
                         area_num = max_area_count - balls_count  # 跟踪区域数量
                         p = int(len(self.path_points[0]) * (ranking_array[num][6] / area_num))
                         if p < len(self.path_points[0]):
-                            pos_stop[num][0] = p
-                            pos_stop[num][8], pos_stop[num][9] = self.path_points[0][pos_stop[num][0]]
+                            self.pos_stop[num][0] = p
+                            self.pos_stop[num][8], self.pos_stop[num][9] = self.path_points[0][self.pos_stop[num][0]]
             TrapBall_ui.trap_flg = False
         if ball_stop:
-            if len(pos_stop) == len(self.positions):
-                self.positions = copy.deepcopy(pos_stop)
+            if len(self.pos_stop) == len(self.positions):
+                self.positions = copy.deepcopy(self.pos_stop)
 
         # 触发重绘
         self.update()
@@ -7512,7 +7488,6 @@ if __name__ == '__main__':
     ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
     ball_stop = False  # 保留卡珠信号
     ball_stop_time = time.time()  # 保留卡珠时间
-    pos_stop = []  # 每个球的停止位置索引
 
     # 初始化数据
     max_lap_count = 1  # 最大圈
