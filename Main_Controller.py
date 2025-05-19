@@ -4318,11 +4318,15 @@ def check_black_screen():
     form_data = {
         'requestType': 'get_run_toggle',
     }
+    black_flg = {}
     while True:
         try:
             for index in range(len(wakeup_addr)):
                 r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
-                if r.text == '2':
+                if r.text != '2':
+                    black_flg[wakeup_addr[index]] = r.text
+                if r.text == '2' and black_flg[wakeup_addr[index]] != r.text:
+                    black_flg[wakeup_addr[index]] = r.text
                     print(r.text, '~~~~~~~~~~~~~')  # 返回1 是正常，返回2 是黑屏
                     index = int(ui.lineEdit_alarm.text()) - 1
                     sc.GASetExtDoBit(index, 1)
