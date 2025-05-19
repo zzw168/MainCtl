@@ -725,7 +725,21 @@ def deal_rank(integration_qiu_array):
                         for r_i in range(0, len(q_item)):
                             ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
                         ranking_array[r_index][10] = 1
-
+                    "*************************************************************************"
+                    if (ranking_array[r_index][6] > max_area_count - balls_count
+                            and ui.checkBox_main_camera_set.isChecked()):
+                        for i in range(1, balls_count):
+                            if ranking_array[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
+                                for j in range(i - 1, balls_count):
+                                    if ranking_array[j][6] > max_area_count - balls_count:
+                                        ranking_array[j][6] = max_area_count - balls_count
+                                    break
+                        for i in range(0, balls_count):
+                            if ranking_array[i][6] >= max_area_count - balls_count:
+                                if len(ball_sort[max_area_count - balls_count][max_lap_count - 1]) < i + 1:
+                                    ball_sort[max_area_count - balls_count][max_lap_count - 1].append('')
+                                ball_sort[max_area_count - balls_count][max_lap_count - 1][i] = ranking_array[i][5]
+                    "*************************************************************************"
                 if r_index > 0 and q_item[6] <= (max_area_count - balls_count):
                     if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
                         if ranking_check[q_item[5]][0] == -1 and ranking_check[q_item[5]][1] == -1:
@@ -1869,7 +1883,7 @@ def restartsignal_accept(msg):
         if ball_stop:
             t = int(time.time() - ball_stop_time)
             ui.label_time_count.setText(str(t))
-            if t == 60:
+            if t == 120:
                 sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
                 msgbox = threading.Thread(target=messagebox.showinfo,
                                           args=("注意", "请点击开始比赛！（Start Game!）"),
@@ -2067,8 +2081,8 @@ class PlanBallNumThread(QThread):
                             num_old = num
                         if num <= balls_count - 2:
                             print(num, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', num)
-                            if ui.checkBox_main_camera_set.isChecked():
-                                EndReFlash_Thread.run_flg = True
+                            # if ui.checkBox_main_camera_set.isChecked():
+                            #     EndReFlash_Thread.run_flg = True
                         else:
                             EndReFlash_Thread.run_flg = False
                         if (num > balls_count - 2 and screen_sort
