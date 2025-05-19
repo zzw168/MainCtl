@@ -2082,12 +2082,6 @@ class PlanBallNumThread(QThread):
                             #     self.signal.emit('录终点图')
                             self.signal.emit(num)
                             num_old = num
-                        if num <= balls_count - 2:
-                            print(num, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', num)
-                            # if ui.checkBox_main_camera_set.isChecked():
-                            #     EndReFlash_Thread.run_flg = True
-                        else:
-                            EndReFlash_Thread.run_flg = False
                         if (num > balls_count - 2 and screen_sort
                                 and not EndReFlash_Thread.run_flg):
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
