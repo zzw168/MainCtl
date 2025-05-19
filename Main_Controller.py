@@ -2065,14 +2065,13 @@ class PlanBallNumThread(QThread):
                             #     self.signal.emit('录终点图')
                             self.signal.emit(num)
                             num_old = num
-                        if (ui.checkBox_main_camera_set.isChecked()
-                                and num <= balls_count - 2):
+                        if num <= balls_count - 2:
                             print(num, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', num)
-                            ObsShot_Thread.run_flg = True
+                            EndReFlash_Thread.run_flg = True
                         else:
-                            ObsShot_Thread.run_flg = False
+                            EndReFlash_Thread.run_flg = False
                         if (num > balls_count - 2 and screen_sort
-                                and not ObsShot_Thread.run_flg):
+                                and not EndReFlash_Thread.run_flg):
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
                         if (num >= balls_count
@@ -2106,7 +2105,7 @@ class PlanBallNumThread(QThread):
                         self.signal.emit(fail("运动板x输入通信出错！"))
                     time.sleep(0.01)
                 try:
-                    ObsShot_Thread.run_flg = False
+                    EndReFlash_Thread.run_flg = False
                     index = int(ui.lineEdit_alarm.text()) - 1
                     sc.GASetExtDoBit(index, 0)
                 except:
@@ -2663,15 +2662,15 @@ def ScreenShotsignal_accept(msg):
 
 
 '''
-    ObsShotThread(QThread) 摄像头运动方案线程
+    EndReFlashThread(QThread) 终点刷新排名
 '''
 
 
-class ObsShotThread(QThread):
+class EndReFlashThread(QThread):
     signal = Signal(object)
 
     def __init__(self):
-        super(ObsShotThread, self).__init__()
+        super(EndReFlashThread, self).__init__()
         self.plan_obs = '0'  # [开关,场景名称]
         self.run_flg = False
         self.running = True
@@ -2698,7 +2697,7 @@ class ObsShotThread(QThread):
             self.signal.emit(ball_sort[max_area_count - balls_count][max_lap_count - 1])
 
 
-def ObsShotsignal_accept(msg):
+def EndReFlash_signal_accept(msg):
     ui.textBrowser_msg.append(msg)
     scroll_to_bottom(ui.textBrowser_msg)
 
@@ -6806,7 +6805,7 @@ class ZApp(QApplication):
             OrganCycle_Thread.stop()
             deal_udp_thread.stop()
             CheckFile_Thread.stop()
-            ObsShot_Thread.stop()
+            EndReFlash_Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -6864,7 +6863,7 @@ class ZApp(QApplication):
             print('deal_udp_thread')
             udp_thread.wait()  # 处理udp数据线程
             print('udp_thread')
-            ObsShot_Thread.wait()  # 终点截图识别
+            EndReFlash_Thread.wait()  # 终点截图识别
             print('ObsShot_Thread')
         except Exception as e:
             print(f"Error waiting threads: {e}")
@@ -7314,9 +7313,9 @@ if __name__ == '__main__':
     ScreenShot_Thread.signal.connect(ScreenShotsignal_accept)
     ScreenShot_Thread.start()
 
-    ObsShot_Thread = ObsShotThread()  # 终点截图识别线程 6
-    ObsShot_Thread.signal.connect(ObsShotsignal_accept)
-    ObsShot_Thread.start()
+    EndReFlash_Thread = EndReFlashThread()  # 终点截图识别线程 6
+    EndReFlash_Thread.signal.connect(EndReFlash_signal_accept)
+    EndReFlash_Thread.start()
 
     ObsEnd_Thread = ObsEndThread()  # 终点截图识别线程 6
     ObsEnd_Thread.signal.connect(ObsEndsignal_accept)
