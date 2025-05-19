@@ -2110,7 +2110,7 @@ class PlanBallNumThread(QThread):
                             if time_num > 1:
                                 time_old = time.time()
                                 sec_ += 1
-                                for i in range(max_area_count - 1, max_area_count - balls_count, -1):
+                                for i in range(max_area_count, max_area_count - balls_count, -1):
                                     for j in range(balls_count):
                                         if ranking_array[j][6] == i:
                                             ball_sort[i][max_lap_count - 1] = []
