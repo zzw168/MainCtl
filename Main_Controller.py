@@ -1768,7 +1768,7 @@ class ReStartThread(QThread):
             if ui.checkBox_end_2.isChecked():
                 ball_sort[1][0] = copy.deepcopy(camera_list)
                 for i in range(balls_count):
-                    ranking_array[i][6] = 1
+                    ranking_array[i][6] = 1  # 强制在第一区
             else:
                 ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
