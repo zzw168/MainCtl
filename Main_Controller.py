@@ -1871,7 +1871,7 @@ def restartsignal_accept(msg):
     elif '卡珠' in msg:
         t = int(time.time() - ball_stop_time)
         ui.label_time_count.setText(str(t))
-        if 63 > t > 60:
+        if t == 60:
             sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
             msgbox = threading.Thread(target=messagebox.showinfo,
                                       args=("注意", "请点击开始比赛！（Start Game!）"),
@@ -4347,8 +4347,8 @@ def check_black_screen():
         try:
             for index in range(len(wakeup_addr)):
                 r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
-                print(r.text)  # 返回1 是正常，返回2 是黑屏
-                if r == '2':
+                if r.text == '2':
+                    print(r.text, '~~~~~~~~~~~~~')  # 返回1 是正常，返回2 是黑屏
                     index = int(ui.lineEdit_alarm.text()) - 1
                     sc.GASetExtDoBit(index, 1)
                     msgbox = threading.Thread(target=messagebox.showinfo,
@@ -6677,12 +6677,14 @@ def my_test():
     global term
     global z_ranking_res
     global ranking_array
-    msgbox = threading.Thread(target=messagebox.showinfo,
-                              args=("注意", "OBS 链接失败！"),
-                              daemon=True)
-    msgbox.start()
-    index = int(ui.lineEdit_alarm.text()) - 1
-    sc.GASetExtDoBit(index, 1)
+    global wakeup_addr
+    # msgbox = threading.Thread(target=messagebox.showinfo,
+    #                           args=("注意", "OBS 链接失败！"),
+    #                           daemon=True)
+    # msgbox.start()
+    # index = int(ui.lineEdit_alarm.text()) - 1
+    # sc.GASetExtDoBit(index, 1)
+    wakeup_addr = ["http://192.168.0.127:8080"]
     # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
     # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
