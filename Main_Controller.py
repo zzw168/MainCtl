@@ -2067,7 +2067,8 @@ class PlanBallNumThread(QThread):
                             num_old = num
                         if num <= balls_count - 2:
                             print(num, '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', num)
-                            EndReFlash_Thread.run_flg = True
+                            if ui.checkBox_main_camera_set.isChecked():
+                                EndReFlash_Thread.run_flg = True
                         else:
                             EndReFlash_Thread.run_flg = False
                         if (num > balls_count - 2 and screen_sort
@@ -2691,6 +2692,7 @@ class EndReFlashThread(QThread):
                 if ranking_temp[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
                     ranking_temp[i - 1][6] = max_area_count - balls_count
                     ranking_temp[i][6] = max_area_count - balls_count
+                    break
             ranking_array = copy.deepcopy(ranking_temp)
             self.signal.emit(ball_sort[max_area_count - balls_count][max_lap_count - 1])
 
