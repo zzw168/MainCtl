@@ -2338,12 +2338,12 @@ class ObsEndThread(QThread):
                     else:
                         print('OBS 关闭录像失败！')
                         self.signal.emit(fail('OBS 关闭录像失败！'))
-                        index = int(ui.lineEdit_alarm.text()) - 1
-                        sc.GASetExtDoBit(index, 1)
-                        msgbox = threading.Thread(target=messagebox.showinfo,
-                                                  args=("注意", "OBS 链接失败！"),
-                                                  daemon=True)
-                        msgbox.start()
+                        # index = int(ui.lineEdit_alarm.text()) - 1
+                        # sc.GASetExtDoBit(index, 1)
+                        # msgbox = threading.Thread(target=messagebox.showinfo,
+                        #                           args=("注意", "OBS 链接失败！"),
+                        #                           daemon=True)
+                        # msgbox.start()
                         flg_start['obs'] = False
 
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
@@ -2691,8 +2691,6 @@ class EndReFlashThread(QThread):
                 if ranking_temp[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
                     ranking_temp[i - 1][6] = max_area_count - balls_count
                     ranking_temp[i][6] = max_area_count - balls_count
-                    if ranking_temp[i + 1][6] > max_area_count - balls_count:
-                        ranking_temp[i + 1][6] = max_area_count - balls_count
             ranking_array = copy.deepcopy(ranking_temp)
             self.signal.emit(ball_sort[max_area_count - balls_count][max_lap_count - 1])
 
