@@ -2689,6 +2689,7 @@ class EndReFlashThread(QThread):
             ranking_temp = copy.deepcopy(ranking_array)
             for i in range(0, balls_count):
                 if ranking_temp[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
+                    ranking_temp[i - 1][6] = max_area_count - balls_count
                     ranking_temp[i][6] = max_area_count - balls_count
                     if ranking_temp[i + 1][6] > max_area_count - balls_count:
                         ranking_temp[i + 1][6] = max_area_count - balls_count
