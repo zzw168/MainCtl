@@ -1728,6 +1728,7 @@ class ReStartThread(QThread):
         global ranking_time_start
         global cl_request
         global camera_list
+        global ranking_array
         while self.running:
             time.sleep(1)
             if ball_stop:
@@ -1766,6 +1767,8 @@ class ReStartThread(QThread):
                 continue
             if ui.checkBox_end_2.isChecked():
                 ball_sort[1][0] = copy.deepcopy(camera_list)
+                for i in range(balls_count):
+                    ranking_array[i][6] = 1
             else:
                 ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
