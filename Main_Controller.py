@@ -733,7 +733,7 @@ def deal_rank(integration_qiu_array):
                                 for j in range(i - 1, balls_count):
                                     if ranking_array[j][6] > max_area_count - balls_count:
                                         ranking_array[j][6] = max_area_count - balls_count
-                                    break
+                                break
                         for i in range(0, balls_count):
                             if ranking_array[i][6] >= max_area_count - balls_count:
                                 if len(ball_sort[max_area_count - balls_count][max_lap_count - 1]) < i + 1:
@@ -2168,7 +2168,7 @@ class PlanBallNumThread(QThread):
                 raise TypeError(f"Object of type {type(o)} is not JSON serializable")
 
             if os.path.exists('D:\数据\复盘'):
-                with open("D:\数据\复盘\%s.json" % term, "w", encoding="utf-8") as f:
+                with open("D:\数据\复盘\\%s.json" % term, "w", encoding="utf-8") as f:
                     json.dump(temp, f, indent=4, ensure_ascii=False, default=convert)
             ranking_save = {'yellow': [],
                             'blue': [],
