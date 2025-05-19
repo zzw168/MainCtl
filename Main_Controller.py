@@ -2687,18 +2687,17 @@ class EndReFlashThread(QThread):
             if not self.run_flg:
                 continue
             ranking_temp = copy.deepcopy(ranking_array)
-            for i in range(0, balls_count):
-                if ranking_temp[i][6] >= max_area_count - balls_count:
-                    if len(ball_sort[max_area_count - balls_count][max_lap_count - 1]) < balls_count:
-                        ball_sort[max_area_count - balls_count][max_lap_count - 1].append('')
-                    ball_sort[max_area_count - balls_count][max_lap_count - 1][i] = ranking_temp[i][5]
+            for i in range(1, balls_count):
+                if ranking_temp[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
+                    ranking_temp[i - 1][6] = max_area_count - balls_count
                     ranking_temp[i][6] = max_area_count - balls_count
+                    ranking_temp[i + 1][6] = max_area_count - balls_count
             ranking_array = copy.deepcopy(ranking_temp)
             self.signal.emit(ball_sort[max_area_count - balls_count][max_lap_count - 1])
 
 
 def EndReFlash_signal_accept(msg):
-    ui.textBrowser_msg.append(msg)
+    ui.textBrowser_msg.append(str(msg))
     scroll_to_bottom(ui.textBrowser_msg)
 
 
@@ -4697,7 +4696,7 @@ class MapLabel(QLabel):
                         for color_index in range(len(init_array)):
                             if init_array[color_index][5] == ranking_array[num][5]:
                                 self.positions[num][2] = color_index + 1
-                        if num > 0 and self.positions[num][0] == self.positions[num - 1][0]:    # 禁止重叠
+                        if num > 0 and self.positions[num][0] == self.positions[num - 1][0]:  # 禁止重叠
                             self.positions[num][0] = self.positions[num][0] - self.ball_space
                         x, y = self.path_points[0][self.positions[num][0]]
                         if self.positions[num][6] != 0:  # 分岔路线
