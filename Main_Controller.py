@@ -1849,7 +1849,6 @@ class ReStartThread(QThread):
 
 def restartsignal_accept(msg):
     global labels
-    global ball_stop
     if isinstance(msg, bool):
         lottery_data2table(ui.tableWidget_Results, lottery_term, labels)
         ui.lineEdit_Main_Camera.setText('')
@@ -1867,14 +1866,15 @@ def restartsignal_accept(msg):
         if row_count > 0:
             tb_result.item(0, 2).setText(str(msg))
     elif '卡珠' in msg:
-        t = int(time.time() - ball_stop_time)
-        ui.label_time_count.setText(str(t))
-        if t == 60:
-            sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
-            msgbox = threading.Thread(target=messagebox.showinfo,
-                                      args=("注意", "请点击开始比赛！（Start Game!）"),
-                                      daemon=True)
-            msgbox.start()
+        if ball_stop:
+            t = int(time.time() - ball_stop_time)
+            ui.label_time_count.setText(str(t))
+            if t == 60:
+                sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
+                msgbox = threading.Thread(target=messagebox.showinfo,
+                                          args=("注意", "请点击开始比赛！（Start Game!）"),
+                                          daemon=True)
+                msgbox.start()
     elif '比赛开始失败' in msg:
         ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(msg)
@@ -4768,10 +4768,10 @@ class MapLabel(QLabel):
             }
 
         # 保留卡珠位置
-        if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
+        # if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
+        if TrapBall_ui.trap_flg:
             ball_stop = True
             ball_stop_time = time.time()
-        if TrapBall_ui.trap_flg:
             self.pos_stop = copy.deepcopy(self.positions)
             for num in range(0, balls_count):
                 for i in range(len(self.pos_stop)):  # 排序
