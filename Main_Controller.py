@@ -1726,19 +1726,21 @@ class ReStartThread(QThread):
         global action_area
         global ball_sort
         global ball_stop
+        global ball_stop_time
         global ranking_time_start
         global cl_request
         global camera_list
         global ranking_array
         while self.running:
             time.sleep(1)
-            if ball_stop:
+            if ball_stop_time != 0:
                 self.signal.emit('卡珠倒数')
             if not self.run_flg:
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
             ready_flg = True  # 准备动作开启信号
             ball_stop = False  # 保留卡珠信号
+            ball_stop_time = 0  # 卡珠提醒时间
             TrapBall_ui.trap_flg = False  # 卡珠标记
             try:
                 cl_request.disconnect()  # 断开重连 OBS
@@ -1884,7 +1886,7 @@ def restartsignal_accept(msg):
         if row_count > 0:
             tb_result.item(0, 2).setText(str(msg))
     elif '卡珠' in msg:
-        if ball_stop:
+        if ball_stop_time != 0:
             t = int(time.time() - ball_stop_time)
             ui.label_time_count.setText(str(t))
             if t == 120:
@@ -4733,20 +4735,11 @@ class MapLabel(QLabel):
             }
 
         # 保留卡珠位置
-        # if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
-        if TrapBall_ui.trap_flg:
+        if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
             ball_stop = True
+        if TrapBall_ui.trap_flg:
             ball_stop_time = time.time()
             self.pos_stop = copy.deepcopy(self.positions)
-            for num in range(0, balls_count):
-                for i in range(len(self.pos_stop)):  # 排序
-                    if self.pos_stop[i][1] == ranking_array[num][5]:
-                        self.pos_stop[i], self.pos_stop[num] = self.pos_stop[num], self.pos_stop[i]
-                        area_num = max_area_count - balls_count  # 跟踪区域数量
-                        p = int(len(self.path_points[0]) * (ranking_array[num][6] / area_num))
-                        if p < len(self.path_points[0]):
-                            self.pos_stop[num][0] = p
-                            self.pos_stop[num][8], self.pos_stop[num][9] = self.path_points[0][self.pos_stop[num][0]]
             TrapBall_ui.trap_flg = False
         if ball_stop:
             if len(self.pos_stop) == len(self.positions):
@@ -7447,7 +7440,7 @@ if __name__ == '__main__':
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "roadPart", "lapCount", "visible"]
     ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
     ball_stop = False  # 保留卡珠信号
-    ball_stop_time = time.time()  # 保留卡珠时间
+    ball_stop_time = 0  # 保留卡珠时间
 
     # 初始化数据
     max_lap_count = 1  # 最大圈
