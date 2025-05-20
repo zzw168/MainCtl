@@ -714,17 +714,18 @@ def deal_rank(integration_qiu_array):
                         and 0 <= q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
                         and ranking_array[r_index][9] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
-                    write_ok = True
                     ranking_check[q_item[5]] = [-1, -1]
-                    for i in range(len(ranking_array)):
-                        if ((abs(q_item[0] - ranking_array[i][0]) <= 7)  # 不能和前一个球的位置重叠
-                                and (abs(q_item[1] - ranking_array[i][1]) <= 7)):  # 避免误判两种颜色
-                            write_ok = False
-                            break
-                    if write_ok:
-                        for r_i in range(0, len(q_item)):
-                            ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                        ranking_array[r_index][10] = 1
+                    if ranking_array[r_index][6] == 1:
+                        write_ok = True
+                        for i in range(len(ranking_array)):
+                            if ((abs(q_item[0] - ranking_array[i][0]) <= 7)  # 不能和前一个球的位置重叠
+                                    and (abs(q_item[1] - ranking_array[i][1]) <= 7)):  # 避免误判两种颜色
+                                write_ok = False
+                                break
+                        if write_ok:
+                            for r_i in range(0, len(q_item)):
+                                ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                            ranking_array[r_index][10] = 1
                     "*************************************************************************"
                     if (ranking_array[r_index][6] > max_area_count - balls_count
                             and ui.checkBox_main_camera_set.isChecked()):
