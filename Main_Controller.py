@@ -1741,6 +1741,9 @@ class ReStartThread(QThread):
             ready_flg = True  # 准备动作开启信号
             ball_stop = False  # 保留卡珠信号
             ball_stop_time = 0  # 卡珠提醒时间
+            map_label.pos_stop = []  # 每个球的停止位置索引
+            map_label1.pos_stop = []  # 每个球的停止位置索引
+            map_label_big.pos_stop = []  # 每个球的停止位置索引
             TrapBall_ui.trap_flg = False  # 卡珠标记
             try:
                 cl_request.disconnect()  # 断开重连 OBS
