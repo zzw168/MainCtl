@@ -715,17 +715,17 @@ def deal_rank(integration_qiu_array):
                         and ranking_array[r_index][9] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     ranking_check[q_item[5]] = [-1, -1]
+                    write_ok = True
                     if ranking_array[r_index][6] == 1:
-                        write_ok = True
                         for i in range(len(ranking_array)):
                             if ((abs(q_item[0] - ranking_array[i][0]) <= 7)  # 不能和前一个球的位置重叠
                                     and (abs(q_item[1] - ranking_array[i][1]) <= 7)):  # 避免误判两种颜色
                                 write_ok = False
                                 break
-                        if write_ok:
-                            for r_i in range(0, len(q_item)):
-                                ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                            ranking_array[r_index][10] = 1
+                    if write_ok:
+                        for r_i in range(0, len(q_item)):
+                            ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
+                        ranking_array[r_index][10] = 1
                     "*************************************************************************"
                     if (ranking_array[r_index][6] > max_area_count - balls_count
                             and ui.checkBox_main_camera_set.isChecked()):
@@ -2079,12 +2079,9 @@ class PlanBallNumThread(QThread):
                                 lottery_term[11] = str(betting_end_time)
                             if num <= balls_count:
                                 map_label_big.bet_running[num - 1] = False
-                            # if num == balls_count:
-                            #     self.signal.emit('录终点图')
                             self.signal.emit(num)
                             num_old = num
-                        if (num > balls_count - 2 and screen_sort
-                                and not EndReFlash_Thread.run_flg):
+                        if num > balls_count - 2 and screen_sort:
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
                         if (num >= balls_count
@@ -2118,7 +2115,6 @@ class PlanBallNumThread(QThread):
                         self.signal.emit(fail("运动板x输入通信出错！"))
                     time.sleep(0.01)
                 try:
-                    EndReFlash_Thread.run_flg = False
                     index = int(ui.lineEdit_alarm.text()) - 1
                     sc.GASetExtDoBit(index, 0)
                 except:
@@ -2668,53 +2664,6 @@ def ScreenShotsignal_accept(msg):
         ui.textBrowser_msg.append(str(msg))
         scroll_to_bottom(ui.textBrowser)
         scroll_to_bottom(ui.textBrowser_msg)
-
-
-# except:
-#     print('OBS 操作失败！')
-
-
-'''
-    EndReFlashThread(QThread) 终点刷新排名
-'''
-
-
-class EndReFlashThread(QThread):
-    signal = Signal(object)
-
-    def __init__(self):
-        super(EndReFlashThread, self).__init__()
-        self.plan_obs = '0'  # [开关,场景名称]
-        self.run_flg = False
-        self.running = True
-
-    def stop(self):
-        self.run_flg = False
-        self.running = False  # 修改标志位，线程优雅退出
-        self.quit()  # 退出线程事件循环
-
-    def run(self) -> None:
-        global ranking_array
-        while self.running:
-            time.sleep(0.2)
-            if not self.run_flg:
-                continue
-            ranking_temp = copy.deepcopy(ranking_array)
-            for i in range(0, balls_count):
-                if ranking_temp[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
-                    for j in range(i, balls_count):
-                        ranking_temp[j][6] = max_area_count - balls_count
-                    break
-                if len(ball_sort[max_area_count - balls_count][max_lap_count - 1]) < balls_count:
-                    ball_sort[max_area_count - balls_count][max_lap_count - 1].append('')
-                ball_sort[max_area_count - balls_count][max_lap_count - 1][i] = ranking_temp[i][5]
-            ranking_array = copy.deepcopy(ranking_temp)
-            self.signal.emit(ball_sort[max_area_count - balls_count][max_lap_count - 1])
-
-
-def EndReFlash_signal_accept(msg):
-    ui.textBrowser_msg.append(str(msg))
-    scroll_to_bottom(ui.textBrowser_msg)
 
 
 '''
@@ -6820,7 +6769,6 @@ class ZApp(QApplication):
             OrganCycle_Thread.stop()
             deal_udp_thread.stop()
             CheckFile_Thread.stop()
-            EndReFlash_Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -6878,8 +6826,6 @@ class ZApp(QApplication):
             print('deal_udp_thread')
             udp_thread.wait()  # 处理udp数据线程
             print('udp_thread')
-            EndReFlash_Thread.wait()  # 终点截图识别
-            print('ObsShot_Thread')
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -7327,10 +7273,6 @@ if __name__ == '__main__':
     ScreenShot_Thread = ScreenShotThread()  # 终点截图识别线程 6
     ScreenShot_Thread.signal.connect(ScreenShotsignal_accept)
     ScreenShot_Thread.start()
-
-    EndReFlash_Thread = EndReFlashThread()  # 终点截图识别线程 6
-    EndReFlash_Thread.signal.connect(EndReFlash_signal_accept)
-    EndReFlash_Thread.start()
 
     ObsEnd_Thread = ObsEndThread()  # 终点截图识别线程 6
     ObsEnd_Thread.signal.connect(ObsEndsignal_accept)
