@@ -1845,7 +1845,8 @@ class ReStartThread(QThread):
                         if not reset_ranking_Thread.run_flg:
                             reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                         ready_flg = False
-                    ball_sort[1][0] = []
+                    if not ui.checkBox_end_2.isChecked():
+                        ball_sort[1][0] = []
                 ranking_time_start = time.time()
                 time.sleep(1)
                 self.signal.emit(t)
@@ -5980,8 +5981,13 @@ class ResetRankingThread(QThread):
             ball_sort = []  # 位置寄存器
             for row in range(0, max_area_count + 1):
                 ball_sort.append([])
-                for col in range(0, max_lap_count):
-                    ball_sort[row].append([])
+                if row == 1 and ui.checkBox_end_2.isChecked():
+                    ball_sort[row][0] = copy.deepcopy(camera_list)
+                    for i in range(balls_count):
+                        ranking_array[i][6] = 1  # 强制在第一区
+                else:
+                    for col in range(0, max_lap_count):
+                        ball_sort[row].append([])
             balls_start = 0  # 起点球数
             if con_data:
                 for row in range(0, len(init_array)):
