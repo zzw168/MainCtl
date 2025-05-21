@@ -737,8 +737,12 @@ def deal_rank(integration_qiu_array):
                                 break
                         for i in range(0, balls_count):
                             if ranking_array[i][6] >= max_area_count - balls_count:
-                                if len(ball_sort[max_area_count - balls_count][max_lap_count - 1]) < i + 1:
-                                    ball_sort[max_area_count - balls_count][max_lap_count - 1].append('')
+                                # print(max_area_count - balls_count, max_lap_count - 1, i)
+                                ball_sort_num = len(ball_sort[max_area_count - balls_count][max_lap_count - 1])
+                                if ball_sort_num < i + 1:
+                                    for j in range(i + 1 - ball_sort_num):
+                                        ball_sort[max_area_count - balls_count][max_lap_count - 1].append('')
+                                # print(len(ball_sort[max_area_count - balls_count][max_lap_count - 1]))
                                 ball_sort[max_area_count - balls_count][max_lap_count - 1][i] = ranking_array[i][5]
                     "*************************************************************************"
                 if r_index > 0 and q_item[6] <= (max_area_count - balls_count):

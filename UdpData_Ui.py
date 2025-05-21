@@ -54,7 +54,7 @@ class Ui_Dialog_UdpData(object):
     # setupUi
 
     def retranslateUi(self, Dialog_UdpData):
-        Dialog_UdpData.setWindowTitle(QCoreApplication.translate("Dialog_UdpData", u"\u536b\u661f\u56fe", None))
-        self.groupBox_14.setTitle(QCoreApplication.translate("Dialog_UdpData", u"\u536b\u661f\u56fe", None))
+        Dialog_UdpData.setWindowTitle(QCoreApplication.translate("Dialog_UdpData", u"\u8bc6\u522b\u6570\u636e", None))
+        self.groupBox_14.setTitle(QCoreApplication.translate("Dialog_UdpData", u"\u8bc6\u522b\u6570\u636e", None))
     # retranslateUi
 
