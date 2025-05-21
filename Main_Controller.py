@@ -2677,6 +2677,72 @@ def ScreenShotsignal_accept(msg):
 
 
 '''
+    ObsShotThread(QThread) 摄像头排位线程
+'''
+
+
+class ObsShotThread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(ObsShotThread, self).__init__()
+        self.plan_obs = '0'  # [开关,场景名称]
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        global ranking_array
+        while self.running:
+            time.sleep(0.5)
+            if not self.run_flg:
+                continue
+            print('OBS运行')
+            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
+            if obs_res:
+                obs_list = eval(obs_res[1])
+                obs_num = len(obs_list)
+                if obs_num > 2:
+                    # print(obs_list)
+                    ranking_temp = copy.deepcopy(ranking_array)
+                    for i in range(0, obs_num):
+                        if len(ball_sort[max_area_count - i][max_lap_count - 1]) < 1:
+                            ball_sort[max_area_count - i][max_lap_count - 1].append('')
+                        ball_sort[max_area_count - i][max_lap_count - 1][0] = obs_list[i]
+                        for j in range(0, len(ranking_temp)):
+                            if ranking_temp[j][5] == obs_list[i]:
+                                ranking_temp[j][6] = max_area_count - i
+                                ranking_temp[j][9] = max_lap_count - 1
+                                break
+                    ranking_array = copy.deepcopy(ranking_temp)
+                    self.signal.emit(obs_res)
+            self.run_flg = False
+
+
+def ObsShotsignal_accept(msg):
+    if isinstance(msg, list):
+        if len(msg) < 2 or msg[0] == '':
+            return
+        img = msg[0]
+        pixmap = QPixmap()
+        pixmap.loadFromData(img)
+        pixmap = pixmap.scaled(pixmap.width() / 2, pixmap.height() / 2, Qt.KeepAspectRatio, Qt.SmoothTransformation);
+
+        if msg[2] == 'obs':
+            painter = QPainter(pixmap)
+            painter.setFont(QFont("Arial", 50, QFont.Bold))  # 设置字体
+            painter.setPen(QColor(255, 0, 0))  # 设定颜色（红色）
+            painter.drawText(10, 60, "1")  # (x, y, "文本")
+            painter.end()  # 结束绘制
+            main_camera_ui.label_picture.setPixmap(pixmap)
+            ui.label_main_picture.setPixmap(pixmap)
+
+
+'''
     PlanObsThread(QThread) 摄像头运动方案线程
 '''
 
@@ -5914,16 +5980,20 @@ def cancel_end():
     global term_status
     global term_comment
     global betting_loop_flg
+    global z_ranking_time
     # if ReStart_Thread.start_flg:
     #     messagebox.showinfo("取消当局", "当前开盘中，不能直接取消比赛，如需强制取消，请点击封盘！")
     #     return
-    response = messagebox.askquestion("取消当局", "确保没上传国结果才能取消当局，你确定吗？")
+    response = messagebox.askquestion("取消当局", "确保没上传过结果才能取消当局，你确定吗？")
     print(response)  # "yes" / "no"
     if "yes" in response:
         term_status = 2
         term_comment = term_comments[0]
         Kaj789_Thread.run_type = 'post_end'
         Kaj789_Thread.run_flg = True
+        for index in range(balls_count):
+            if z_ranking_time[index] == '':
+                z_ranking_time[index] = 'TRAP'
         betting_loop_flg = False  # 停止循环
         ReStart_Thread.start_flg = False  # 停止比赛
 
@@ -5976,12 +6046,11 @@ class ResetRankingThread(QThread):
             ranking_array = []  # 排名数组
             for row in range(balls_count):
                 ranking_array.append([])
+                for col in range(0, len(init_array[row])):
+                    ranking_array[row].append(init_array[row][col])
                 if row == 1 and ui.checkBox_end_2.isChecked():
                     for i in range(balls_count):
                         ranking_array[i][6] = 1  # 强制在第一区
-                else:
-                    for col in range(0, len(init_array[row])):
-                        ranking_array[row].append(init_array[row][col])
             ball_sort = []  # 位置寄存器
             for row in range(0, max_area_count + 1):
                 ball_sort.append([])
