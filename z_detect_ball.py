@@ -244,13 +244,6 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
 
 
 def run_server():
-    server_address = ('0.0.0.0', 6066)
-
-    # 检测端口是否被占用
-    if check_port_in_use(*server_address):
-        print(f"Error: Port {server_address[1]} is already in use.")
-        sys.exit(1)  # 优雅退出程序
-
     httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
     print('Starting server on port 6066...')
     try:
@@ -262,6 +255,13 @@ def run_server():
 
 
 if __name__ == '__main__':
+    server_address = ('0.0.0.0', 6066)
+
+    # 检测端口是否被占用
+    if check_port_in_use(*server_address):
+        print(f"Error: Port {server_address[1]} is already in use.")
+        sys.exit(1)  # 优雅退出程序
+
     color_names = {'red': (255, 0, 0), 'green': (0, 255, 0), 'blue': (0, 0, 255),
                    'pink': (255, 0, 255), 'yellow': (255, 255, 0), 'black': (0, 0, 0),
                    'purple': (128, 0, 128), 'White': (248, 248, 255),
