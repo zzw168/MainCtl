@@ -17,12 +17,7 @@ from urllib3 import request
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
-        self.models = {
-            'obs': YOLO('./best_obs.pt'),
-            'rtsp': YOLO('./best_rtsp.pt')
-        }
         super().__init__(*args, **kwargs)
-        load_area()
 
     def do_GET(self):
         self.send_response(200)
@@ -46,7 +41,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             return
 
         if post_data['CameraType'][0] in ['obs', 'rtsp']:
-            model = self.models['obs'] if post_data['CameraType'][0] == 'obs' else self.models['rtsp']
+            model = models['obs'] if post_data['CameraType'][0] == 'obs' else models['rtsp']
             conf_num = 0.3 if post_data['CameraType'][0] == 'obs' else 0.3
             np_array = np.frombuffer(base64.b64decode(post_data['img'][0].encode('ascii')), np.uint8)
             img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
@@ -70,7 +65,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     qiu_array.append(array)
             print(qiu_array)
             qiu_array = filter_max_value(qiu_array)
-            qiu_array = deal_area(qiu_array, cap_num)
+            if len(area_Code[post_data['CameraType'][0]]) > 0:
+                qiu_array = deal_area(qiu_array, post_data['CameraType'][0])
 
             if post_data['sort'][0] == '0':
                 qiu_array.sort(key=lambda x: (x[0]), reverse=True)
@@ -103,9 +99,13 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                 if post_data['sort'][0] in ['0', '1']:
                     text_x = (array[0] + array[2]) // 2 - 13
                     text_y = array[1] - 22
+                    conf_x = (array[0] + array[2]) // 2 - 30
+                    conf_y = array[3] + 30
                 else:
                     text_x = array[0] - 50
                     text_y = (array[1] + array[3]) // 2 + 13
+                    conf_x = array[2] + 5
+                    conf_y = (array[1] + array[3]) // 2 + 13
                 if color_num[array[5]] in ['1', '7', '10']:
                     if color_num[array[5]] in ['10']:
                         text_x -= 15
@@ -116,6 +116,9 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     cv2.putText(img, "%s" % (color_num[array[5]]), (text_x, text_y), cv2.FONT_HERSHEY_SIMPLEX,
                                 fontScale=1.3,
                                 color=(248, 248, 255), thickness=3)
+                cv2.putText(img, "%s" % array[4], (conf_x, conf_y), cv2.FONT_HERSHEY_SIMPLEX,
+                            fontScale=1,
+                            color=color_rects[array[5]], thickness=3)
 
             qiu_rank = []
             for i in range(len(qiu_array)):
@@ -137,18 +140,18 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 def filter_max_value(lists):  # 在区域范围内如果出现两个相同的球，则取置信度最高的球为准
     max_values = {}
     lists_temp = [''] * len(lists)  # 存储位置重复的珠子
-    for i in range(len(lists)) :    # 查找位置重复的珠子
+    for i in range(len(lists)):  # 查找位置重复的珠子
         x, y, key = int(lists[i][0]), int(lists[i][1]), lists[i][5]
         for item in lists:
             if key != item[5] and abs(x - int(item[0])) < 7 and abs(y - int(item[1])) < 7:
                 lists_temp[i] = copy.deepcopy(lists[i])
     # print(lists_temp)
-    for i in range(len(lists_temp)):    # 查找重复的珠子是否其他地方有相同颜色
+    for i in range(len(lists_temp)):  # 查找重复的珠子是否其他地方有相同颜色
         if lists_temp[i] != '':
             x, y, key = int(lists_temp[i][0]), int(lists_temp[i][1]), lists_temp[i][5]
             for j in range(len(lists)):
                 if lists[j] != '' and key == lists[j][5] and (x != int(lists[j][0])) and (y != int(lists[j][1])):
-                    lists[i] = ''   # 如果该颜色珠子在其他地方也有相同颜色的，则把本珠子置空
+                    lists[i] = ''  # 如果该颜色珠子在其他地方也有相同颜色的，则把本珠子置空
     # print(lists)
     for sublist in lists:
         if sublist != '':
@@ -217,6 +220,7 @@ def load_area():  # 载入位置文件初始化区域列表
                     area_Code[key].append(polgon_array)
     print(area_Code)
 
+
 def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
     ball_area_array = []
     if len(ball_array) < 1 or cap_num == '':
@@ -237,6 +241,7 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
                 if res > -1:
                     ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向,路线
     return ball_area_array  # ball_area_array = [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
+
 
 def run_server():
     server_address = ('0.0.0.0', 6066)
@@ -288,4 +293,9 @@ if __name__ == '__main__':
     #             'pink': '粉',
     #             'White': '白'}
     area_Code = {'obs': [], 'rtsp': []}  # 摄像头代码列表
+    models = {
+        'obs': YOLO('./best_obs.pt'),
+        'rtsp': YOLO('./best_rtsp.pt')
+    }
+    load_area()
     run_server()
