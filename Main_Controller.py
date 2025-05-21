@@ -5976,15 +5976,17 @@ class ResetRankingThread(QThread):
             ranking_array = []  # 排名数组
             for row in range(balls_count):
                 ranking_array.append([])
-                for col in range(0, len(init_array[row])):
-                    ranking_array[row].append(init_array[row][col])
+                if row == 1 and ui.checkBox_end_2.isChecked():
+                    for i in range(balls_count):
+                        ranking_array[i][6] = 1  # 强制在第一区
+                else:
+                    for col in range(0, len(init_array[row])):
+                        ranking_array[row].append(init_array[row][col])
             ball_sort = []  # 位置寄存器
             for row in range(0, max_area_count + 1):
                 ball_sort.append([])
                 if row == 1 and ui.checkBox_end_2.isChecked():
                     ball_sort[row][0] = copy.deepcopy(camera_list)
-                    for i in range(balls_count):
-                        ranking_array[i][6] = 1  # 强制在第一区
                 else:
                     for col in range(0, max_lap_count):
                         ball_sort[row].append([])
