@@ -535,6 +535,7 @@ def get_rtsp(r_url, timeout=20):
     def inner_get_rtsp(rt_url):
         cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
         cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+        jpg_base64 = ''
         if cap.isOpened():
             for i in range(3):
                 ret = False
@@ -589,7 +590,7 @@ def get_rtsp(r_url, timeout=20):
         else:
             print('无法打开摄像头')
         cap.release()
-        return ['', '[1]', 'rtsp']
+        return [jpg_base64, '[1]', 'rtsp']
 
     # 添加超时控制
     with concurrent.futures.ThreadPoolExecutor() as executor:
