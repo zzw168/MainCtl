@@ -333,7 +333,7 @@ def scenes_change():  # 变换场景
 
 
 # 截取OBS图片
-def get_picture(scence_current):
+def get_obs(scence_current):
     global lottery_term
     global cl_request
     resp = ''
@@ -471,7 +471,7 @@ def obs_script_request():
 #     #     ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
 #     #     requests.get(ip_address)
 #     # except:
-#     #     return ['', '[1]', 'monitor']
+#     #     return ['', '[1]', 'rtsp']
 #     # cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
 #     cap = cv2.VideoCapture(rt_url)
 #     # cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
@@ -503,7 +503,7 @@ def obs_script_request():
 #                             str2image_file(jpg_base64, img_file)  # 保存图片
 #
 #                         form_data = {
-#                             'CameraType': 'monitor',
+#                             'CameraType': 'rtsp',
 #                             'img': jpg_base64,
 #                             'sort': ui.lineEdit_monitor_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
 #                         }
@@ -530,7 +530,7 @@ def obs_script_request():
 #     else:
 #         print(f'无法打开摄像头')
 #     cap.release()
-#     return ['', '[1]', 'monitor']
+#     return ['', '[1]', 'rtsp']
 def get_rtsp(r_url, timeout=20):
     def inner_get_rtsp(rt_url):
         cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
@@ -563,7 +563,7 @@ def get_rtsp(r_url, timeout=20):
                                 str2image_file(jpg_base64, img_file)
 
                             form_data = {
-                                'CameraType': 'monitor',
+                                'CameraType': 'rtsp',
                                 'img': jpg_base64,
                                 'sort': ui.lineEdit_monitor_sort.text(),
                             }
@@ -589,7 +589,7 @@ def get_rtsp(r_url, timeout=20):
         else:
             print('无法打开摄像头')
         cap.release()
-        return ['', '[1]', 'monitor']
+        return ['', '[1]', 'rtsp']
 
     # 添加超时控制
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -598,7 +598,7 @@ def get_rtsp(r_url, timeout=20):
             return future.result(timeout=timeout)
         except concurrent.futures.TimeoutError:
             print(f'⛔ get_rtsp 超时（>{timeout}s），自动放弃！')
-            return ['', '[1]', 'monitor']
+            return ['', '[1]', 'rtsp']
 
 
 def rtsp_save_image():
@@ -2533,17 +2533,17 @@ class ScreenShotThread(QThread):
             self.signal.emit(succeed('截图结果识别运行！'))
             time.sleep(1)
             ObsEnd_Thread.screen_flg = False  # 结算页标志1
-            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
+            obs_res = get_obs(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])
                 main_Camera = camera_to_num(obs_list)
                 self.signal.emit(obs_res)
 
-            monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
-            if monitor_res:
-                rtsp_list = eval(monitor_res[1])
+            rtsp_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
+            if rtsp_res:
+                rtsp_list = eval(rtsp_res[1])
                 monitor_Camera = camera_to_num(rtsp_list)
-                self.signal.emit(monitor_res)
+                self.signal.emit(rtsp_res)
 
             if obs_res[1] != '[1]' and main_Camera == monitor_Camera:
                 term_status = 1
@@ -2640,7 +2640,7 @@ def ScreenShotsignal_accept(msg):
             # if ui.checkBox_main_camera.isChecked():
             main_camera_ui.label_picture.setPixmap(pixmap)
             ui.label_main_picture.setPixmap(pixmap)
-        elif msg[2] == 'monitor':
+        elif msg[2] == 'rtsp':
             painter = QPainter(pixmap)
             painter.setFont(QFont("Arial", 50, QFont.Bold))  # 设置字体
             painter.setPen(QColor(0, 255, 0))  # 设定颜色（红色）
@@ -2702,7 +2702,7 @@ class ObsShotThread(QThread):
             if not self.run_flg:
                 continue
             print('OBS运行')
-            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
+            obs_res = get_obs(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])
                 obs_num = len(obs_list)
@@ -5392,7 +5392,7 @@ def stop_alarm():
 class CameraLabel(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.Camera_index = 'main_Camera'
+        self.Camera_index = 'obs_Camera'
         self.img_data = []  # 图资料
         for num in range(0, 10):
             self.img_data.append('./img/ball/%s.png' % str(num + 1))
@@ -5424,10 +5424,10 @@ class CameraLabel(QLabel):
             ball_radius = 23
             rect = QRect(x_offset, 0, ball_radius, ball_radius)
             # 使用高质量的缩放方式
-            if self.Camera_index == 'main_Camera':
+            if self.Camera_index == 'obs_Camera':
                 scaled_img = self.images[main_Camera[index] - 1].scaled(rect.size(), Qt.KeepAspectRatio,
                                                                         Qt.SmoothTransformation)
-            elif self.Camera_index == 'monitor_Camera':
+            elif self.Camera_index == 'rtsp_Camera':
                 scaled_img = self.images[monitor_Camera[index] - 1].scaled(rect.size(), Qt.KeepAspectRatio,
                                                                            Qt.SmoothTransformation)
             else:
@@ -5440,9 +5440,9 @@ class CameraLabel(QLabel):
     def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.LeftButton:
             print("QLabel 被左键点击")
-            if self.Camera_index == 'main_Camera':
+            if self.Camera_index == 'obs_Camera':
                 set_result(main_Camera)
-            elif self.Camera_index == 'monitor_Camera':
+            elif self.Camera_index == 'rtsp_Camera':
                 set_result(monitor_Camera)
         elif event.button() == Qt.RightButton:
             print("QLabel 被右键点击")
@@ -7758,25 +7758,25 @@ if __name__ == '__main__':
     main_camera_layout = QVBoxLayout(ui.widget_camera_sony)
     main_camera_layout.setContentsMargins(0, 9, 0, 0)
     main_camera_label = CameraLabel()
-    main_camera_label.Camera_index = 'main_Camera'
+    main_camera_label.Camera_index = 'obs_Camera'
     main_camera_layout.addWidget(main_camera_label)
 
     monitor_camera_layout = QVBoxLayout(ui.widget_camera_monitor)
     monitor_camera_layout.setContentsMargins(0, 9, 0, 0)
     monitor_camera_label = CameraLabel()
-    monitor_camera_label.Camera_index = 'monitor_Camera'
+    monitor_camera_label.Camera_index = 'rtsp_Camera'
     monitor_camera_layout.addWidget(monitor_camera_label)
 
     result_main_camera_layout = QVBoxLayout(result_ui.widget_camera_sony)
     result_main_camera_layout.setContentsMargins(0, 9, 0, 0)
     result_main_camera_label = CameraLabel()
-    result_main_camera_label.Camera_index = 'main_Camera'
+    result_main_camera_label.Camera_index = 'obs_Camera'
     result_main_camera_layout.addWidget(result_main_camera_label)
 
     result_monitor_camera_layout = QVBoxLayout(result_ui.widget_camera_monitor)
     result_monitor_camera_layout.setContentsMargins(0, 9, 0, 0)
     result_monitor_camera_label = CameraLabel()
-    result_monitor_camera_label.Camera_index = 'monitor_Camera'
+    result_monitor_camera_label.Camera_index = 'rtsp_Camera'
     result_monitor_camera_layout.addWidget(result_monitor_camera_label)
 
     fit_camera_layout = QVBoxLayout(ui.widget_camera_fit)

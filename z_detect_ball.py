@@ -19,9 +19,10 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         self.models = {
             'obs': YOLO('./best_obs.pt'),
-            'monitor': YOLO('./best_rtsp.pt')
+            'rtsp': YOLO('./best_rtsp.pt')
         }
         super().__init__(*args, **kwargs)
+        load_area()
 
     def do_GET(self):
         self.send_response(200)
@@ -44,8 +45,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write("Missing required parameters.".encode('utf-8'))
             return
 
-        if post_data['CameraType'][0] in ['obs', 'monitor']:
-            model = self.models['obs'] if post_data['CameraType'][0] == 'obs' else self.models['monitor']
+        if post_data['CameraType'][0] in ['obs', 'rtsp']:
+            model = self.models['obs'] if post_data['CameraType'][0] == 'obs' else self.models['rtsp']
             conf_num = 0.3 if post_data['CameraType'][0] == 'obs' else 0.3
             np_array = np.frombuffer(base64.b64decode(post_data['img'][0].encode('ascii')), np.uint8)
             img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
@@ -69,6 +70,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     qiu_array.append(array)
             print(qiu_array)
             qiu_array = filter_max_value(qiu_array)
+            qiu_array = deal_area(qiu_array, cap_num)
 
             if post_data['sort'][0] == '0':
                 qiu_array.sort(key=lambda x: (x[0]), reverse=True)
@@ -183,6 +185,59 @@ def check_port_in_use(host, port):
             return True  # 端口被占用
 
 
+def load_area():  # 载入位置文件初始化区域列表
+    global area_Code
+    for key in area_Code.keys():
+        track_file = "./txts/%s.txt" % key
+        print(track_file)
+        if os.path.exists(track_file):  # 存在就加载数据对应赛道数据
+            with open(track_file, 'r') as file:
+                content = file.read().split('\n')
+            for area in content:
+                if area:
+                    polgon_array = {'coordinates': [], 'area_code': 0, 'direction': 0, 'road_path': 0}
+                    paths = area.split(' ')
+                    if len(paths) < 2:
+                        print("分区文件错误！")
+                        return
+                    lines = paths[0].split(',')
+                    for line in lines:
+                        if line:
+                            x, y = line.split('/')
+                            polgon_array['coordinates'].append((int(x), int(y)))
+                    polgon_array['area_code'] = int(paths[1])
+                    if len(paths) > 2:
+                        polgon_array['direction'] = int(paths[2])
+                    else:
+                        polgon_array['direction'] = 0
+                    if len(paths) > 3:
+                        polgon_array['road_path'] = int(paths[3])
+                    else:
+                        polgon_array['road_path'] = 0
+                    area_Code[key].append(polgon_array)
+    print(area_Code)
+
+def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
+    ball_area_array = []
+    if len(ball_array) < 1 or cap_num == '':
+        return
+    for ball in ball_array:
+        # print(ball)
+        if ball[4] < 0.05:  # 置信度小于 0.45 的数据不处理
+            continue
+        # x = (ball[0] + ball[2]) / 2
+        # y = (ball[1] + ball[3]) / 2
+        x = ball[0]
+        y = ball[1]
+        point = (x, y)
+        if cap_num in area_Code.keys():
+            for area in area_Code[cap_num]:
+                pts = np.array(area['coordinates'], np.int32)
+                res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
+                if res > -1:
+                    ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向,路线
+    return ball_area_array  # ball_area_array = [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
+
 def run_server():
     server_address = ('0.0.0.0', 6066)
 
@@ -232,4 +287,5 @@ if __name__ == '__main__':
     #             'black': '黑',
     #             'pink': '粉',
     #             'White': '白'}
+    area_Code = {'obs': [], 'rtsp': []}  # 摄像头代码列表
     run_server()
