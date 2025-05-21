@@ -65,7 +65,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     qiu_array.append(array)
             print(qiu_array)
             qiu_array = filter_max_value(qiu_array)
-            if len(area_Code[post_data['CameraType'][0]]) > 0:
+            if len(area_Code[post_data['CameraType'][0]]) > 0:  # 画线范围内
                 qiu_array = deal_area(qiu_array, post_data['CameraType'][0])
 
             if post_data['sort'][0] == '0':
