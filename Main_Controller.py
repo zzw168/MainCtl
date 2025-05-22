@@ -272,10 +272,7 @@ def activate_browser():  # 程序开始，刷新浏览器
                 flg_start['obs'] = False
                 index = int(ui.lineEdit_alarm.text()) - 1
                 sc.GASetExtDoBit(index, 1)
-                msgbox = threading.Thread(target=messagebox.showinfo,
-                                          args=("注意", "OBS 链接失败！"),
-                                          daemon=True)
-                msgbox.start()
+                show_message("注意", "OBS 链接失败！")
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -401,10 +398,7 @@ def get_obs(scence_current):
                 flg_start['obs'] = False
                 index = int(ui.lineEdit_alarm.text()) - 1
                 sc.GASetExtDoBit(index, 1)
-                msgbox = threading.Thread(target=messagebox.showinfo,
-                                          args=("注意", "OBS 链接失败！"),
-                                          daemon=True)
-                msgbox.start()
+                show_message("注意", "OBS 链接失败！")
                 return ['', '[1]', 'obs']
 
 
@@ -1900,10 +1894,7 @@ def restartsignal_accept(msg):
             ui.label_time_count.setText(str(t))
             if t == 120:
                 sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
-                msgbox = threading.Thread(target=messagebox.showinfo,
-                                          args=("注意", "请点击开始比赛！（Start Game!）"),
-                                          daemon=True)
-                msgbox.start()
+                show_message("注意", "请点击开始比赛！（Start Game!）")
     elif '比赛开始失败' in msg:
         ui.radioButton_stop_betting.click()
         ui.textBrowser_msg.append(msg)
@@ -2298,10 +2289,7 @@ class ObsEndThread(QThread):
                             self.signal.emit(fail('OBS 截图操作失败！'))
                             index = int(ui.lineEdit_alarm.text()) - 1
                             sc.GASetExtDoBit(index, 1)
-                            msgbox = threading.Thread(target=messagebox.showinfo,
-                                                      args=("注意", "OBS 链接失败！"),
-                                                      daemon=True)
-                            msgbox.start()
+                            show_message("注意", "OBS 链接失败！")
                             flg_start['obs'] = False
             for i in range(5):
                 try:
@@ -2329,10 +2317,7 @@ class ObsEndThread(QThread):
                         self.signal.emit(fail('OBS 切换操作失败！'))
                         index = int(ui.lineEdit_alarm.text()) - 1
                         sc.GASetExtDoBit(index, 1)
-                        msgbox = threading.Thread(target=messagebox.showinfo,
-                                                  args=("注意", "OBS 链接失败！"),
-                                                  daemon=True)
-                        msgbox.start()
+                        show_message("注意", "OBS 链接失败！")
                         flg_start['obs'] = False
             for i in range(5):
                 try:
@@ -2360,10 +2345,7 @@ class ObsEndThread(QThread):
                         self.signal.emit(fail('OBS 关闭录像失败！'))
                         # index = int(ui.lineEdit_alarm.text()) - 1
                         # sc.GASetExtDoBit(index, 1)
-                        # msgbox = threading.Thread(target=messagebox.showinfo,
-                        #                           args=("注意", "OBS 链接失败！"),
-                        #                           daemon=True)
-                        # msgbox.start()
+                        # show_message("注意", "OBS 链接失败！")
                         flg_start['obs'] = False
 
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
@@ -4370,10 +4352,7 @@ def check_black_screen():
                     print(r.text, '~~~~~~~~~~~~~')  # 返回1 是正常，返回2 是黑屏
                     index = int(ui.lineEdit_alarm.text()) - 1
                     sc.GASetExtDoBit(index, 1)
-                    msgbox = threading.Thread(target=messagebox.showinfo,
-                                              args=("注意", "%s 识别主机黑屏！" % wakeup_addr[index]),
-                                              daemon=True)
-                    msgbox.start()
+                    show_message("注意", "%s 识别主机黑屏！" % wakeup_addr[index])
         except:
             print('图像识别主机通信失败！')
             flg_start['ai'] = False
@@ -6699,10 +6678,7 @@ def my_test():
     global z_ranking_res
     global ranking_array
     global wakeup_addr
-    # msgbox = threading.Thread(target=messagebox.showinfo,
-    #                           args=("注意", "OBS 链接失败！"),
-    #                           daemon=True)
-    # msgbox.start()
+    show_message("注意", "OBS 链接失败！")
     # index = int(ui.lineEdit_alarm.text()) - 1
     # sc.GASetExtDoBit(index, 1)
     wakeup_addr = ["http://192.168.0.127:8080"]
@@ -6797,6 +6773,15 @@ def scroll_to_bottom(text_browser: QTextBrowser):
     text_browser.setTextCursor(cursor)
     text_browser.ensureCursorVisible()
 
+def show_message(msg_title, msg_text):
+    msg_box = QMessageBox(ui)
+    msg_box.setIcon(QMessageBox.Information)
+    msg_box.setWindowTitle(msg_title)
+    msg_box.setText(msg_text)
+    msg_box.setStandardButtons(QMessageBox.Ok)
+    msg_box.setWindowModality(Qt.NonModal)  # 不阻塞主窗口交互（NonModal）
+    msg_box.setWindowFlags(msg_box.windowFlags() | Qt.WindowStaysOnTopHint) # 始终显示在主窗口前面
+    msg_box.show()
 
 class ZApp(QApplication):
     def __init__(self, argv):
