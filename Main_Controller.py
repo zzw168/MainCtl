@@ -764,11 +764,11 @@ def sort_ranking():
     global ranking_array
     global ball_sort
     # 1.排序区域
-    for i in range(0, len(ranking_array)):  # 冒泡排序
-        for j in range(0, len(ranking_array) - i - 1):
-            if ranking_array[j][6] < ranking_array[j + 1][6]:
-                ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
-    # ranking_array.sort(key=lambda x: x[6], reverse=True)
+    # for i in range(0, len(ranking_array)):  # 冒泡排序
+    #     for j in range(0, len(ranking_array) - i - 1):
+    #         if ranking_array[j][6] < ranking_array[j + 1][6]:
+    #             ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+    ranking_array.sort(key=lambda x: x[6], reverse=True)
 
     # 2.区域内排序
     for i in range(0, len(ranking_array)):  # 冒泡排序
@@ -1306,7 +1306,7 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
                     continue
                 pts = np.array(area['coordinates'], np.int32)
                 res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
-                if res > -1 and len(ball) <= 9:
+                if res > -1 and len(ball) >= 9:
                     ball[6] = area['area_code']
                     ball[7] = area['direction']
                     ball[8] = area['road_path']
@@ -2114,7 +2114,7 @@ class PlanBallNumThread(QThread):
                             if time_num > 1:
                                 time_old = time.time()
                                 sec_ += 1
-                                for i in range(max_area_count, max_area_count - balls_count, -1):
+                                for i in range(max_area_count - 1, max_area_count - balls_count, -1):
                                     for j in range(balls_count):
                                         if ranking_array[j][6] == i:
                                             ball_sort[i][max_lap_count - 1] = []
@@ -2705,17 +2705,14 @@ class ObsShotThread(QThread):
                     # print(obs_list)
                     ranking_temp = copy.deepcopy(ranking_array)
                     for i in range(0, obs_num):
-                        ball_sort_num = len(ball_sort[max_area_count][max_lap_count - 1])
-                        if ball_sort_num < i + 1:
-                            for j in range(i + 1 - ball_sort_num):
-                                ball_sort[max_area_count - balls_count][max_lap_count - 1].append('')
-                        ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
                         for j in range(0, len(ranking_temp)):
                             if ranking_temp[j][5] == obs_list[i]:
                                 ranking_temp[j][6] = max_area_count
                                 ranking_temp[j][9] = max_lap_count - 1
                                 break
                     ranking_array = copy.deepcopy(ranking_temp)
+                    ball_sort[max_area_count][max_lap_count - 1] = copy.deepcopy(obs_list)
+                    print(ball_sort[max_area_count][max_lap_count - 1],'~~~~~~~~~~~~~~~~~~~')
                     self.signal.emit(obs_res)
             self.run_flg = False
 
@@ -4750,7 +4747,14 @@ class MapLabel(QLabel):
         # print(self.positions)
         # 模拟排名
         if ranking_array and ranking_array[0][6] < max_area_count - 2 and ranking_array[0][10] == 0:
-            self.positions.sort(key=lambda a: (-a[3], -a[0]))
+            # self.positions.sort(key=lambda a: (-a[3], -a[0]))
+            self.positions.sort(key=lambda a: (-a[3]))
+            for i in range(len(self.positions)):
+                for j in range(len(self.positions) - i - 1):
+                    if self.positions[j][3] == self.positions[j + 1][3]:
+                        if self.positions[j][0] < self.positions[j + 1][0]:
+                            self.positions[j], self.positions[j + 1] = self.positions[j + 1], self.positions[j]
+
             z_ranking_res = [ball[2] for ball in self.positions]
         # 各个珠子一圈时间
         if ranking_array:
@@ -6042,17 +6046,15 @@ class ResetRankingThread(QThread):
                 ranking_array.append([])
                 for col in range(0, len(init_array[row])):
                     ranking_array[row].append(init_array[row][col])
-                if row == 1 and ui.checkBox_end_2.isChecked():
-                    for i in range(balls_count):
-                        ranking_array[i][6] = 1  # 强制在第一区
             ball_sort = []  # 位置寄存器
             for row in range(0, max_area_count + 1):
                 ball_sort.append([])
-                if row == 1 and ui.checkBox_end_2.isChecked():
-                    ball_sort[row][0] = copy.deepcopy(camera_list)
-                else:
-                    for col in range(0, max_lap_count):
-                        ball_sort[row].append([])
+                for col in range(0, max_lap_count):
+                    ball_sort[row].append([])
+            if ui.checkBox_end_2.isChecked():
+                ball_sort[1][0] = copy.deepcopy(camera_list)
+                for i in range(balls_count):
+                    ranking_array[i][6] = 1  # 强制在第一区
             balls_start = 0  # 起点球数
             if con_data:
                 for row in range(0, len(init_array)):
