@@ -4747,15 +4747,16 @@ class MapLabel(QLabel):
         # print(self.positions)
         # 模拟排名
         if ranking_array and ranking_array[0][6] < max_area_count - 2 and ranking_array[0][10] == 0:
-            # self.positions.sort(key=lambda a: (-a[3], -a[0]))
-            self.positions.sort(key=lambda a: (-a[3]))
-            for i in range(len(self.positions)):
-                for j in range(len(self.positions) - i - 1):
-                    if self.positions[j][3] == self.positions[j + 1][3]:
-                        if self.positions[j][0] < self.positions[j + 1][0]:
-                            self.positions[j], self.positions[j + 1] = self.positions[j + 1], self.positions[j]
-
-            z_ranking_res = [ball[2] for ball in self.positions]
+            self.positions.sort(key=lambda a: (-a[3], -a[0]))
+            # self.positions.sort(key=lambda a: (-a[3]))
+            # for i in range(len(self.positions)):
+            #     for j in range(len(self.positions) - i - 1):
+            #         if self.positions[j][3] == self.positions[j + 1][3]:
+            #             if self.positions[j][0] < self.positions[j + 1][0]:
+            #                 self.positions[j], self.positions[j + 1] = self.positions[j + 1], self.positions[j]
+            pos_temp = [ball[2] for ball in self.positions]
+            if len(pos_temp) == len(z_ranking_res):
+                z_ranking_res = copy.deepcopy(pos_temp)
         # 各个珠子一圈时间
         if ranking_array:
             for i in range(balls_count):
