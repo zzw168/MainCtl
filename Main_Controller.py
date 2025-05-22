@@ -1771,6 +1771,11 @@ class ReStartThread(QThread):
             if not self.run_flg:
                 continue
             if ui.checkBox_end_2.isChecked():
+                while ObsShot_Thread.run_flg:
+                    time.sleep(1)
+                ObsShot_Thread.run_flg = True
+                while ObsShot_Thread.run_flg:
+                    time.sleep(1)
                 ball_sort[1][0] = copy.deepcopy(camera_list)
                 for i in range(balls_count):
                     ranking_array[i][6] = 1  # 强制在第一区
@@ -2685,6 +2690,7 @@ class ObsShotThread(QThread):
 
     def run(self) -> None:
         global ranking_array
+        global camera_list
         while self.running:
             time.sleep(0.1)
             if not self.run_flg:
@@ -2693,6 +2699,7 @@ class ObsShotThread(QThread):
             obs_res = get_obs(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])
+                camera_list = copy.deepcopy(obs_list)
                 obs_num = len(obs_list)
                 if obs_num > 2:
                     # print(obs_list)
