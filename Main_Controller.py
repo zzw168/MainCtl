@@ -764,11 +764,11 @@ def sort_ranking():
     global ranking_array
     global ball_sort
     # 1.排序区域
-    # for i in range(0, len(ranking_array)):  # 冒泡排序
-    #     for j in range(0, len(ranking_array) - i - 1):
-    #         if ranking_array[j][6] < ranking_array[j + 1][6]:
-    #             ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
-    ranking_array.sort(key=lambda x: x[6], reverse=True)
+    for i in range(0, len(ranking_array)):  # 冒泡排序
+        for j in range(0, len(ranking_array) - i - 1):
+            if ranking_array[j][6] < ranking_array[j + 1][6]:
+                ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+    # ranking_array.sort(key=lambda x: x[6], reverse=True)
 
     # 2.区域内排序
     for i in range(0, len(ranking_array)):  # 冒泡排序
