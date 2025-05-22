@@ -2080,10 +2080,15 @@ class PlanBallNumThread(QThread):
                                 betting_end_time = int(time.time())
                                 lottery_term[11] = str(betting_end_time)
                             if num <= balls_count:
-                                map_label_big.bet_running[num - 1] = False
+                                for i in range(num):
+                                    map_label_big.bet_running[i] = False
                             self.signal.emit(num)
                             num_old = num
-                        if num > balls_count - 2 and screen_sort:
+                        if num < balls_count - 2:
+                            ObsShot_Thread.run_flg = True  # 终点识别排名线程
+                        if (num > balls_count - 2
+                                and not ObsShot_Thread.run_flg
+                                and screen_sort):
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
                         if (num >= balls_count
@@ -2139,7 +2144,7 @@ class PlanBallNumThread(QThread):
 
             tcp_ranking_thread.sleep_time = 0.1  # 恢复正常前端排名数据包发送频率
             if screen_sort:
-                while ScreenShot_Thread.run_flg:
+                while ObsShot_Thread.run_flg:
                     time.sleep(1)
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
             lottery_term[8] = term_comment
@@ -2221,7 +2226,7 @@ def PlanBallNumsignal_accept(msg):
 
 class ObsEndThread(QThread):
     """
-    ObsEndThread(QThread) 实时结果截图线程
+    ObsEndThread(QThread) 结束线程
     """
     signal = Signal(object)
 
@@ -2681,7 +2686,7 @@ class ObsShotThread(QThread):
     def run(self) -> None:
         global ranking_array
         while self.running:
-            time.sleep(0.5)
+            time.sleep(0.1)
             if not self.run_flg:
                 continue
             print('OBS运行')
@@ -2693,12 +2698,14 @@ class ObsShotThread(QThread):
                     # print(obs_list)
                     ranking_temp = copy.deepcopy(ranking_array)
                     for i in range(0, obs_num):
-                        if len(ball_sort[max_area_count - i][max_lap_count - 1]) < 1:
-                            ball_sort[max_area_count - i][max_lap_count - 1].append('')
-                        ball_sort[max_area_count - i][max_lap_count - 1][0] = obs_list[i]
+                        ball_sort_num = len(ball_sort[max_area_count][max_lap_count - 1])
+                        if ball_sort_num < i + 1:
+                            for j in range(i + 1 - ball_sort_num):
+                                ball_sort[max_area_count - balls_count][max_lap_count - 1].append('')
+                        ball_sort[max_area_count][max_lap_count - 1][i] = obs_list[i]
                         for j in range(0, len(ranking_temp)):
                             if ranking_temp[j][5] == obs_list[i]:
-                                ranking_temp[j][6] = max_area_count - i
+                                ranking_temp[j][6] = max_area_count
                                 ranking_temp[j][9] = max_lap_count - 1
                                 break
                     ranking_array = copy.deepcopy(ranking_temp)
@@ -4601,7 +4608,7 @@ class MapLabel(QLabel):
         self.step_length = step_length  # 步长
         self.ball_space = ball_space  # 球之间的距离（步数）
         self.ball_radius = ball_radius  # 像素
-        self.bet_running = [False] * balls_count
+        self.bet_running = [False] * balls_count  # 珠子结束计时标志
         self.pos_stop = []  # 每个球的停止位置索引
         # 设置label的尺寸
         self.setMaximumSize(picture_size, picture_size)
@@ -6773,6 +6780,7 @@ def scroll_to_bottom(text_browser: QTextBrowser):
     text_browser.setTextCursor(cursor)
     text_browser.ensureCursorVisible()
 
+
 def show_message(msg_title, msg_text):
     msg_box = QMessageBox(ui)
     msg_box.setIcon(QMessageBox.Information)
@@ -6780,8 +6788,9 @@ def show_message(msg_title, msg_text):
     msg_box.setText(msg_text)
     msg_box.setStandardButtons(QMessageBox.Ok)
     msg_box.setWindowModality(Qt.NonModal)  # 不阻塞主窗口交互（NonModal）
-    msg_box.setWindowFlags(msg_box.windowFlags() | Qt.WindowStaysOnTopHint) # 始终显示在主窗口前面
+    msg_box.setWindowFlags(msg_box.windowFlags() | Qt.WindowStaysOnTopHint)  # 始终显示在主窗口前面
     msg_box.show()
+
 
 class ZApp(QApplication):
     def __init__(self, argv):
@@ -7340,6 +7349,10 @@ if __name__ == '__main__':
     ObsEnd_Thread = ObsEndThread()  # 终点截图识别线程 6
     ObsEnd_Thread.signal.connect(ObsEndsignal_accept)
     ObsEnd_Thread.start()
+
+    ObsShot_Thread = ObsShotThread()  # 终点截图识别线程 6
+    ObsShot_Thread.signal.connect(ObsShotsignal_accept)
+    ObsShot_Thread.start()
 
     Axis_Thread = AxisThread()  # 轴复位 7
     Axis_Thread.signal.connect(axis_signal_accept)
