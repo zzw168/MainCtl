@@ -823,7 +823,8 @@ def color_to_num(res):  # 按最新排名排列数组
             if r[5] == init_array[i][5]:
                 arr_res.append(i + 1)
     if len(z_ranking_res) == len(arr_res):
-        z_ranking_res = copy.deepcopy(arr_res)
+        with z_lock:
+            z_ranking_res = copy.deepcopy(arr_res)
     # for i in range(0, len(arr_res)):
     #     for j in range(0, balls_count):
     #         if arr_res[i] == z_ranking_res[j]:
@@ -4759,7 +4760,8 @@ class MapLabel(QLabel):
             #                 self.positions[j], self.positions[j + 1] = self.positions[j + 1], self.positions[j]
             pos_temp = [ball[2] for ball in self.positions]
             if len(pos_temp) == len(z_ranking_res):
-                z_ranking_res = copy.deepcopy(pos_temp)
+                with z_lock:
+                    z_ranking_res = copy.deepcopy(pos_temp)
         # 各个珠子一圈时间
         if ranking_array:
             for i in range(balls_count):
@@ -7608,6 +7610,7 @@ if __name__ == '__main__':
     s485.cam_open()
 
     # 初始化列表
+    z_lock = threading.Lock()   # 线程锁
     con_data = []  # 排名数组
     z_ranking_res = []  # 球号排名数组(发送给前端网页排名显示)
     z_ranking_end = []  # 结果排名数组(发送给前端网页排名显示)
