@@ -654,6 +654,7 @@ def deal_action():
 # 处理排名
 def deal_rank(integration_qiu_array):
     global ranking_array
+    global ball_sort
     global lapTimes
     global lapTimes_thread
     global ranking_check
@@ -753,12 +754,7 @@ def deal_rank(integration_qiu_array):
                 ranking_temp[r_index][10] = 1
             else:
                 ranking_temp[r_index][10] = 0
-    with ranking_lock:
-        ranking_array = sort_ranking(ranking_temp, ball_sort_temp)
 
-
-def sort_ranking(ranking_temp, ball_sort_temp):
-    global ball_sort
     # 1.排序区域
     # for i in range(0, len(ranking_temp)):  # 冒泡排序
     #     for j in range(0, len(ranking_temp) - i - 1):
@@ -809,7 +805,8 @@ def sort_ranking(ranking_temp, ball_sort_temp):
                     ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
     with ball_sort_lock:
         ball_sort = copy.deepcopy(ball_sort_temp)
-    return ranking_temp
+    with ranking_lock:
+        ranking_array = copy.deepcopy(ranking_temp)
 
 
 def color_to_num(res):  # 按最新排名排列数组
