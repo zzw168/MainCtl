@@ -6584,12 +6584,18 @@ def stop_betting():
         if "yes" in response:
             term_status = 2
             term_comment = term_comments[0]
-            ReStart_Thread.start_flg = False
             while Kaj789_Thread.run_flg:
                 time.sleep(1)
             Kaj789_Thread.run_type = 'post_end'
             Kaj789_Thread.run_flg = True
+            for index in range(balls_count):
+                if z_ranking_time[index] == '':
+                    z_ranking_time[index] = 'TRAP'
             betting_loop_flg = False
+            ReStart_Thread.start_flg = False
+
+            PlanBallNum_Thread.run_flg = False  # 停止计球
+            TrapBall_ui.hide()  # 关闭卡珠窗口
         else:
             ui.radioButton_start_betting.setChecked(True)
             return
