@@ -39,20 +39,15 @@ def test_server(Track_number='I'):
         print(response.status_code)
         if response.status_code == 200:
             return True
-        else:
-            return False
     except requests.exceptions.Timeout:
         print("请求超时")
-        return False
     except requests.exceptions.ConnectionError:
         print("网络连接错误")
-        return False
     except requests.exceptions.HTTPError as err:
         print(f"HTTP 错误: {err}")
-        return False
     except requests.exceptions.RequestException as err:
         print(f"请求异常: {err}")  # 捕获所有 requests 相关异常
-        return False
+    return False
 
 
 def get_term(Track_number='M'):  # 取期号
