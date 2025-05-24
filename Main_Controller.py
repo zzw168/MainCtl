@@ -719,23 +719,23 @@ def deal_rank(integration_qiu_array):
                             ranking_temp[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_temp
                         ranking_temp[r_index][10] = 1
                     "*************************************************************************"
-                    if (ranking_temp[r_index][6] > max_area_count - balls_count
-                            and ui.checkBox_main_camera_set.isChecked()):
-                        for i in range(1, balls_count):
-                            if ranking_temp[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
-                                for j in range(i - 1, balls_count):
-                                    if ranking_temp[j][6] > max_area_count - balls_count:
-                                        ranking_temp[j][6] = max_area_count - balls_count
-                                break
-                        for i in range(0, balls_count):
-                            if ranking_temp[i][6] >= max_area_count - balls_count:
-                                # print(max_area_count - balls_count, max_lap_count - 1, i)
-                                ball_sort_num = len(ball_sort_temp[max_area_count - balls_count][max_lap_count - 1])
-                                if ball_sort_num < i + 1:
-                                    for j in range(i + 1 - ball_sort_num):
-                                        ball_sort_temp[max_area_count - balls_count][max_lap_count - 1].append('')
-                                # print(len(ball_sort_temp[max_area_count - balls_count][max_lap_count - 1]))
-                                ball_sort_temp[max_area_count - balls_count][max_lap_count - 1][i] = ranking_temp[i][5]
+                    # if (ranking_temp[r_index][6] > max_area_count - balls_count
+                    #         and ui.checkBox_main_camera_set.isChecked()):
+                    #     for i in range(1, balls_count):
+                    #         if ranking_temp[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
+                    #             for j in range(i - 1, balls_count):
+                    #                 if ranking_temp[j][6] > max_area_count - balls_count:
+                    #                     ranking_temp[j][6] = max_area_count - balls_count
+                    #             break
+                    #     for i in range(0, balls_count):
+                    #         if ranking_temp[i][6] >= max_area_count - balls_count:
+                    #             # print(max_area_count - balls_count, max_lap_count - 1, i)
+                    #             ball_sort_num = len(ball_sort_temp[max_area_count - balls_count][max_lap_count - 1])
+                    #             if ball_sort_num < i + 1:
+                    #                 for j in range(i + 1 - ball_sort_num):
+                    #                     ball_sort_temp[max_area_count - balls_count][max_lap_count - 1].append('')
+                    #             # print(len(ball_sort_temp[max_area_count - balls_count][max_lap_count - 1]))
+                    #             ball_sort_temp[max_area_count - balls_count][max_lap_count - 1][i] = ranking_temp[i][5]
                     "*************************************************************************"
                 if r_index > 0 and q_item[6] <= (max_area_count - balls_count):
                     if abs(q_item[6] - ranking_temp[0][6]) < area_limit / 2:
@@ -2097,7 +2097,7 @@ class PlanBallNumThread(QThread):
                                     map_label_big.bet_running[i] = False
                             self.signal.emit(num)
                             num_old = num
-                        if num < balls_count - 2:
+                        if num < balls_count - 2 and ui.checkBox_main_camera_set.isChecked():
                             ObsShot_Thread.run_flg = True  # 终点识别排名线程
                         if (num > balls_count - 2
                                 and not ObsShot_Thread.run_flg
