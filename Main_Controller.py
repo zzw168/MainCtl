@@ -6325,6 +6325,7 @@ def test_statussignal_accept(msg):
         index = int(ui.lineEdit_alarm.text()) - 1
         sc.GASetExtDoBit(index, 1)
         show_message("注意", "%s 识别主机黑屏！" % msg)
+        ui.checkBox_end_stop.setChecked(True)
     else:
         for flg in flg_start.keys():
             if flg_start[flg]:
