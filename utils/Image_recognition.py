@@ -1,115 +1,145 @@
-def deal_rank(integration_qiu_array, max_region_count, max_lap_count, ranking_array_, ball_sort_):
-    for r_index in range(0, len(ranking_array_)):
-        replaced = False
+import copy
+import threading
+import time
+
+max_area_count = 68
+balls_count = 8
+max_lap_count = 2
+ranking_time_start = 0
+Track_number = 'I'
+term = 8000
+
+ball_sort_lock = threading.Lock()
+ranking_lock = threading.Lock()
+
+def deal_rank(integration_qiu_array):
+    global ranking_array, ball_sort, lapTimes, lapTimes_thread, ranking_check
+
+    area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
+
+    # 深拷贝全局状态以操作
+    ranking_temp = copy.deepcopy(ranking_array)
+    ball_sort_temp = copy.deepcopy(ball_sort)
+
+    # 更新圈数、位置
+    for r_index, ball in enumerate(ranking_temp):
+        updated = False
         for q_item in integration_qiu_array:
-            if ranking_array_[r_index][5] == q_item[5]:  # 更新 ranking_array
-                if q_item[6] < ranking_array_[r_index][6]:  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
-                    result_count = ranking_array_[r_index][6] - q_item[6]
-                    if result_count >= max_region_count - 6:
-                        ranking_array_[r_index][8] += 1
-                        if ranking_array_[r_index][8] > max_lap_count - 1:
-                            ranking_array_[r_index][8] = 0
-                if ((ranking_array_[r_index][6] == 0)  # 等于0 刚初始化，未检测区域
-                        or (q_item[6] >= ranking_array_[r_index][6] and  # 新位置要大于旧位置
-                            (q_item[6] - ranking_array_[r_index][6] <= 3  # 新位置相差旧位置三个区域以内
-                             or ranking_array_[0][6] - ranking_array_[r_index][
-                                 6] > 5))  # 当新位置与旧位置超过3个区域，则旧位置与头名要超过5个区域才统计
-                        or (q_item[6] < 8 and ranking_array_[r_index][6] >= max_region_count - 8)):  # 跨圈情况
-                    for r_i in range(0, len(q_item)):
-                        ranking_array_[r_index][r_i] = q_item[r_i]  # 更新 ranking_array
-                    ranking_array_[r_index][9] = 1
-                replaced = True
-                break
-        if not replaced:
-            ranking_array_[r_index][9] = 0
-    sort_ranking(ranking_array_, ball_sort_)
+            if ball[5] != q_item[5]:
+                continue
 
+            if handle_lap(ball, q_item, r_index, area_limit):
+                pass  # 圈数更新逻辑封装
 
-def sort_ranking(ranking_array_, ball_sort_):
-    # 1.排序区域
-    for i in range(0, len(ranking_array_)):  # 冒泡排序
-        for j in range(0, len(ranking_array_) - i - 1):
-            if ranking_array_[j][6] < ranking_array_[j + 1][6]:
-                ranking_array_[j], ranking_array_[j + 1] = ranking_array_[j + 1], ranking_array_[j]
-    # 2.区域内排序
-    for i in range(0, len(ranking_array_)):  # 冒泡排序
-        for j in range(0, len(ranking_array_) - i - 1):
-            if ranking_array_[j][6] == ranking_array_[j + 1][6]:
-                if ranking_array_[j][7] == 0:  # (左后->右前)
-                    if ranking_array_[j][0] < ranking_array_[j + 1][0]:
-                        ranking_array_[j], ranking_array_[j + 1] = ranking_array_[j + 1], ranking_array_[j]
-                if ranking_array_[j][7] == 1:  # (左前<-右后)
-                    if ranking_array_[j][0] > ranking_array_[j + 1][0]:
-                        ranking_array_[j], ranking_array_[j + 1] = ranking_array_[j + 1], ranking_array_[j]
-                if ranking_array_[j][7] == 10:  # (上前 ↑ 下后)
-                    if ranking_array_[j][1] > ranking_array_[j + 1][1]:
-                        ranking_array_[j], ranking_array_[j + 1] = ranking_array_[j + 1], ranking_array_[j]
-                if ranking_array_[j][7] == 11:  # (上后 ↓ 下前)
-                    if ranking_array_[j][1] < ranking_array_[j + 1][1]:
-                        ranking_array_[j], ranking_array_[j + 1] = ranking_array_[j + 1], ranking_array_[j]
-    # 3.圈数排序
-    for i in range(0, len(ranking_array_)):  # 冒泡排序
-        for j in range(0, len(ranking_array_) - i - 1):
-            if ranking_array_[j][8] < ranking_array_[j + 1][8]:
-                ranking_array_[j], ranking_array_[j + 1] = ranking_array_[j + 1], ranking_array_[j]
-    # 4.寄存器保存固定每个区域的最新排位（因为ranking_array 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
-    for i in range(0, len(ranking_array_)):
-        if not (ranking_array_[i][5] in ball_sort_[ranking_array_[i][6]][ranking_array_[i][8]]):
-            ball_sort_[ranking_array_[i][6]][ranking_array_[i][8]].append(ranking_array_[i][5])  # 添加寄存器球排序
-            # if ranking_array[i][6] == 35 and ranking_array[i][8] == 1:
-            #     print(ball_sort[ranking_array[i][6]][ranking_array[i][8]])
-    # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
-    for i in range(0, len(ranking_array_)):
-        for j in range(0, len(ranking_array_) - i - 1):
-            if (ranking_array_[j][6] == ranking_array_[j + 1][6]) and (
-                    ranking_array_[j][8] == ranking_array_[j + 1][8]):
-                m = 0
-                n = 0
-                for k in range(0, len(ball_sort_[ranking_array_[j][6]][ranking_array_[j][8]])):
-                    if ranking_array_[j][5] == ball_sort_[ranking_array_[j][6]][ranking_array_[j][8]][k]:
-                        n = k
-                    elif ranking_array_[j + 1][5] == ball_sort_[ranking_array_[j][6]][ranking_array_[j][8]][k]:
-                        m = k
-                if n > m:  # 把区域排位索引最小的球（即排名最前的球）放前面
-                    ranking_array_[j], ranking_array_[j + 1] = ranking_array_[j + 1], ranking_array_[j]
-    return ranking_array_, ball_sort_
+            if is_valid_update(ball, q_item, area_limit):
+                if check_position_conflict(ranking_temp, q_item) or ball[6] != 1:
+                    apply_position_update(ball, q_item)
+                    ball[10] = 1
+                else:
+                    ball[10] = 0
 
+            if r_index > 0 and q_item[6] <= max_area_count - balls_count:
+                if abs(q_item[6] - ranking_temp[0][6]) < area_limit / 2:
+                    if ranking_check[q_item[5]] == [-1, -1]:
+                        ranking_check[q_item[5]] = [q_item[6], ball[9]]
+                    if ball[6] != max_area_count - balls_count and ball[6] <= q_item[6]:
+                        ball[9] = ranking_temp[0][9]
+                    ball[10] = 1
+            updated = True
+            break
 
-def reset_ranking_array(init_array, max_lap_count, max_region_count, ):
-    """
-    重置排名数组
-    # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域，7=方向排名,8=圈数,9=0不可见 1可见.
-    """
-    ranking_array_ = []  # 排名数组
-    for i in range(0, len(init_array)):
-        ranking_array_.append([])
-        for j in range(0, len(init_array[i])):
-            ranking_array_[i].append(init_array[i][j])
-    ball_sort_ = []  # 位置寄存器
-    for i in range(0, max_region_count + 1):
-        ball_sort_.append([])
-        for j in range(0, max_lap_count):
-            ball_sort_[i].append([])
-    con_data_ = []  # 排名数组
-    for i in range(0, len(init_array)):
-        con_data_.append([])
-        for j in range(0, 5):
-            con_data_[i].append([])
-            if j == 0:
-                con_data_[i][j] = init_array[i][5]  # con_data 数据表数组
-            else:
-                con_data_[i][j] = 0
-    return ranking_array_, ball_sort_, con_data_
+        if not updated:
+            ball[10] = 1 if map_label_big.map_action >= len(map_label_big.path_points[0]) - 20 else 0
 
+    # 将区域内排位寄存器更新
+    for ball in ranking_temp:
+        if len(ball_sort_temp) <= ball[6]:
+            continue
+        if ball[5] not in ball_sort_temp[ball[6]][ball[9]]:
+            ball_sort_temp[ball[6]][ball[9]].append(ball[5])
 
-def to_num(res, init_array, z_response):
-    arr_res = []
-    for r in res:
-        for i in range(0, len(init_array)):
-            if r[0] == init_array[i][5]:
-                arr_res.append(i + 1)
-    for i in range(0, len(arr_res)):
-        for j in range(0, len(z_response)):
-            if arr_res[i] == z_response[j]:
-                z_response[i], z_response[j] = z_response[j], z_response[i]
-    return z_response
+    # 排序：圈数 > 区域 > 自定义方向 > 寄存器顺序
+    def sort_key(ball):
+        lap, area, direction = ball[9], ball[6], ball[7]
+        try:
+            reg_order = ball_sort_temp[area][lap].index(ball[5])
+        except ValueError:
+            reg_order = 999
+        pos_score = ball[0] if direction in (0, 1) else ball[1]
+        pos_score *= -1 if direction in (0, 11) else 1
+        return (-lap, -area, pos_score, reg_order)
+
+    ranking_temp_sorted = sorted(ranking_temp, key=sort_key)
+
+    # 最终写回全局
+    with ball_sort_lock:
+        ball_sort = copy.deepcopy(ball_sort_temp)
+    with ranking_lock:
+        ranking_array = copy.deepcopy(ranking_temp_sorted)
+
+def handle_lap(ball, q_item, r_index, area_limit):
+    if ball[6] >= max_area_count - balls_count and ball[9] >= max_lap_count - 1 and r_index == 0:
+        for b in ranking_array:
+            if b[6] != max_area_count - balls_count:
+                b[9] = max_lap_count - 1
+
+    lap_condition = (
+        (not ui.checkBox_end_2.isChecked() and q_item[6] < ball[6] < max_area_count - balls_count + 1)
+        or (ui.checkBox_end_2.isChecked() and ball[9] < max_lap_count - 1 and q_item[6] < ball[6] < max_area_count + 1)
+    )
+
+    if lap_condition:
+        passed_area = ball[6] - q_item[6]
+        if passed_area >= max_area_count - area_limit - balls_count:
+            if ball[9] == 0 and lapTimes[r_index] == 0:
+                lapTimes[r_index] = round(time.time() - ranking_time_start, 2)
+                thread = threading.Thread(
+                    target=post_lapTime,
+                    args=(term, r_index + 1, lapTimes[r_index], Track_number),
+                    daemon=True
+                )
+                lapTimes_thread[r_index] = thread
+                thread.start()
+            if r_index == 0:
+                for b in ranking_array:
+                    ranking_check[b[5]] = [-1, -1]
+            ball[6] = 0
+            ball[9] += 1
+            if ball[9] >= max_lap_count:
+                ball[9] = max_lap_count - 1
+        return True
+    return False
+
+def is_valid_update(old_ball, new_ball, area_limit):
+    new_area = new_ball[6]
+    old_area = old_ball[6]
+    lap = old_ball[9]
+    valid_basic = (
+        old_area == 0 and new_area < area_limit or
+        (max_area_count - balls_count >= new_area >= old_area and 0 <= new_area - old_area <= area_limit) or
+        (
+            ranking_check[new_ball[5]][0] != -1 and
+            ranking_check[new_ball[5]][1] == lap and
+            0 < new_area - ranking_check[new_ball[5]][0] < area_limit
+            and ui.checkBox_First_Check.isChecked()
+        )
+    )
+    valid_end = (
+        new_area >= old_area >= max_area_count - area_limit - balls_count and
+        new_area - old_area <= area_limit + balls_count and
+        lap == max_lap_count - 1
+    )
+    return (valid_basic or valid_end) and new_area <= max_area_count
+
+def check_position_conflict(ranking_temp, q_item):
+    for b in ranking_temp:
+        if abs(q_item[0] - b[0]) <= 7 and abs(q_item[1] - b[1]) <= 7:
+            return False
+    return True
+
+def apply_position_update(ball, q_item):
+    for idx in range(len(q_item)):
+        ball[idx] = copy.deepcopy(q_item[idx])
+
+def post_lapTime():
+    pass
