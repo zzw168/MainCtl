@@ -1910,8 +1910,8 @@ def restartsignal_accept(msg):
                 show_message("注意", "请点击开始比赛！（Start Game!）")
     elif '比赛开始失败' in msg:
         ui.radioButton_stop_betting.click()
-        ui.textBrowser_msg.append(msg)
-        scroll_to_bottom(ui.textBrowser_msg)
+        sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
+        show_message("注意", "向服务器发送开始比赛状态失败！请重新开盘！")
     elif msg == '过场动画':
         ui.textBrowser_msg.append(succeed('过场动画'))
         scroll_to_bottom(ui.textBrowser_msg)
@@ -1923,8 +1923,8 @@ def restartsignal_accept(msg):
         ui.pushButton_term.setText(str(term))
     elif msg == 'error':
         ui.radioButton_stop_betting.click()
-        ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
-        scroll_to_bottom(ui.textBrowser_msg)
+        sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
+        show_message("注意", "开盘失败！请重新尝试！")
     else:
         ui.textBrowser.append(msg)
         ui.textBrowser_msg.append(msg)
