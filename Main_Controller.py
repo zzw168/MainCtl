@@ -358,7 +358,7 @@ def get_obs(scence_current):
                 img = resp.image_data[22:]
 
             if os.path.exists(ui.lineEdit_end1_Path.text()):
-                img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time()))
+                img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time()*1000))
                 str2image_file(img, img_file)  # 保存图片
 
             form_data = {
@@ -371,7 +371,8 @@ def get_obs(scence_current):
                 r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
                 r_img = r_list[0]
                 if os.path.exists(ui.lineEdit_end1_Path.text()):
-                    image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0]), 'wb')
+                    image_json = open('%s/obs_end_%s_%s.jpg' %
+                                      (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time()*1000)), 'wb')
                     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
                     image_json.close()
                 flg_start['ai_end'] = True
@@ -412,7 +413,7 @@ def obs_save_image():
                 if num >= balls_count or ui.checkBox_saveImgs_auto.isChecked():
                     time.sleep(1)
                     cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
-                                                      '%s/%s.jpg' % (save_path, time.time()), 1920,
+                                                      '%s/%s.jpg' % (save_path, int(time.time()*1000)), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
                         time.sleep(2)
@@ -549,7 +550,7 @@ def get_rtsp(r_url, timeout=20):
                             jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
                             if os.path.exists(ui.lineEdit_end2_Path.text()):
                                 img_file = '%s/rtsp_%s_%s.jpg' % (
-                                    ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+                                    ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()*1000))
                                 str2image_file(jpg_base64, img_file)
 
                             form_data = {
@@ -561,7 +562,8 @@ def get_rtsp(r_url, timeout=20):
                             r_list = eval(res.text)
                             r_img = r_list[0]
                             if os.path.exists(ui.lineEdit_end2_Path.text()):
-                                with open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
+                                with open('%s/rtsp_end_%s_%s.jpg' %
+                                          (ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()*1000)),
                                           'wb') as f:
                                     f.write(r_img)
                             flg_start['ai_end'] = True
@@ -618,7 +620,7 @@ def rtsp_save_image():
                             ret, frame = cap.read()
                         cap.release()
                         if ret:
-                            f = '%s/%s.jpg' % (save_path, int(time.time()))
+                            f = '%s/%s.jpg' % (save_path, int(time.time()*1000))
                             cv2.imwrite(f, frame)
                         else:
                             print("无法读取视频帧")
