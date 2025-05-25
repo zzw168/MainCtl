@@ -358,7 +358,7 @@ def get_obs(scence_current):
                 img = resp.image_data[22:]
 
             if os.path.exists(ui.lineEdit_end1_Path.text()):
-                img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time()*1000))
+                img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time() * 1000))
                 str2image_file(img, img_file)  # 保存图片
 
             form_data = {
@@ -372,7 +372,7 @@ def get_obs(scence_current):
                 r_img = r_list[0]
                 if os.path.exists(ui.lineEdit_end1_Path.text()):
                     image_json = open('%s/obs_end_%s_%s.jpg' %
-                                      (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time()*1000)), 'wb')
+                                      (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time() * 1000)), 'wb')
                     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
                     image_json.close()
                 flg_start['ai_end'] = True
@@ -413,7 +413,7 @@ def obs_save_image():
                 if num >= balls_count or ui.checkBox_saveImgs_auto.isChecked():
                     time.sleep(1)
                     cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
-                                                      '%s/%s.jpg' % (save_path, int(time.time()*1000)), 1920,
+                                                      '%s/%s.jpg' % (save_path, int(time.time() * 1000)), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
                         time.sleep(2)
@@ -550,7 +550,7 @@ def get_rtsp(r_url, timeout=20):
                             jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
                             if os.path.exists(ui.lineEdit_end2_Path.text()):
                                 img_file = '%s/rtsp_%s_%s.jpg' % (
-                                    ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()*1000))
+                                    ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000))
                                 str2image_file(jpg_base64, img_file)
 
                             form_data = {
@@ -563,7 +563,7 @@ def get_rtsp(r_url, timeout=20):
                             r_img = r_list[0]
                             if os.path.exists(ui.lineEdit_end2_Path.text()):
                                 with open('%s/rtsp_end_%s_%s.jpg' %
-                                          (ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()*1000)),
+                                          (ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000)),
                                           'wb') as f:
                                     f.write(r_img)
                             flg_start['ai_end'] = True
@@ -620,7 +620,7 @@ def rtsp_save_image():
                             ret, frame = cap.read()
                         cap.release()
                         if ret:
-                            f = '%s/%s.jpg' % (save_path, int(time.time()*1000))
+                            f = '%s/%s.jpg' % (save_path, int(time.time() * 1000))
                             cv2.imwrite(f, frame)
                         else:
                             print("无法读取视频帧")
@@ -2039,6 +2039,7 @@ class PlanBallNumThread(QThread):
         super(PlanBallNumThread, self).__init__()
         self.run_flg = False
         self.running = True
+        self.balls_num = 0
 
     def stop(self):
         self.run_flg = False
@@ -2076,11 +2077,11 @@ class PlanBallNumThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     # print(res, value)
                     if res == 0:
-                        num = math.ceil(value[0] / 2)  # 小数进一
-                        if num > len(z_ranking_time):
-                            num = len(z_ranking_time)
-                        if num > num_old:
-                            for i in range(num):
+                        self.balls_num = math.ceil(value[0] / 2)  # 小数进一
+                        if self.balls_num > len(z_ranking_time):
+                            self.balls_num = len(z_ranking_time)
+                        if self.balls_num > num_old:
+                            for i in range(self.balls_num):
                                 t = time.time()
                                 end_t = t - ranking_time_start
                                 if z_end_time[i] == 0:
@@ -2088,22 +2089,22 @@ class PlanBallNumThread(QThread):
                                 if z_ranking_time[i] in ['TRAP', 'OUT', '']:
                                     z_ranking_time[i] = '%.2f' % end_t
 
-                            if num == 1:
+                            if self.balls_num == 1:
                                 betting_end_time = int(time.time())
                                 lottery_term[11] = str(betting_end_time)
-                            if num <= balls_count:
-                                for i in range(num):
+                            if self.balls_num <= balls_count:
+                                for i in range(self.balls_num):
                                     map_label_big.bet_running[i] = False
-                            self.signal.emit(num)
-                            num_old = num
-                        if num < balls_count - 2 and ui.checkBox_main_camera_set.isChecked():
+                            self.signal.emit(self.balls_num)
+                            num_old = self.balls_num
+                        if self.balls_num < balls_count - 2 and ui.checkBox_main_camera_set.isChecked():
                             ObsShot_Thread.run_flg = True  # 终点识别排名线程
-                        if (num > balls_count - 2
+                        if (self.balls_num > balls_count - 2
                                 and not ObsShot_Thread.run_flg
                                 and screen_sort):
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
-                        if (num >= balls_count
+                        if (self.balls_num >= balls_count
                                 or z_ranking_time[balls_count - 1] not in ['TRAP', 'OUT', '']):
                             break
                         # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
@@ -2602,7 +2603,7 @@ class ScreenShotThread(QThread):
             for i in range(0, len(camera_list)):
                 for j in range(0, len(ranking_temp)):
                     if ranking_temp[j][5] == camera_list[i]:
-                        if i < balls_count - 1:
+                        if i < PlanBallNum_Thread.balls_num:  # 已进港的珠子数量
                             ranking_temp[j][6] = ball_num - 1
                         ranking_temp[j][9] = max_lap_count - 1
                 num = len(ball_sort_temp[ball_num - 1][max_lap_count - 1]) - 1
