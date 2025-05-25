@@ -6888,6 +6888,7 @@ class ZApp(QApplication):
             OrganCycle_Thread.stop()
             deal_udp_thread.stop()
             CheckFile_Thread.stop()
+            ObsShot_Thread.stop()  # obs终点排序线程
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -6945,6 +6946,8 @@ class ZApp(QApplication):
             print('deal_udp_thread')
             udp_thread.wait()  # 处理udp数据线程
             print('udp_thread')
+            ObsShot_Thread.wait()  # obs终点排序线程
+            print('ObsShot_Thread')
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
