@@ -1772,6 +1772,9 @@ class ReStartThread(QThread):
             if not self.run_flg:
                 continue
             if ui.checkBox_end_2.isChecked():
+                with ranking_lock:
+                    for i in range(balls_count):
+                        ranking_array[i][6] = 1  # 强制在第一区
                 while ObsShot_Thread.run_flg:
                     time.sleep(1)
                 ObsShot_Thread.run_flg = True
@@ -1779,9 +1782,6 @@ class ReStartThread(QThread):
                     time.sleep(1)
                 with ball_sort_lock:
                     ball_sort[1][0] = copy.deepcopy(camera_list)
-                with ranking_lock:
-                    for i in range(balls_count):
-                        ranking_array[i][6] = 1  # 强制在第一区
             else:
                 with ball_sort_lock:
                     ball_sort[1][0] = []
@@ -2094,7 +2094,7 @@ class PlanBallNumThread(QThread):
                                 for i in range(self.balls_num):
                                     map_label_big.bet_running[i] = False
                             self.signal.emit(self.balls_num)
-                            if self.balls_num in [2, 3, 4, 5] and ui.checkBox_main_camera_set.isChecked():
+                            if self.balls_num in [3, 4, 5] and ui.checkBox_main_camera_set.isChecked():
                                 ObsShot_Thread.run_flg = True  # 终点识别排名线程
                             num_old = self.balls_num
                         if (self.balls_num > balls_count - 2
