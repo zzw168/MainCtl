@@ -2094,7 +2094,7 @@ class PlanBallNumThread(QThread):
                                 for i in range(self.balls_num):
                                     map_label_big.bet_running[i] = False
                             self.signal.emit(self.balls_num)
-                            if self.balls_num in [3, 4, 5] and ui.checkBox_main_camera_set.isChecked():
+                            if self.balls_num in [3, 5] and ui.checkBox_main_camera_set.isChecked():
                                 ObsShot_Thread.run_flg = True  # 终点识别排名线程
                             num_old = self.balls_num
                         if (self.balls_num > balls_count - 2
