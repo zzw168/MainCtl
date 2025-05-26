@@ -254,7 +254,7 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
             time.sleep(1)
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
-            break
+            return True
         except:
             if i < 3:
                 try:
@@ -270,12 +270,7 @@ def activate_browser():  # 程序开始，刷新浏览器
                 lottery_term[9] = '截图失败'
                 print('OBS 切换操作失败！')
                 flg_start['obs'] = False
-                index = int(ui.lineEdit_alarm.text()) - 1
-                sc.GASetExtDoBit(index, 1)
-                msgbox = threading.Thread(target=messagebox.showinfo,
-                                          args=("注意", "OBS 链接失败！"),
-                                          daemon=True)
-                msgbox.start()
+                return False
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -333,7 +328,7 @@ def scenes_change():  # 变换场景
 
 
 # 截取OBS图片
-def get_picture(scence_current):
+def get_obs(scence_current):
     global lottery_term
     global cl_request
     resp = ''
@@ -363,7 +358,7 @@ def get_picture(scence_current):
                 img = resp.image_data[22:]
 
             if os.path.exists(ui.lineEdit_end1_Path.text()):
-                img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time()))
+                img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time() * 1000))
                 str2image_file(img, img_file)  # 保存图片
 
             form_data = {
@@ -376,7 +371,8 @@ def get_picture(scence_current):
                 r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
                 r_img = r_list[0]
                 if os.path.exists(ui.lineEdit_end1_Path.text()):
-                    image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0]), 'wb')
+                    image_json = open('%s/obs_end_%s_%s.jpg' %
+                                      (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time() * 1000)), 'wb')
                     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
                     image_json.close()
                 flg_start['ai_end'] = True
@@ -399,12 +395,6 @@ def get_picture(scence_current):
                 continue
             else:
                 flg_start['obs'] = False
-                index = int(ui.lineEdit_alarm.text()) - 1
-                sc.GASetExtDoBit(index, 1)
-                msgbox = threading.Thread(target=messagebox.showinfo,
-                                          args=("注意", "OBS 链接失败！"),
-                                          daemon=True)
-                msgbox.start()
                 return ['', '[1]', 'obs']
 
 
@@ -423,7 +413,7 @@ def obs_save_image():
                 if num >= balls_count or ui.checkBox_saveImgs_auto.isChecked():
                     time.sleep(1)
                     cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
-                                                      '%s/%s.jpg' % (save_path, time.time()), 1920,
+                                                      '%s/%s.jpg' % (save_path, int(time.time() * 1000)), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
                         time.sleep(2)
@@ -471,7 +461,7 @@ def obs_script_request():
 #     #     ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
 #     #     requests.get(ip_address)
 #     # except:
-#     #     return ['', '[1]', 'monitor']
+#     #     return ['', '[1]', 'rtsp']
 #     # cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
 #     cap = cv2.VideoCapture(rt_url)
 #     # cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
@@ -503,7 +493,7 @@ def obs_script_request():
 #                             str2image_file(jpg_base64, img_file)  # 保存图片
 #
 #                         form_data = {
-#                             'CameraType': 'monitor',
+#                             'CameraType': 'rtsp',
 #                             'img': jpg_base64,
 #                             'sort': ui.lineEdit_monitor_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
 #                         }
@@ -530,11 +520,12 @@ def obs_script_request():
 #     else:
 #         print(f'无法打开摄像头')
 #     cap.release()
-#     return ['', '[1]', 'monitor']
+#     return ['', '[1]', 'rtsp']
 def get_rtsp(r_url, timeout=20):
     def inner_get_rtsp(rt_url):
         cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
         cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+        jpg_base64 = ''
         if cap.isOpened():
             for i in range(3):
                 ret = False
@@ -559,11 +550,11 @@ def get_rtsp(r_url, timeout=20):
                             jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
                             if os.path.exists(ui.lineEdit_end2_Path.text()):
                                 img_file = '%s/rtsp_%s_%s.jpg' % (
-                                    ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+                                    ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000))
                                 str2image_file(jpg_base64, img_file)
 
                             form_data = {
-                                'CameraType': 'monitor',
+                                'CameraType': 'rtsp',
                                 'img': jpg_base64,
                                 'sort': ui.lineEdit_monitor_sort.text(),
                             }
@@ -571,7 +562,8 @@ def get_rtsp(r_url, timeout=20):
                             r_list = eval(res.text)
                             r_img = r_list[0]
                             if os.path.exists(ui.lineEdit_end2_Path.text()):
-                                with open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
+                                with open('%s/rtsp_end_%s_%s.jpg' %
+                                          (ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000)),
                                           'wb') as f:
                                     f.write(r_img)
                             flg_start['ai_end'] = True
@@ -589,7 +581,7 @@ def get_rtsp(r_url, timeout=20):
         else:
             print('无法打开摄像头')
         cap.release()
-        return ['', '[1]', 'monitor']
+        return [jpg_base64, '[1]', 'rtsp']
 
     # 添加超时控制
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -598,7 +590,7 @@ def get_rtsp(r_url, timeout=20):
             return future.result(timeout=timeout)
         except concurrent.futures.TimeoutError:
             print(f'⛔ get_rtsp 超时（>{timeout}s），自动放弃！')
-            return ['', '[1]', 'monitor']
+            return ['', '[1]', 'rtsp']
 
 
 def rtsp_save_image():
@@ -628,7 +620,7 @@ def rtsp_save_image():
                             ret, frame = cap.read()
                         cap.release()
                         if ret:
-                            f = '%s/%s.jpg' % (save_path, int(time.time()))
+                            f = '%s/%s.jpg' % (save_path, int(time.time() * 1000))
                             cv2.imwrite(f, frame)
                         else:
                             print("无法读取视频帧")
@@ -664,29 +656,32 @@ def deal_action():
 # 处理排名
 def deal_rank(integration_qiu_array):
     global ranking_array
+    global ball_sort
     global lapTimes
     global lapTimes_thread
     global ranking_check
     area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
-    for r_index in range(0, len(ranking_array)):
+    ranking_temp = copy.deepcopy(ranking_array)
+    ball_sort_temp = copy.deepcopy(ball_sort)
+    for r_index in range(0, len(ranking_temp)):
         replaced = False
         for q_item in integration_qiu_array:
-            if ranking_array[r_index][5] == q_item[5]:  # 更新 ranking_array
-                if (ranking_array[0][6] >= max_area_count - balls_count  # 头名进港,所有珠子变为最后一圈
-                        and ranking_array[0][9] >= max_lap_count - 1):
-                    for i in range(len(ranking_array)):
-                        if ranking_array[i][6] != max_area_count - balls_count:
-                            ranking_array[i][9] = max_lap_count - 1
+            if ranking_temp[r_index][5] == q_item[5]:  # 更新 ranking_temp
+                if (ranking_temp[0][6] >= max_area_count - balls_count  # 头名进港,所有珠子变为最后一圈
+                        and ranking_temp[0][9] >= max_lap_count - 1):
+                    for i in range(len(ranking_temp)):
+                        if ranking_temp[i][6] != max_area_count - balls_count:
+                            ranking_temp[i][9] = max_lap_count - 1
 
                 if ((not ui.checkBox_end_2.isChecked()  # 圈数处理
-                     and q_item[6] < ranking_array[r_index][6] < max_area_count - balls_count + 1)
+                     and q_item[6] < ranking_temp[r_index][6] < max_area_count - balls_count + 1)
                         or (ui.checkBox_end_2.isChecked()
-                            and ranking_array[r_index][9] < max_lap_count - 1  # 防止跨圈误判
-                            and q_item[6] < ranking_array[r_index][
+                            and ranking_temp[r_index][9] < max_lap_count - 1  # 防止跨圈误判
+                            and q_item[6] < ranking_temp[r_index][
                                 6] < max_area_count + 1)):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
-                    result_count = ranking_array[r_index][6] - q_item[6]
+                    result_count = ranking_temp[r_index][6] - q_item[6]
                     if result_count >= max_area_count - area_limit - balls_count:
-                        if (ranking_array[r_index][9] == 0  # 第0圈
+                        if (ranking_temp[r_index][9] == 0  # 第0圈
                                 and lapTimes[r_index] == 0):
                             lapTimes[r_index] = round(time.time() - ranking_time_start, 2)
                             lapTimes_thread[r_index] = threading.Thread(target=post_lapTime,
@@ -695,123 +690,125 @@ def deal_rank(integration_qiu_array):
                                                                         daemon=True)
                             lapTimes_thread[r_index].start()
                         if r_index == 0:
-                            for i in range(len(ranking_array)):
-                                ranking_check[ranking_array[i][5]] = [-1, -1]  # 换圈复位记号
-                        ranking_array[r_index][6] = 0  # 每增加一圈，重置区域
-                        ranking_array[r_index][9] += 1
-                        if ranking_array[r_index][9] > max_lap_count - 1:
-                            ranking_array[r_index][9] = max_lap_count - 1
+                            for i in range(len(ranking_temp)):
+                                ranking_check[ranking_temp[i][5]] = [-1, -1]  # 换圈复位记号
+                        ranking_temp[r_index][6] = 0  # 每增加一圈，重置区域
+                        ranking_temp[r_index][9] += 1
+                        if ranking_temp[r_index][9] > max_lap_count - 1:
+                            ranking_temp[r_index][9] = max_lap_count - 1
 
-                if ((ranking_array[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
-                    or (max_area_count - balls_count >= q_item[6] >= ranking_array[r_index][6]  # 新位置要大于旧位置
-                        and (0 <= q_item[6] - ranking_array[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
+                if ((ranking_temp[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
+                    or (max_area_count - balls_count >= q_item[6] >= ranking_temp[r_index][6]  # 新位置要大于旧位置
+                        and (0 <= q_item[6] - ranking_temp[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
                              or (ranking_check[q_item[5]][0] != -1
-                                 and ranking_check[q_item[5]][1] == ranking_array[r_index][9]
+                                 and ranking_check[q_item[5]][1] == ranking_temp[r_index][9]
                                  and 0 < q_item[6] - ranking_check[q_item[5]][0] < area_limit)
                              and ui.checkBox_First_Check.isChecked())
                     )  # 处理除终点排名位置的条件
-                    or (q_item[6] >= ranking_array[r_index][6] >= max_area_count - area_limit - balls_count
-                        and 0 <= q_item[6] - ranking_array[r_index][6] <= area_limit + balls_count
-                        and ranking_array[r_index][9] == max_lap_count - 1  # 处理最后一圈终点附近的条件
+                    or (q_item[6] >= ranking_temp[r_index][6] >= max_area_count - area_limit - balls_count
+                        and 0 <= q_item[6] - ranking_temp[r_index][6] <= area_limit + balls_count
+                        and ranking_temp[r_index][9] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                     )) and q_item[6] <= max_area_count:
                     ranking_check[q_item[5]] = [-1, -1]
                     write_ok = True
-                    if ranking_array[r_index][6] == 1:
-                        for i in range(len(ranking_array)):
-                            if ((abs(q_item[0] - ranking_array[i][0]) <= 7)  # 不能和前一个球的位置重叠
-                                    and (abs(q_item[1] - ranking_array[i][1]) <= 7)):  # 避免误判两种颜色
+                    if ranking_temp[r_index][6] == 1:  # 只在第一区作颜色互斥判断
+                        for i in range(len(ranking_temp)):
+                            if ((abs(q_item[0] - ranking_temp[i][0]) <= 7)  # 不能和前一个球的位置重叠
+                                    and (abs(q_item[1] - ranking_temp[i][1]) <= 7)):  # 避免误判两种颜色
                                 write_ok = False
                                 break
                     if write_ok:
                         for r_i in range(0, len(q_item)):
-                            ranking_array[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_array
-                        ranking_array[r_index][10] = 1
+                            ranking_temp[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_temp
+                        ranking_temp[r_index][10] = 1
                     "*************************************************************************"
-                    if (ranking_array[r_index][6] > max_area_count - balls_count
-                            and ui.checkBox_main_camera_set.isChecked()):
-                        for i in range(1, balls_count):
-                            if ranking_array[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
-                                for j in range(i - 1, balls_count):
-                                    if ranking_array[j][6] > max_area_count - balls_count:
-                                        ranking_array[j][6] = max_area_count - balls_count
-                                break
-                        for i in range(0, balls_count):
-                            if ranking_array[i][6] >= max_area_count - balls_count:
-                                if len(ball_sort[max_area_count - balls_count][max_lap_count - 1]) < i + 1:
-                                    ball_sort[max_area_count - balls_count][max_lap_count - 1].append('')
-                                ball_sort[max_area_count - balls_count][max_lap_count - 1][i] = ranking_array[i][5]
+                    # if (ranking_temp[r_index][6] > max_area_count - balls_count
+                    #         and ui.checkBox_main_camera_set.isChecked()):
+                    #     for i in range(1, balls_count):
+                    #         if ranking_temp[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
+                    #             for j in range(i - 1, balls_count):
+                    #                 if ranking_temp[j][6] > max_area_count - balls_count:
+                    #                     ranking_temp[j][6] = max_area_count - balls_count
+                    #             break
+                    #     for i in range(0, balls_count):
+                    #         if ranking_temp[i][6] >= max_area_count - balls_count:
+                    #             # print(max_area_count - balls_count, max_lap_count - 1, i)
+                    #             ball_sort_num = len(ball_sort_temp[max_area_count - balls_count][max_lap_count - 1])
+                    #             if ball_sort_num < i + 1:
+                    #                 for j in range(i + 1 - ball_sort_num):
+                    #                     ball_sort_temp[max_area_count - balls_count][max_lap_count - 1].append('')
+                    #             # print(len(ball_sort_temp[max_area_count - balls_count][max_lap_count - 1]))
+                    #             ball_sort_temp[max_area_count - balls_count][max_lap_count - 1][i] = ranking_temp[i][5]
                     "*************************************************************************"
                 if r_index > 0 and q_item[6] <= (max_area_count - balls_count):
-                    if abs(q_item[6] - ranking_array[0][6]) < area_limit / 2:
+                    if abs(q_item[6] - ranking_temp[0][6]) < area_limit / 2:
                         if ranking_check[q_item[5]][0] == -1 and ranking_check[q_item[5]][1] == -1:
                             ranking_check[q_item[5]][0] = q_item[6]  # 记录珠子区域
-                            ranking_check[q_item[5]][1] = ranking_array[r_index][9]  # 记录珠子圈数
-                        if (ranking_array[r_index][6] != max_area_count - balls_count
-                                and ranking_array[r_index][6] <= q_item[6]):
-                            ranking_array[r_index][9] = ranking_array[0][9]
-                        ranking_array[r_index][10] = 1
+                            ranking_check[q_item[5]][1] = ranking_temp[r_index][9]  # 记录珠子圈数
+                        if (ranking_temp[r_index][6] != max_area_count - balls_count
+                                and ranking_temp[r_index][6] <= q_item[6]):
+                            ranking_temp[r_index][9] = ranking_temp[0][9]
+                        ranking_temp[r_index][10] = 1
                 replaced = True
                 break
         if not replaced:
             if map_label_big.map_action >= len(map_label_big.path_points[0]) - 20:
-                ranking_array[r_index][10] = 1
+                ranking_temp[r_index][10] = 1
             else:
-                ranking_array[r_index][10] = 0
+                ranking_temp[r_index][10] = 0
 
-    sort_ranking()
-
-
-def sort_ranking():
-    global ranking_array
-    global ball_sort
     # 1.排序区域
-    # for i in range(0, len(ranking_array)):  # 冒泡排序
-    #     for j in range(0, len(ranking_array) - i - 1):
-    #         if ranking_array[j][6] < ranking_array[j + 1][6]:
-    #             ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
-    ranking_array.sort(key=lambda x: x[6], reverse=True)
+    # for i in range(0, len(ranking_temp)):  # 冒泡排序
+    #     for j in range(0, len(ranking_temp) - i - 1):
+    #         if ranking_temp[j][6] < ranking_temp[j + 1][6]:
+    #             ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+    ranking_temp.sort(key=lambda x: x[6], reverse=True)
 
     # 2.区域内排序
-    for i in range(0, len(ranking_array)):  # 冒泡排序
-        for j in range(0, len(ranking_array) - i - 1):
-            if ranking_array[j][6] == ranking_array[j + 1][6]:
-                if ranking_array[j][7] == 0:  # (左后->右前)
-                    if ranking_array[j][0] < ranking_array[j + 1][0]:
-                        ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
-                if ranking_array[j][7] == 1:  # (左前<-右后)
-                    if ranking_array[j][0] > ranking_array[j + 1][0]:
-                        ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
-                if ranking_array[j][7] == 10:  # (上前 ↑ 下后)
-                    if ranking_array[j][1] > ranking_array[j + 1][1]:
-                        ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
-                if ranking_array[j][7] == 11:  # (上后 ↓ 下前)
-                    if ranking_array[j][1] < ranking_array[j + 1][1]:
-                        ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+    for i in range(0, len(ranking_temp)):  # 冒泡排序
+        for j in range(0, len(ranking_temp) - i - 1):
+            if ranking_temp[j][6] == ranking_temp[j + 1][6]:
+                if ranking_temp[j][7] == 0:  # (左后->右前)
+                    if ranking_temp[j][0] < ranking_temp[j + 1][0]:
+                        ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+                if ranking_temp[j][7] == 1:  # (左前<-右后)
+                    if ranking_temp[j][0] > ranking_temp[j + 1][0]:
+                        ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+                if ranking_temp[j][7] == 10:  # (上前 ↑ 下后)
+                    if ranking_temp[j][1] > ranking_temp[j + 1][1]:
+                        ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+                if ranking_temp[j][7] == 11:  # (上后 ↓ 下前)
+                    if ranking_temp[j][1] < ranking_temp[j + 1][1]:
+                        ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
     # 3.圈数排序
-    for i in range(0, len(ranking_array)):  # 冒泡排序
-        for j in range(0, len(ranking_array) - i - 1):
-            if ranking_array[j][9] < ranking_array[j + 1][9]:
-                ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
-    # 4.寄存器保存固定每个区域的最新排位（因为ranking_array 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
-    for i in range(0, len(ranking_array)):
-        if len(ball_sort) - 1 < ranking_array[i][6]:
+    for i in range(0, len(ranking_temp)):  # 冒泡排序
+        for j in range(0, len(ranking_temp) - i - 1):
+            if ranking_temp[j][9] < ranking_temp[j + 1][9]:
+                ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+    # 4.寄存器保存固定每个区域的最新排位（因为ranking_temp 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
+    for i in range(0, len(ranking_temp)):
+        if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
             continue
-        if not (ranking_array[i][5] in ball_sort[ranking_array[i][6]][ranking_array[i][9]]):
-            ball_sort[ranking_array[i][6]][ranking_array[i][9]].append(copy.deepcopy(ranking_array[i][5]))  # 添加寄存器球排序
+        if not (ranking_temp[i][5] in ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]):
+            ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
     # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
-    for i in range(0, len(ranking_array)):
-        for j in range(0, len(ranking_array) - i - 1):
-            if (ranking_array[j][6] == ranking_array[j + 1][6]) and (ranking_array[j][9] == ranking_array[j + 1][9]):
+    for i in range(0, len(ranking_temp)):
+        for j in range(0, len(ranking_temp) - i - 1):
+            if (ranking_temp[j][6] == ranking_temp[j + 1][6]) and (ranking_temp[j][9] == ranking_temp[j + 1][9]):
                 m = 0
                 n = 0
 
-                for k in range(0, len(ball_sort[ranking_array[j][6]][ranking_array[j][9]])):
-                    if ranking_array[j][5] == ball_sort[ranking_array[j][6]][ranking_array[j][9]][k]:
+                for k in range(0, len(ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]])):
+                    if ranking_temp[j][5] == ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]][k]:
                         n = k
-                    elif ranking_array[j + 1][5] == ball_sort[ranking_array[j][6]][ranking_array[j][9]][k]:
+                    elif ranking_temp[j + 1][5] == ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]][k]:
                         m = k
                 if n > m:  # 把区域排位索引最小的球（即排名最前的球）放前面
-                    ranking_array[j], ranking_array[j + 1] = ranking_array[j + 1], ranking_array[j]
+                    ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+    with ball_sort_lock:
+        ball_sort = copy.deepcopy(ball_sort_temp)
+    with ranking_lock:
+        ranking_array = copy.deepcopy(ranking_temp)
 
 
 def color_to_num(res):  # 按最新排名排列数组
@@ -823,10 +820,13 @@ def color_to_num(res):  # 按最新排名排列数组
         for i in range(0, balls_count):
             if r[5] == init_array[i][5]:
                 arr_res.append(i + 1)
-    for i in range(0, len(arr_res)):
-        for j in range(0, balls_count):
-            if arr_res[i] == z_ranking_res[j]:
-                z_ranking_res[i], z_ranking_res[j] = z_ranking_res[j], z_ranking_res[i]
+    if len(z_ranking_res) == len(arr_res):
+        with z_lock:
+            z_ranking_res = copy.deepcopy(arr_res)
+    # for i in range(0, len(arr_res)):
+    #     for j in range(0, balls_count):
+    #         if arr_res[i] == z_ranking_res[j]:
+    #             z_ranking_res[i], z_ranking_res[j] = z_ranking_res[j], z_ranking_res[i]
 
 
 def camera_to_num(res):  # 按最新排名排列数组
@@ -838,6 +838,7 @@ def camera_to_num(res):  # 按最新排名排列数组
         for arr in range(0, len(init_array)):
             if r == init_array[arr][5]:
                 arr_res.append(arr + 1)
+    # return arr_res
     for arr in range(0, len(arr_res)):
         for cam in range(0, len(camera_response)):
             if arr_res[arr] == camera_response[cam]:
@@ -911,11 +912,12 @@ def save_ballsort_json():
             ballsort_all['time_count_ball'] = int(ui.lineEdit_end_count_ball.text())
             max_lap_count = int(ui.lineEdit_lap_Ranking.text())
             max_area_count = int(ui.lineEdit_area_Ranking.text())
-            ball_sort = []  # 位置寄存器
-            for row in range(0, max_area_count + 1):
-                ball_sort.append([])
-                for col in range(0, max_lap_count):
-                    ball_sort[row].append([])
+            with ball_sort_lock:
+                ball_sort = []  # 位置寄存器
+                for row in range(0, max_area_count + 2):
+                    ball_sort.append([])
+                    for col in range(0, max_lap_count):
+                        ball_sort[row].append([])
             # print(ballsort_conf)
             with open(file, "w", encoding="utf-8") as f:
                 json.dump(ballsort_all, f, indent=4, ensure_ascii=False)
@@ -1307,7 +1309,7 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
                     continue
                 pts = np.array(area['coordinates'], np.int32)
                 res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
-                if res > -1 and len(ball) <= 9:
+                if res > -1 and len(ball) >= 9:
                     ball[6] = area['area_code']
                     ball[7] = area['direction']
                     ball[8] = area['road_path']
@@ -1772,11 +1774,19 @@ class ReStartThread(QThread):
             if not self.run_flg:
                 continue
             if ui.checkBox_end_2.isChecked():
-                ball_sort[1][0] = copy.deepcopy(camera_list)
-                for i in range(balls_count):
-                    ranking_array[i][6] = 1  # 强制在第一区
+                while ObsShot_Thread.run_flg:
+                    time.sleep(1)
+                ObsShot_Thread.run_flg = True
+                while ObsShot_Thread.run_flg:
+                    time.sleep(1)
+                with ball_sort_lock:
+                    ball_sort[1][0] = copy.deepcopy(camera_list)
+                with ranking_lock:
+                    for i in range(balls_count):
+                        ranking_array[i][6] = 1  # 强制在第一区
             else:
-                ball_sort[1][0] = []
+                with ball_sort_lock:
+                    ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
                 response = get_term(Track_number)
@@ -1841,7 +1851,9 @@ class ReStartThread(QThread):
                         if not reset_ranking_Thread.run_flg:
                             reset_ranking_Thread.run_flg = True  # 初始化排名，位置变量
                         ready_flg = False
-                    ball_sort[1][0] = []
+                    if not ui.checkBox_end_2.isChecked():
+                        with ball_sort_lock:
+                            ball_sort[1][0] = []
                 ranking_time_start = time.time()
                 time.sleep(1)
                 self.signal.emit(t)
@@ -1894,14 +1906,11 @@ def restartsignal_accept(msg):
             ui.label_time_count.setText(str(t))
             if t == 120:
                 sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
-                msgbox = threading.Thread(target=messagebox.showinfo,
-                                          args=("注意", "请点击开始比赛！（Start Game!）"),
-                                          daemon=True)
-                msgbox.start()
+                show_message("注意", "请点击开始比赛！（Start Game!）")
     elif '比赛开始失败' in msg:
         ui.radioButton_stop_betting.click()
-        ui.textBrowser_msg.append(msg)
-        scroll_to_bottom(ui.textBrowser_msg)
+        sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
+        show_message("注意", "向服务器发送开始比赛状态失败！请重新开盘！")
     elif msg == '过场动画':
         ui.textBrowser_msg.append(succeed('过场动画'))
         scroll_to_bottom(ui.textBrowser_msg)
@@ -1913,8 +1922,8 @@ def restartsignal_accept(msg):
         ui.pushButton_term.setText(str(term))
     elif msg == 'error':
         ui.radioButton_stop_betting.click()
-        ui.textBrowser_msg.append(fail('分机服务器没有响应，可能在封盘状态！'))
-        scroll_to_bottom(ui.textBrowser_msg)
+        sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
+        show_message("注意", "开盘失败！请重新尝试！")
     else:
         ui.textBrowser.append(msg)
         ui.textBrowser_msg.append(msg)
@@ -2030,6 +2039,7 @@ class PlanBallNumThread(QThread):
         super(PlanBallNumThread, self).__init__()
         self.run_flg = False
         self.running = True
+        self.balls_num = 0
 
     def stop(self):
         self.run_flg = False
@@ -2067,11 +2077,11 @@ class PlanBallNumThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     # print(res, value)
                     if res == 0:
-                        num = math.ceil(value[0] / 2)  # 小数进一
-                        if num > len(z_ranking_time):
-                            num = len(z_ranking_time)
-                        if num > num_old:
-                            for i in range(num):
+                        self.balls_num = math.ceil(value[0] / 2)  # 小数进一
+                        if self.balls_num > len(z_ranking_time):
+                            self.balls_num = len(z_ranking_time)
+                        if self.balls_num > num_old:
+                            for i in range(self.balls_num):
                                 t = time.time()
                                 end_t = t - ranking_time_start
                                 if z_end_time[i] == 0:
@@ -2079,17 +2089,22 @@ class PlanBallNumThread(QThread):
                                 if z_ranking_time[i] in ['TRAP', 'OUT', '']:
                                     z_ranking_time[i] = '%.2f' % end_t
 
-                            if num == 1:
+                            if self.balls_num == 1:
                                 betting_end_time = int(time.time())
                                 lottery_term[11] = str(betting_end_time)
-                            if num <= balls_count:
-                                map_label_big.bet_running[num - 1] = False
-                            self.signal.emit(num)
-                            num_old = num
-                        if num > balls_count - 2 and screen_sort:
+                            if self.balls_num <= balls_count:
+                                for i in range(self.balls_num):
+                                    map_label_big.bet_running[i] = False
+                            self.signal.emit(self.balls_num)
+                            num_old = self.balls_num
+                        if self.balls_num < balls_count - 2 and ui.checkBox_main_camera_set.isChecked():
+                            ObsShot_Thread.run_flg = True  # 终点识别排名线程
+                        if (self.balls_num > balls_count - 2
+                                and not ObsShot_Thread.run_flg
+                                and screen_sort):
                             ScreenShot_Thread.run_flg = True  # 终点截图识别线程
                             screen_sort = False
-                        if (num >= balls_count
+                        if (self.balls_num >= balls_count
                                 or z_ranking_time[balls_count - 1] not in ['TRAP', 'OUT', '']):
                             break
                         # elif num >= balls_start and not ui.checkBox_Pass_Recognition_Start.isChecked():
@@ -2110,7 +2125,8 @@ class PlanBallNumThread(QThread):
                                 for i in range(max_area_count, max_area_count - balls_count, -1):
                                     for j in range(balls_count):
                                         if ranking_array[j][6] == i:
-                                            ball_sort[i][max_lap_count - 1] = []
+                                            with ball_sort_lock:
+                                                ball_sort[i][max_lap_count - 1] = []
                                             break
                                 self.signal.emit(
                                     succeed('计球倒计时：%s' %
@@ -2142,7 +2158,7 @@ class PlanBallNumThread(QThread):
 
             tcp_ranking_thread.sleep_time = 0.1  # 恢复正常前端排名数据包发送频率
             if screen_sort:
-                while ScreenShot_Thread.run_flg:
+                while ObsShot_Thread.run_flg:
                     time.sleep(1)
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
             lottery_term[8] = term_comment
@@ -2224,7 +2240,7 @@ def PlanBallNumsignal_accept(msg):
 
 class ObsEndThread(QThread):
     """
-    ObsEndThread(QThread) 实时结果截图线程
+    ObsEndThread(QThread) 结束线程
     """
     signal = Signal(object)
 
@@ -2290,12 +2306,6 @@ class ObsEndThread(QThread):
                             lottery_term[9] = '截图失败'
                             print('OBS 截图操作失败！')
                             self.signal.emit(fail('OBS 截图操作失败！'))
-                            index = int(ui.lineEdit_alarm.text()) - 1
-                            sc.GASetExtDoBit(index, 1)
-                            msgbox = threading.Thread(target=messagebox.showinfo,
-                                                      args=("注意", "OBS 链接失败！"),
-                                                      daemon=True)
-                            msgbox.start()
                             flg_start['obs'] = False
             for i in range(5):
                 try:
@@ -2321,12 +2331,6 @@ class ObsEndThread(QThread):
                     else:
                         print('OBS 切换操作失败！')
                         self.signal.emit(fail('OBS 切换操作失败！'))
-                        index = int(ui.lineEdit_alarm.text()) - 1
-                        sc.GASetExtDoBit(index, 1)
-                        msgbox = threading.Thread(target=messagebox.showinfo,
-                                                  args=("注意", "OBS 链接失败！"),
-                                                  daemon=True)
-                        msgbox.start()
                         flg_start['obs'] = False
             for i in range(5):
                 try:
@@ -2352,12 +2356,6 @@ class ObsEndThread(QThread):
                     else:
                         print('OBS 关闭录像失败！')
                         self.signal.emit(fail('OBS 关闭录像失败！'))
-                        # index = int(ui.lineEdit_alarm.text()) - 1
-                        # sc.GASetExtDoBit(index, 1)
-                        # msgbox = threading.Thread(target=messagebox.showinfo,
-                        #                           args=("注意", "OBS 链接失败！"),
-                        #                           daemon=True)
-                        # msgbox.start()
                         flg_start['obs'] = False
 
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
@@ -2456,6 +2454,10 @@ def ObsEndsignal_accept(msg):
         if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():
             ui.checkBox_saveImgs_main.setChecked(False)
             ui.checkBox_saveImgs_monitor.setChecked(False)
+    elif '失败' in msg:
+        index = int(ui.lineEdit_alarm.text()) - 1
+        sc.GASetExtDoBit(index, 1)
+        show_message("注意", msg)
     elif '比赛计时' in msg:
         if ReStart_Thread.start_flg:
             t = int(time.time() - ranking_time_start)
@@ -2528,17 +2530,17 @@ class ScreenShotThread(QThread):
             self.signal.emit(succeed('截图结果识别运行！'))
             time.sleep(1)
             ObsEnd_Thread.screen_flg = False  # 结算页标志1
-            obs_res = get_picture(ui.lineEdit_source_end.text())  # 拍摄来源
+            obs_res = get_obs(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])
                 main_Camera = camera_to_num(obs_list)
                 self.signal.emit(obs_res)
 
-            monitor_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
-            if monitor_res:
-                rtsp_list = eval(monitor_res[1])
+            rtsp_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
+            if rtsp_res:
+                rtsp_list = eval(rtsp_res[1])
                 monitor_Camera = camera_to_num(rtsp_list)
-                self.signal.emit(monitor_res)
+                self.signal.emit(rtsp_res)
 
             if obs_res[1] != '[1]' and main_Camera == monitor_Camera:
                 term_status = 1
@@ -2591,22 +2593,28 @@ class ScreenShotThread(QThread):
             camera_list = []
             for i in range(balls_count):
                 camera_list.append(init_array[z_ranking_end[i] - 1][5])
-            # ball_sort[max_area_count][max_lap_count - 1] = []
             temp_lap = []
             for i in range(max_lap_count):
                 temp_lap.append([])
-            ball_sort.append(temp_lap)
+            ball_sort_temp = copy.deepcopy(ball_sort)
+            ball_sort_temp.append(temp_lap)
+            ball_num = len(ball_sort_temp)
             ranking_temp = copy.deepcopy(ranking_array)
             for i in range(0, len(camera_list)):
                 for j in range(0, len(ranking_temp)):
                     if ranking_temp[j][5] == camera_list[i]:
-                        if i < balls_count - 1:
-                            ranking_temp[j][6] = max_area_count + 1
+                        if i < PlanBallNum_Thread.balls_num:  # 已进港的珠子数量
+                            ranking_temp[j][6] = ball_num - 1
                         ranking_temp[j][9] = max_lap_count - 1
-                if len(ball_sort[max_area_count + 1][max_lap_count - 1]) - 1 < i:
-                    ball_sort[max_area_count + 1][max_lap_count - 1].append('')
-                ball_sort[max_area_count + 1][max_lap_count - 1][i] = camera_list[i]
-            ranking_array = copy.deepcopy(ranking_temp)
+                num = len(ball_sort_temp[ball_num - 1][max_lap_count - 1]) - 1
+                if num < i:
+                    for j in range(i - num + 1):
+                        ball_sort_temp[ball_num - 1][max_lap_count - 1].append('')
+                ball_sort_temp[ball_num - 1][max_lap_count - 1][i] = camera_list[i]
+            with ranking_lock:
+                ranking_array = copy.deepcopy(ranking_temp)
+            with ball_sort_lock:
+                ball_sort = copy.deepcopy(ball_sort_temp)
             self.signal.emit('核对完成')
             time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
@@ -2635,7 +2643,7 @@ def ScreenShotsignal_accept(msg):
             # if ui.checkBox_main_camera.isChecked():
             main_camera_ui.label_picture.setPixmap(pixmap)
             ui.label_main_picture.setPixmap(pixmap)
-        elif msg[2] == 'monitor':
+        elif msg[2] == 'rtsp':
             painter = QPainter(pixmap)
             painter.setFont(QFont("Arial", 50, QFont.Bold))  # 设置字体
             painter.setPen(QColor(0, 255, 0))  # 设定颜色（红色）
@@ -2669,6 +2677,75 @@ def ScreenShotsignal_accept(msg):
         ui.textBrowser_msg.append(str(msg))
         scroll_to_bottom(ui.textBrowser)
         scroll_to_bottom(ui.textBrowser_msg)
+
+
+'''
+    ObsShotThread(QThread) 摄像头排位线程
+'''
+
+
+class ObsShotThread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(ObsShotThread, self).__init__()
+        self.plan_obs = '0'  # [开关,场景名称]
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        global ranking_array
+        global camera_list
+        while self.running:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
+            print('OBS运行')
+            obs_res = get_obs(ui.lineEdit_source_end.text())  # 拍摄来源
+            if obs_res:
+                obs_list = eval(obs_res[1])
+                camera_list = copy.deepcopy(obs_list)
+                obs_num = len(obs_list)
+                if obs_num > 2 and ranking_array[0][6] != 1:
+                    # print(obs_list)
+                    ranking_temp = copy.deepcopy(ranking_array)
+                    for i in range(0, obs_num):
+                        for j in range(0, len(ranking_temp)):
+                            if ranking_temp[j][5] == obs_list[i] and ranking_temp[j][6] != 1:
+                                ranking_temp[j][6] = max_area_count + 1
+                                ranking_temp[j][9] = max_lap_count - 1
+                                break
+                    with ranking_lock:
+                        ranking_array = copy.deepcopy(ranking_temp)
+                    with ball_sort_lock:
+                        ball_sort[max_area_count + 1][max_lap_count - 1] = copy.deepcopy(obs_list)
+                    print(ball_sort[max_area_count + 1][max_lap_count - 1], '~~~~~~~~~~~~~~~~~~~')
+                    self.signal.emit(obs_res)
+            self.run_flg = False
+
+
+def ObsShotsignal_accept(msg):
+    if isinstance(msg, list):
+        if len(msg) < 2 or msg[0] == '':
+            return
+        img = msg[0]
+        pixmap = QPixmap()
+        pixmap.loadFromData(img)
+        pixmap = pixmap.scaled(pixmap.width() / 2, pixmap.height() / 2, Qt.KeepAspectRatio, Qt.SmoothTransformation);
+
+        if msg[2] == 'obs':
+            painter = QPainter(pixmap)
+            painter.setFont(QFont("Arial", 50, QFont.Bold))  # 设置字体
+            painter.setPen(QColor(255, 0, 0))  # 设定颜色（红色）
+            painter.drawText(10, 60, "1")  # (x, y, "文本")
+            painter.end()  # 结束绘制
+            main_camera_ui.label_picture.setPixmap(pixmap)
+            ui.label_main_picture.setPixmap(pixmap)
 
 
 '''
@@ -2760,16 +2837,18 @@ class ShootThread(QThread):
             self.signal.emit(succeed("正在弹射上珠。。。"))
             try:
                 map_label_big.map_action = 0
-                ranking_array = []  # 排名数组
-                for row in range(0, len(init_array)):
-                    ranking_array.append([])
-                    for col in range(0, len(init_array[row])):
-                        ranking_array[row].append(init_array[row][col])
-                ball_sort = []  # 位置寄存器
-                for row in range(0, max_area_count + 1):
-                    ball_sort.append([])
-                    for col in range(0, max_lap_count):
-                        ball_sort[row].append([])
+                with ranking_lock:
+                    ranking_array = []  # 排名数组
+                    for row in range(0, len(init_array)):
+                        ranking_array.append([])
+                        for col in range(0, len(init_array[row])):
+                            ranking_array[row].append(init_array[row][col])
+                with ball_sort_lock:
+                    ball_sort = []  # 位置寄存器
+                    for row in range(0, max_area_count + 2):
+                        ball_sort.append([])
+                        for col in range(0, max_lap_count):
+                            ball_sort[row].append([])
                 balls_start = 0  # 起点球数
                 if not ui.checkBox_end_2.isChecked():
                     sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
@@ -2793,7 +2872,8 @@ class ShootThread(QThread):
                 time_count = 0
                 while self.run_flg:
                     time.sleep(1)
-                    ball_sort[1][0] = []  # 持续刷新起点排名
+                    with ball_sort_lock:
+                        ball_sort[1][0] = []  # 持续刷新起点排名
                     if (BallsNum_ui.go_flg
                             or (ui.lineEdit_balls_auto.text().isdigit()
                                 and ((not BallsNum_ui.isVisible())
@@ -2821,16 +2901,18 @@ class ShootThread(QThread):
                     ]:
                         sc.GASetExtDoBit(index, 0)
                 OrganCycle_Thread.run_flg = False
-                ranking_array = []  # 排名数组
-                for row in range(0, len(init_array)):
-                    ranking_array.append([])
-                    for col in range(0, len(init_array[row])):
-                        ranking_array[row].append(init_array[row][col])
-                ball_sort = []  # 位置寄存器
-                for row in range(0, max_area_count + 1):
-                    ball_sort.append([])
-                    for col in range(0, max_lap_count):
-                        ball_sort[row].append([])
+                with ranking_lock:
+                    ranking_array = []  # 排名数组
+                    for row in range(0, len(init_array)):
+                        ranking_array.append([])
+                        for col in range(0, len(init_array[row])):
+                            ranking_array[row].append(init_array[row][col])
+                with ball_sort_lock:
+                    ball_sort = []  # 位置寄存器
+                    for row in range(0, max_area_count + 2):
+                        ball_sort.append([])
+                        for col in range(0, max_lap_count):
+                            ball_sort[row].append([])
                 balls_start = 0  # 起点球数
             except:
                 print("弹射上珠参数出错！")
@@ -3001,16 +3083,18 @@ class PlanCmdThread(QThread):
                                 if (plan_list[plan_index][12][0] == ui.lineEdit_start_count.text()
                                         and not (self.background_state or self.end_state)):  # '9'倒数机关打开
                                     if ui.checkBox_Start_Flash.isChecked():
-                                        ranking_array = []  # 排名数组
-                                        for row in range(balls_count):
-                                            ranking_array.append([])
-                                            for col in range(0, len(init_array[row])):
-                                                ranking_array[row].append(init_array[row][col])
-                                        ball_sort = []  # 位置寄存器
-                                        for row in range(0, max_area_count + 1):
-                                            ball_sort.append([])
-                                            for col in range(0, max_lap_count):
-                                                ball_sort[row].append([])
+                                        with ranking_lock:
+                                            ranking_array = []  # 排名数组
+                                            for row in range(balls_count):
+                                                ranking_array.append([])
+                                                for col in range(0, len(init_array[row])):
+                                                    ranking_array[row].append(init_array[row][col])
+                                        with ball_sort_lock:
+                                            ball_sort = []  # 位置寄存器
+                                            for row in range(0, max_area_count + 2):
+                                                ball_sort.append([])
+                                                for col in range(0, max_lap_count):
+                                                    ball_sort[row].append([])
                                     lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                     self.signal.emit('进行中')  # 修改结果列表中的赛事状态
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
@@ -4282,32 +4366,6 @@ def stop_server():  # 关闭识别服务器
         flg_start['ai'] = False
 
 
-def check_black_screen():
-    form_data = {
-        'requestType': 'get_run_toggle',
-    }
-    black_flg = {}
-    while True:
-        try:
-            for index in range(len(wakeup_addr)):
-                r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
-                if r.text != '2':
-                    black_flg[wakeup_addr[index]] = r.text
-                if r.text == '2' and black_flg[wakeup_addr[index]] != r.text:
-                    black_flg[wakeup_addr[index]] = r.text
-                    print(r.text, '~~~~~~~~~~~~~')  # 返回1 是正常，返回2 是黑屏
-                    index = int(ui.lineEdit_alarm.text()) - 1
-                    sc.GASetExtDoBit(index, 1)
-                    msgbox = threading.Thread(target=messagebox.showinfo,
-                                              args=("注意", "%s 识别主机黑屏！" % wakeup_addr[index]),
-                                              daemon=True)
-                    msgbox.start()
-        except:
-            print('图像识别主机通信失败！')
-            flg_start['ai'] = False
-        time.sleep(10)
-
-
 def save_images():
     if ui.checkBox_saveImgs.isChecked():
         saveImgRun = 1  # 1 录图开启标志
@@ -4550,7 +4608,7 @@ class MapLabel(QLabel):
         self.step_length = step_length  # 步长
         self.ball_space = ball_space  # 球之间的距离（步数）
         self.ball_radius = ball_radius  # 像素
-        self.bet_running = [False] * balls_count
+        self.bet_running = [False] * balls_count  # 珠子结束计时标志
         self.pos_stop = []  # 每个球的停止位置索引
         # 设置label的尺寸
         self.setMaximumSize(picture_size, picture_size)
@@ -4686,7 +4744,16 @@ class MapLabel(QLabel):
         # 模拟排名
         if ranking_array and ranking_array[0][6] < max_area_count - 2 and ranking_array[0][10] == 0:
             self.positions.sort(key=lambda a: (-a[3], -a[0]))
-            z_ranking_res = [ball[2] for ball in self.positions]
+            # self.positions.sort(key=lambda a: (-a[3]))
+            # for i in range(len(self.positions)):
+            #     for j in range(len(self.positions) - i - 1):
+            #         if self.positions[j][3] == self.positions[j + 1][3]:
+            #             if self.positions[j][0] < self.positions[j + 1][0]:
+            #                 self.positions[j], self.positions[j + 1] = self.positions[j + 1], self.positions[j]
+            pos_temp = [ball[2] for ball in self.positions]
+            if len(pos_temp) == len(z_ranking_res):
+                with z_lock:
+                    z_ranking_res = copy.deepcopy(pos_temp)
         # 各个珠子一圈时间
         if ranking_array:
             for i in range(balls_count):
@@ -5321,7 +5388,7 @@ def stop_alarm():
 class CameraLabel(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.Camera_index = 'main_Camera'
+        self.Camera_index = 'obs_Camera'
         self.img_data = []  # 图资料
         for num in range(0, 10):
             self.img_data.append('./img/ball/%s.png' % str(num + 1))
@@ -5353,10 +5420,10 @@ class CameraLabel(QLabel):
             ball_radius = 23
             rect = QRect(x_offset, 0, ball_radius, ball_radius)
             # 使用高质量的缩放方式
-            if self.Camera_index == 'main_Camera':
+            if self.Camera_index == 'obs_Camera':
                 scaled_img = self.images[main_Camera[index] - 1].scaled(rect.size(), Qt.KeepAspectRatio,
                                                                         Qt.SmoothTransformation)
-            elif self.Camera_index == 'monitor_Camera':
+            elif self.Camera_index == 'rtsp_Camera':
                 scaled_img = self.images[monitor_Camera[index] - 1].scaled(rect.size(), Qt.KeepAspectRatio,
                                                                            Qt.SmoothTransformation)
             else:
@@ -5369,9 +5436,9 @@ class CameraLabel(QLabel):
     def mouseDoubleClickEvent(self, event):
         if event.button() == Qt.LeftButton:
             print("QLabel 被左键点击")
-            if self.Camera_index == 'main_Camera':
+            if self.Camera_index == 'obs_Camera':
                 set_result(main_Camera)
-            elif self.Camera_index == 'monitor_Camera':
+            elif self.Camera_index == 'rtsp_Camera':
                 set_result(monitor_Camera)
         elif event.button() == Qt.RightButton:
             print("QLabel 被右键点击")
@@ -5909,16 +5976,20 @@ def cancel_end():
     global term_status
     global term_comment
     global betting_loop_flg
+    global z_ranking_time
     # if ReStart_Thread.start_flg:
     #     messagebox.showinfo("取消当局", "当前开盘中，不能直接取消比赛，如需强制取消，请点击封盘！")
     #     return
-    response = messagebox.askquestion("取消当局", "确保没上传国结果才能取消当局，你确定吗？")
+    response = messagebox.askquestion("取消当局", "确保没上传过结果才能取消当局，你确定吗？")
     print(response)  # "yes" / "no"
     if "yes" in response:
         term_status = 2
         term_comment = term_comments[0]
         Kaj789_Thread.run_type = 'post_end'
         Kaj789_Thread.run_flg = True
+        for index in range(balls_count):
+            if z_ranking_time[index] == '':
+                z_ranking_time[index] = 'TRAP'
         betting_loop_flg = False  # 停止循环
         ReStart_Thread.start_flg = False  # 停止比赛
 
@@ -5968,16 +6039,22 @@ class ResetRankingThread(QThread):
                 continue
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
             init_array = copy.deepcopy(init_array[:balls_count])
-            ranking_array = []  # 排名数组
-            for row in range(balls_count):
-                ranking_array.append([])
-                for col in range(0, len(init_array[row])):
-                    ranking_array[row].append(init_array[row][col])
-            ball_sort = []  # 位置寄存器
-            for row in range(0, max_area_count + 1):
-                ball_sort.append([])
-                for col in range(0, max_lap_count):
-                    ball_sort[row].append([])
+            with ranking_lock:
+                ranking_array = []  # 排名数组
+                for row in range(balls_count):
+                    ranking_array.append([])
+                    for col in range(0, len(init_array[row])):
+                        ranking_array[row].append(init_array[row][col])
+            with ball_sort_lock:
+                ball_sort = []  # 位置寄存器
+                for row in range(0, max_area_count + 2):
+                    ball_sort.append([])
+                    for col in range(0, max_lap_count):
+                        ball_sort[row].append([])
+            if ui.checkBox_end_2.isChecked():
+                ball_sort[1][0] = copy.deepcopy(camera_list)
+                for i in range(balls_count):
+                    ranking_array[i][6] = 1  # 强制在第一区
             balls_start = 0  # 起点球数
             if con_data:
                 for row in range(0, len(init_array)):
@@ -6024,7 +6101,8 @@ class ResetRankingThread(QThread):
                             'White': [], }
             alarm_worker.toggle_enablesignal.emit(False)
             if not ui.checkBox_test.isChecked():
-                activate_browser()  # 刷新OBS中排名浏览器
+                if not activate_browser():  # 刷新OBS中排名浏览器
+                    self.signal.emit('obs 失败')
                 try:
                     while Script_Thread.run_flg:
                         time.sleep(1)
@@ -6038,11 +6116,16 @@ class ResetRankingThread(QThread):
 
 
 def reset_ranking_signal_accept(msg):
+    if '失败' in msg:
+        index = int(ui.lineEdit_alarm.text()) - 1
+        sc.GASetExtDoBit(index, 1)
+        show_message("注意", "OBS 链接失败！")
     # Map_ui.hide()
-    ui.textBrowser.append(msg)
-    ui.textBrowser_msg.append(msg)
-    scroll_to_bottom(ui.textBrowser)
-    scroll_to_bottom(ui.textBrowser_msg)
+    else:
+        ui.textBrowser.append(msg)
+        ui.textBrowser_msg.append(msg)
+        scroll_to_bottom(ui.textBrowser)
+        scroll_to_bottom(ui.textBrowser_msg)
 
 
 class CheckFileThread(QThread):
@@ -6142,8 +6225,14 @@ class TestStatusThread(QThread):
 
     def run(self) -> None:
         global flg_start
+        t = 0
+        form_data = {
+            'requestType': 'get_run_toggle',
+        }  # 检测识别主机黑屏数据包
+        black_flg = {}
         while self.running:
             time.sleep(1)
+            t += 1
             if not self.run_flg:
                 continue
             cardnum = ui.lineEdit_CardNo.text()
@@ -6154,13 +6243,11 @@ class TestStatusThread(QThread):
                     flg_start['card'] = True
                     if flg_start['card']:  # 轴复位一次
                         Axis_Thread.run_flg = True
-                        res_sql = query_sql()  # 加载网络设置 一次
-                        self.signal.emit(res_sql)
+                        # res_sql = query_sql()  # 加载网络设置 一次
+                        # self.signal.emit(res_sql)
 
             if not flg_start['ai_end']:  # 测试结果识别服务
                 test_ai_end()
-            else:
-                time.sleep(3)
 
             if not flg_start['server']:  # 测试期号服务器
                 try:
@@ -6206,6 +6293,22 @@ class TestStatusThread(QThread):
                 except:
                     flg_start['ai'] = False
 
+            if t == 10:
+                try:
+                    for index in range(len(wakeup_addr)):
+                        r = requests.post(url=wakeup_addr[index], data=form_data, timeout=5)
+                        if r.text != '2':
+                            black_flg[wakeup_addr[index]] = r.text
+                        if r.text == '2' and black_flg[wakeup_addr[index]] != r.text:
+                            black_flg[wakeup_addr[index]] = r.text
+                            print(r.text, '~~~~~~~~~~~~~')  # 返回1 是正常，返回2 是黑屏
+                            self.signal.emit('%s 黑屏' % wakeup_addr[index])
+                except:
+                    print('图像识别主机通信失败！')
+                    flg_start['ai'] = False
+
+            if t > 10:
+                t = 0
             self.signal.emit('标志')
 
 
@@ -6218,6 +6321,11 @@ def test_statussignal_accept(msg):
             z_window.setWindowTitle(msg["赛道名称"])
         else:
             z_window.setWindowTitle(ui.lineEdit_map_picture.text()[6: -5])
+    elif '黑屏' in msg:
+        index = int(ui.lineEdit_alarm.text()) - 1
+        sc.GASetExtDoBit(index, 1)
+        show_message("注意", "%s 识别主机黑屏！" % msg)
+        ui.checkBox_end_stop.setChecked(True)
     else:
         for flg in flg_start.keys():
             if flg_start[flg]:
@@ -6476,12 +6584,18 @@ def stop_betting():
         if "yes" in response:
             term_status = 2
             term_comment = term_comments[0]
-            ReStart_Thread.start_flg = False
             while Kaj789_Thread.run_flg:
                 time.sleep(1)
             Kaj789_Thread.run_type = 'post_end'
             Kaj789_Thread.run_flg = True
+            for index in range(balls_count):
+                if z_ranking_time[index] == '':
+                    z_ranking_time[index] = 'TRAP'
             betting_loop_flg = False
+            ReStart_Thread.start_flg = False
+
+            PlanBallNum_Thread.run_flg = False  # 停止计球
+            TrapBall_ui.hide()  # 关闭卡珠窗口
         else:
             ui.radioButton_start_betting.setChecked(True)
             return
@@ -6506,16 +6620,18 @@ def auto_shoot():  # 自动上珠
     global ball_sort
     global ranking_array
     if ui.checkBox_shoot_0.isChecked():
-        ranking_array = []  # 排名数组
-        for row in range(0, len(init_array)):
-            ranking_array.append([])
-            for col in range(0, len(init_array[row])):
-                ranking_array[row].append(init_array[row][col])
-        ball_sort = []  # 位置寄存器
-        for row in range(0, max_area_count + 1):
-            ball_sort.append([])
-            for col in range(0, max_lap_count):
-                ball_sort[row].append([])
+        with ranking_lock:
+            ranking_array = []  # 排名数组
+            for row in range(0, len(init_array)):
+                ranking_array.append([])
+                for col in range(0, len(init_array[row])):
+                    ranking_array[row].append(init_array[row][col])
+        with ball_sort_lock:
+            ball_sort = []  # 位置寄存器
+            for row in range(0, max_area_count + 2):
+                ball_sort.append([])
+                for col in range(0, max_lap_count):
+                    ball_sort[row].append([])
         balls_start = 0
         Shoot_Thread.run_flg = True
     else:
@@ -6617,10 +6733,7 @@ def my_test():
     global z_ranking_res
     global ranking_array
     global wakeup_addr
-    # msgbox = threading.Thread(target=messagebox.showinfo,
-    #                           args=("注意", "OBS 链接失败！"),
-    #                           daemon=True)
-    # msgbox.start()
+    show_message("注意", "OBS 链接失败！")
     # index = int(ui.lineEdit_alarm.text()) - 1
     # sc.GASetExtDoBit(index, 1)
     wakeup_addr = ["http://192.168.0.127:8080"]
@@ -6716,6 +6829,17 @@ def scroll_to_bottom(text_browser: QTextBrowser):
     text_browser.ensureCursorVisible()
 
 
+def show_message(msg_title, msg_text):
+    msg_box = QMessageBox(ui)
+    msg_box.setIcon(QMessageBox.Information)
+    msg_box.setWindowTitle(msg_title)
+    msg_box.setText(msg_text)
+    msg_box.setStandardButtons(QMessageBox.Ok)
+    msg_box.setWindowModality(Qt.NonModal)  # 不阻塞主窗口交互（NonModal）
+    msg_box.setWindowFlags(msg_box.windowFlags() | Qt.WindowStaysOnTopHint)  # 始终显示在主窗口前面
+    msg_box.show()
+
+
 class ZApp(QApplication):
     def __init__(self, argv):
         super().__init__(argv)
@@ -6765,6 +6889,7 @@ class ZApp(QApplication):
             OrganCycle_Thread.stop()
             deal_udp_thread.stop()
             CheckFile_Thread.stop()
+            ObsShot_Thread.stop()  # obs终点排序线程
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -6822,6 +6947,8 @@ class ZApp(QApplication):
             print('deal_udp_thread')
             udp_thread.wait()  # 处理udp数据线程
             print('udp_thread')
+            ObsShot_Thread.wait()  # obs终点排序线程
+            print('ObsShot_Thread')
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -7274,6 +7401,10 @@ if __name__ == '__main__':
     ObsEnd_Thread.signal.connect(ObsEndsignal_accept)
     ObsEnd_Thread.start()
 
+    ObsShot_Thread = ObsShotThread()  # 终点截图识别线程 6
+    ObsShot_Thread.signal.connect(ObsShotsignal_accept)
+    ObsShot_Thread.start()
+
     Axis_Thread = AxisThread()  # 轴复位 7
     Axis_Thread.signal.connect(axis_signal_accept)
     Axis_Thread.start()
@@ -7419,6 +7550,7 @@ if __name__ == '__main__':
     action_area = [0, 0, 0]  # 触发镜头向下一个位置活动的点位 action_area[区域, 圈数, 可写]
     balls_count = 8  # 运行球数
     balls_start = 0  # 起点球数量
+    ranking_lock = threading.Lock()  # 排名线程锁
     ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
     ranking_check = {'yellow': [-1, -1],  # 头名检测是否误判 [区域, 圈数]
                      'blue': [-1, -1],
@@ -7441,7 +7573,8 @@ if __name__ == '__main__':
                     'pink': [],
                     'White': [], }
     keys = ["x1", "y1", "x2", "y2", "con", "name", "position", "direction", "roadPart", "lapCount", "visible"]
-    ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 1]
+    ball_sort = []  # 位置寄存器 ball_sort[[[]*max_lap_count]*max_area_count + 2]
+    ball_sort_lock = threading.Lock()  # 寄存器线程锁
     ball_stop = False  # 保留卡珠信号
     ball_stop_time = 0  # 保留卡珠时间
 
@@ -7515,6 +7648,7 @@ if __name__ == '__main__':
     s485.cam_open()
 
     # 初始化列表
+    z_lock = threading.Lock()  # 线程锁
     con_data = []  # 排名数组
     z_ranking_res = []  # 球号排名数组(发送给前端网页排名显示)
     z_ranking_end = []  # 结果排名数组(发送给前端网页排名显示)
@@ -7554,10 +7688,6 @@ if __name__ == '__main__':
     # 唤醒图像识别主机线程 17
     wakeup_ser = threading.Thread(target=wakeup_server, daemon=True)
     wakeup_ser.start()
-
-    # 测试黑屏线程 18
-    check_screen = threading.Thread(target=check_black_screen, daemon=True)
-    check_screen.start()
 
     # 启动 HTTPServer 接收外部命令控制本程序 18
     httpd = HTTPServer(httpServer_addr, SimpleHTTPRequestHandler)
@@ -7677,25 +7807,25 @@ if __name__ == '__main__':
     main_camera_layout = QVBoxLayout(ui.widget_camera_sony)
     main_camera_layout.setContentsMargins(0, 9, 0, 0)
     main_camera_label = CameraLabel()
-    main_camera_label.Camera_index = 'main_Camera'
+    main_camera_label.Camera_index = 'obs_Camera'
     main_camera_layout.addWidget(main_camera_label)
 
     monitor_camera_layout = QVBoxLayout(ui.widget_camera_monitor)
     monitor_camera_layout.setContentsMargins(0, 9, 0, 0)
     monitor_camera_label = CameraLabel()
-    monitor_camera_label.Camera_index = 'monitor_Camera'
+    monitor_camera_label.Camera_index = 'rtsp_Camera'
     monitor_camera_layout.addWidget(monitor_camera_label)
 
     result_main_camera_layout = QVBoxLayout(result_ui.widget_camera_sony)
     result_main_camera_layout.setContentsMargins(0, 9, 0, 0)
     result_main_camera_label = CameraLabel()
-    result_main_camera_label.Camera_index = 'main_Camera'
+    result_main_camera_label.Camera_index = 'obs_Camera'
     result_main_camera_layout.addWidget(result_main_camera_label)
 
     result_monitor_camera_layout = QVBoxLayout(result_ui.widget_camera_monitor)
     result_monitor_camera_layout.setContentsMargins(0, 9, 0, 0)
     result_monitor_camera_label = CameraLabel()
-    result_monitor_camera_label.Camera_index = 'monitor_Camera'
+    result_monitor_camera_label.Camera_index = 'rtsp_Camera'
     result_monitor_camera_layout.addWidget(result_monitor_camera_label)
 
     fit_camera_layout = QVBoxLayout(ui.widget_camera_fit)
