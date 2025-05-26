@@ -1153,10 +1153,8 @@ class DealUdpThread(QThread):
                 self.signal.emit(fail('array_data:%s < 7数据错误！' % array_data[0]))
                 print('array_data < 7数据错误！', array_data[0])
                 continue
-            if action_area[0] > max_area_count - balls_count - 2:
-                array_data = filter_max_value(array_data)  # 结束时，以置信度为准
-            else:
-                array_data = filter_max_value(array_data)  # 在平时球位置追踪，前面为准
+            if not ui.checkBox_Two_Color.isChecked():
+                array_data = filter_max_value(array_data)  # 非双色则开启同色过滤
             if not array_data or len(array_data) < 1:
                 continue
             array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球

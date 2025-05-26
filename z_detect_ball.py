@@ -66,7 +66,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             print(qiu_array)
             qiu_array = filter_max_value(qiu_array)
             if len(area_Code[post_data['CameraType'][0]]) > 0:  # 画线范围内
-                qiu_array = deal_area(qiu_array, post_data['CameraType'][0])
+                qiu_array, img = deal_area(qiu_array, img, post_data['CameraType'][0])
 
             if post_data['sort'][0] == '0':
                 qiu_array.sort(key=lambda x: (x[0]), reverse=True)
@@ -221,7 +221,7 @@ def load_area():  # 载入位置文件初始化区域列表
     print(area_Code)
 
 
-def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
+def deal_area(ball_array, img, cap_num):  # 找出该摄像头内所有球的区域
     ball_area_array = []
     if len(ball_array) < 1 or cap_num == '':
         return
@@ -239,8 +239,21 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
                 pts = np.array(area['coordinates'], np.int32)
                 res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
                 if res > -1:
-                    ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向,路线
-    return ball_area_array  # ball_area_array = [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
+                    ball.append(area['area_code'])
+                    ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名
+    if len(ball_area_array) != 0:
+        area_array = []
+        for ball in ball_area_array:
+            if ball[6] not in area_array:  # 记录所有被触发的多边形号码
+                area_array.append(ball[6])
+        for area in area_Code[cap_num]:  # 遍历该摄像头所有区域
+            pts = np.array(area['coordinates'], np.int32)
+            if area['area_code'] in area_array:
+                polygonColor = ( 0, 255,255)
+            else:
+                polygonColor = (255, 0, 255)
+            cv2.polylines(img, [pts], isClosed=True, color=polygonColor, thickness=8)
+    return ball_area_array, img
 
 
 def run_server():

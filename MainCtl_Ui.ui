@@ -44,7 +44,7 @@
          <enum>Qt::FocusPolicy::NoFocus</enum>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab_0">
          <attribute name="title">
@@ -8074,33 +8074,47 @@
                 <string>弹珠设置</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_38">
-                <item row="0" column="1">
-                 <widget class="QLineEdit" name="lineEdit_balls_count">
+                <item row="0" column="3">
+                 <widget class="QLabel" name="label_35">
                   <property name="maximumSize">
                    <size>
-                    <width>50</width>
+                    <width>80</width>
                     <height>16777215</height>
                    </size>
                   </property>
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <bold>false</bold>
                    </font>
                   </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
                   <property name="text">
-                   <string>8</string>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
+                   <string>弹珠数量：</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0" colspan="5">
+                <item row="0" column="2">
+                 <widget class="QCheckBox" name="checkBox_Two_Color">
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>双色   </string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" colspan="7">
                  <widget class="QGroupBox" name="groupBox_15">
                   <property name="maximumSize">
                    <size>
@@ -8952,38 +8966,18 @@
                   </layout>
                  </widget>
                 </item>
-                <item row="0" column="4">
+                <item row="0" column="6">
                  <widget class="QPushButton" name="pushButton_Save_Ball">
                   <property name="text">
                    <string>保存弹珠</string>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_35">
-                  <property name="maximumSize">
-                   <size>
-                    <width>80</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>弹珠数量：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3">
+                <item row="0" column="5">
                  <widget class="QFrame" name="frame_25">
                   <property name="minimumSize">
                    <size>
-                    <width>200</width>
+                    <width>180</width>
                     <height>0</height>
                    </size>
                   </property>
@@ -8995,23 +8989,29 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="2">
-                 <widget class="QCheckBox" name="checkBox_shoot1_2">
+                <item row="0" column="4">
+                 <widget class="QLineEdit" name="lineEdit_balls_count">
                   <property name="maximumSize">
                    <size>
-                    <width>60</width>
+                    <width>50</width>
                     <height>16777215</height>
                    </size>
                   </property>
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
+                    <pointsize>10</pointsize>
                     <bold>false</bold>
                    </font>
                   </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
                   <property name="text">
-                   <string>双色</string>
+                   <string>8</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
