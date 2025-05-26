@@ -830,20 +830,20 @@ def color_to_num(res):  # 按最新排名排列数组
 
 
 def camera_to_num(res):  # 按最新排名排列数组
-    # camera_response = []
-    # for i in range(1, balls_count + 1):
-    #     camera_response.append(i)
+    camera_response = []
+    for i in range(1, balls_count + 1):
+        camera_response.append(i)
     arr_res = []
     for r in res:
         for arr in range(0, len(init_array)):
             if r == init_array[arr][5]:
                 arr_res.append(arr + 1)
-    return arr_res
-    # for arr in range(0, len(arr_res)):
-    #     for cam in range(0, len(camera_response)):
-    #         if arr_res[arr] == camera_response[cam]:
-    #             camera_response[arr], camera_response[cam] = camera_response[cam], camera_response[arr]
-    # return camera_response
+    # return arr_res
+    for arr in range(0, len(arr_res)):
+        for cam in range(0, len(camera_response)):
+            if arr_res[arr] == camera_response[cam]:
+                camera_response[arr], camera_response[cam] = camera_response[cam], camera_response[arr]
+    return camera_response
 
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
