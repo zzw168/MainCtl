@@ -10,7 +10,7 @@ def send_detect_picture():
     with open(track_file, 'rb') as file:
         img = base64.b64encode(file.read()).decode('ascii')
     form_data = {
-        'CameraType': 'rtsp',
+        'CameraType': ['rtsp','1'],
         'img': str(img),
         'sort': '11',  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
     }

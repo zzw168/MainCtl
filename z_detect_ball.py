@@ -64,7 +64,10 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                              round(r[4].item(), 2), names[int(r[5].item())]]
                     qiu_array.append(array)
             print(qiu_array)
-            qiu_array = filter_max_value(qiu_array)
+            if len(post_data['CameraType']) > 1 and post_data['CameraType'][1] == 'Two_Color':
+                pass
+            else:
+                qiu_array = filter_max_value(qiu_array)
             if len(area_Code[post_data['CameraType'][0]]) > 0:  # 画线范围内
                 qiu_array, img = deal_area(qiu_array, img, post_data['CameraType'][0])
 
@@ -249,7 +252,7 @@ def deal_area(ball_array, img, cap_num):  # 找出该摄像头内所有球的区
         for area in area_Code[cap_num]:  # 遍历该摄像头所有区域
             pts = np.array(area['coordinates'], np.int32)
             if area['area_code'] in area_array:
-                polygonColor = ( 0, 255,255)
+                polygonColor = (0, 255, 255)
             else:
                 polygonColor = (255, 0, 255)
             cv2.polylines(img, [pts], isClosed=True, color=polygonColor, thickness=8)
