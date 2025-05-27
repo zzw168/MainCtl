@@ -653,46 +653,6 @@ def deal_action():
         action_area[0] = int(ranking_array[0][6])  # 触发区域
 
 
-def deal_rank_two_color(integration_qiu_array):
-    global ranking_array
-    global ball_sort
-    area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
-    ranking_temp = copy.deepcopy(ranking_array)
-    ball_sort_temp = copy.deepcopy(ball_sort)
-    for r_index in range(0, len(ranking_temp)):
-        ranking_temp[r_index][10] = 0  # 全部预设不可见
-    for q_item in integration_qiu_array:
-        for r_index in range(0, len(ranking_temp)):
-            if ranking_temp[r_index][5] == q_item[5]:  # 更新 ranking_temp
-                # 圈数处理
-                if (ranking_temp[r_index][9] < max_lap_count - 1  # 防止跨圈误判
-                        and q_item[6] < ranking_temp[r_index][6] < max_area_count - balls_count + 1
-                ):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
-                    result_count = ranking_temp[r_index][6] - q_item[6]
-                    if result_count >= max_area_count - area_limit - balls_count:
-                        if (ranking_temp[r_index][9] == 0  # 第0圈
-                                and lapTimes[r_index] == 0):
-                            lapTimes[r_index] = round(time.time() - ranking_time_start, 2)
-                            lapTimes_thread[r_index] = threading.Thread(target=post_lapTime,
-                                                                        args=(term, r_index + 1, lapTimes[r_index],
-                                                                              Track_number),
-                                                                        daemon=True)
-                            lapTimes_thread[r_index].start()
-                        if r_index == 0:
-                            for i in range(len(ranking_temp)):
-                                ranking_check[ranking_temp[i][5]] = [-1, -1]  # 换圈复位记号
-                        ranking_temp[r_index][6] = 0  # 每增加一圈，重置区域
-                        ranking_temp[r_index][9] += 1
-                        if ranking_temp[r_index][9] > max_lap_count - 1:
-                            ranking_temp[r_index][9] = max_lap_count - 1
-                pass
-                ranking_temp[r_index][10] = 1
-    with ball_sort_lock:
-        ball_sort = copy.deepcopy(ball_sort_temp)
-    with ranking_lock:
-        ranking_array = copy.deepcopy(ranking_temp)
-
-
 # 处理排名
 def deal_rank(integration_qiu_array):
     global ranking_array
@@ -707,8 +667,13 @@ def deal_rank(integration_qiu_array):
         replaced = False
         for q_item in integration_qiu_array:
             if ranking_temp[r_index][5] == q_item[5]:  # 更新 ranking_temp
-                # 圈数处理
-                if ((not ui.checkBox_end_2.isChecked()
+                if (ranking_temp[0][6] >= max_area_count - balls_count  # 头名进港,所有珠子变为最后一圈
+                        and ranking_temp[0][9] >= max_lap_count - 1):
+                    for i in range(len(ranking_temp)):
+                        if ranking_temp[i][6] != max_area_count - balls_count:
+                            ranking_temp[i][9] = max_lap_count - 1
+
+                if ((not ui.checkBox_end_2.isChecked()  # 圈数处理
                      and q_item[6] < ranking_temp[r_index][6] < max_area_count - balls_count + 1)
                         or (ui.checkBox_end_2.isChecked()
                             and ranking_temp[r_index][9] < max_lap_count - 1  # 防止跨圈误判
@@ -731,7 +696,7 @@ def deal_rank(integration_qiu_array):
                         ranking_temp[r_index][9] += 1
                         if ranking_temp[r_index][9] > max_lap_count - 1:
                             ranking_temp[r_index][9] = max_lap_count - 1
-                # 位置处理
+
                 if ((ranking_temp[r_index][6] == 0 and q_item[6] < area_limit)  # 等于0 刚初始化，未检测区域
                     or (max_area_count - balls_count >= q_item[6] >= ranking_temp[r_index][6]  # 新位置要大于旧位置
                         and (0 <= q_item[6] - ranking_temp[r_index][6] <= area_limit  # 新位置相差旧位置三个区域以内
@@ -756,7 +721,25 @@ def deal_rank(integration_qiu_array):
                         for r_i in range(0, len(q_item)):
                             ranking_temp[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_temp
                         ranking_temp[r_index][10] = 1
-                # 头名侦测,在头名附近的珠子变成同圈,并记录遇到的珠子位置
+                    "*************************************************************************"
+                    # if (ranking_temp[r_index][6] > max_area_count - balls_count
+                    #         and ui.checkBox_main_camera_set.isChecked()):
+                    #     for i in range(1, balls_count):
+                    #         if ranking_temp[i][6] > max_area_count - balls_count and z_ranking_time[i] == '':
+                    #             for j in range(i - 1, balls_count):
+                    #                 if ranking_temp[j][6] > max_area_count - balls_count:
+                    #                     ranking_temp[j][6] = max_area_count - balls_count
+                    #             break
+                    #     for i in range(0, balls_count):
+                    #         if ranking_temp[i][6] >= max_area_count - balls_count:
+                    #             # print(max_area_count - balls_count, max_lap_count - 1, i)
+                    #             ball_sort_num = len(ball_sort_temp[max_area_count - balls_count][max_lap_count - 1])
+                    #             if ball_sort_num < i + 1:
+                    #                 for j in range(i + 1 - ball_sort_num):
+                    #                     ball_sort_temp[max_area_count - balls_count][max_lap_count - 1].append('')
+                    #             # print(len(ball_sort_temp[max_area_count - balls_count][max_lap_count - 1]))
+                    #             ball_sort_temp[max_area_count - balls_count][max_lap_count - 1][i] = ranking_temp[i][5]
+                    "*************************************************************************"
                 if r_index > 0 and q_item[6] <= (max_area_count - balls_count):
                     if abs(q_item[6] - ranking_temp[0][6]) < area_limit / 2:
                         if ranking_check[q_item[5]][0] == -1 and ranking_check[q_item[5]][1] == -1:
@@ -766,12 +749,6 @@ def deal_rank(integration_qiu_array):
                                 and ranking_temp[r_index][6] <= q_item[6]):
                             ranking_temp[r_index][9] = ranking_temp[0][9]
                         ranking_temp[r_index][10] = 1
-                # 头名进港,所有珠子变为最后一圈
-                if (ranking_temp[0][6] >= max_area_count - balls_count
-                        and ranking_temp[0][9] >= max_lap_count - 1):
-                    for i in range(len(ranking_temp)):
-                        if ranking_temp[i][6] != max_area_count - balls_count:
-                            ranking_temp[i][9] = max_lap_count - 1
                 replaced = True
                 break
         if not replaced:
@@ -2873,7 +2850,7 @@ class ShootThread(QThread):
                 balls_start = 0  # 起点球数
                 if not ui.checkBox_end_2.isChecked():
                     sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
-                if ui.lineEdit_shake.text() != '0':
+                if ui.lineEdit_shoot.text() != '0':
                     shoot_index = int(ui.lineEdit_shoot.text()) - 1
                     sc.GASetExtDoBit(shoot_index, 1)
                 time.sleep(2)
@@ -2915,7 +2892,7 @@ class ShootThread(QThread):
                 for index in range(0, 16):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
-                        # int(ui.lineEdit_shake.text()) - 1,    # 关闭震动
+                        int(ui.lineEdit_shake.text()) - 1,    # 关闭震动
                         abs(int(ui.lineEdit_end.text())) - 1,
                         int(ui.lineEdit_alarm.text()) - 1,
                         int(ui.lineEdit_start_count.text()) - 1,
