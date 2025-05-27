@@ -671,6 +671,7 @@ def deal_rank_two_color(integration_qiu_array):
                              and 0 <= q_item[6] - ranking_temp[r_index][6] <= area_limit + balls_count
                              and ranking_temp[r_index][9] == max_lap_count - 1  # 处理最后一圈终点附近的条件
                          ))):  # 更大区域才更新
+                ball_sort_temp[ranking_temp[r_index][6]][ranking_temp[r_index][9]] = []  # 更新区域前清空之前的寄存器
                 for r_i in range(0, len(q_item)):
                     ranking_temp[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_temp
                 ranking_temp[r_index][10] = 1
@@ -721,23 +722,25 @@ def deal_rank_two_color(integration_qiu_array):
         for i in range(0, len(ranking_temp)):
             if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
                 continue
-            if not (ranking_temp[i][5] in ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]):
+            color_count = ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].count(ranking_temp[i][5])
+            if color_count < balls_count / 2:  # 如果同色珠子少于总数一半
                 ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(
                     copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
         # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
-        for i in range(0, len(ranking_temp)):
-            for j in range(0, len(ranking_temp) - i - 1):
-                if (ranking_temp[j][6] == ranking_temp[j + 1][6]) and (ranking_temp[j][9] == ranking_temp[j + 1][9]):
-                    m = 0
-                    n = 0
-
-                    for k in range(0, len(ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]])):
-                        if ranking_temp[j][5] == ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]][k]:
-                            n = k
-                        elif ranking_temp[j + 1][5] == ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]][k]:
-                            m = k
-                    if n > m:  # 把区域排位索引最小的球（即排名最前的球）放前面
-                        ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+        for i in range(len(ranking_temp)):
+            for j in range(len(ranking_temp) - i - 1):
+                a, b = ranking_temp[j], ranking_temp[j + 1]
+                if a[6] == b[6] and a[9] == b[9] and a[5] != b[5]:
+                    area, round_ = a[6], a[9]
+                    ball_list = ball_sort_temp[area][round_]
+                    try:
+                        a_index = ball_list.index(a[5])
+                        b_index = ball_list.index(b[5])
+                        if a_index > b_index:
+                            ranking_temp[j], ranking_temp[j + 1] = b, a
+                    except ValueError:
+                        # 如果某个球不在 ball_list 中，跳过处理或根据需要处理
+                        pass
 
     with ball_sort_lock:
         ball_sort = copy.deepcopy(ball_sort_temp)
