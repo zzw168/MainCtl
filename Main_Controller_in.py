@@ -663,30 +663,81 @@ def deal_rank_two_color(integration_qiu_array):
         ranking_temp[r_index][10] = 0  # 全部预设不可见
     for q_item in integration_qiu_array:
         for r_index in range(0, len(ranking_temp)):
-            if ranking_temp[r_index][5] == q_item[5]:  # 更新 ranking_temp
-                # 圈数处理
-                if (ranking_temp[r_index][9] < max_lap_count - 1  # 防止跨圈误判
-                        and q_item[6] < ranking_temp[r_index][6] < max_area_count - balls_count + 1
-                ):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
-                    result_count = ranking_temp[r_index][6] - q_item[6]
-                    if result_count >= max_area_count - area_limit - balls_count:
-                        if (ranking_temp[r_index][9] == 0  # 第0圈
-                                and lapTimes[r_index] == 0):
-                            lapTimes[r_index] = round(time.time() - ranking_time_start, 2)
-                            lapTimes_thread[r_index] = threading.Thread(target=post_lapTime,
-                                                                        args=(term, r_index + 1, lapTimes[r_index],
-                                                                              Track_number),
-                                                                        daemon=True)
-                            lapTimes_thread[r_index].start()
-                        if r_index == 0:
-                            for i in range(len(ranking_temp)):
-                                ranking_check[ranking_temp[i][5]] = [-1, -1]  # 换圈复位记号
-                        ranking_temp[r_index][6] = 0  # 每增加一圈，重置区域
-                        ranking_temp[r_index][9] += 1
-                        if ranking_temp[r_index][9] > max_lap_count - 1:
-                            ranking_temp[r_index][9] = max_lap_count - 1
-                pass
+            if (ranking_temp[r_index][5] == q_item[5]  # 同色
+                    and ((max_area_count - balls_count >= q_item[6]
+                          and 0 < q_item[6] - ranking_temp[r_index][6] <= area_limit)
+                         or (max_area_count >= q_item[6]
+                             >= ranking_temp[r_index][6] >= max_area_count - area_limit - balls_count
+                             and 0 <= q_item[6] - ranking_temp[r_index][6] <= area_limit + balls_count
+                             and ranking_temp[r_index][9] == max_lap_count - 1  # 处理最后一圈终点附近的条件
+                         ))):  # 更大区域才更新
+                for r_i in range(0, len(q_item)):
+                    ranking_temp[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_temp
                 ranking_temp[r_index][10] = 1
+                break  # 每匹配到一颗珠子就停止
+            # 处理圈数
+            if (r_index == len(ranking_temp) - 1
+                    and q_item[6] <= area_limit):
+                for i in range(0, len(ranking_temp)):
+                    if (ranking_temp[i][5] == q_item[5]
+                            and ranking_temp[i][6] >= max_area_count - area_limit - balls_count
+                            and ranking_temp[i][9] < max_lap_count - 1):  # 同色,第0圈
+                        ranking_temp[i][6] = 0  # 每增加一圈，重置区域
+                        ranking_temp[i][9] += 1
+                        if ranking_temp[i][9] > max_lap_count - 1:
+                            ranking_temp[i][9] = max_lap_count - 1
+                        ranking_temp[i][10] = 1
+                        break
+
+        # 1.排序区域
+        # for i in range(0, len(ranking_temp)):  # 冒泡排序
+        #     for j in range(0, len(ranking_temp) - i - 1):
+        #         if ranking_temp[j][6] < ranking_temp[j + 1][6]:
+        #             ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+        ranking_temp.sort(key=lambda x: x[6], reverse=True)
+
+        # 2.区域内排序
+        for i in range(0, len(ranking_temp)):  # 冒泡排序
+            for j in range(0, len(ranking_temp) - i - 1):
+                if ranking_temp[j][6] == ranking_temp[j + 1][6]:
+                    if ranking_temp[j][7] == 0:  # (左后->右前)
+                        if ranking_temp[j][0] < ranking_temp[j + 1][0]:
+                            ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+                    if ranking_temp[j][7] == 1:  # (左前<-右后)
+                        if ranking_temp[j][0] > ranking_temp[j + 1][0]:
+                            ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+                    if ranking_temp[j][7] == 10:  # (上前 ↑ 下后)
+                        if ranking_temp[j][1] > ranking_temp[j + 1][1]:
+                            ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+                    if ranking_temp[j][7] == 11:  # (上后 ↓ 下前)
+                        if ranking_temp[j][1] < ranking_temp[j + 1][1]:
+                            ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+        # 3.圈数排序
+        for i in range(0, len(ranking_temp)):  # 冒泡排序
+            for j in range(0, len(ranking_temp) - i - 1):
+                if ranking_temp[j][9] < ranking_temp[j + 1][9]:
+                    ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+        # 4.寄存器保存固定每个区域的最新排位（因为ranking_temp 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
+        for i in range(0, len(ranking_temp)):
+            if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
+                continue
+            if not (ranking_temp[i][5] in ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]):
+                ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(
+                    copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
+        # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
+        for i in range(0, len(ranking_temp)):
+            for j in range(0, len(ranking_temp) - i - 1):
+                if (ranking_temp[j][6] == ranking_temp[j + 1][6]) and (ranking_temp[j][9] == ranking_temp[j + 1][9]):
+                    m = 0
+                    n = 0
+
+                    for k in range(0, len(ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]])):
+                        if ranking_temp[j][5] == ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]][k]:
+                            n = k
+                        elif ranking_temp[j + 1][5] == ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]][k]:
+                            m = k
+                    if n > m:  # 把区域排位索引最小的球（即排名最前的球）放前面
+                        ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
 
     with ball_sort_lock:
         ball_sort = copy.deepcopy(ball_sort_temp)
@@ -2916,7 +2967,7 @@ class ShootThread(QThread):
                 for index in range(0, 16):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
-                        int(ui.lineEdit_shake.text()) - 1,    # 关闭震动
+                        int(ui.lineEdit_shake.text()) - 1,  # 关闭震动
                         abs(int(ui.lineEdit_end.text())) - 1,
                         int(ui.lineEdit_alarm.text()) - 1,
                         int(ui.lineEdit_start_count.text()) - 1,
