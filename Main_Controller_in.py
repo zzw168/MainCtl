@@ -2874,7 +2874,7 @@ class ShootThread(QThread):
                 balls_start = 0  # 起点球数
                 if not ui.checkBox_end_2.isChecked():
                     sc.GASetExtDoBit(int(ui.lineEdit_start.text()) - 1, 0)  # 关闭闸门
-                if ui.lineEdit_shake.text() != '0':
+                if ui.lineEdit_shoot.text() != '0':
                     shoot_index = int(ui.lineEdit_shoot.text()) - 1
                     sc.GASetExtDoBit(shoot_index, 1)
                 time.sleep(2)
@@ -2916,7 +2916,7 @@ class ShootThread(QThread):
                 for index in range(0, 16):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
-                        # int(ui.lineEdit_shake.text()) - 1,    # 关闭震动
+                        int(ui.lineEdit_shake.text()) - 1,    # 关闭震动
                         abs(int(ui.lineEdit_end.text())) - 1,
                         int(ui.lineEdit_alarm.text()) - 1,
                         int(ui.lineEdit_start_count.text()) - 1,
