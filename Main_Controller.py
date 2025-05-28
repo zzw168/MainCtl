@@ -2370,6 +2370,7 @@ class ObsEndThread(QThread):
                         lottery_term[6] = "发送成功"
                     else:
                         lottery_term[6] = "发送失败"
+                        betting_loop_flg = False
                     if os.path.exists(lottery_term[9]):
                         res_upload = post_upload(term=term, img_path=lottery_term[9],
                                                  Track_number=Track_number)  # 上传结果图片
@@ -2377,6 +2378,7 @@ class ObsEndThread(QThread):
                             lottery_term[7] = "上传成功"
                         else:
                             lottery_term[7] = "上传失败"
+                            betting_loop_flg = False
                     if term_comment != '' and term_status != 1:
                         res_marble_results = post_marble_results(term=term,
                                                                  comments=term_comment,
@@ -2385,6 +2387,7 @@ class ObsEndThread(QThread):
                             lottery_term[8] = term_comment
                         else:
                             lottery_term[8] = "备注失败"
+                            betting_loop_flg = False
                         term_comment = ''
                 else:
                     send_flg = False
