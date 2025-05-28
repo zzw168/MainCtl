@@ -734,7 +734,10 @@ def deal_rank(integration_qiu_array):
                 if (ranking_temp[0][6] >= max_area_count - balls_count
                         and ranking_temp[0][9] >= max_lap_count - 1):
                     for i in range(len(ranking_temp)):
-                        if ranking_temp[i][6] != max_area_count - balls_count:
+                        if (not ui.checkBox_end_2.isChecked()
+                                and ranking_temp[i][6] == max_area_count - balls_count):
+                            pass
+                        else:
                             ranking_temp[i][9] = max_lap_count - 1
                 replaced = True
                 break
