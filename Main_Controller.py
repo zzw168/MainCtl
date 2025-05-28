@@ -2244,6 +2244,8 @@ class ObsEndThread(QThread):
         global tcp_result_socket
         global action_area
         global term_comment
+        global term_status
+        global z_ranking_time
         global result_data
         global betting_loop_flg
         global balls_start
@@ -2263,6 +2265,14 @@ class ObsEndThread(QThread):
             send_flg = True  # 发送赛果成功标志
             betting_end_time = int(time.time())
             lottery_term[11] = str(betting_end_time)
+            for index in range(balls_count):
+                if z_ranking_time[index] == '':
+                    z_ranking_time[index] = 'TRAP'
+                if z_ranking_time[index] in ['TRAP', 'OUT']:
+                    s = z_ranking_time[index]
+                    term_comment = s
+                    term_status = 0
+                    betting_loop_flg = False
             save_path = '%s' % ui.lineEdit_upload_Path.text()
             if os.path.exists(save_path):
                 lottery_term[9] = '%s/%s.jpg' % (save_path, term)
@@ -2433,8 +2443,6 @@ class ObsEndThread(QThread):
 def ObsEndsignal_accept(msg):
     # print(msg)
     if '录图结束' in msg:
-        # if term_comment in ['TRAP', 'OUT']:
-        #     Map_ui.show()
         if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():
             ui.checkBox_saveImgs_main.setChecked(False)
             ui.checkBox_saveImgs_monitor.setChecked(False)
