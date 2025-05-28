@@ -730,7 +730,7 @@ def deal_rank(integration_qiu_array):
                                 and ranking_temp[r_index][6] <= q_item[6]):
                             ranking_temp[r_index][9] = ranking_temp[0][9]
                         ranking_temp[r_index][10] = 1
-                # 头名进港,所有珠子变为最后一圈
+                # 头名进港,所有珠子变为最后一圈.
                 if (ranking_temp[0][6] >= max_area_count - balls_count
                         and ranking_temp[0][9] >= max_lap_count - 1):
                     for i in range(len(ranking_temp)):
