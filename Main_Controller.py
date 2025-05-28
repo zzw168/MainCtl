@@ -2268,6 +2268,7 @@ class ObsEndThread(QThread):
             for index in range(balls_count):
                 if z_ranking_time[index] == '':
                     z_ranking_time[index] = 'TRAP'
+                    time.sleep(0.2)
                 if z_ranking_time[index] in ['TRAP', 'OUT']:
                     s = z_ranking_time[index]
                     term_comment = s
@@ -5982,6 +5983,7 @@ def cancel_end():
         for index in range(balls_count):
             if z_ranking_time[index] == '':
                 z_ranking_time[index] = 'TRAP'
+                time.sleep(0.3)
         betting_loop_flg = False  # 停止循环
         ReStart_Thread.start_flg = False  # 停止比赛
 
