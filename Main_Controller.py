@@ -721,7 +721,7 @@ def deal_rank(integration_qiu_array):
                             ranking_temp[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_temp
                         ranking_temp[r_index][10] = 1
                 # 头名侦测,在头名附近的珠子变成同圈,并记录遇到的珠子位置
-                if r_index > 0 and q_item[6] <= (max_area_count - balls_count - 2):
+                if r_index > 0 and q_item[6] < (max_area_count - balls_count):
                     if abs(q_item[6] - ranking_temp[0][6]) < area_limit / 2:
                         if ranking_check[q_item[5]][0] == -1 and ranking_check[q_item[5]][1] == -1:
                             ranking_check[q_item[5]][0] = q_item[6]  # 记录珠子区域
