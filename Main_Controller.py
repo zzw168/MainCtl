@@ -2269,11 +2269,11 @@ class ObsEndThread(QThread):
                 if z_ranking_time[index] == '':
                     z_ranking_time[index] = 'TRAP'
                     time.sleep(0.2)
-                if z_ranking_time[index] in ['TRAP', 'OUT']:
-                    s = z_ranking_time[index]
-                    term_comment = s
-                    term_status = 0
-                    betting_loop_flg = False
+            if z_ranking_time[balls_count - 1] in ['TRAP', 'OUT']:
+                s = z_ranking_time[balls_count - 1]
+                term_comment = s
+                term_status = 0
+                betting_loop_flg = False
             save_path = '%s' % ui.lineEdit_upload_Path.text()
             if os.path.exists(save_path):
                 lottery_term[9] = '%s/%s.jpg' % (save_path, term)
@@ -2887,7 +2887,7 @@ class ShootThread(QThread):
                 for index in range(0, 16):
                     if index not in [
                         int(ui.lineEdit_start.text()) - 1,
-                        int(ui.lineEdit_shake.text()) - 1,    # 关闭震动
+                        int(ui.lineEdit_shake.text()) - 1,  # 关闭震动
                         abs(int(ui.lineEdit_end.text())) - 1,
                         int(ui.lineEdit_alarm.text()) - 1,
                         int(ui.lineEdit_start_count.text()) - 1,
