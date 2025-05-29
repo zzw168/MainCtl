@@ -725,8 +725,9 @@ def deal_rank_two_color(integration_qiu_array):
                 continue
             # 查询寄存器中区域内珠子数量
             ball_sort_len = len(ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]])
-            # 找出所有同区索引位置
-            area_index = [i for i, row in enumerate(ranking_temp) if row[6] == ranking_temp[i][6]]
+            # 找出所有同圈同区索引位置
+            area_index = [i for i, row in enumerate(ranking_temp)
+                          if (row[6] == ranking_temp[i][6] and row[9] == ranking_temp[i][9])]
             # 查询实时区域内珠子数量
             area_len = len(area_index)
             if area_len > ball_sort_len:  # 如果区域内实际数量大于寄存器数量则：
