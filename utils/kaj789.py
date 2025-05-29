@@ -35,7 +35,7 @@ headers = {
 def test_server(Track_number='I'):
     try:
         GET_term_url = '/forecast/%s' % Track_number  # 取得期号，开始时间，结束时间，运行时长
-        response = requests.get('%s%s' % (url, GET_term_url), headers=headers, timeout=5)
+        response = requests.get('%s%s' % (url, GET_term_url), headers=headers, timeout=10)
         print(response.status_code)
         if response.status_code == 200:
             return True
@@ -53,7 +53,7 @@ def test_server(Track_number='I'):
 def get_term(Track_number='M'):  # 取期号
     try:
         GET_term_url = '/v2/forecast/%s' % Track_number  # 取得期号，开始时间，结束时间，运行时长
-        response = requests.get('%s%s' % (url, GET_term_url), headers=headers, timeout=5)
+        response = requests.get('%s%s' % (url, GET_term_url), headers=headers, timeout=10)
         print(response.status_code)
         if response.status_code == 200:
             print(response.json())
@@ -82,7 +82,7 @@ def post_start(term, betting_start_time, starting_Position='8,7,6,5,4,3,2,1', Tr
                            "actualStartTime": betting_start_time,
                            "startingPosition": starting_Position, }
         print(POST_start_data)
-        response = requests.post('%s%s' % (url, POST_start_url), headers=headers, json=POST_start_data, timeout=5)
+        response = requests.post('%s%s' % (url, POST_start_url), headers=headers, json=POST_start_data, timeout=10)
         print('start:', response.text)
         return response.text
     except requests.exceptions.Timeout:
@@ -105,7 +105,7 @@ def post_end(term, betting_end_time, status=1, Track_number='I'):  # 结束比�
         POST_end_data = {"raceTrackID": Track_number, "term": str(term), "actualEndTime": betting_end_time,
                          "status": status}  # 0: 不正常(卡珠,飞珠), 1: 正常, 2: 完全流局(只有一种情况:前三名检测不到)
         print(POST_end_data)
-        response = requests.post('%s%s' % (url, POST_end_url), headers=headers, json=POST_end_data, timeout=5)
+        response = requests.post('%s%s' % (url, POST_end_url), headers=headers, json=POST_end_data, timeout=10)
         print('end:', response.text)
         return response.text
     except requests.exceptions.Timeout:
@@ -145,7 +145,7 @@ def post_result(term, betting_end_time, result_data='', Track_number='I'):  # �
                                 "lapTime": 65.33
                                 }
         print(POST_result_data)
-        response = requests.post('%s%s' % (url, POST_result_url), headers=headers, json=POST_result_data, timeout=10)
+        response = requests.post('%s%s' % (url, POST_result_url), headers=headers, json=POST_result_data, timeout=30)
         print('result:', response.text)
         return response.text
     except requests.exceptions.Timeout:
@@ -168,7 +168,7 @@ def post_upload(term, img_path, Track_number='I'):  # 上传图片
         POST_upload_url = '/upload/%s/%s' % (Track_number, term)
         with open(img_path, 'rb') as f:
             files = {'file': ('image.jpg', f, 'image/jpeg')}  # 创建上传文件对象
-            response = requests.post('%s%s' % (url, POST_upload_url), files=files, headers=headers, timeout=10)
+            response = requests.post('%s%s' % (url, POST_upload_url), files=files, headers=headers, timeout=30)
         print(files)
         print('upload:', response.text)
         return response.text
@@ -192,7 +192,7 @@ def post_lapTime(term, position, lapTime, Track_number='I'):  # 上传图片
         POST_lapTime_data = {"raceTrackID": Track_number, "term": str(term), "position": position,
                          "lapTime": lapTime}  # 发送每种颜色珠子一圈的时间
         print(POST_lapTime_data)
-        response = requests.post('%s%s' % (url, POST_lapTime_url), headers=headers, json=POST_lapTime_data, timeout=5)
+        response = requests.post('%s%s' % (url, POST_lapTime_url), headers=headers, json=POST_lapTime_data, timeout=10)
         print('lapTime:', response.text)
         return response.text
     except requests.exceptions.Timeout:
@@ -221,7 +221,7 @@ def post_marble_results(term, comments='Invalid Term', Track_number='I'):  # 比
             "term": str(term),
             "comments": comments
         }
-        response = requests.post(post_marble_results_url, headers=control_headers, json=marble_results_data, timeout=5)
+        response = requests.post(post_marble_results_url, headers=control_headers, json=marble_results_data, timeout=10)
         print(marble_results_data)
         print('marble_results:', response.text)
         return response.text
@@ -242,7 +242,7 @@ def post_marble_results(term, comments='Invalid Term', Track_number='I'):  # 比
 def get_marble_settings():  # 取得当前整体开盘情况
     try:
         GET_marble_settings_url = 'https://control.kaj789.com/marbleSettings'
-        response = requests.get(GET_marble_settings_url, headers=headers, timeout=5)
+        response = requests.get(GET_marble_settings_url, headers=headers, timeout=10)
         print(response.status_code)
         if response.status_code == 200:
             print(response.json())
@@ -269,7 +269,7 @@ def post_aiupload(term, ai_img_path, Track_number='I'):
         POST_aiupload_url = '/aiupload/%s/%s' % (Track_number, term)
         with open(ai_img_path, 'rb') as f:
             files = {'file': ('image.jpg', f, 'image/jpeg')}  # 创建上传文件对象
-            response = requests.post('%s%s' % (url, POST_aiupload_url), headers=headers, files=files, timeout=5)
+            response = requests.post('%s%s' % (url, POST_aiupload_url), headers=headers, files=files, timeout=10)
         print(response.text)
         return response.text
     except requests.exceptions.Timeout:
@@ -290,7 +290,7 @@ def get_stream(Track_number='M'):
     try:
         global stream_url
         GET_stream_url = '/stream/%s' % Track_number
-        response = requests.get('%s%s' % (url, GET_stream_url), headers=headers, timeout=5)
+        response = requests.get('%s%s' % (url, GET_stream_url), headers=headers, timeout=10)
         print(response.status_code)
         if response.status_code == 200:
             stream_url = response.text
@@ -317,7 +317,7 @@ def post_status(status=True, Track_number='M'):  # 发送开盘封盘状态，�
     try:
         POST_status_url = '/status/%s' % Track_number
         POST_status_data = {"status": status}  # true: 开盘, false: 封盘
-        response = requests.post('%s%s' % (url, POST_status_url), headers=headers, json=POST_status_data, timeout=5)
+        response = requests.post('%s%s' % (url, POST_status_url), headers=headers, json=POST_status_data, timeout=10)
         print(response.text)
         return response.text
     except requests.exceptions.Timeout:
