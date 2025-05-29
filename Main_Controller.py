@@ -1779,7 +1779,6 @@ class ReStartThread(QThread):
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
                 response = get_term(Track_number)
                 if len(response) > 2:  # 开盘模式，获取期号正常
-                    self.start_flg = True
                     term = response['term']
                     betting_start_time = response['scheduledGameStartTime']
                     betting_end_time = response['scheduledResultOpeningTime']
@@ -1792,6 +1791,7 @@ class ReStartThread(QThread):
                         self.signal.emit(fail('比赛开始失败:%s' % res_start))
                         self.run_flg = False
                         continue
+                    self.start_flg = True   # 比赛进行中
                     if self.countdown < 0:  # 时间错误，30秒后开赛
                         betting_start_time = int(time.time())
                         betting_end_time = int(time.time()) + 30
@@ -2389,6 +2389,7 @@ class ObsEndThread(QThread):
                     else:
                         lottery_term[6] = "发送失败"
                         betting_loop_flg = False
+                        self.signal.emit(fail('发送赛果失败！请在赛事记录中补发！'))
                     if os.path.exists(lottery_term[9]):
                         res_upload = post_upload(term=term, img_path=lottery_term[9],
                                                  Track_number=Track_number)  # 上传结果图片
@@ -2397,6 +2398,7 @@ class ObsEndThread(QThread):
                         else:
                             lottery_term[7] = "上传失败"
                             betting_loop_flg = False
+                            self.signal.emit(fail('上传图片失败！请在赛事记录中补发！'))
                     if term_comment != '' and term_status != 1:
                         res_marble_results = post_marble_results(term=term,
                                                                  comments=term_comment,
@@ -2406,10 +2408,11 @@ class ObsEndThread(QThread):
                         else:
                             lottery_term[8] = "备注失败"
                             betting_loop_flg = False
+                            self.signal.emit(fail('上传备注失败！请在赛事记录中补发！'))
                         term_comment = ''
                 else:
                     send_flg = False
-                    self.signal.emit(fail('上传结果错误！'))
+                    self.signal.emit(fail('上传结果失败！请在赛事记录中补发！'))
                     print('上传结果错误！')
                 ReStart_Thread.start_flg = False  # 比赛结束标志,添加比赛总用时
                 lottery_term[2] = str(int(time.time() - ranking_time_start))
@@ -6734,10 +6737,10 @@ def my_test():
     global z_ranking_res
     global ranking_array
     global wakeup_addr
-    show_message("注意", "OBS 链接失败！")
+    show_message("注意", fail('上传结果失败！'))
     # index = int(ui.lineEdit_alarm.text()) - 1
     # sc.GASetExtDoBit(index, 1)
-    wakeup_addr = ["http://192.168.0.127:8080"]
+    # wakeup_addr = ["http://192.168.0.127:8080"]
     # cl_request.stop_stream()
     # cl_request.press_input_properties_button("结算页", "refreshnocache")
     # OrganCycle_Thread.run_flg = not OrganCycle_Thread.run_flg
