@@ -4684,7 +4684,7 @@ class MapLabel(QLabel):
                             if self.positions[num][4] != p:
                                 self.positions[num][4] = p
                                 self.positions[num][5] = round(time.time(), 2)
-                    if ranking_array[num][6] <= 1 and ranking_array[num][9] == 0:  # 起点
+                    if ranking_array[num][6] <= 1:  # 起点 and ranking_array[num][9] == 0
                         if num == 0:
                             index = len(ranking_array) * self.ball_space
                         else:
