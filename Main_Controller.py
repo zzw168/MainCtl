@@ -6737,7 +6737,9 @@ def my_test():
     global z_ranking_res
     global ranking_array
     global wakeup_addr
-    show_message("注意", fail('上传结果失败！'))
+    a = fail('上传备注失败！请在赛事记录中补发！')
+    if '失败' in a:
+        show_message("注意", fail('上传结果失败！'))
     # index = int(ui.lineEdit_alarm.text()) - 1
     # sc.GASetExtDoBit(index, 1)
     # wakeup_addr = ["http://192.168.0.127:8080"]
