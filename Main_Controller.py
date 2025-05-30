@@ -4714,11 +4714,11 @@ class MapLabel(QLabel):
                             self.positions[num][0] = p  # 盲跑时间
                         elif (round(time.time(), 2) - self.positions[num][5] > 0.5
                               and self.positions[num][0] > len(self.path_points[0]) / 10 * 9):
-                            self.positions[num][0] = p  # 最后路段，盲跑时间为0秒
+                            self.positions[num][0] = p  # 最后路段，盲跑时间为0.5秒
                         elif (round(time.time(), 2) - self.positions[num][5] > 1
                               and self.positions[num][0] > len(self.path_points[0]) / 10 * int(
                                     ui.lineEdit_Map_Action.text())):
-                            self.positions[num][0] = p  # 最后路段，盲跑时间为1秒
+                            self.positions[num][0] = p  # 最后路段,计球位置，盲跑时间为1秒
                         else:
                             self.speed = 1
                         index = self.positions[num][0] + self.speed
