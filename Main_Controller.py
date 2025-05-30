@@ -4088,15 +4088,7 @@ def load_main_json():
         ui.checkBox_end_2.setChecked(main_all['checkBox_end_2'])
         ui.checkBox_main_camera_set.setChecked(main_all['checkBox_main_camera_set'])
         ui.checkBox_Ai.setChecked(main_all['checkBox_Ai'])
-        for index in range(1, 4):
-            getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
-            getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
-            getattr(ui, 'radioButton_music_background_%s' % index).setChecked(main_all['music_%s' % index][0])
-        for index in range(1, balls_count + 1):
-            eng = main_all['init_array'][index - 1][5]
-            ch = main_all['color_ch'][eng]
-            getattr(ui, 'lineEdit_Color_Eng_%s' % index).setText(eng)
-            getattr(ui, 'lineEdit_Color_Ch_%s' % index).setText(ch)
+
         # 赋值变量
         init_array = copy.deepcopy(main_all['init_array'])
         print(init_array)
@@ -4115,6 +4107,15 @@ def load_main_json():
         five_axis = main_all['five_axis']
         five_key = main_all['five_key']
         Track_number = main_all['Track_number']
+        for index in range(1, 4):
+            getattr(ui, 'lineEdit_music_%s' % index).setText(main_all['music_%s' % index][1])
+            getattr(ui, 'radioButton_music_%s' % index).setChecked(main_all['music_%s' % index][0])
+            getattr(ui, 'radioButton_music_background_%s' % index).setChecked(main_all['music_%s' % index][0])
+        for index in range(1, balls_count + 1):
+            eng = main_all['init_array'][index - 1][5]
+            ch = main_all['color_ch'][eng]
+            getattr(ui, 'lineEdit_Color_Eng_%s' % index).setText(eng)
+            getattr(ui, 'lineEdit_Color_Ch_%s' % index).setText(ch)
         for i in range(balls_count, 10):
             getattr(ui, 'lineEdit_result_%s' % i).hide()
             getattr(result_ui, 'lineEdit_result_%s' % i).hide()
