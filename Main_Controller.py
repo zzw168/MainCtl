@@ -1400,6 +1400,12 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
                         and map_label_big.map_action >
                         len(map_label_big.path_points[0]) * 0.2):
                     continue
+                if (map_label_big and map_label_big.map_action and map_label_big.path_points
+                        and area['area_code'] > max_area_count - balls_count  # 防止起点和终点区域冲突
+                        and ui.checkBox_end_2.isChecked()
+                        and map_label_big.map_action <
+                        len(map_label_big.path_points[0]) * 0.2):
+                    continue
                 pts = np.array(area['coordinates'], np.int32)
                 res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
                 if res > -1 and len(ball) >= 9:
@@ -7478,8 +7484,6 @@ if __name__ == '__main__':
     flg_start = {'card': False, 's485': False, 'obs': False, 'live': False,
                  'ai': False, 'ai_end': False, 'server': False}  # 各硬件启动标志
 
-    load_plan_json()
-
     tb_step_worker = UiWorker(ui.tableWidget_Step)
     # main_music_worker = UiWorker(ui.checkBox_main_music)
     alarm_worker = UiWorker(ui.checkBox_alarm)
@@ -7784,9 +7788,6 @@ if __name__ == '__main__':
         QMessageBox.information(z_window, "UDP", "UDP端口被占用")
         # sys.exit()
 
-    deal_udp_thread = DealUdpThread()
-    deal_udp_thread.signal.connect(udpsignal_accept)
-    deal_udp_thread.start()
 
     # pingpong 发送排名 15
     tcp_ranking_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -7853,6 +7854,8 @@ if __name__ == '__main__':
             {"pm": 10, "id": 10, "x": 79, "y": 635, "b": 7}
         ]
     }
+
+    load_plan_json()
 
     positions_live_thread = PositionsLiveThread()  # 发送实时位置到服务器线程
     positions_live_thread.signal.connect(livesignal_accept)
@@ -8070,5 +8073,9 @@ if __name__ == '__main__':
     ui.pushButton_kaj789.clicked.connect(kaj789_table)
 
     "**************************直播大厅_结束*****************************"
+
+    deal_udp_thread = DealUdpThread()
+    deal_udp_thread.signal.connect(udpsignal_accept)
+    deal_udp_thread.start()
 
     sys.exit(app.exec())
