@@ -256,21 +256,18 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
             return True
         except:
-            if i < 3:
-                try:
-                    cl_request.disconnect()
-                    time.sleep(0.5)
-                    cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
-                    print('重连OBS~~~~~~~~~~~~')
-                    time.sleep(0.5)
-                except:
-                    print('链接OBS失败~~~~~~~~~~~~')
-                continue
-            else:
-                lottery_term[9] = '截图失败'
-                print('OBS 切换操作失败！')
-                flg_start['obs'] = False
-                return False
+            try:
+                cl_request.disconnect()
+                time.sleep(0.5)
+                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                print('重连OBS~~~~~~~~~~~~')
+                time.sleep(0.5)
+            except:
+                print('链接OBS失败~~~~~~~~~~~~')
+            continue
+    print('OBS 切换操作失败！')
+    flg_start['obs'] = False
+    return False
 
 
 def get_scenes_list():  # 刷新所有列表
@@ -331,7 +328,7 @@ def scenes_change():  # 变换场景
 def get_obs(scence_current):
     global lottery_term
     global cl_request
-    resp = ''
+    image_byte = ''
     for i in range(5):
         try:
             resp = cl_request.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
@@ -381,21 +378,20 @@ def get_obs(scence_current):
                 flg_start['ai_end'] = False
                 image_byte = base64.b64decode(img.encode('ascii'))
                 print('终点识别服务没有开启！')
-                return [image_byte, '[1]', 'obs']
-        except:
-            if i < 3:
-                try:
-                    cl_request.disconnect()
-                    time.sleep(0.5)
-                    cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
-                    print('重连OBS~~~~~~~~~~~~')
-                    time.sleep(0.5)
-                except:
-                    print('链接OBS失败~~~~~~~~~~~~')
                 continue
-            else:
-                flg_start['obs'] = False
-                return ['', '[1]', 'obs']
+                # return [image_byte, '[1]', 'obs']
+        except:
+            try:
+                cl_request.disconnect()
+                time.sleep(0.5)
+                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                print('重连OBS~~~~~~~~~~~~')
+                time.sleep(0.5)
+            except:
+                print('链接OBS失败~~~~~~~~~~~~')
+            continue
+    flg_start['obs'] = False
+    return [image_byte, '[1]', 'obs']
 
 
 def obs_save_image():
