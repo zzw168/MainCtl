@@ -4830,8 +4830,8 @@ class MapLabel(QLabel):
         painter.setRenderHint(QPainter.Antialiasing)
 
         if ui.checkBox_show_orbit.isChecked():  # 绘制路径
+            part = math.ceil(len(self.path_points[0]) / (max_area_count - balls_count))
             for index in range(len(self.path_points[0])):
-                part = len(self.path_points[0]) / (max_area_count - balls_count)
                 if index % int(part) == 0:
                     painter.setBrush(QBrush(QColor(255, 0, 0), Qt.SolidPattern))
                     font = QFont("Arial", 12, QFont.Bold)  # 字体：Arial，大小：16，加粗
