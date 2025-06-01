@@ -666,7 +666,7 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
                     break
     ranking_temp = copy.deepcopy(ranking_array)
     if (len(array_temp) >= balls_count
-            or time.time()- update_two_time > 0.5):
+            or time.time() - update_two_time > 0.5):
         # 统计跨圈珠子数量
         for i in range(len(array_temp)):
             if array_temp[i][6] == 0:
@@ -725,7 +725,8 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
             if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
                 continue
             if not (ranking_temp[i][5] in ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]):
-                ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
+                ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(
+                    copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
 
     # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
     if ranking_temp[0][6] > max_area_count:
@@ -1098,6 +1099,7 @@ class TcpRankingThread(QThread):
 
     def run(self) -> None:
         global tcp_ranking_socket
+        global z_ranking_res
         tcp_ranking_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         tcp_ranking_socket.bind(tcpServer_addr)
         tcp_ranking_socket.listen(1)
@@ -1126,6 +1128,12 @@ class TcpRankingThread(QThread):
                                                 Script_Thread.run_type = 'period'
                                                 Script_Thread.run_flg = True
                                 else:
+                                    if ui.checkBox_Two_Color.isChecked():
+                                        for i in z_ranking_res:
+                                            if z_ranking_res[i] > balls_count / 2:
+                                                z_ranking_res[i] = 6
+                                            else:
+                                                z_ranking_res[i] = 3
                                     d = {'data': z_ranking_res, 'type': 'pm'}
                                     ws.send(json.dumps(d))
                         except Exception as e:
@@ -7679,7 +7687,7 @@ if __name__ == '__main__':
     balls_count = 8  # 运行球数
     balls_start = 0  # 起点球数量
     laps_count = 0  # 跨圈计数
-    update_two_time = time.time()   # 记录两种颜色珠子的更新时间
+    update_two_time = time.time()  # 记录两种颜色珠子的更新时间
     ranking_lock = threading.Lock()  # 排名线程锁
     ranking_array = []  # 前0~3是坐标↖↘,4=镜头号，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
     array_temp = []  # 暂存珠子数据位置，满6颗重置  前0~3是坐标↖↘,4=镜头号，5=名称,6=赛道区域,7=方向排名,8=路线
