@@ -1131,9 +1131,9 @@ class TcpRankingThread(QThread):
                                     if ui.checkBox_Two_Color.isChecked():
                                         for i in z_ranking_res:
                                             if z_ranking_res[i] > balls_count / 2:
-                                                z_ranking_res[i] = 6
+                                                z_ranking_res[i] = 1
                                             else:
-                                                z_ranking_res[i] = 3
+                                                z_ranking_res[i] = 0
                                     d = {'data': z_ranking_res, 'type': 'pm'}
                                     ws.send(json.dumps(d))
                         except Exception as e:
