@@ -649,49 +649,45 @@ def deal_action():
         action_area[0] = int(ranking_array[0][6])  # 触发区域
 
 
-def deal_rank_two_color(integration_qiu_array):
+def deal_rank_two_color(integration_qiu_array, cam_num):
     global ranking_array
+    global array_temp
     global ball_sort
-    area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
-    ranking_temp = copy.deepcopy(ranking_array)
-    ball_sort_temp = copy.deepcopy(ball_sort)
-    for r_index in range(0, len(ranking_temp)):
-        ranking_temp[r_index][10] = 0  # 全部预设不可见
-    if (len(integration_qiu_array) == len(ranking_temp)
-            and integration_qiu_array[0][6] == 1):
-        for r_index in range(0, len(ranking_temp)):
-            for r_i in range(0, len(integration_qiu_array[r_index])):
-                ranking_temp[r_index][r_i] = copy.deepcopy(integration_qiu_array[r_index][r_i])  # 更新 ranking_temp
-            ranking_temp[r_index][10] = 1
-    else:
+    global laps_count
+    global update_two_time
+    if (len(array_temp) < balls_count
+            and cam_num not in {item[4] for item in array_temp}):
+        update_two_time = time.time()
         for q_item in integration_qiu_array:
-            for r_index in range(0, len(ranking_temp)):
-                if (ranking_temp[r_index][5] == q_item[5]  # 同色
-                        and ((max_area_count - balls_count >= q_item[6]
-                                 and 0 < q_item[6] - ranking_temp[r_index][6] <= area_limit)
-                             or (max_area_count >= q_item[6]
-                                 >= ranking_temp[r_index][6] >= max_area_count - area_limit - balls_count
-                                 and 0 <= q_item[6] - ranking_temp[r_index][6] <= area_limit + balls_count
-                                 and ranking_temp[r_index][9] == max_lap_count - 1  # 处理最后一圈终点附近的条件
-                             ))):  # 更大区域才更新
-                    ball_sort_temp[ranking_temp[r_index][6]][ranking_temp[r_index][9]] = []  # 更新区域前清空之前的寄存器
-                    for r_i in range(0, len(q_item)):
-                        ranking_temp[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_temp
-                    ranking_temp[r_index][10] = 1
-                    break  # 每匹配到一颗珠子就停止
-                # 处理圈数
-                if (r_index == len(ranking_temp) - 1
-                        and q_item[6] <= area_limit):
-                    for i in range(0, len(ranking_temp)):
-                        if (ranking_temp[i][5] == q_item[5]
-                                and ranking_temp[i][6] >= max_area_count - area_limit - balls_count
-                                and ranking_temp[i][9] < max_lap_count - 1):  # 同色,第0圈
-                            ranking_temp[i][6] = 0  # 每增加一圈，重置区域
-                            ranking_temp[i][9] += 1
-                            if ranking_temp[i][9] > max_lap_count - 1:
-                                ranking_temp[i][9] = max_lap_count - 1
-                            ranking_temp[i][10] = 1
-                            break
+            color_num = len([a_item for a_item in array_temp if q_item[5] == a_item[5]])
+            if color_num < balls_count / 2:
+                array_temp.append(q_item)
+                if len(array_temp) >= balls_count:
+                    break
+    ranking_temp = copy.deepcopy(ranking_array)
+    if (len(array_temp) >= balls_count
+            or time.time()- update_two_time > 0.5):
+        # 统计跨圈珠子数量
+        for i in range(len(array_temp)):
+            if array_temp[i][6] == 0:
+                laps_count += 1
+        # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
+        array_temp.sort(key=lambda x: x[6], reverse=False)
+
+        for r_index in range(0, len(array_temp)):
+            if ranking_temp[r_index][6] <= max_area_count:
+                for r_i in range(0, len(array_temp[r_index])):
+                    ranking_temp[r_index][r_i] = copy.deepcopy(array_temp[r_index][r_i])  # 更新 ranking_temp
+        quotient = laps_count // balls_count  # 整数部分
+        remainder = laps_count % balls_count  # 余数
+        for item in ranking_temp:
+            item[9] = quotient
+        for i in range(remainder):
+            ranking_temp[i][9] += 1
+
+        array_temp = []
+
+    ball_sort_temp = copy.deepcopy(ball_sort)
 
     # 1.排序区域
     # for i in range(0, len(ranking_temp)):  # 冒泡排序
@@ -722,36 +718,31 @@ def deal_rank_two_color(integration_qiu_array):
     #         if ranking_temp[j][9] < ranking_temp[j + 1][9]:
     #             ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
     ranking_temp.sort(key=lambda x: x[9], reverse=True)
+
     # 4.寄存器保存固定每个区域的最新排位（因为ranking_temp 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
-    for i in range(0, len(ranking_temp)):
-        if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
-            continue
-        # 查询寄存器中区域内珠子数量
-        ball_sort_len = len(ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]])
-        # 找出所有同圈同区索引位置
-        area_index = [i for i, row in enumerate(ranking_temp)
-                      if (row[6] == ranking_temp[i][6] and row[9] == ranking_temp[i][9])]
-        # 查询实时区域内珠子数量
-        area_len = len(area_index)
-        if area_len > ball_sort_len:  # 如果区域内实际数量大于寄存器数量则：
-            for j in range(ball_sort_len, area_len):
-                ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(
-                    copy.deepcopy(ranking_temp[area_index[j]][5]))  # 添加寄存器中该区域的珠子
+    if ranking_temp[0][6] == 1:
+        for i in range(0, len(ranking_temp)):
+            if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
+                continue
+            if not (ranking_temp[i][5] in ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]):
+                ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
+
     # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
-    for i in range(len(ranking_temp)):
-        for j in range(len(ranking_temp) - i - 1):
-            a, b = ranking_temp[j], ranking_temp[j + 1]
-            if a[6] == b[6] and a[9] == b[9] and a[5] != b[5]:
-                area, round_ = a[6], a[9]
-                ball_list = ball_sort_temp[area][round_]
-                try:
-                    a_index = ball_list.index(a[5])
-                    b_index = ball_list.index(b[5])
-                    if a_index > b_index:
-                        ranking_temp[j], ranking_temp[j + 1] = b, a
-                except ValueError:
-                    # 如果某个球不在 ball_list 中，跳过处理或根据需要处理
-                    pass
+    if ranking_temp[0][6] > max_area_count:
+        for i in range(len(ranking_temp)):
+            for j in range(len(ranking_temp) - i - 1):
+                a, b = ranking_temp[j], ranking_temp[j + 1]
+                if a[6] == b[6] and a[9] == b[9] and a[5] != b[5]:
+                    area, round_ = a[6], a[9]
+                    ball_list = ball_sort_temp[area][round_]
+                    try:
+                        a_index = ball_list.index(a[5])
+                        b_index = ball_list.index(b[5])
+                        if a_index > b_index:
+                            ranking_temp[j], ranking_temp[j + 1] = b, a
+                    except ValueError:
+                        # 如果某个球不在 ball_list 中，跳过处理或根据需要处理
+                        pass
 
     with ball_sort_lock:
         ball_sort = copy.deepcopy(ball_sort_temp)
@@ -1257,7 +1248,8 @@ class DealUdpThread(QThread):
                 array_data = filter_max_value(array_data)  # 非双色则开启同色过滤
             if not array_data or len(array_data) < 1:
                 continue
-            array_data = deal_area(array_data, array_data[0][6])  # 收集统计区域内的球
+            cam_num = array_data[0][6]
+            array_data = deal_area(array_data, cam_num)  # 收集统计区域内的球
             if not array_data or len(array_data) < 1:
                 continue
             if len(array_data[0]) < 8:
@@ -1268,7 +1260,7 @@ class DealUdpThread(QThread):
                 continue
             # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
             if ui.checkBox_Two_Color.isChecked():
-                deal_rank_two_color(array_data)
+                deal_rank_two_color(array_data, cam_num)
             else:
                 deal_rank(array_data)
             if ball_sort and balls_start != len(ball_sort[1][0]):
@@ -1417,6 +1409,7 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
                 pts = np.array(area['coordinates'], np.int32)
                 res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
                 if res > -1 and len(ball) >= 9:
+                    ball[4] = cap_num  # 把置信度位置修改为镜头号码
                     ball[6] = area['area_code']
                     ball[7] = area['direction']
                     ball[8] = area['road_path']
@@ -2753,7 +2746,6 @@ def ScreenShotsignal_accept(msg):
         img = msg[0]
         pixmap = QPixmap()
         pixmap.loadFromData(img)
-        pixmap = pixmap.scaled(pixmap.width() / 2, pixmap.height() / 2, Qt.KeepAspectRatio, Qt.SmoothTransformation);
 
         if msg[2] == 'obs':
             painter = QPainter(pixmap)
@@ -2763,6 +2755,9 @@ def ScreenShotsignal_accept(msg):
             painter.end()  # 结束绘制
             ui.lineEdit_Main_Camera.setText(str(main_Camera[:balls_count]))
             # if ui.checkBox_main_camera.isChecked():
+            # 获取 label 的当前大小
+            label_size = main_camera_ui.label_picture.size()
+            pixmap = pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             main_camera_ui.label_picture.setPixmap(pixmap)
             ui.label_main_picture.setPixmap(pixmap)
         elif msg[2] == 'rtsp':
@@ -2773,6 +2768,9 @@ def ScreenShotsignal_accept(msg):
             painter.end()  # 结束绘制
             ui.lineEdit_Backup_Camera.setText(str(monitor_Camera[:balls_count]))
             # if ui.checkBox_monitor_cam.isChecked():
+            # 获取 label 的当前大小
+            label_size = monitor_camera_ui.label_picture.size()
+            pixmap = pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             monitor_camera_ui.label_picture.setPixmap(pixmap)
             ui.label_monitor_picture.setPixmap(pixmap)
         for index in range(len(main_Camera)):
@@ -2858,7 +2856,6 @@ def ObsShotsignal_accept(msg):
         img = msg[0]
         pixmap = QPixmap()
         pixmap.loadFromData(img)
-        pixmap = pixmap.scaled(pixmap.width() / 2, pixmap.height() / 2, Qt.KeepAspectRatio, Qt.SmoothTransformation);
 
         if msg[2] == 'obs':
             painter = QPainter(pixmap)
@@ -2866,6 +2863,9 @@ def ObsShotsignal_accept(msg):
             painter.setPen(QColor(255, 0, 0))  # 设定颜色（红色）
             painter.drawText(10, 60, "1")  # (x, y, "文本")
             painter.end()  # 结束绘制
+            # 获取 label 的当前大小
+            label_size = main_camera_ui.label_picture.size()
+            pixmap = pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
             main_camera_ui.label_picture.setPixmap(pixmap)
             ui.label_main_picture.setPixmap(pixmap)
 
@@ -6159,6 +6159,7 @@ class ResetRankingThread(QThread):
         global ranking_save
         global balls_ranking_time
         global ranking_check
+        global laps_count
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -6182,6 +6183,7 @@ class ResetRankingThread(QThread):
                 for i in range(balls_count):
                     ranking_array[i][6] = 1  # 强制在第一区
             balls_start = 0  # 起点球数
+            laps_count = 0  # 初始化跨圈数量
             if con_data:
                 for row in range(0, len(init_array)):
                     for col in range(0, 5):
@@ -7676,8 +7678,11 @@ if __name__ == '__main__':
     action_area = [0, 0, 0]  # 触发镜头向下一个位置活动的点位 action_area[区域, 圈数, 可写]
     balls_count = 8  # 运行球数
     balls_start = 0  # 起点球数量
+    laps_count = 0  # 跨圈计数
+    update_two_time = time.time()   # 记录两种颜色珠子的更新时间
     ranking_lock = threading.Lock()  # 排名线程锁
-    ranking_array = []  # 前0~3是坐标↖↘,4=置信度，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
+    ranking_array = []  # 前0~3是坐标↖↘,4=镜头号，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
+    array_temp = []  # 暂存珠子数据位置，满6颗重置  前0~3是坐标↖↘,4=镜头号，5=名称,6=赛道区域,7=方向排名,8=路线
     ranking_check = {'yellow': [-1, -1],  # 头名检测是否误判 [区域, 圈数]
                      'blue': [-1, -1],
                      'red': [-1, -1],
