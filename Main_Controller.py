@@ -724,7 +724,7 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
         for i in range(0, len(ranking_temp)):
             if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
                 continue
-            if not (ranking_temp[i][5] in ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]):
+            if len(ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]) < balls_count:
                 ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(
                     copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
 
@@ -3451,6 +3451,9 @@ class PlanCmdThread(QThread):
                 # 强制中断情况处理
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断情况下的动作
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
+                    self.background_state = False
+                    self.ready_state = False
+                    self.end_state = False
                     print('另外开关~~~~~~~~~')
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                     if ui.checkBox_Ai.isChecked():
@@ -3467,6 +3470,9 @@ class PlanCmdThread(QThread):
                     self.signal.emit(succeed("运动流程：中断！"))
                 if ui.checkBox_test.isChecked():
                     self.signal.emit(succeed("测试流程：完成！"))
+                    self.background_state = False
+                    self.ready_state = False
+                    self.end_state = False
                     self.run_flg = False  # 测试模式，不自动关闭任何机关
                 else:  # 每次循环增加一圈，初始化动作位置为0，初始化地图位置为0
                     action_area[2] = 1  # 写入标志 1 为独占写入
@@ -3493,6 +3499,9 @@ class PlanCmdThread(QThread):
                 print('动作已完成！')
                 if not flg_start['card']:
                     self.signal.emit(fail("运动卡未链接！"))
+                self.background_state = False
+                self.ready_state = False
+                self.end_state = False
                 self.run_flg = False
 
 
