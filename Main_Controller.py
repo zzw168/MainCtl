@@ -4837,14 +4837,13 @@ class MapLabel(QLabel):
                     if p >= len(self.path_points[0]):
                         p = len(self.path_points[0]) - 1
                     if ui.checkBox_Two_Color.isChecked():
-                        for i in range(len(self.positions)):  # 排序
-                            self.positions[i][1] = ranking_array[num][5]
-                            self.positions[num][3] = ranking_array[num][9]  # 圈数
-                            self.positions[num][6] = abs(ranking_array[num][8])  # 路线标志
-                            self.positions[num][7] = self.path_direction[abs(ranking_array[num][8])]  # 方向标志
-                            if self.positions[num][4] != p:
-                                self.positions[num][4] = p
-                                self.positions[num][5] = round(time.time(), 2)
+                        self.positions[num][1] = ranking_array[num][5]
+                        self.positions[num][3] = ranking_array[num][9]  # 圈数
+                        self.positions[num][6] = abs(ranking_array[num][8])  # 路线标志
+                        self.positions[num][7] = self.path_direction[abs(ranking_array[num][8])]  # 方向标志
+                        if self.positions[num][4] != p:
+                            self.positions[num][4] = p
+                            self.positions[num][5] = round(time.time(), 2)
                     else:
                         for i in range(len(self.positions)):  # 排序
                             if self.positions[i][1] == ranking_array[num][5]:
