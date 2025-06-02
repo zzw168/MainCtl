@@ -4309,6 +4309,9 @@ def cmd_run():
     else:
         save_plan_json()
         plan_refresh()
+        PlanCmd_Thread.background_state = False
+        PlanCmd_Thread.end_state = False
+        PlanCmd_Thread.ready_state = False
         PlanCmd_Thread.run_flg = True
 
 
