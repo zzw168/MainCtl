@@ -1863,6 +1863,7 @@ class ReStartThread(QThread):
             except:
                 self.signal.emit(fail('OBS链接失败！'))
             while PlanCmd_Thread.run_flg:
+                self.signal.emit('等待背景结束~~~~~~~')
                 print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
                 time.sleep(1)
             PlanCmd_Thread.background_state = True  # 运行背景
@@ -1873,11 +1874,13 @@ class ReStartThread(QThread):
                 Shoot_Thread.run_flg = True
                 while Shoot_Thread.run_flg:
                     print('等待上珠结束~~~~~~~')
+                    self.signal.emit('等待上珠结束~~~~~~~')
                     time.sleep(1)
                     if not ui.checkBox_shoot_0.isChecked():
                         break
             while PlanCmd_Thread.run_flg:
                 print('等待背景结束~~~~~~~')
+                self.signal.emit('等待背景结束~~~~~~~')
                 time.sleep(1)
             if not self.run_flg:
                 continue
@@ -1886,9 +1889,11 @@ class ReStartThread(QThread):
                     for i in range(balls_count):
                         ranking_array[i][6] = 1  # 强制在第一区
                 while ObsShot_Thread.run_flg:
+                    self.signal.emit('等待主摄像头识别~~~~~~~')
                     time.sleep(1)
                 ObsShot_Thread.run_flg = True
                 while ObsShot_Thread.run_flg:
+                    self.signal.emit('等待主摄像头识别~~~~~~~')
                     time.sleep(1)
                 with ball_sort_lock:
                     ball_sort[1][0] = copy.deepcopy(camera_list)
