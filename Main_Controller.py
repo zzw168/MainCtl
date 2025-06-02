@@ -669,7 +669,7 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
             or time.time() - update_two_time > 0.5):
         # 统计跨圈珠子数量
         for i in range(len(array_temp)):
-            if array_temp[i][6] == 0:
+            if array_temp[i][6] == 60:
                 laps_count += 1
         # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
         array_temp.sort(key=lambda x: x[6], reverse=False)
@@ -2759,6 +2759,7 @@ def ScreenShotsignal_accept(msg):
         img = msg[0]
         pixmap = QPixmap()
         pixmap.loadFromData(img)
+        pixmap = pixmap.scaled(pixmap.width() / 2, pixmap.height() / 2, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
         if msg[2] == 'obs':
             painter = QPainter(pixmap)
@@ -2768,11 +2769,12 @@ def ScreenShotsignal_accept(msg):
             painter.end()  # 结束绘制
             ui.lineEdit_Main_Camera.setText(str(main_Camera[:balls_count]))
             # if ui.checkBox_main_camera.isChecked():
+            ui.label_main_picture.setPixmap(pixmap)
             # 获取 label 的当前大小
             label_size = main_camera_ui.label_picture.size()
-            pixmap = pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            main_camera_ui.label_picture.setPixmap(pixmap)
-            ui.label_main_picture.setPixmap(pixmap)
+            main_camera_ui.original_pixmap = pixmap
+            main_camera_ui.label_picture.setPixmap(
+                pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         elif msg[2] == 'rtsp':
             painter = QPainter(pixmap)
             painter.setFont(QFont("Arial", 50, QFont.Bold))  # 设置字体
@@ -2781,11 +2783,13 @@ def ScreenShotsignal_accept(msg):
             painter.end()  # 结束绘制
             ui.lineEdit_Backup_Camera.setText(str(monitor_Camera[:balls_count]))
             # if ui.checkBox_monitor_cam.isChecked():
+            ui.label_monitor_picture.setPixmap(pixmap)
             # 获取 label 的当前大小
             label_size = monitor_camera_ui.label_picture.size()
-            pixmap = pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            monitor_camera_ui.label_picture.setPixmap(pixmap)
-            ui.label_monitor_picture.setPixmap(pixmap)
+            monitor_camera_ui.original_pixmap = pixmap
+            monitor_camera_ui.label_picture.setPixmap(
+                pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+
         for index in range(len(main_Camera)):
             fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
             if fit_Camera[index]:
@@ -2869,6 +2873,7 @@ def ObsShotsignal_accept(msg):
         img = msg[0]
         pixmap = QPixmap()
         pixmap.loadFromData(img)
+        pixmap = pixmap.scaled(pixmap.width() / 2, pixmap.height() / 2, Qt.KeepAspectRatio, Qt.SmoothTransformation)
 
         if msg[2] == 'obs':
             painter = QPainter(pixmap)
@@ -2876,11 +2881,13 @@ def ObsShotsignal_accept(msg):
             painter.setPen(QColor(255, 0, 0))  # 设定颜色（红色）
             painter.drawText(10, 60, "1")  # (x, y, "文本")
             painter.end()  # 结束绘制
+
+            ui.label_main_picture.setPixmap(pixmap)
             # 获取 label 的当前大小
             label_size = main_camera_ui.label_picture.size()
-            pixmap = pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            main_camera_ui.label_picture.setPixmap(pixmap)
-            ui.label_main_picture.setPixmap(pixmap)
+            main_camera_ui.original_pixmap = pixmap
+            main_camera_ui.label_picture.setPixmap(
+                pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
 
 
 '''
@@ -3938,6 +3945,11 @@ def load_plan_json():
         print("文件不存在")
 
 
+def z_combox_change():
+    plan_refresh()
+    save_main_json()
+
+
 def plan_refresh():  # 刷新方案列表
     global plan_list
     comb = ui.comboBox_plan
@@ -4023,7 +4035,6 @@ def plan_refresh():  # 刷新方案列表
             num = ui.comboBox_plan.currentIndex() + 1  # 方案索引+1
             ai_points[index][0].move(*ai_points[index][num][1])  # 设置初始位置
             # ai_points[index][0].show()
-    save_main_json()
 
 
 def save_main_json():
@@ -6886,9 +6897,12 @@ def my_test():
     global z_ranking_res
     global ranking_array
     global wakeup_addr
-    a = fail('上传备注失败！请在赛事记录中补发！')
-    if '失败' in a:
-        show_message("注意", fail('上传结果失败！'))
+    print('~~~~~~~~~~~~~~~~~~~')
+    img = 'D:\\rtsp\\rtsp_0_end.jpg'
+    pixmap = QPixmap(img)
+    label_size = monitor_camera_ui.label_picture.size()
+    monitor_camera_ui.original_pixmap = pixmap
+    monitor_camera_ui.label_picture.setPixmap(pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
     # index = int(ui.lineEdit_alarm.text()) - 1
     # sc.GASetExtDoBit(index, 1)
     # wakeup_addr = ["http://192.168.0.127:8080"]
@@ -7220,11 +7234,56 @@ def auto_time():  # 相对上一个动作按时间设置速度
 
 
 class CameraUi(QDialog, Ui_Camera_Dialog):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.original_pixmap = QPixmap()  # 初始化为空 pixmap
 
-    def setupUi(self, z_dialog):
-        super(CameraUi, self).setupUi(z_dialog)
+    # def setupUi(self, z_dialog):
+    #     super(CameraUi, self).setupUi(z_dialog)
+    # def showEvent(self, event: QEvent):
+    #     print("窗口显示了！")
+    #     # 可以在这里加载图片或执行其他初始化任务
+    #     if self.original_pixmap and not self.original_pixmap.isNull():
+    #         scaled_pixmap = self.original_pixmap.scaled(
+    #             self.label_picture.size(),
+    #             Qt.KeepAspectRatio,
+    #             Qt.SmoothTransformation
+    #         )
+    #         self.label_picture.setPixmap(scaled_pixmap)
+    #     super().showEvent(event)
+
+    def resizeEvent(self, event):
+        if self.original_pixmap and not self.original_pixmap.isNull():
+            scaled_pixmap = self.original_pixmap.scaled(
+                self.label_picture.size(),
+                Qt.KeepAspectRatio,
+                Qt.SmoothTransformation
+            )
+            self.label_picture.setPixmap(scaled_pixmap)
+
+        super().resizeEvent(event)
+
+
+# class CameraUi(QDialog, Ui_Camera_Dialog):
+#     def __init__(self):
+#         super().__init__()
+#         self.original_pixmap = ''
+#
+#     def setupUi(self, z_dialog):
+#         super(CameraUi, self).setupUi(z_dialog)
+#
+#     def resizeEvent(self, event):
+#         print('~~~!!!!')
+#         if self.original_pixmap:  # 原始 pixmap 应该保存为类属性
+#             scaled_pixmap = self.original_pixmap.scaled(
+#                 self.label_picture.size(),
+#                 Qt.KeepAspectRatio,
+#                 Qt.SmoothTransformation
+#             )
+#
+#             self.label_picture.setPixmap(scaled_pixmap)
+#         super().resizeEvent(event)
 
 
 def main_hide_event(event):
@@ -7259,16 +7318,16 @@ def udpdata_hide_event(event):
 
 def main_cam_change():
     if ui.checkBox_main_camera.isChecked():
-        MainCameraDialog.show()
+        main_camera_ui.show()
     else:
-        MainCameraDialog.hide()
+        main_camera_ui.hide()
 
 
 def monitor_cam_change():
     if ui.checkBox_monitor_cam.isChecked():
-        MonitorCameraDialog.show()
+        monitor_camera_ui.show()
     else:
-        MonitorCameraDialog.hide()
+        monitor_camera_ui.hide()
 
 
 def map_change():
@@ -7489,19 +7548,15 @@ if __name__ == '__main__':
     speed_ui.tableWidget_Set_Speed.itemChanged.connect(auto_line)
     speed_ui.lineEdit_time_set.editingFinished.connect(auto_time)
 
-    MainCameraDialog = QDialog(z_window)
-    MainCameraDialog.hideEvent = main_hide_event
-    main_camera_ui = CameraUi()
-    main_camera_ui.setupUi(MainCameraDialog)
+    main_camera_ui = CameraUi(z_window)
+    main_camera_ui.hideEvent = main_hide_event
     main_camera_ui.groupBox_main_camera.setTitle('主摄像头')
     main_camera_ui.label_picture.mouseDoubleClickEvent = main_doubleclick_event
     ui.label_main_picture.mouseDoubleClickEvent = main_doubleclick_event
     main_camera_ui.pushButton_net.hide()
 
-    MonitorCameraDialog = QDialog(z_window)
-    MonitorCameraDialog.hideEvent = monitor_hide_event
-    monitor_camera_ui = CameraUi()
-    monitor_camera_ui.setupUi(MonitorCameraDialog)
+    monitor_camera_ui = CameraUi(z_window)
+    monitor_camera_ui.hideEvent = monitor_hide_event
     monitor_camera_ui.groupBox_main_camera.setTitle('网络摄像头')
     monitor_camera_ui.label_picture.mouseDoubleClickEvent = monitor_doubleclick_event
     ui.label_monitor_picture.mouseDoubleClickEvent = monitor_doubleclick_event
@@ -7645,7 +7700,7 @@ if __name__ == '__main__':
     ui.checkBox_alarm_2.checkStateChanged.connect(organ_alarm)
     ui.checkBox_switch.checkStateChanged.connect(organ_number)
 
-    ui.comboBox_plan.currentIndexChanged.connect(plan_refresh)
+    ui.comboBox_plan.currentIndexChanged.connect(z_combox_change)
     ui.tableWidget_Step.itemChanged.connect(table_change)
 
     ui.textBrowser.textChanged.connect(lambda: clean_browser(ui.textBrowser))
