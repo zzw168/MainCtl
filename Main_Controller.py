@@ -669,7 +669,7 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
             or time.time() - update_two_time > 0.5):
         # 统计跨圈珠子数量
         for i in range(len(array_temp)):
-            if array_temp[i][6] == 60:
+            if array_temp[i][6] == 0:
                 laps_count += 1
         # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
         array_temp.sort(key=lambda x: x[6], reverse=False)
@@ -2024,6 +2024,10 @@ def restartsignal_accept(msg):
         ui.radioButton_stop_betting.click()
         sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
         show_message("注意", "向服务器发送开始比赛状态失败！请重新开盘！")
+        ui.textBrowser.append(msg)
+        ui.textBrowser_msg.append(msg)
+        scroll_to_bottom(ui.textBrowser)
+        scroll_to_bottom(ui.textBrowser_msg)
     elif msg == '过场动画':
         ui.textBrowser_msg.append(succeed('过场动画'))
         scroll_to_bottom(ui.textBrowser_msg)
@@ -2037,6 +2041,10 @@ def restartsignal_accept(msg):
         ui.radioButton_stop_betting.click()
         sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
         show_message("注意", "开盘失败！请重新尝试！")
+        ui.textBrowser.append(msg)
+        ui.textBrowser_msg.append(msg)
+        scroll_to_bottom(ui.textBrowser)
+        scroll_to_bottom(ui.textBrowser_msg)
     else:
         ui.textBrowser.append(msg)
         ui.textBrowser_msg.append(msg)
