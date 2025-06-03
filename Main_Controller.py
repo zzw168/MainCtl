@@ -2398,6 +2398,7 @@ class ObsEndThread(QThread):
                 self.signal.emit('比赛计时')
                 continue
             print('结算页面运行！')
+            lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
             if ui.checkBox_Ai.isChecked():
                 Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
@@ -2492,7 +2493,7 @@ class ObsEndThread(QThread):
                         self.signal.emit(fail('OBS 关闭录像失败！'))
                         flg_start['obs'] = False
 
-            lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
+            # lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
                 result_data = {"raceTrackID": Track_number, "term": str(term),
                                "actualResultOpeningTime": betting_end_time,
