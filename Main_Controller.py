@@ -667,12 +667,15 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
     ranking_temp = copy.deepcopy(ranking_array)
     if (len(array_temp) >= balls_count
             or time.time() - update_two_time > 0.5):
-        # 统计跨圈珠子数量
-        for i in range(len(array_temp)):
-            if array_temp[i][6] == 60:
-                array_temp[i][2] = 60   # 记录跑了一圈
         # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
         array_temp.sort(key=lambda x: x[6], reverse=False)
+        area_end = max_area_count - balls_count
+        area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
+        # 统计跨圈珠子数量
+        for i in range(len(array_temp)):
+            if (array_temp[i][6] == area_end
+                    and area_end - area_limit < ranking_temp[balls_count - i - 1][6] < area_end):
+                laps_count += 1
 
         for r_index in range(0, len(array_temp)):
             if ranking_temp[r_index][6] <= max_area_count:
@@ -2513,43 +2516,63 @@ class ObsEndThread(QThread):
                 result_data["timings"] = json.dumps(data_temp)
                 lottery_term[12] = json.dumps(result_data)
                 print(lottery_term[12])
-                res_end = post_end(term=term, betting_end_time=betting_end_time,
-                                   status=term_status,
-                                   Track_number=Track_number)  # 发送游戏结束信号给服务器
-                if res_end == 'OK':
-                    res_result = post_result(term=term, betting_end_time=betting_end_time,
-                                             result_data=result_data,
-                                             Track_number=Track_number)  # 发送最终排名给服务器
-                    if res_result == 'OK':
-                        lottery_term[6] = "发送成功"
+                for i in range(5):
+                    self.signal.emit('结束信号发送中！第 %s 次' % i)
+                    res_end = post_end(term=term, betting_end_time=betting_end_time,
+                                       status=term_status,
+                                       Track_number=Track_number)  # 发送游戏结束信号给服务器
+                    if res_end == 'OK':
+                        for j in range(5):
+                            self.signal.emit('赛果发送中！第 %s 次' % j)
+                            res_result = post_result(term=term, betting_end_time=betting_end_time,
+                                                     result_data=result_data,
+                                                     Track_number=Track_number)  # 发送最终排名给服务器
+                            if res_result == 'OK':
+                                lottery_term[6] = "发送成功"
+                                break
+                            else:
+                                if i < 4:
+                                    continue
+                                lottery_term[6] = "发送失败"
+                                betting_loop_flg = False
+                                self.signal.emit(fail('发送赛果失败！请在赛事记录中补发！'))
+                        if os.path.exists(lottery_term[9]):
+                            for j in range(5):
+                                self.signal.emit('图片上传中！第 %s 次' % j)
+                                res_upload = post_upload(term=term, img_path=lottery_term[9],
+                                                         Track_number=Track_number)  # 上传结果图片
+                                if res_upload == 'OK':
+                                    lottery_term[7] = "上传成功"
+                                    break
+                                else:
+                                    if i < 4:
+                                        continue
+                                    lottery_term[7] = "上传失败"
+                                    betting_loop_flg = False
+                                    self.signal.emit(fail('上传图片失败！请在赛事记录中补发！'))
+                        if term_comment != '' and term_status != 1:
+                            for j in range(5):
+                                self.signal.emit('备注发送中！第 %s 次' % j)
+                                res_marble_results = post_marble_results(term=term,
+                                                                         comments=term_comment,
+                                                                         Track_number=Track_number)  # 上传备注信息
+                                if str(term) in res_marble_results:
+                                    lottery_term[8] = term_comment
+                                    break
+                                else:
+                                    if i < 4:
+                                        continue
+                                    lottery_term[8] = "备注失败"
+                                    betting_loop_flg = False
+                                    self.signal.emit(fail('上传备注失败！请在赛事记录中补发！'))
+                            term_comment = ''
+                        break
                     else:
-                        lottery_term[6] = "发送失败"
-                        betting_loop_flg = False
-                        self.signal.emit(fail('发送赛果失败！请在赛事记录中补发！'))
-                    if os.path.exists(lottery_term[9]):
-                        res_upload = post_upload(term=term, img_path=lottery_term[9],
-                                                 Track_number=Track_number)  # 上传结果图片
-                        if res_upload == 'OK':
-                            lottery_term[7] = "上传成功"
-                        else:
-                            lottery_term[7] = "上传失败"
-                            betting_loop_flg = False
-                            self.signal.emit(fail('上传图片失败！请在赛事记录中补发！'))
-                    if term_comment != '' and term_status != 1:
-                        res_marble_results = post_marble_results(term=term,
-                                                                 comments=term_comment,
-                                                                 Track_number=Track_number)  # 上传备注信息
-                        if str(term) in res_marble_results:
-                            lottery_term[8] = term_comment
-                        else:
-                            lottery_term[8] = "备注失败"
-                            betting_loop_flg = False
-                            self.signal.emit(fail('上传备注失败！请在赛事记录中补发！'))
-                        term_comment = ''
-                else:
-                    send_flg = False
-                    self.signal.emit(fail('上传结果失败！请在赛事记录中补发！'))
-                    print('上传结果错误！')
+                        if i < 4:
+                            continue
+                        send_flg = False
+                        self.signal.emit(fail('上传结果失败！请在赛事记录中补发！'))
+                        print('上传结果错误！')
                 ReStart_Thread.start_flg = False  # 比赛结束标志,添加比赛总用时
                 lottery_term[2] = str(int(time.time() - ranking_time_start))
             if send_flg:

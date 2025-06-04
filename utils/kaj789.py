@@ -145,7 +145,7 @@ def post_result(term, betting_end_time, result_data='', Track_number='I'):  # �
                                 "lapTime": 65.33
                                 }
         print(POST_result_data)
-        response = requests.post('%s%s' % (url, POST_result_url), headers=headers, json=POST_result_data, timeout=30)
+        response = requests.post('%s%s' % (url, POST_result_url), headers=headers, json=POST_result_data, timeout=20)
         print('result:', response.text)
         return response.text
     except requests.exceptions.Timeout:
@@ -168,7 +168,7 @@ def post_upload(term, img_path, Track_number='I'):  # 上传图片
         POST_upload_url = '/upload/%s/%s' % (Track_number, term)
         with open(img_path, 'rb') as f:
             files = {'file': ('image.jpg', f, 'image/jpeg')}  # 创建上传文件对象
-            response = requests.post('%s%s' % (url, POST_upload_url), files=files, headers=headers, timeout=30)
+            response = requests.post('%s%s' % (url, POST_upload_url), files=files, headers=headers, timeout=20)
         print(files)
         print('upload:', response.text)
         return response.text
