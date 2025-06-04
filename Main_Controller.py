@@ -673,9 +673,11 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
         area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
         # 统计跨圈珠子数量
         for i in range(len(array_temp)):
-            if (array_temp[i][6] == area_end
-                    and area_end - area_limit < ranking_temp[balls_count - i - 1][6] < area_end):
-                laps_count += 1
+            if array_temp[i][6] == area_end:
+                array_temp[i][2] = area_end
+            if (array_temp[i][6] == area_end - 1
+                    and array_temp[i][2] == area_end):
+                array_temp[i][3] = area_end - 1
 
         for r_index in range(0, len(array_temp)):
             if ranking_temp[r_index][6] <= max_area_count:
@@ -695,9 +697,10 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
     # 1.排序区域
     # for i in range(0, len(ranking_temp)):  # 冒泡排序
     #     for j in range(0, len(ranking_temp) - i - 1):
-    #         if ranking_temp[j][6] < ranking_temp[j + 1][6]:
+    #         if ((ranking_temp[j][2] + ranking_temp[j][3] + ranking_temp[j][6])
+    #                 < (ranking_temp[j + 1][2] + ranking_temp[j + 1][3] + ranking_temp[j + 1][6])):
     #             ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
-    ranking_temp.sort(key=lambda x: x[6], reverse=True)
+    ranking_temp.sort(key=lambda x: (x[2] + x[3] + x[6]), reverse=True)
 
     # 2.区域内排序
     for i in range(0, len(ranking_temp)):  # 冒泡排序
@@ -1420,8 +1423,8 @@ def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
                 pts = np.array(area['coordinates'], np.int32)
                 res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
                 if res > -1 and len(ball) >= 9:
-                    # ball[2] = 0  # 把X2位置修改为第二圈计数
-                    # ball[3] = 0  # 把Y2位置修改为第三圈计数
+                    ball[2] = 0  # 把X2位置修改为第二圈计数
+                    ball[3] = 0  # 把Y2位置修改为第三圈计数
                     ball[4] = cap_num  # 把置信度位置修改为镜头号码
                     ball[6] = area['area_code']
                     ball[7] = area['direction']
@@ -7743,7 +7746,6 @@ if __name__ == '__main__':
     ui.checkBox_alarm_2.checkStateChanged.connect(organ_alarm)
     ui.checkBox_switch.checkStateChanged.connect(organ_number)
 
-    ui.comboBox_plan.currentIndexChanged.connect(z_combox_change)
     ui.tableWidget_Step.itemChanged.connect(table_change)
 
     ui.textBrowser.textChanged.connect(lambda: clean_browser(ui.textBrowser))
@@ -8171,6 +8173,8 @@ if __name__ == '__main__':
     ui.checkBox_main_camera_set.checkStateChanged.connect(save_main_json)
     ui.checkBox_Ai.checkStateChanged.connect(save_main_json)
     ui.checkBox_Two_Color.checkStateChanged.connect(save_main_json)
+
+    ui.comboBox_plan.currentIndexChanged.connect(z_combox_change)
 
     ui.radioButton_music_background_1.clicked.connect(save_main_json)
     ui.radioButton_music_background_2.clicked.connect(save_main_json)

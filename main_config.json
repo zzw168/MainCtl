@@ -139,7 +139,7 @@
     "comboBox_plan": 1,
     "lineEdit_Map_Action": "8",
     "lineEdit_Cycle": "4",
-    "checkBox_Cycle": false,
+    "checkBox_Cycle": true,
     "checkBox_Start_Flash": false,
     "checkBox_Ai": false,
     "checkBox_Two_Color": false,
