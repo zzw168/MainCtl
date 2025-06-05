@@ -7906,6 +7906,7 @@ if __name__ == '__main__':
     load_main_json()
     load_ballsort_json()
     load_area()  # 初始化区域划分
+    load_plan_json()
 
     s485.cam_open()
 
