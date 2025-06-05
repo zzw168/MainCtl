@@ -7620,9 +7620,6 @@ if __name__ == '__main__':
     flg_start = {'card': False, 's485': False, 'obs': False, 'live': False,
                  'ai': False, 'ai_end': False, 'server': False}  # 各硬件启动标志
 
-    camera_points = []  # 摄像机移动点位 camera_points[[label内存],[区域号],[卫星图坐标]]
-    audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
-    ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
     load_plan_json()
 
     tb_step_worker = UiWorker(ui.tableWidget_Step)
@@ -7905,7 +7902,7 @@ if __name__ == '__main__':
     load_main_json()
     load_ballsort_json()
     load_area()  # 初始化区域划分
-    plan_refresh()  # 刷新列表
+    # plan_refresh()  # 刷新列表
 
     s485.cam_open()
 
@@ -7974,9 +7971,9 @@ if __name__ == '__main__':
     # 开奖记录 lottery_term[期号, 开跑时间, 倒数, 状态, 自动赛果, 确认赛果, 发送状态,
     #                       图片上传状态, 备注, 图片, 录像, 结束时间, 数据包, 补发状态, 补传图片]
     lottery_term = ['0'] * 15
-    # camera_points = []  # 摄像机移动点位 camera_points[[label内存],[区域号],[卫星图坐标]]
-    # audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
-    # ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
+    camera_points = []  # 摄像机移动点位 camera_points[[label内存],[区域号],[卫星图坐标]]
+    audio_points = []  # 音效点位 audio_points[[label内存],[区域号],[卫星图坐标]]
+    ai_points = []  # AI点位 ai_points[[label内存],[区域号],[卫星图坐标]]
     map_orbit = []  # 地图轨迹
     previous_channel = None  # 音效通道
     balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
@@ -7998,7 +7995,7 @@ if __name__ == '__main__':
         ]
     }
 
-    # load_plan_json()
+    plan_refresh()  # 刷新列表
 
     positions_live_thread = PositionsLiveThread()  # 发送实时位置到服务器线程
     positions_live_thread.signal.connect(livesignal_accept)

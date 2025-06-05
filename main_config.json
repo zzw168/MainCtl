@@ -136,7 +136,7 @@
         ]
     ],
     "lineEdit_alarm": "1",
-    "comboBox_plan": 1,
+    "comboBox_plan": 2,
     "lineEdit_Map_Action": "8",
     "lineEdit_Cycle": "4",
     "checkBox_Cycle": true,
