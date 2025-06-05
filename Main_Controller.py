@@ -3976,7 +3976,6 @@ def load_plan_json():
 
             comb = ui.comboBox_plan
             comb.addItems(plan_names)
-            plan_refresh()
         except:
             pass
     else:
@@ -7906,7 +7905,7 @@ if __name__ == '__main__':
     load_main_json()
     load_ballsort_json()
     load_area()  # 初始化区域划分
-    load_plan_json()
+    plan_refresh()  # 刷新列表
 
     s485.cam_open()
 
