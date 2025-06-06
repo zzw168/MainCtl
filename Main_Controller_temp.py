@@ -2726,19 +2726,20 @@ class ScreenShotThread(QThread):
                 temp_lap.append([])
             ball_sort_temp = copy.deepcopy(ball_sort)
             ball_sort_temp.append(temp_lap)
-            ball_num = len(ball_sort_temp)
+            ball_sort_num = len(ball_sort_temp)
             ranking_temp = copy.deepcopy(ranking_array)
             for i in range(0, len(camera_list)):
                 for j in range(0, len(ranking_temp)):
                     if ranking_temp[j][5] == camera_list[i]:
                         if i < PlanBallNum_Thread.balls_num:  # 已进港的珠子数量
-                            ranking_temp[j][6] = ball_num - 1
+                            ranking_temp[j][6] = ball_sort_num - 1
                         ranking_temp[j][9] = max_lap_count - 1
-                num = len(ball_sort_temp[ball_num - 1][max_lap_count - 1]) - 1
+                num = len(ball_sort_temp[ball_sort_num - 1][max_lap_count - 1]) - 1
                 if num < i:
                     for j in range(i - num + 1):
-                        ball_sort_temp[ball_num - 1][max_lap_count - 1].append('')
-                ball_sort_temp[ball_num - 1][max_lap_count - 1][i] = camera_list[i]
+                        ball_sort_temp[ball_sort_num - 1][max_lap_count - 1].append('')
+                ball_sort_temp[ball_sort_num - 1][max_lap_count - 1][i] = camera_list[i]
+            ranking_temp[0][10] = 1
             with ranking_lock:
                 ranking_array = copy.deepcopy(ranking_temp)
             with ball_sort_lock:

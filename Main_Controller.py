@@ -1208,7 +1208,6 @@ class TcpRankingThread(QThread):
                                             else:
                                                 z_ranking_res[i] = 0
                                     d = {'data': z_ranking_res, 'type': 'pm'}
-                                    print(d)
                                     ws.send(json.dumps(d))
                         except Exception as e:
                             print("pingpong_rank_1 错误：", e)
