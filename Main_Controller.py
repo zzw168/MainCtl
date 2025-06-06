@@ -941,13 +941,13 @@ def deal_end():  # 处理最后结果
                             ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
         # 3.圈数排序
         ranking_temp.sort(key=lambda x: x[9], reverse=True)
-        # # 4.寄存器保存固定每个区域的最新排位（因为ranking_temp 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
-        # for i in range(0, len(ranking_temp)):
-        #     if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
-        #         continue
-        #     if not (ranking_temp[i][5] in ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]):
-        #         ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(
-        #             copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
+        # 4.寄存器保存固定每个区域的最新排位（因为ranking_temp 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
+        for i in range(0, len(ranking_temp)):
+            if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
+                continue
+            if not (ranking_temp[i][5] in ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]):
+                ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(
+                    copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
         # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
         for i in range(0, len(ranking_temp)):
             for j in range(0, len(ranking_temp) - i - 1):
