@@ -912,7 +912,6 @@ def deal_rank(integration_qiu_array):
 
 def deal_end():  # 处理最后结果
     global ranking_array
-    global ball_sort
     ranking_temp = copy.deepcopy(ranking_array)
     ball_sort_temp = copy.deepcopy(ball_sort)
     if (ranking_temp[0][6] > max_area_count
@@ -932,8 +931,6 @@ def deal_end():  # 处理最后结果
                             m = k
                     if n > m:  # 把区域排位索引最小的球（即排名最前的球）放前面
                         ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
-        with ball_sort_lock:
-            ball_sort = copy.deepcopy(ball_sort_temp)
         with ranking_lock:
             ranking_array = copy.deepcopy(ranking_temp)
         color_to_num(ranking_array)
@@ -2810,7 +2807,7 @@ class ScreenShotThread(QThread):
                 ranking_array = copy.deepcopy(ranking_temp)
             with ball_sort_lock:
                 ball_sort = copy.deepcopy(ball_sort_temp)
-            color_to_num(ranking_array)
+            deal_end()  # 终点排序
             self.signal.emit('核对完成')
             time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
@@ -2929,7 +2926,7 @@ class ObsShotThread(QThread):
                         ranking_array = copy.deepcopy(ranking_temp)
                     with ball_sort_lock:
                         ball_sort[max_area_count + 1][max_lap_count - 1] = copy.deepcopy(obs_list)
-                    color_to_num(ranking_array)
+                    deal_end()  # 终点排序
                     print(ball_sort[max_area_count + 1][max_lap_count - 1], '~~~~~~~~~~~~~~~~~~~')
                     self.signal.emit(obs_res)
             self.run_flg = False
