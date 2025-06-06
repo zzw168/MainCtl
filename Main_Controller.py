@@ -2839,12 +2839,12 @@ class ScreenShotThread(QThread):
                         if i < PlanBallNum_Thread.balls_num:  # 已进港的珠子数量
                             ranking_temp[j][6] = ball_sort_num - 1
                         ranking_temp[j][9] = max_lap_count - 1
-                        ranking_temp[0][10] = 1
                 num = len(ball_sort_temp[ball_sort_num - 1][max_lap_count - 1]) - 1
                 if num < i:
                     for j in range(i - num + 1):
                         ball_sort_temp[ball_sort_num - 1][max_lap_count - 1].append('')
                 ball_sort_temp[ball_sort_num - 1][max_lap_count - 1][i] = camera_list[i]
+            ranking_temp[0][10] = 1
             with ranking_lock:
                 ranking_array = copy.deepcopy(ranking_temp)
             with ball_sort_lock:
@@ -2963,8 +2963,8 @@ class ObsShotThread(QThread):
                             if ranking_temp[j][5] == obs_list[i] and ranking_temp[j][6] != 1:
                                 ranking_temp[j][6] = max_area_count + 1
                                 ranking_temp[j][9] = max_lap_count - 1
-                                ranking_temp[0][1] = 1
                                 break
+                    ranking_temp[0][10] = 1
                     with ranking_lock:
                         ranking_array = copy.deepcopy(ranking_temp)
                     with ball_sort_lock:
