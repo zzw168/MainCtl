@@ -912,11 +912,42 @@ def deal_rank(integration_qiu_array):
 
 def deal_end():  # 处理最后结果
     global ranking_array
+    global con_data
     ranking_temp = copy.deepcopy(ranking_array)
     ball_sort_temp = copy.deepcopy(ball_sort)
-    if (ranking_temp[0][6] > max_area_count
-            and ranking_temp[0][9] == max_lap_count - 1
-            and len(ball_sort_temp[ranking_temp[0][6]][ranking_temp[0][9]]) > 0):
+    items = [item for item in ranking_temp if item[6] > max_area_count]
+    ranking_val = len(items)
+    if (ranking_val > 1
+            and len(ball_sort_temp[items[0][6]][items[0][9]]) > 0):
+
+        # 1.排序区域
+        ranking_temp.sort(key=lambda x: x[6], reverse=True)
+
+        # 2.区域内排序
+        for i in range(0, len(ranking_temp)):  # 冒泡排序
+            for j in range(0, len(ranking_temp) - i - 1):
+                if ranking_temp[j][6] == ranking_temp[j + 1][6]:
+                    if ranking_temp[j][7] == 0:  # (左后->右前)
+                        if ranking_temp[j][0] < ranking_temp[j + 1][0]:
+                            ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+                    if ranking_temp[j][7] == 1:  # (左前<-右后)
+                        if ranking_temp[j][0] > ranking_temp[j + 1][0]:
+                            ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+                    if ranking_temp[j][7] == 10:  # (上前 ↑ 下后)
+                        if ranking_temp[j][1] > ranking_temp[j + 1][1]:
+                            ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+                    if ranking_temp[j][7] == 11:  # (上后 ↓ 下前)
+                        if ranking_temp[j][1] < ranking_temp[j + 1][1]:
+                            ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+        # 3.圈数排序
+        ranking_temp.sort(key=lambda x: x[9], reverse=True)
+        # # 4.寄存器保存固定每个区域的最新排位（因为ranking_temp 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
+        # for i in range(0, len(ranking_temp)):
+        #     if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
+        #         continue
+        #     if not (ranking_temp[i][5] in ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]):
+        #         ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(
+        #             copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
         # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
         for i in range(0, len(ranking_temp)):
             for j in range(0, len(ranking_temp) - i - 1):
@@ -934,6 +965,15 @@ def deal_end():  # 处理最后结果
         with ranking_lock:
             ranking_array = copy.deepcopy(ranking_temp)
         color_to_num(ranking_array)
+        print(ranking_array)
+        print(z_ranking_res)
+        con_data = []
+        if ranking_array:
+            for k in range(0, balls_count):
+                con_item = dict(zip(keys, ranking_array[k]))  # 把数组打包成字典
+                con_data.append(
+                    [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
+                     con_item['y1']])
 
 
 def color_to_num(res):  # 按最新排名排列数组
@@ -1168,6 +1208,7 @@ class TcpRankingThread(QThread):
                                             else:
                                                 z_ranking_res[i] = 0
                                     d = {'data': z_ranking_res, 'type': 'pm'}
+                                    print(d)
                                     ws.send(json.dumps(d))
                         except Exception as e:
                             print("pingpong_rank_1 错误：", e)
@@ -2798,6 +2839,7 @@ class ScreenShotThread(QThread):
                         if i < PlanBallNum_Thread.balls_num:  # 已进港的珠子数量
                             ranking_temp[j][6] = ball_num - 1
                         ranking_temp[j][9] = max_lap_count - 1
+                        ranking_temp[0][1] = 1
                 num = len(ball_sort_temp[ball_num - 1][max_lap_count - 1]) - 1
                 if num < i:
                     for j in range(i - num + 1):
@@ -2921,6 +2963,7 @@ class ObsShotThread(QThread):
                             if ranking_temp[j][5] == obs_list[i] and ranking_temp[j][6] != 1:
                                 ranking_temp[j][6] = max_area_count + 1
                                 ranking_temp[j][9] = max_lap_count - 1
+                                ranking_temp[0][1] = 1
                                 break
                     with ranking_lock:
                         ranking_array = copy.deepcopy(ranking_temp)
@@ -6966,17 +7009,42 @@ def red_line():
         scroll_to_bottom(ui.textBrowser_save_msg)
 
 
+def my_def():
+    global ranking_array
+    global ball_sort
+    obs_list = ["black","White", "purple", "red", "green", "pink", "yellow", "blue"]
+    obs_num = len(obs_list)
+    if obs_num > 2:
+        print(obs_list)
+        ranking_temp = copy.deepcopy(ranking_array)
+        for i in range(0, obs_num):
+            for j in range(0, len(ranking_temp)):
+                if ranking_temp[j][5] == obs_list[i] and ranking_temp[j][6] != 1:
+                    ranking_temp[j][6] = max_area_count
+                    ranking_temp[j][9] = max_lap_count - 1
+                    ranking_temp[0][10] = 1
+                    break
+        with ranking_lock:
+            ranking_array = copy.deepcopy(ranking_temp)
+        print(ranking_array)
+        with ball_sort_lock:
+            ball_sort[max_area_count + 1][max_lap_count - 1] = copy.deepcopy(obs_list)
+        print(ball_sort[max_area_count + 1][max_lap_count - 1])
+        deal_end()  # 终点排序
+
+
 def my_test():
     global term
     global z_ranking_res
     global ranking_array
     global wakeup_addr
     print('~~~~~~~~~~~~~~~~~~~')
-    img = 'D:\\rtsp\\rtsp_0_end.jpg'
-    pixmap = QPixmap(img)
-    label_size = monitor_camera_ui.label_picture.size()
-    monitor_camera_ui.original_pixmap = pixmap
-    monitor_camera_ui.label_picture.setPixmap(pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+    my_def()
+    # img = 'D:\\rtsp\\rtsp_0_end.jpg'
+    # pixmap = QPixmap(img)
+    # label_size = monitor_camera_ui.label_picture.size()
+    # monitor_camera_ui.original_pixmap = pixmap
+    # monitor_camera_ui.label_picture.setPixmap(pixmap.scaled(label_size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
     # index = int(ui.lineEdit_alarm.text()) - 1
     # sc.GASetExtDoBit(index, 1)
     # wakeup_addr = ["http://192.168.0.127:8080"]
