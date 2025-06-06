@@ -3257,12 +3257,12 @@ class PlanCmdThread(QThread):
                 self.signal.emit(succeed("运动流程：开始！"))
                 self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
                 cb_index = ui.comboBox_plan.currentIndex()
-                time_old = int(time.time())
+                # time_old = int(time.time())
                 for plan_index in range(0, len(plan_list)):
                     # self.signal.emit(succeed(
                     #     '第%s个动作，识别在第%s区%s圈 %s秒！' %
                     #     (plan_index + 1, action_area[0], action_area[1], int(time.time()) - time_old)))
-                    time_old = int(time.time())
+                    # time_old = int(time.time())
                     if (not self.run_flg) or (not flg_start['card']):  # 强制停止线程
                         print('动作未开始！')
                         break
