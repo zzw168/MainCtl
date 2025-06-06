@@ -4936,10 +4936,11 @@ class MapLabel(QLabel):
         for num in range(0, balls_count):
             if len(ranking_array) >= balls_count and ranking_array[num][5] in self.color_names.keys():
                 area_num = max_area_count - balls_count  # 跟踪区域数量
-                if ((ranking_array[num][6] <= max_area_count
-                     and not ObsEnd_Thread.ball_flg)
-                        or (ranking_array[num][6] >= max_area_count + 1
-                            and ObsEnd_Thread.ball_flg)):
+                # if ((ranking_array[num][6] <= max_area_count
+                #      and not ObsEnd_Thread.ball_flg)
+                #         or (ranking_array[num][6] >= max_area_count + 1
+                #             and ObsEnd_Thread.ball_flg)):
+                if True:
                     p = int(len(self.path_points[0]) * (ranking_array[num][6] / area_num))
                     if p >= len(self.path_points[0]):
                         p = len(self.path_points[0]) - 1
