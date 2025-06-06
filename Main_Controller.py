@@ -910,6 +910,35 @@ def deal_rank(integration_qiu_array):
         ranking_array = copy.deepcopy(ranking_temp)
 
 
+def deal_end():  # 处理最后结果
+    global ranking_array
+    global ball_sort
+    ranking_temp = copy.deepcopy(ranking_array)
+    ball_sort_temp = copy.deepcopy(ball_sort)
+    if (ranking_temp[0][6] > max_area_count
+            and ranking_temp[0][9] == max_lap_count - 1
+            and len(ball_sort_temp[ranking_temp[0][6]][ranking_temp[0][9]]) > 0):
+        # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
+        for i in range(0, len(ranking_temp)):
+            for j in range(0, len(ranking_temp) - i - 1):
+                if (ranking_temp[j][6] == ranking_temp[j + 1][6]) and (ranking_temp[j][9] == ranking_temp[j + 1][9]):
+                    m = 0
+                    n = 0
+
+                    for k in range(0, len(ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]])):
+                        if ranking_temp[j][5] == ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]][k]:
+                            n = k
+                        elif ranking_temp[j + 1][5] == ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]][k]:
+                            m = k
+                    if n > m:  # 把区域排位索引最小的球（即排名最前的球）放前面
+                        ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
+        with ball_sort_lock:
+            ball_sort = copy.deepcopy(ball_sort_temp)
+        with ranking_lock:
+            ranking_array = copy.deepcopy(ranking_temp)
+        color_to_num(ranking_array)
+
+
 def color_to_num(res):  # 按最新排名排列数组
     global z_ranking_res
     arr_res = []
@@ -2781,6 +2810,7 @@ class ScreenShotThread(QThread):
                 ranking_array = copy.deepcopy(ranking_temp)
             with ball_sort_lock:
                 ball_sort = copy.deepcopy(ball_sort_temp)
+            color_to_num(ranking_array)
             self.signal.emit('核对完成')
             time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
@@ -2899,6 +2929,7 @@ class ObsShotThread(QThread):
                         ranking_array = copy.deepcopy(ranking_temp)
                     with ball_sort_lock:
                         ball_sort[max_area_count + 1][max_lap_count - 1] = copy.deepcopy(obs_list)
+                    color_to_num(ranking_array)
                     print(ball_sort[max_area_count + 1][max_lap_count - 1], '~~~~~~~~~~~~~~~~~~~')
                     self.signal.emit(obs_res)
             self.run_flg = False
