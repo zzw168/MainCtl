@@ -160,7 +160,7 @@ class AnnotationViewer(QMainWindow):
         x1, y1, x2, y2 = map(int, box[:4])
         conf = box[4]
         idx = box[6]
-        color = box[7]
+        color = box[5]
         label = f"{color} {conf:.2f} ID:{idx}"
 
         color_map = {
