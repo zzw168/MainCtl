@@ -163,16 +163,15 @@ class AnnotationViewer(QMainWindow):
         color = box[5]
         label = f"{color} {conf:.2f} ID:{idx}"
 
-        color_map = {
-            "yellow": (0, 255, 255),
-            "red": (0, 0, 255),
-            "green": (0, 255, 0),
-            "blue": (255, 0, 0)
-        }
+        color_map = {'red': (0, 0, 255), 'green': (0, 255, 0), 'blue': (255, 0, 0),
+                            'pink': (255, 0, 255), 'yellow': (0, 255, 255), 'black': (0, 0, 0),
+                            'purple': (128, 0, 128), 'orange': (0, 165, 255),
+                            'White': (255, 248, 248),
+                            'Brown': (19, 69, 139)}
         box_color = color_map.get(color, (255, 255, 255))
 
         cv2.rectangle(image, (x1, y1), (x2, y2), box_color, 2)
-        cv2.putText(image, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, box_color, 1)
+        cv2.putText(image, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, box_color, 2)
         cv2.putText(image, f"{self.index + 1}/{len(self.filtered_boxes)}", (50, 50),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
         return image
