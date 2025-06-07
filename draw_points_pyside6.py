@@ -50,7 +50,7 @@ class AnnotationViewer(QMainWindow):
         filter_layout = QHBoxLayout()
         filter_layout.addWidget(QLabel("颜色选择:"))
         filter_layout.addWidget(self.color_combo)
-        filter_layout.addWidget(QLabel("编号选择:"))
+        filter_layout.addWidget(QLabel("镜头选择:"))
         filter_layout.addWidget(self.index_combo)
 
         main_layout = QVBoxLayout()
