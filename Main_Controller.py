@@ -818,13 +818,14 @@ def deal_rank(integration_qiu_array):
                         )):
                     ranking_check[q_item[5]] = [-1, -1]
                     write_ok = True
-                    # if ranking_temp[r_index][6] == 1:  # 只在第一区作颜色互斥判断
-                    for i in range(len(ranking_temp)):
-                        if (q_item[5] != ranking_temp[i][5]
-                                and (abs(q_item[0] - ranking_temp[i][0]) <= 7)  # 不能和前一个球的位置重叠
-                                and (abs(q_item[1] - ranking_temp[i][1]) <= 7)):  # 避免误判两种颜色
-                            write_ok = False
-                            break
+                    if (ranking_temp[r_index][6] == 1
+                            or (not ui.checkBox_main_camera_set.isChecked())):  # 只在第一区作颜色互斥判断
+                        for i in range(len(ranking_temp)):
+                            if (q_item[5] != ranking_temp[i][5]
+                                    and (abs(q_item[0] - ranking_temp[i][0]) <= 7)  # 不能和前一个球的位置重叠
+                                    and (abs(q_item[1] - ranking_temp[i][1]) <= 7)):  # 避免误判两种颜色
+                                write_ok = False
+                                break
                     if write_ok:
                         for r_i in range(0, len(q_item)):
                             ranking_temp[r_index][r_i] = copy.deepcopy(q_item[r_i])  # 更新 ranking_temp
@@ -7012,7 +7013,7 @@ def red_line():
 def my_def():
     global ranking_array
     global ball_sort
-    obs_list = ["black","White", "purple", "red", "green", "pink", "yellow", "blue"]
+    obs_list = ["black", "White", "purple", "red", "green", "pink", "yellow", "blue"]
     obs_num = len(obs_list)
     if obs_num > 2:
         print(obs_list)
