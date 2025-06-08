@@ -2688,12 +2688,14 @@ class ObsEndThread(QThread):
 
 
 def ObsEndsignal_accept(msg):
+    global betting_loop_flg
     # print(msg)
     if '录图结束' in msg:
         if not ui.checkBox_test.isChecked() and ui.checkBox_saveImgs_auto.isChecked():
             ui.checkBox_saveImgs_main.setChecked(False)
             ui.checkBox_saveImgs_monitor.setChecked(False)
     elif '失败' in msg:
+        betting_loop_flg = False
         index = int(ui.lineEdit_alarm.text()) - 1
         sc.GASetExtDoBit(index, 1)
         show_message("注意", msg)
