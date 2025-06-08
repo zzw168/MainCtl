@@ -2802,7 +2802,8 @@ class ScreenShotThread(QThread):
                 z_ranking_end = copy.deepcopy(z_ranking_res)
                 send_list = []
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
-                    ui.lineEdit_Send_Result.setText('')
+                    # ui.lineEdit_Send_Result.setText('')
+                    self.signal.emit('send_res')
                     Send_Result_End = False
                     while self.run_flg:
                         self.signal.emit('显示结果对话框')
