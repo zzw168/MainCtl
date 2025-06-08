@@ -2507,9 +2507,11 @@ class ObsEndThread(QThread):
                                 time.sleep(0.5)
                                 cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
                                 print('重连OBS~~~~~~~~~~~~')
+                                self.signal.emit(fail('重连OBS~~~~~~~~~~~~'))
                                 time.sleep(0.5)
                             except:
                                 print('链接OBS失败~~~~~~~~~~~~')
+                                self.signal.emit(fail('链接OBS失 败~~~~~~~~~~~~'))
                             continue
                         else:
                             lottery_term[9] = '截图失败'
@@ -2533,9 +2535,11 @@ class ObsEndThread(QThread):
                             time.sleep(0.5)
                             cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
                             print('重连OBS~~~~~~~~~~~~')
+                            self.signal.emit(fail('重连OBS~~~~~~~~~~~~'))
                             time.sleep(0.5)
                         except:
                             print('链接OBS失败~~~~~~~~~~~~')
+                            self.signal.emit(fail('链接OBS失 败~~~~~~~~~~~~'))
                         continue
                     else:
                         print('OBS 切换操作失败！')
@@ -2557,9 +2561,11 @@ class ObsEndThread(QThread):
                             cl_request.disconnect()
                             time.sleep(0.5)
                             cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+                            self.signal.emit(fail('重连OBS~~~~~~~~~~~~'))
                             print('重连OBS~~~~~~~~~~~~')
                             time.sleep(0.5)
                         except:
+                            self.signal.emit(fail('链接OBS失 败~~~~~~~~~~~~'))
                             print('链接OBS失败~~~~~~~~~~~~')
                         continue
                     else:
@@ -2796,7 +2802,8 @@ class ScreenShotThread(QThread):
                 z_ranking_end = copy.deepcopy(z_ranking_res)
                 send_list = []
                 if not ui.checkBox_Pass_Ranking_Twice.isChecked():
-                    ui.lineEdit_Send_Result.setText('')
+                    # ui.lineEdit_Send_Result.setText('')
+                    self.signal.emit('send_res')
                     Send_Result_End = False
                     while self.run_flg:
                         self.signal.emit('显示结果对话框')
