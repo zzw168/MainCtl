@@ -1246,6 +1246,7 @@ class TcpResultThread(QThread):
                     try:
                         while self.run_flg:
                             time.sleep(1)
+                            print('1~~~~~~~~~~~~~~~~~~~~~~~')
                             if self.send_type == 'updata':
                                 self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end[:balls_count]))))
                                 data_list = {'type': 'updata',
@@ -1268,9 +1269,8 @@ class TcpResultThread(QThread):
                                 self.send_type = ''
                                 self.run_flg = False
                             else:
-                                data_list = {'type': 'pong',
-                                             'data': str(term)}
-                                ws.send(json.dumps(data_list))
+                                ws.send('pong')
+                                print('pong~~~~~~~~~~~~~~~~~~~~~~~')
                     except Exception as e:
                         print("pingpong_result_1 错误：%s" % e)
                         self.signal.emit("tcp_result_1 错误：%s" % e)
@@ -7049,7 +7049,9 @@ def my_test():
     global ranking_array
     global wakeup_addr
     print('~~~~~~~~~~~~~~~~~~~')
-    my_def()
+    tcp_result_thread.send_type = ''
+    tcp_result_thread.run_flg = True
+    # my_def()
     # img = 'D:\\rtsp\\rtsp_0_end.jpg'
     # pixmap = QPixmap(img)
     # label_size = monitor_camera_ui.label_picture.size()
