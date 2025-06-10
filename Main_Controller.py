@@ -1978,31 +1978,38 @@ class ReStartThread(QThread):
                     ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
-                response = get_term(Track_number)
-                if len(response) > 2:  # 开盘模式，获取期号正常
-                    term = response['term']
-                    betting_start_time = response['scheduledGameStartTime']
-                    betting_end_time = response['scheduledResultOpeningTime']
-                    self.countdown = int(betting_start_time) - int(time.time())
-                    self.signal.emit('term_ok')
-                    res_start = post_start(term=term, betting_start_time=betting_start_time,
-                                           starting_Position=str(z_ranking_res[:balls_count])[1:-1],
-                                           Track_number=Track_number)  # 发送开始信号给服务器
-                    if str(res_start) != 'OK':
-                        self.signal.emit(fail('比赛开始失败:%s' % res_start))
+                for i in range(3):
+                    response = get_term(Track_number)
+                    if isinstance(response, dict) and 'term' in response.keys():  # 开盘模式，获取期号正常
+                        term = response['term']
+                        betting_start_time = response['scheduledGameStartTime']
+                        betting_end_time = response['scheduledResultOpeningTime']
+                        self.countdown = int(betting_start_time) - int(time.time())
+                        self.signal.emit('term_ok')
+                        for j in range(3):
+                            res_start = post_start(term=term, betting_start_time=betting_start_time,
+                                                   starting_Position=str(z_ranking_res[:balls_count])[1:-1],
+                                                   Track_number=Track_number)  # 发送开始信号给服务器
+                            if str(res_start) == 'OK':
+                                break
+                            elif j == 2:
+                                self.signal.emit(fail('比赛开始失败:%s' % res_start))
+                                self.run_flg = False
+                        if not self.run_flg:
+                            break
+                        self.start_flg = True  # 比赛进行中
+                        if self.countdown < 0:  # 时间错误，30秒后开赛
+                            betting_start_time = int(time.time())
+                            betting_end_time = int(time.time()) + 30
+                            self.countdown = str(30)
+                        else:
+                            self.countdown = str(self.countdown)
+                        break
+                    elif i == 2:  # 封盘模式，退出循环
+                        # tcp_result_thread.send_type = 'time'
+                        self.signal.emit('error')
                         self.run_flg = False
-                        continue
-                    self.start_flg = True  # 比赛进行中
-                    if self.countdown < 0:  # 时间错误，30秒后开赛
-                        betting_start_time = int(time.time())
-                        betting_end_time = int(time.time()) + 30
-                        self.countdown = str(30)
-                    else:
-                        self.countdown = str(self.countdown)
-                else:  # 封盘模式，退出循环
-                    # tcp_result_thread.send_type = 'time'
-                    self.signal.emit('error')
-                    self.run_flg = False
+                if not self.run_flg:
                     continue
             else:
                 # 获取当前时间的时间戳
