@@ -809,7 +809,7 @@ def deal_rank(integration_qiu_array):
                              or (q_item[6] >= ranking_temp[r_index][6] >= max_area_count - area_limit - balls_count
                                  and ranking_temp[r_index][9] == max_lap_count - 1
                                  and (0 <= q_item[6] - ranking_temp[r_index][6] <= area_limit + balls_count
-                                      or q_item[6] > max_area_count - balls_count  # 飞珠提前入港
+                                      # or q_item[6] > max_area_count - balls_count  # 飞珠提前入港
                                       or (ui.checkBox_First_Check.isChecked()
                                           and (ranking_check[q_item[5]][0] != -1
                                                and ranking_check[q_item[5]][1] == ranking_temp[r_index][9]
