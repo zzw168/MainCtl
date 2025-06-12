@@ -817,9 +817,9 @@ def deal_rank(integration_qiu_array):
                                                < area_limit + balls_count)))
                              )  # 处理最后一圈终点附近的条件
                              or (q_item[6] > max_area_count - balls_count  # 飞珠提前入港
-                                 and ranking_temp[r_index][6] >=
-                                 (max_area_count - balls_count) / 10 * int(ui.lineEdit_Map_Action.text())
-                                 and ranking_temp[r_index][9] == max_lap_count - 1)
+                                 and (map_label_big.map_action >=
+                                      len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
+                                 and (action_area[1] >= max_lap_count - 1))
                         )):
                     ranking_check[q_item[5]] = [-1, -1]
                     write_ok = True
