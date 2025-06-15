@@ -2993,7 +2993,7 @@ class ObsShotThread(QThread):
                         ball_sort[max_area_count + 1][max_lap_count - 1] = copy.deepcopy(obs_list)
                     deal_end()  # 终点排序
                     print(ball_sort[max_area_count + 1][max_lap_count - 1], '~~~~~~~~~~~~~~~~~~~')
-                    self.signal.emit(obs_res)
+                self.signal.emit(obs_res)
             self.run_flg = False
 
 
