@@ -809,17 +809,12 @@ def deal_rank(integration_qiu_array):
                              or (q_item[6] >= ranking_temp[r_index][6] >= max_area_count - area_limit - balls_count
                                  and ranking_temp[r_index][9] == max_lap_count - 1
                                  and (0 <= q_item[6] - ranking_temp[r_index][6] <= area_limit + balls_count
-                                      # or q_item[6] > max_area_count - balls_count  # 飞珠提前入港
                                       or (ui.checkBox_First_Check.isChecked()
                                           and (ranking_check[q_item[5]][0] != -1
                                                and ranking_check[q_item[5]][1] == ranking_temp[r_index][9]
                                                and 0 < q_item[6] - ranking_check[q_item[5]][0]
                                                < area_limit + balls_count)))
                              )  # 处理最后一圈终点附近的条件
-                             or (q_item[6] > max_area_count - balls_count  # 飞珠提前入港
-                                 and ranking_temp[r_index][6] <= q_item[6] <= max_area_count
-                                 and max_area_count - balls_count - area_limit < ranking_temp[0][6] <= max_area_count
-                                 and (action_area[1] >= max_lap_count - 1))
                         )):
                     ranking_check[q_item[5]] = [-1, -1]
                     write_ok = True
@@ -1251,7 +1246,6 @@ class TcpResultThread(QThread):
                     try:
                         while self.run_flg:
                             time.sleep(1)
-                            print('1~~~~~~~~~~~~~~~~~~~~~~~')
                             if self.send_type == 'updata':
                                 self.signal.emit(succeed('第%s期 结算！%s' % (term, str(z_ranking_end[:balls_count]))))
                                 data_list = {'type': 'updata',
