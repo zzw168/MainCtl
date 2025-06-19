@@ -5561,7 +5561,7 @@ class AudioThread(QThread):
     def run(self) -> None:
         area_old = 0
         while self.running:
-            time.sleep(0.2)
+            time.sleep(0.1)
             if not self.run_flg:
                 continue
             if len(audio_points) <= 1:
@@ -5575,7 +5575,7 @@ class AudioThread(QThread):
                     tb_audio = ui.tableWidget_Audio
                     sound_file = tb_audio.item(index - 1, 0).text()
                     sound_times = int(tb_audio.item(index - 1, 1).text())
-                    sound_delay = int(tb_audio.item(index - 1, 2).text())
+                    sound_delay = int(float(tb_audio.item(index - 1, 2).text())*10)
                     sound_volume = float(tb_audio.item(index - 1, 3).text())
                     print(sound_file, sound_times, sound_delay)
                     volume = pygame.mixer.music.get_volume()
@@ -5583,12 +5583,12 @@ class AudioThread(QThread):
                     # 加载音效
                     sound_effect = pygame.mixer.Sound(sound_file)
                     sound_effect.set_volume(sound_volume)
-                    sound_effect.play(loops=sound_times, maxtime=sound_delay * 1000)  # 播放音效
+                    sound_effect.play(loops=sound_times, maxtime=sound_delay * 100)  # 播放音效
 
                     for i in range(sound_delay):
                         if not self.run_flg:
                             break
-                        time.sleep(1)
+                        time.sleep(0.1)
                     pygame.mixer.music.set_volume(volume)
 
                     area_old = copy.deepcopy(action_area)
