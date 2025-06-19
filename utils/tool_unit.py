@@ -140,7 +140,8 @@ def interpolate_y_from_x(polyline, x_value):
         return None
 
     try:
-        interpolator = interp1d(x_vals, y_vals, bounds_error=False, fill_value="extrapolate")
+        interpolator = interp1d(x_vals, y_vals, bounds_error=True)
+        # interpolator = interp1d(x_vals, y_vals, bounds_error=False, fill_value="extrapolate")
         result = float(interpolator(x_value))
         if not math.isfinite(result):
             return None
