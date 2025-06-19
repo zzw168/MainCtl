@@ -5028,15 +5028,19 @@ class MapLabel(QLabel):
                         if num > 0 and self.positions[num][0] == self.positions[num - 1][0]:  # 禁止重叠
                             self.positions[num][0] = self.positions[num][0] - self.ball_space
                         x, y = self.path_points[0][self.positions[num][0]]
-                        if self.positions[num][6] != 0 and self.positions[num][0] >= p - 30:  # 分岔路线
+                        if self.positions[num][6] != 0:  # 分岔路线
                             if 0 < self.positions[num][7] < 10:  # 小于10是X轴
                                 y1 = interpolate_y_from_x(self.path_points[self.positions[num][6]], x)
                                 if math.isfinite(y1):
                                     y = y1
+                                else:
+                                    print(y1,'~~~~~~~~~~~~~~~~y1')
                             elif self.positions[num][7] > 10:  # 大于10是Y轴
                                 x1 = interpolate_x_from_y(self.path_points[self.positions[num][6]], y)
                                 if math.isfinite(x1):
                                     x = x1
+                                else:
+                                    print(x1,'~~~~~~~~~~~~~~~~x1')
                             elif self.positions[num][7] < 0:  # 小于0是 一个点
                                 x, y = self.path_points[self.positions[num][6]][0]
                         self.positions[num][8] = x

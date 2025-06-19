@@ -14,6 +14,7 @@ import os
 from scipy.interpolate import interp1d
 import shutil
 
+
 def limit_folder_count(parent_path, max_folders=5):
     # 获取子目录列表，并按修改时间排序（最早修改的在前）
     folders = sorted(
@@ -122,11 +123,18 @@ def is_natural_num(z):
     except ValueError:
         return False
 
+
 def interpolate_y_from_x(polyline, x_value):
+    """
+    给定 polyline 和某个 x 值，返回对应的 y 值（通过线性插值）
+    :param polyline: list of (x, y)
+    :param x_value: float，目标 x
+    :return: float 或 None，插值得到的 y
+    """
     if len(polyline) < 2:
         return None
 
-    # 去重处理
+    # 去重处理（防止 interp1d 因 x 重复报错）
     seen = {}
     for x, y in polyline:
         if x not in seen:
@@ -140,18 +148,25 @@ def interpolate_y_from_x(polyline, x_value):
         return None
 
     try:
-        interpolator = interp1d(x_vals, y_vals, bounds_error=True)
-        # interpolator = interp1d(x_vals, y_vals, bounds_error=False, fill_value="extrapolate")
-        result = float(interpolator(x_value))
+        # 创建插值函数
+        interpolator = interp1d(x_vals, y_vals, bounds_error=False, fill_value="extrapolate")
+
+        # 手动限制 x_value 的范围
+        if x_value < min(x_vals):
+            result = y_vals[0]  # 使用最小 x 对应的 y
+        elif x_value > max(x_vals):
+            result = y_vals[-1]  # 使用最大 x 对应的 y
+        else:
+            result = float(interpolator(x_value))  # 插值计算
+
         if not math.isfinite(result):
             return None
         return result
+
     except Exception as e:
         print(f"插值异常: {e}")
         return None
 
-from scipy.interpolate import interp1d
-import math
 
 def interpolate_x_from_y(polyline, y_value):
     """
@@ -176,16 +191,27 @@ def interpolate_x_from_y(polyline, y_value):
     if len(y_vals) < 2:
         return None
 
+    # 创建插值函数
     try:
         interpolator = interp1d(y_vals, x_vals, bounds_error=False, fill_value="extrapolate")
-        result = float(interpolator(y_value))
+
+        # 插值前手动限制 y_value 的范围
+        if y_value < min(y_vals):
+            # 如果 y_value 小于最小的 y 值，使用最小的 y 值对应的 x 值
+            result = x_vals[0]
+        elif y_value > max(y_vals):
+            # 如果 y_value 大于最大的 y 值，使用最大的 y 值对应的 x 值
+            result = x_vals[-1]
+        else:
+            # 在范围内，正常进行插值
+            result = float(interpolator(y_value))
+
         if not math.isfinite(result):
             return None
         return result
     except Exception as e:
         print(f"插值异常: {e}")
         return None
-
 
 
 def divide_path(path_points, step_length):
@@ -251,6 +277,7 @@ def z_sort(z_array, direction=0, index=None):  # 排序函数
                         z_array[j], z_array[j + 1] = z_array[j + 1], z_array[j]
     return z_array
 
+
 if __name__ == '__main__':
     # polyline = [(0, 0), (100, 100), (200, 0)]
     # y_target = 100
@@ -262,4 +289,3 @@ if __name__ == '__main__':
 
     y_at_150 = interpolate_y_from_x(polyline, x_target)
     print(f"X = {x_target} 对应的 Y ≈ {y_at_150}")
-
