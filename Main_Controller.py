@@ -4970,8 +4970,10 @@ class MapLabel(QLabel):
                     if ui.checkBox_Two_Color.isChecked():
                         self.positions[num][1] = ranking_array[num][5]
                         self.positions[num][3] = ranking_array[num][9]  # 圈数
-                        self.positions[num][6] = abs(ranking_array[num][8])  # 路线标志
-                        self.positions[num][7] = self.path_direction[abs(ranking_array[num][8])]  # 方向标志
+                        if (self.positions[num][6] != abs(ranking_array[num][8])
+                                and self.positions[num][4] < p - 30):
+                            self.positions[num][6] = abs(ranking_array[num][8])  # 路线标志
+                            self.positions[num][7] = self.path_direction[abs(ranking_array[num][8])]  # 方向标志
                         if self.positions[num][4] != p:
                             self.positions[num][4] = p
                             self.positions[num][5] = round(time.time(), 2)
