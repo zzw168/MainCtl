@@ -4980,8 +4980,10 @@ class MapLabel(QLabel):
                             if self.positions[i][1] == ranking_array[num][5]:
                                 self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
                                 self.positions[num][3] = ranking_array[num][9]  # 圈数
-                                self.positions[num][6] = abs(ranking_array[num][8])  # 路线标志
-                                self.positions[num][7] = self.path_direction[abs(ranking_array[num][8])]  # 方向标志
+                                if (self.positions[num][6] != abs(ranking_array[num][8])
+                                        and self.positions[num][4] < p - 30):
+                                    self.positions[num][6] = abs(ranking_array[num][8])  # 路线标志
+                                    self.positions[num][7] = self.path_direction[abs(ranking_array[num][8])]  # 方向标志
                                 if self.positions[num][4] != p:
                                     self.positions[num][4] = p
                                     self.positions[num][5] = round(time.time(), 2)
@@ -5034,13 +5036,13 @@ class MapLabel(QLabel):
                                 if math.isfinite(y1):
                                     y = y1
                                 else:
-                                    print(y1,'~~~~~~~~~~~~~~~~y1')
+                                    print(y1, '~~~~~~~~~~~~~~~~y1')
                             elif self.positions[num][7] > 10:  # 大于10是Y轴
                                 x1 = interpolate_x_from_y(self.path_points[self.positions[num][6]], y)
                                 if math.isfinite(x1):
                                     x = x1
                                 else:
-                                    print(x1,'~~~~~~~~~~~~~~~~x1')
+                                    print(x1, '~~~~~~~~~~~~~~~~x1')
                             elif self.positions[num][7] < 0:  # 小于0是 一个点
                                 x, y = self.path_points[self.positions[num][6]][0]
                         self.positions[num][8] = x
