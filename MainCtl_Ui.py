@@ -755,6 +755,14 @@ class Ui_MainWindow(object):
 
         self.gridLayout_5.addWidget(self.lineEdit_Backup_Camera, 3, 1, 1, 1)
 
+        self.pushButton_Test_End = QPushButton(self.groupBox_term)
+        self.pushButton_Test_End.setObjectName(u"pushButton_Test_End")
+        self.pushButton_Test_End.setFont(font1)
+        self.pushButton_Test_End.setAutoDefault(False)
+        self.pushButton_Test_End.setFlat(False)
+
+        self.gridLayout_5.addWidget(self.pushButton_Test_End, 1, 2, 1, 1)
+
 
         self.gridLayout_10.addWidget(self.groupBox_term, 2, 0, 1, 1)
 
@@ -3668,6 +3676,7 @@ class Ui_MainWindow(object):
         self.pushButton_Cancel_End.setDefault(True)
         self.pushButton_Send_End.setDefault(True)
         self.pushButton_term.setDefault(True)
+        self.pushButton_Test_End.setDefault(True)
         self.pushButton_Organ.setDefault(True)
         self.pushButton_kaj789.setDefault(True)
         self.pushButton_fsave.setDefault(True)
@@ -3788,6 +3797,7 @@ class Ui_MainWindow(object):
         self.pushButton_Cancel_End.setText(QCoreApplication.translate("MainWindow", u"\u53d6\u6d88\u5f53\u5c40", None))
         self.pushButton_Send_End.setText(QCoreApplication.translate("MainWindow", u"\u8865\u53d1\u8d5b\u679c", None))
         self.pushButton_term.setText(QCoreApplication.translate("MainWindow", u"\u8d5b\u679c\u786e\u8ba4 \u8bc6\u522b\u72b6\u6001", None))
+        self.pushButton_Test_End.setText(QCoreApplication.translate("MainWindow", u"\u7ed3\u7b97\u9875", None))
         self.pushButton_TRAP.setText(QCoreApplication.translate("MainWindow", u"\u5361\u73e0", None))
         self.pushButton_TRAP_1.setText(QCoreApplication.translate("MainWindow", u"1", None))
         self.pushButton_TRAP_2.setText(QCoreApplication.translate("MainWindow", u"2", None))

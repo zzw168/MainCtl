@@ -7042,6 +7042,20 @@ def red_line():
         scroll_to_bottom(ui.textBrowser_save_msg)
 
 
+def test_end():
+    try:
+        tcp_result_thread.send_type = 'updata'
+        tcp_result_thread.run_flg = True
+
+        cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
+                                          False)  # 关闭排名来源
+        cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
+                                          True)  # 打开结果来源
+    except:
+        print('OBS 切换操作失败！')
+        flg_start['obs'] = False
+
+
 def my_def():
     global ranking_array
     global ball_sort
@@ -8328,6 +8342,7 @@ if __name__ == '__main__':
     ui.pushButton_Send_End.clicked.connect(send_end)
     ui.pushButton_Cancel_End.clicked.connect(cancel_end)
     ui.pushButton_ready.clicked.connect(ready_btn)
+    ui.pushButton_Test_End.clicked.connect(test_end)
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
