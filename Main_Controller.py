@@ -5571,11 +5571,12 @@ class AudioThread(QThread):
                 # print(audio_points[index][plan_index][0])
                 if (audio_points[index][plan_index][0][0] > 0
                         and (area_old != action_area)
-                        and (audio_points[index][plan_index][0][0] == action_area[0])):
+                        and (audio_points[index][plan_index][0][0]
+                             in [action_area[0], action_area[0] + 1, action_area[0] + 2])):
                     tb_audio = ui.tableWidget_Audio
                     sound_file = tb_audio.item(index - 1, 0).text()
                     sound_times = int(tb_audio.item(index - 1, 1).text())
-                    sound_delay = int(float(tb_audio.item(index - 1, 2).text())*10)
+                    sound_delay = int(float(tb_audio.item(index - 1, 2).text()) * 10)
                     sound_volume = float(tb_audio.item(index - 1, 3).text())
                     print(sound_file, sound_times, sound_delay)
                     volume = pygame.mixer.music.get_volume()
