@@ -5572,7 +5572,7 @@ class AudioThread(QThread):
                 if (audio_points[index][plan_index][0][0] > 0
                         and (area_old != action_area)
                         and (audio_points[index][plan_index][0][0]
-                             in [action_area[0], action_area[0] + 1, action_area[0] + 2])):
+                             in [action_area[0], action_area[0] + 1, action_area[0] - 1])):
                     tb_audio = ui.tableWidget_Audio
                     sound_file = tb_audio.item(index - 1, 0).text()
                     sound_times = int(tb_audio.item(index - 1, 1).text())
