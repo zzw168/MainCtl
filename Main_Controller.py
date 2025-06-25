@@ -785,9 +785,10 @@ def deal_rank(integration_qiu_array):
                                 and lapTimes[0][r_index] == 0):
                             lapTimes[0][r_index] = round(time.time() - ranking_time_start, 2)
                             lapTimes_thread[0][r_index] = threading.Thread(target=post_lapTime,
-                                                                        args=(term, r_index + 1, lapTimes[0][r_index],
-                                                                              Track_number),
-                                                                        daemon=True)
+                                                                           args=(
+                                                                           term, r_index + 1, lapTimes[0][r_index],
+                                                                           Track_number),
+                                                                           daemon=True)
                             lapTimes_thread[0][r_index].start()
                         if r_index == 0:
                             for i in range(len(ranking_temp)):
@@ -4967,99 +4968,100 @@ class MapLabel(QLabel):
             for num in range(balls_count):
                 self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0, 0, 0])
         ranking_temp = copy.deepcopy(ranking_array)
-        for num in range(0, balls_count):
-            if len(ranking_temp) >= balls_count and ranking_temp[num][5] in self.color_names.keys():
-                area_num = max_area_count - balls_count  # 跟踪区域数量
-                # if ((ranking_temp[num][6] <= max_area_count
-                #      and not ObsEnd_Thread.ball_flg)
-                #         or (ranking_temp[num][6] >= max_area_count + 1
-                #             and ObsEnd_Thread.ball_flg)):
-                if True:
-                    p = int(len(self.path_points[0]) * (ranking_temp[num][6] / area_num))
-                    if p >= len(self.path_points[0]):
-                        p = len(self.path_points[0]) - 1
-                    if ui.checkBox_Two_Color.isChecked():
-                        self.positions[num][1] = ranking_temp[num][5]
-                        self.positions[num][3] = ranking_temp[num][9]  # 圈数
-                        if (self.positions[num][6] != abs(ranking_temp[num][8])
-                                and self.positions[num][4] < p - 30):
-                            self.positions[num][6] = abs(ranking_temp[num][8])  # 路线标志
-                            self.positions[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
-                        if self.positions[num][4] != p:
-                            self.positions[num][4] = p
-                            self.positions[num][5] = round(time.time(), 2)
-                    else:
-                        for i in range(len(self.positions)):  # 排序
-                            if self.positions[i][1] == ranking_temp[num][5]:
-                                self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
-                                self.positions[num][3] = ranking_temp[num][9]  # 圈数
-                                if (self.positions[num][6] != abs(ranking_temp[num][8])
-                                        and self.positions[num][4] < p - 30):
-                                    self.positions[num][6] = abs(ranking_temp[num][8])  # 路线标志
-                                    self.positions[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
-                                if self.positions[num][4] != p:
-                                    self.positions[num][4] = p
-                                    self.positions[num][5] = round(time.time(), 2)
-                    if ranking_temp[num][6] <= 1:  # 起点 and ranking_temp[num][9] == 0
-                        if num == 0:
-                            index = len(ranking_temp) * self.ball_space
+        if not ball_stop:
+            for num in range(0, balls_count):
+                if len(ranking_temp) >= balls_count and ranking_temp[num][5] in self.color_names.keys():
+                    area_num = max_area_count - balls_count  # 跟踪区域数量
+                    # if ((ranking_temp[num][6] <= max_area_count
+                    #      and not ObsEnd_Thread.ball_flg)
+                    #         or (ranking_temp[num][6] >= max_area_count + 1
+                    #             and ObsEnd_Thread.ball_flg)):
+                    if True:
+                        p = int(len(self.path_points[0]) * (ranking_temp[num][6] / area_num))
+                        if p >= len(self.path_points[0]):
+                            p = len(self.path_points[0]) - 1
+                        if ui.checkBox_Two_Color.isChecked():
+                            self.positions[num][1] = ranking_temp[num][5]
+                            self.positions[num][3] = ranking_temp[num][9]  # 圈数
+                            if (self.positions[num][6] != abs(ranking_temp[num][8])
+                                    and self.positions[num][4] < p - 30):
+                                self.positions[num][6] = abs(ranking_temp[num][8])  # 路线标志
+                                self.positions[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
+                            if self.positions[num][4] != p:
+                                self.positions[num][4] = p
+                                self.positions[num][5] = round(time.time(), 2)
                         else:
-                            index = len(ranking_temp) * self.ball_space - num * self.ball_space
-                    elif (ranking_temp[num][9] >= max_lap_count - 1  # 最后一圈处理
-                          and ranking_temp[num][6] >= max_area_count / 3 * 2
-                          and self.positions[num][0] > len(self.path_points[0]) - num * self.ball_space - 20):
-                        if num == 0:
-                            index = len(self.path_points[0]) - 1
+                            for i in range(len(self.positions)):  # 排序
+                                if self.positions[i][1] == ranking_temp[num][5]:
+                                    self.positions[i], self.positions[num] = self.positions[num], self.positions[i]
+                                    self.positions[num][3] = ranking_temp[num][9]  # 圈数
+                                    if (self.positions[num][6] != abs(ranking_temp[num][8])
+                                            and self.positions[num][4] < p - 30):
+                                        self.positions[num][6] = abs(ranking_temp[num][8])  # 路线标志
+                                        self.positions[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
+                                    if self.positions[num][4] != p:
+                                        self.positions[num][4] = p
+                                        self.positions[num][5] = round(time.time(), 2)
+                        if ranking_temp[num][6] <= 1:  # 起点 and ranking_temp[num][9] == 0
+                            if num == 0:
+                                index = len(ranking_temp) * self.ball_space
+                            else:
+                                index = len(ranking_temp) * self.ball_space - num * self.ball_space
+                        elif (ranking_temp[num][9] >= max_lap_count - 1  # 最后一圈处理
+                              and ranking_temp[num][6] >= max_area_count / 3 * 2
+                              and self.positions[num][0] > len(self.path_points[0]) - num * self.ball_space - 20):
+                            if num == 0:
+                                index = len(self.path_points[0]) - 1
+                            else:
+                                index = len(self.path_points[0]) - 1 - num * self.ball_space
                         else:
-                            index = len(self.path_points[0]) - 1 - num * self.ball_space
-                    else:
-                        if ranking_temp[num][8] < 0:
-                            self.positions[num][0] = p  # 判断分岔路交汇点
-                        elif p - self.positions[num][0] > 50:
-                            self.speed = 3
-                        elif 50 >= p - self.positions[num][0] >= 25:
-                            self.speed = 2
-                        elif p < self.positions[num][0] and ranking_temp[num][10] == 1:
-                            self.positions[num][0] = p  # 跨圈情况
-                        elif (round(time.time(), 2) - self.positions[num][5] > float(ui.lineEdit_lost.text())
-                              and self.positions[num][0] <= len(self.path_points[0]) / 10 * int(
-                                    ui.lineEdit_Map_Action.text())):
-                            self.positions[num][0] = p  # 盲跑时间
-                        elif (round(time.time(), 2) - self.positions[num][5] > 0.5
-                              and self.positions[num][0] > len(self.path_points[0]) / 10 * 9):
-                            self.positions[num][0] = p  # 最后路段，盲跑时间为0.5秒
-                        elif (round(time.time(), 2) - self.positions[num][5] > 1
-                              and self.positions[num][0] > len(self.path_points[0]) / 10 * int(
-                                    ui.lineEdit_Map_Action.text())):
-                            self.positions[num][0] = p  # 最后路段,计球位置，盲跑时间为1秒
-                        else:
-                            self.speed = 1
-                        index = self.positions[num][0] + self.speed
-                    if index < len(self.path_points[0]) and ranking_temp[num][9] < max_lap_count:
-                        self.positions[num][0] = index
-                        for color_index in range(len(init_array)):
-                            if init_array[color_index][5] == ranking_temp[num][5]:
-                                self.positions[num][2] = color_index + 1
-                        if num > 0 and self.positions[num][0] == self.positions[num - 1][0]:  # 禁止重叠
-                            self.positions[num][0] = self.positions[num][0] - self.ball_space
-                        x, y = self.path_points[0][self.positions[num][0]]
-                        if self.positions[num][6] != 0:  # 分岔路线
-                            if 0 < self.positions[num][7] < 10:  # 小于10是X轴
-                                y1 = interpolate_y_from_x(self.path_points[self.positions[num][6]], x)
-                                if math.isfinite(y1):
-                                    y = y1
-                                else:
-                                    print(y1, '~~~~~~~~~~~~~~~~y1')
-                            elif self.positions[num][7] > 10:  # 大于10是Y轴
-                                x1 = interpolate_x_from_y(self.path_points[self.positions[num][6]], y)
-                                if math.isfinite(x1):
-                                    x = x1
-                                else:
-                                    print(x1, '~~~~~~~~~~~~~~~~x1')
-                            elif self.positions[num][7] < 0:  # 小于0是 一个点
-                                x, y = self.path_points[self.positions[num][6]][0]
-                        self.positions[num][8] = x
-                        self.positions[num][9] = y
+                            if ranking_temp[num][8] < 0:
+                                self.positions[num][0] = p  # 判断分岔路交汇点
+                            elif p - self.positions[num][0] > 50:
+                                self.speed = 3
+                            elif 50 >= p - self.positions[num][0] >= 25:
+                                self.speed = 2
+                            elif p < self.positions[num][0] and ranking_temp[num][10] == 1:
+                                self.positions[num][0] = p  # 跨圈情况
+                            elif (round(time.time(), 2) - self.positions[num][5] > float(ui.lineEdit_lost.text())
+                                  and self.positions[num][0] <= len(self.path_points[0]) / 10 * int(
+                                        ui.lineEdit_Map_Action.text())):
+                                self.positions[num][0] = p  # 盲跑时间
+                            elif (round(time.time(), 2) - self.positions[num][5] > 0.5
+                                  and self.positions[num][0] > len(self.path_points[0]) / 10 * 9):
+                                self.positions[num][0] = p  # 最后路段，盲跑时间为0.5秒
+                            elif (round(time.time(), 2) - self.positions[num][5] > 1
+                                  and self.positions[num][0] > len(self.path_points[0]) / 10 * int(
+                                        ui.lineEdit_Map_Action.text())):
+                                self.positions[num][0] = p  # 最后路段,计球位置，盲跑时间为1秒
+                            else:
+                                self.speed = 1
+                            index = self.positions[num][0] + self.speed
+                        if index < len(self.path_points[0]) and ranking_temp[num][9] < max_lap_count:
+                            self.positions[num][0] = index
+                            for color_index in range(len(init_array)):
+                                if init_array[color_index][5] == ranking_temp[num][5]:
+                                    self.positions[num][2] = color_index + 1
+                            if num > 0 and self.positions[num][0] == self.positions[num - 1][0]:  # 禁止重叠
+                                self.positions[num][0] = self.positions[num][0] - self.ball_space
+                            x, y = self.path_points[0][self.positions[num][0]]
+                            if self.positions[num][6] != 0:  # 分岔路线
+                                if 0 < self.positions[num][7] < 10:  # 小于10是X轴
+                                    y1 = interpolate_y_from_x(self.path_points[self.positions[num][6]], x)
+                                    if math.isfinite(y1):
+                                        y = y1
+                                    else:
+                                        print(y1, '~~~~~~~~~~~~~~~~y1')
+                                elif self.positions[num][7] > 10:  # 大于10是Y轴
+                                    x1 = interpolate_x_from_y(self.path_points[self.positions[num][6]], y)
+                                    if math.isfinite(x1):
+                                        x = x1
+                                    else:
+                                        print(x1, '~~~~~~~~~~~~~~~~x1')
+                                elif self.positions[num][7] < 0:  # 小于0是 一个点
+                                    x, y = self.path_points[self.positions[num][6]][0]
+                            self.positions[num][8] = x
+                            self.positions[num][9] = y
         # print(self.positions)
         # 模拟排名
         if ranking_temp and ranking_temp[0][6] < max_area_count - 2 and ranking_temp[0][10] == 0:
@@ -5083,8 +5085,8 @@ class MapLabel(QLabel):
                     if lapTimes[0][i] == 0:
                         lapTimes[0][i] = round(time.time() - ranking_time_start, 2)
                         lapTimes_thread[0][i] = threading.Thread(target=post_lap_time,
-                                                              args=(i + 1, lapTimes[0][i]),
-                                                              daemon=True)
+                                                                 args=(i + 1, lapTimes[0][i]),
+                                                                 daemon=True)
                         lapTimes_thread[0][i].start()
         # 更新实时触发位置
         for i in range(len(self.positions)):
@@ -5134,7 +5136,8 @@ class MapLabel(QLabel):
         if ball_stop:
             if len(self.pos_stop) == len(self.positions):
                 self.positions = copy.deepcopy(self.pos_stop)
-
+                # print('self.pos_stop',self.pos_stop)
+                # print('self.positions',self.positions)
         # 触发重绘
         self.update()
 
@@ -6940,23 +6943,7 @@ def test_betting():
 
 
 def auto_shoot():  # 自动上珠
-    global balls_start
-    global ball_sort
-    global ranking_array
     if ui.checkBox_shoot_0.isChecked():
-        with ranking_lock:
-            ranking_array = []  # 排名数组
-            for row in range(0, len(init_array)):
-                ranking_array.append([])
-                for col in range(0, len(init_array[row])):
-                    ranking_array[row].append(init_array[row][col])
-        with ball_sort_lock:
-            ball_sort = []  # 位置寄存器
-            for row in range(0, max_area_count + 2):
-                ball_sort.append([])
-                for col in range(0, max_lap_count):
-                    ball_sort[row].append([])
-        balls_start = 0
         Shoot_Thread.run_flg = True
     else:
         Shoot_Thread.run_flg = False
