@@ -2474,6 +2474,7 @@ class ObsEndThread(QThread):
         global action_area
         global term_comment
         global term_status
+        global z_ranking_end
         global z_ranking_time
         global result_data
         global betting_loop_flg
@@ -2533,6 +2534,7 @@ class ObsEndThread(QThread):
                             flg_start['obs'] = False
             for i in range(5):
                 try:
+                    z_ranking_end = copy.deepcopy(z_ranking_res)  # 对齐结算页和最终结果截图排名
                     tcp_result_thread.send_type = 'updata'
                     tcp_result_thread.run_flg = True
 
