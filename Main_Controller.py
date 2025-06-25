@@ -782,13 +782,13 @@ def deal_rank(integration_qiu_array):
                     result_count = ranking_temp[r_index][6] - q_item[6]
                     if result_count >= max_area_count - area_limit - balls_count:
                         if (ranking_temp[r_index][9] == 0  # 第0圈
-                                and lapTimes[r_index] == 0):
-                            lapTimes[r_index] = round(time.time() - ranking_time_start, 2)
-                            lapTimes_thread[r_index] = threading.Thread(target=post_lapTime,
-                                                                        args=(term, r_index + 1, lapTimes[r_index],
+                                and lapTimes[0][r_index] == 0):
+                            lapTimes[0][r_index] = round(time.time() - ranking_time_start, 2)
+                            lapTimes_thread[0][r_index] = threading.Thread(target=post_lapTime,
+                                                                        args=(term, r_index + 1, lapTimes[0][r_index],
                                                                               Track_number),
                                                                         daemon=True)
-                            lapTimes_thread[r_index].start()
+                            lapTimes_thread[0][r_index].start()
                         if r_index == 0:
                             for i in range(len(ranking_temp)):
                                 ranking_check[ranking_temp[i][5]] = [-1, -1]  # 换圈复位记号
@@ -2265,6 +2265,8 @@ class PlanBallNumThread(QThread):
         global betting_end_time
         global lottery_term
         global z_end_time
+        global lapTimes
+        global lapTimes_thread
         global ranking_save
         while self.running:
             time.sleep(0.1)
@@ -2298,6 +2300,12 @@ class PlanBallNumThread(QThread):
                                     z_end_time[i] = int(end_t * 1000)  # 记录结束时间
                                 if z_ranking_time[i] in ['TRAP', 'OUT', '']:
                                     z_ranking_time[i] = '%.2f' % end_t
+                                if lapTimes[1][i] == 0:
+                                    lapTimes[1][i] = round(end_t, 2)
+                                    lapTimes_thread[1][i] = threading.Thread(target=post_lap_time,
+                                                                             args=(i + 21, lapTimes[1][i]),
+                                                                             daemon=True)
+                                    lapTimes_thread[1][i].start()
 
                             if self.balls_num == 1:
                                 betting_end_time = int(time.time())
@@ -2594,7 +2602,7 @@ class ObsEndThread(QThread):
                                "actualResultOpeningTime": betting_end_time,
                                "result": z_ranking_end[0:balls_count],
                                "timings": "[]",
-                               "lapTime": abs(lapTimes[0])}
+                               "lapTime": abs(lapTimes[0][0])}
                 data_temp = []
                 for index in range(balls_count):
                     if is_natural_num(z_ranking_time[index]):
@@ -5072,12 +5080,12 @@ class MapLabel(QLabel):
                 if (ranking_temp[i][9] == 0  # 第0圈
                         and (ranking_temp[i][6] >= max_area_count - balls_count
                              or self.positions[i][0] >= len(self.path_points[0]) - 100)):
-                    if lapTimes[i] == 0:
-                        lapTimes[i] = round(time.time() - ranking_time_start, 2)
-                        lapTimes_thread[i] = threading.Thread(target=post_lap_time,
-                                                              args=(i + 1, lapTimes[i]),
+                    if lapTimes[0][i] == 0:
+                        lapTimes[0][i] = round(time.time() - ranking_time_start, 2)
+                        lapTimes_thread[0][i] = threading.Thread(target=post_lap_time,
+                                                              args=(i + 1, lapTimes[0][i]),
                                                               daemon=True)
-                        lapTimes_thread[i].start()
+                        lapTimes_thread[0][i].start()
         # 更新实时触发位置
         for i in range(len(self.positions)):
             if ((self.positions[i][0] - self.map_action < len(self.path_points[0]) / 3)
@@ -6393,7 +6401,7 @@ class ResetRankingThread(QThread):
             print('tcp_ranking_thread.run_flg = True~~~~~~~~~~~~')
             map_label_big.map_action = 0
             term_comment = ''
-            lapTimes = [0.0] * balls_count
+            lapTimes = [[0.0] * balls_count, [0.0] * balls_count]
             balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
             ranking_check = {'yellow': [-1, -1],
                              'blue': [-1, -1],
@@ -8030,8 +8038,8 @@ if __name__ == '__main__':
     term_status = 1  # 赛事状态（丢球）
     term_comments = ['Invalid Term', 'TRAP', 'OUT', 'Revise']
     term_comment = ''
-    lapTimes = [0.0] * balls_count
-    lapTimes_thread = [''] * balls_count
+    lapTimes = [[0.0] * balls_count, [0.0] * balls_count]
+    lapTimes_thread = [[''] * balls_count, [''] * balls_count]
     result_data = {"raceTrackID": Track_number, "term": str(term), "actualResultOpeningTime": betting_end_time,
                    "result": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"],
                    "timings": json.dumps([
