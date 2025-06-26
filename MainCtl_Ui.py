@@ -357,41 +357,46 @@ class Ui_MainWindow(object):
         self.groupBox_2.setFont(font1)
         self.gridLayout_8 = QGridLayout(self.groupBox_2)
         self.gridLayout_8.setObjectName(u"gridLayout_8")
-        self.lineEdit_times_count = QLineEdit(self.groupBox_2)
-        self.lineEdit_times_count.setObjectName(u"lineEdit_times_count")
-        self.lineEdit_times_count.setMaximumSize(QSize(30, 16777215))
-        self.lineEdit_times_count.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.lineEdit_times_count.setReadOnly(True)
-
-        self.gridLayout_8.addWidget(self.lineEdit_times_count, 0, 7, 1, 1)
-
-        self.pushButton_ready = QPushButton(self.groupBox_2)
-        self.pushButton_ready.setObjectName(u"pushButton_ready")
-        self.pushButton_ready.setMinimumSize(QSize(0, 20))
-        self.pushButton_ready.setMaximumSize(QSize(130, 16777215))
-
-        self.gridLayout_8.addWidget(self.pushButton_ready, 0, 3, 1, 1)
-
-        self.checkBox_maintain = QCheckBox(self.groupBox_2)
-        self.checkBox_maintain.setObjectName(u"checkBox_maintain")
-        self.checkBox_maintain.setMaximumSize(QSize(50, 16777215))
-
-        self.gridLayout_8.addWidget(self.checkBox_maintain, 0, 4, 1, 1)
-
         self.label_10 = QLabel(self.groupBox_2)
         self.label_10.setObjectName(u"label_10")
         self.label_10.setMaximumSize(QSize(30, 16777215))
         self.label_10.setFont(font1)
         self.label_10.setAutoFillBackground(False)
 
-        self.gridLayout_8.addWidget(self.label_10, 0, 6, 1, 1)
+        self.gridLayout_8.addWidget(self.label_10, 0, 5, 1, 1)
+
+        self.lineEdit_times_count = QLineEdit(self.groupBox_2)
+        self.lineEdit_times_count.setObjectName(u"lineEdit_times_count")
+        self.lineEdit_times_count.setMaximumSize(QSize(30, 16777215))
+        self.lineEdit_times_count.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_times_count.setReadOnly(True)
+
+        self.gridLayout_8.addWidget(self.lineEdit_times_count, 0, 6, 1, 1)
+
+        self.checkBox_maintain = QCheckBox(self.groupBox_2)
+        self.checkBox_maintain.setObjectName(u"checkBox_maintain")
+        self.checkBox_maintain.setMaximumSize(QSize(50, 16777215))
+
+        self.gridLayout_8.addWidget(self.checkBox_maintain, 0, 3, 1, 1)
 
         self.pushButton_close_all = QPushButton(self.groupBox_2)
         self.pushButton_close_all.setObjectName(u"pushButton_close_all")
         self.pushButton_close_all.setMinimumSize(QSize(0, 20))
         self.pushButton_close_all.setMaximumSize(QSize(130, 16777215))
 
-        self.gridLayout_8.addWidget(self.pushButton_close_all, 0, 5, 1, 1)
+        self.gridLayout_8.addWidget(self.pushButton_close_all, 0, 4, 1, 1)
+
+        self.radioButton_ready = QRadioButton(self.groupBox_2)
+        self.radioButton_ready.setObjectName(u"radioButton_ready")
+        self.radioButton_ready.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.gridLayout_8.addWidget(self.radioButton_ready, 0, 0, 1, 1)
+
+        self.radioButton_wide = QRadioButton(self.groupBox_2)
+        self.radioButton_wide.setObjectName(u"radioButton_wide")
+        self.radioButton_wide.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+
+        self.gridLayout_8.addWidget(self.radioButton_wide, 0, 1, 1, 1)
 
 
         self.gridLayout_12.addWidget(self.groupBox_2, 1, 2, 2, 1)
@@ -3666,7 +3671,6 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
 
         self.tabWidget_Ranking.setCurrentIndex(0)
-        self.pushButton_ready.setDefault(True)
         self.pushButton_close_all.setDefault(True)
         self.pushButton_start_game.setDefault(True)
         self.pushButton_Cardreset.setDefault(True)
@@ -3760,11 +3764,12 @@ class Ui_MainWindow(object):
         self.label_85.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
         self.lineEdit_balls_auto.setText(QCoreApplication.translate("MainWindow", u"8", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u7ef4\u62a4\u529f\u80fd", None))
-        self.lineEdit_times_count.setText(QCoreApplication.translate("MainWindow", u"0", None))
-        self.pushButton_ready.setText(QCoreApplication.translate("MainWindow", u"\u51c6\u5907", None))
-        self.checkBox_maintain.setText(QCoreApplication.translate("MainWindow", u"\u7ef4\u62a4", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"\u5012\u6570\uff1a", None))
+        self.lineEdit_times_count.setText(QCoreApplication.translate("MainWindow", u"0", None))
+        self.checkBox_maintain.setText(QCoreApplication.translate("MainWindow", u"\u7ef4\u62a4", None))
         self.pushButton_close_all.setText(QCoreApplication.translate("MainWindow", u"\u5168\u90e8\u5173", None))
+        self.radioButton_ready.setText(QCoreApplication.translate("MainWindow", u"\u51c6\u5907", None))
+        self.radioButton_wide.setText(QCoreApplication.translate("MainWindow", u"\u5e7f\u89d2", None))
         self.pushButton_start_game.setText(QCoreApplication.translate("MainWindow", u"\u542f\u52a8", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"\u7ec8\u70b9\uff1a", None))

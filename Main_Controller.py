@@ -3527,10 +3527,10 @@ class PlanCmdThread(QThread):
                                 time.sleep(abs(float(plan_list[plan_index][14][0])))  # 负数则等待对应秒数再进行下一个动作
                             else:
                                 t_over = 0
-                                while True:  # 正式运行，等待球进入触发区域再进行下一个动作
-                                    if not self.run_flg:
-                                        print('动作等待中！')
-                                        break
+                                while self.run_flg:  # 正式运行，等待球进入触发区域再进行下一个动作
+                                    # if not self.run_flg:
+                                    #     print('动作等待中！')
+                                    #     break
                                     if not plan_list[plan_index][14][0].isdigit():
                                         self.signal.emit(fail("%s 卫星图号出错！" % plan_list[plan_index][14][0]))
                                         break
@@ -4484,6 +4484,9 @@ def cmd_next():
 # 关闭动作循环
 def cmd_stop():
     PlanCmd_Thread.run_flg = False  # 停止运动
+    PlanCmd_Thread.background_state = False
+    PlanCmd_Thread.end_state = False
+    PlanCmd_Thread.ready_state = False
     ReStart_Thread.run_flg = False  # 停止循环
     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
     if ui.checkBox_Ai.isChecked():
@@ -6954,10 +6957,18 @@ def auto_shoot():  # 自动上珠
 
 
 def ready_btn():
-    while PlanCmd_Thread.run_flg:
-        print('等待动作结束~~~~~~~~')
-        time.sleep(1)
+    # while PlanCmd_Thread.run_flg:
+    #     print('等待动作结束~~~~~~~~')
+    #     time.sleep(1)
     PlanCmd_Thread.ready_state = True  # 运行准备
+    PlanCmd_Thread.run_flg = True
+
+
+def wide_btn():
+    # while PlanCmd_Thread.run_flg:
+    #     print('等待动作结束~~~~~~~~')
+    #     time.sleep(1)
+    PlanCmd_Thread.end_state = True  # 运行广角
     PlanCmd_Thread.run_flg = True
 
 
@@ -8342,8 +8353,9 @@ if __name__ == '__main__':
 
     ui.pushButton_Send_End.clicked.connect(send_end)
     ui.pushButton_Cancel_End.clicked.connect(cancel_end)
-    ui.pushButton_ready.clicked.connect(ready_btn)
     ui.pushButton_Test_End.clicked.connect(test_end)
+    ui.radioButton_ready.clicked.connect(ready_btn)
+    ui.radioButton_wide.clicked.connect(wide_btn)
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
