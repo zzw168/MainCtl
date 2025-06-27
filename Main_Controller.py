@@ -2890,7 +2890,8 @@ class ScreenShotThread(QThread):
                 ball_sort = copy.deepcopy(ball_sort_temp)
             deal_end()  # 终点排序
             z_ranking_end = copy.deepcopy(z_ranking_res)  # 对齐结算页和最终结果截图排名
-            lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+            if lottery_term[5] == '':
+                lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             self.signal.emit('核对完成')
             time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
