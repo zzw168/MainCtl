@@ -2333,7 +2333,7 @@ class PlanBallNumThread(QThread):
                             if ui.checkBox_Pass_Ranking_Twice.isChecked():
                                 self.run_flg = False
                             self.signal.emit('人工检查')
-                            time.sleep(1)
+                            # time.sleep(1)
                             if not self.run_flg:
                                 break
                         else:
@@ -2353,6 +2353,14 @@ class PlanBallNumThread(QThread):
                     else:
                         flg_start['card'] = False
                         self.signal.emit(fail("运动板x输入通信出错！"))
+                        if time.time() - time_now > int(ui.lineEdit_end_count_ball.text()):
+                            # 超时则跳出循环计球
+                            if ui.checkBox_Pass_Ranking_Twice.isChecked():
+                                self.run_flg = False
+                            self.signal.emit('人工检查')
+                            # time.sleep(1)
+                            if not self.run_flg:
+                                break
                     time.sleep(0.01)
                 try:
                     index = int(ui.lineEdit_alarm.text()) - 1
@@ -2483,7 +2491,6 @@ class ObsEndThread(QThread):
         global action_area
         global term_comment
         global term_status
-        global z_ranking_end
         global z_ranking_time
         global result_data
         global betting_loop_flg
@@ -2543,7 +2550,6 @@ class ObsEndThread(QThread):
                             flg_start['obs'] = False
             for i in range(5):
                 try:
-                    z_ranking_end = copy.deepcopy(z_ranking_res)  # 对齐结算页和最终结果截图排名
                     tcp_result_thread.send_type = 'updata'
                     tcp_result_thread.run_flg = True
 
@@ -2811,7 +2817,7 @@ class ScreenShotThread(QThread):
                 term_status = 1
                 print('主镜头识别正确:', main_Camera)
                 z_ranking_end = copy.deepcopy(main_Camera)
-                lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+                # lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             # elif z_ranking_res == monitor_Camera:
             #     term_status = 1
             #     print('网络识别正确:', monitor_Camera)
@@ -2883,6 +2889,8 @@ class ScreenShotThread(QThread):
             with ball_sort_lock:
                 ball_sort = copy.deepcopy(ball_sort_temp)
             deal_end()  # 终点排序
+            z_ranking_end = copy.deepcopy(z_ranking_res)  # 对齐结算页和最终结果截图排名
+            lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             self.signal.emit('核对完成')
             time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
