@@ -1987,7 +1987,9 @@ class ReStartThread(QThread):
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
                 for i in range(3):
                     response = get_term(Track_number)
-                    if isinstance(response, dict) and 'term' in response.keys():  # 开盘模式，获取期号正常
+                    if (isinstance(response, dict)
+                            and 'term' in response.keys()
+                            and term != response['term']):  # 开盘模式，获取期号正常
                         term = response['term']
                         betting_start_time = response['scheduledGameStartTime']
                         betting_end_time = response['scheduledResultOpeningTime']
@@ -2012,6 +2014,9 @@ class ReStartThread(QThread):
                         else:
                             self.countdown = str(self.countdown)
                         break
+                    elif term == response['term']:
+                        self.signal.emit('term_error')
+                        self.run_flg = False
                     elif i == 2:  # 封盘模式，退出循环
                         # tcp_result_thread.send_type = 'time'
                         self.signal.emit('error')
@@ -2127,6 +2132,14 @@ def restartsignal_accept(msg):
     elif msg == 'term_ok':
         ui.groupBox_term.setStyleSheet("QGroupBox { background-color: red; }")  # 让 GroupBox 变红
         ui.pushButton_term.setText(str(term))
+    elif msg == 'term_error':
+        ui.radioButton_stop_betting.click()
+        sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
+        show_message("注意", "期号重复！%s期结果未正常结束！请重新上传或取消该期号赛事！"% term)
+        ui.textBrowser.append(msg)
+        ui.textBrowser_msg.append(msg)
+        scroll_to_bottom(ui.textBrowser)
+        scroll_to_bottom(ui.textBrowser_msg)
     elif msg == 'error':
         ui.radioButton_stop_betting.click()
         sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
