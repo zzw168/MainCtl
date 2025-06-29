@@ -2135,7 +2135,7 @@ def restartsignal_accept(msg):
     elif msg == 'term_error':
         ui.radioButton_stop_betting.click()
         sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
-        show_message("注意", "期号重复！%s期结果未正常结束！请重新上传或取消该期号赛事！"% term)
+        show_message("注意", "期号重复！%s期结果未正常结束！请重新上传或取消该期号赛事！" % term)
         ui.textBrowser.append(msg)
         ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser)
@@ -2830,7 +2830,7 @@ class ScreenShotThread(QThread):
                 term_status = 1
                 print('主镜头识别正确:', main_Camera)
                 z_ranking_end = copy.deepcopy(main_Camera)
-                # lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+                lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             # elif z_ranking_res == monitor_Camera:
             #     term_status = 1
             #     print('网络识别正确:', monitor_Camera)
@@ -2903,7 +2903,7 @@ class ScreenShotThread(QThread):
                 ball_sort = copy.deepcopy(ball_sort_temp)
             deal_end()  # 终点排序
             z_ranking_end = copy.deepcopy(z_ranking_res)  # 对齐结算页和最终结果截图排名
-            if lottery_term[5] == '':
+            if lottery_term[4] != '':
                 lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             self.signal.emit('核对完成')
             time.sleep(3)
