@@ -57,6 +57,7 @@ def z_udp(udp_client_data, address):
     # dest_addr = ('127.0.0.1', 8080)
     # 4. 发送数据到指定的电脑上
     udp_client_socket.sendto(udp_client_data.encode('utf-8'), address)
+    print(udp_client_data, address, '~~~~~~~~~~~~~~~~')
     # 5. 关闭套接字
     udp_client_socket.close()
 
@@ -2425,7 +2426,14 @@ class PlanBallNumThread(QThread):
             ObsEnd_Thread.ball_flg = True  # 结算页标志2
             print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-            # if ui.checkBox_Ai.isChecked():
+            if ui.checkBox_Ai.isChecked():
+                self.signal.emit('发送Ai解说停止信号！%s' % ui.lineEdit_Ai_addr.text())
+                udp_text = json.dumps({term: 'stop'})
+                t = threading.Thread(target=z_udp, args=(str(udp_text),
+                                                         tuple(ui.lineEdit_Ai_addr.text().split(':')[0:1]
+                                                               + [int(ui.lineEdit_Ai_addr.text().split(':')[1])])),
+                                     daemon=True)
+                t.start()
             #     Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
             #     ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
             #     print(f"服务器响应: {ai_res}")  # 停止AI解说服务
@@ -2537,11 +2545,12 @@ class ObsEndThread(QThread):
             print('结算页面运行！')
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）实时数据停止标志
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-            if ui.checkBox_Ai.isChecked():
-                udp_text = json.dumps({term: 'stop'})
-                t = threading.Thread(target=z_udp, args=(udp_text, ui.lineEdit_Ai_addr.text()),
-                                     daemon=True)
-                t.start()
+            # if ui.checkBox_Ai.isChecked():
+            # self.signal.emit('发送Ai解说停止信号！%s' % ui.lineEdit_Ai_addr.text())
+            # udp_text = json.dumps({term: 'stop'})
+            # t = threading.Thread(target=z_udp, args=(str(udp_text), ui.lineEdit_Ai_addr.text()),
+            #                      daemon=True)
+            # t.start()
             #     Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
             #     ai_res = send_data("STOP", ui.lineEdit_Ai_addr.text())
             #     print(f"服务器响应: {ai_res}")  # 停止AI解说服务
@@ -3371,12 +3380,12 @@ class PlanCmdThread(QThread):
                 continue
             if flg_start['card'] and action_area[1] < max_lap_count:
                 Audio_Thread.run_flg = True  # 开启音频播放线程
-                if ui.checkBox_Ai.isChecked():
-                    udp_text = json.dumps({term: 'start'})
-                    t = threading.Thread(target=z_udp, args=(udp_text, ui.lineEdit_Ai_addr.text()),
-                                         daemon=True)
-                    t.start()
-                    # Ai_Thread.run_flg = True  # 开启AI播放线程
+                # if ui.checkBox_Ai.isChecked():
+                #     udp_text = json.dumps({term: 'start'})
+                #     t = threading.Thread(target=z_udp, args=(udp_text, ui.lineEdit_Ai_addr.text()),
+                #                          daemon=True)
+                #     t.start()
+                # Ai_Thread.run_flg = True  # 开启AI播放线程
                 self.signal.emit(succeed("运动流程：开始！"))
                 self.cmd_next = False  # 初始化手动快速跳过下一步动作标志
                 cb_index = ui.comboBox_plan.currentIndex()
@@ -3431,6 +3440,17 @@ class PlanCmdThread(QThread):
                                                     ball_sort[row].append([])
                                     lottery_term[3] = '进行中'  # 新一期比赛的状态（1.进行中）
                                     self.signal.emit('进行中')  # 修改结果列表中的赛事状态
+                                    if ui.checkBox_Ai.isChecked():
+                                        self.signal.emit('发送Ai解说信号！%s~~~' % ui.lineEdit_Ai_addr.text())
+                                        udp_text = json.dumps({term: 'start'})
+                                        t = threading.Thread(target=z_udp, args=(str(udp_text),
+                                                                                 tuple(ui.lineEdit_Ai_addr.text().split(
+                                                                                     ':')[0:1]
+                                                                                       + [int(
+                                                                                     ui.lineEdit_Ai_addr.text().split(
+                                                                                         ':')[1])])),
+                                                             daemon=True)
+                                        t.start()
                                     if flg_start['obs'] and not ui.checkBox_test.isChecked():  # 非测试模式:
                                         try:
                                             # 获取录屏状态
