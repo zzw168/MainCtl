@@ -1945,6 +1945,8 @@ class ReStartThread(QThread):
                 print('断开重连OBS~~~~~~')
             except:
                 self.signal.emit(fail('OBS链接失败！'))
+                self.run_flg = False
+                continue
             while PlanCmd_Thread.run_flg:
                 self.signal.emit('等待背景结束~~~~~~~')
                 print('PlanCmd_Thread.run_flg', '~~~~~~~~~~~')
@@ -2122,6 +2124,12 @@ def restartsignal_accept(msg):
         ui.textBrowser.append(msg)
         ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser)
+        scroll_to_bottom(ui.textBrowser_msg)
+    elif 'OBS链接失败！' in msg:
+        ui.radioButton_stop_betting.click()
+        sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
+        show_message("OBS异常", "请确保OBS状态正常，重新开盘！")
+        ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser_msg)
     elif msg == '过场动画':
         ui.textBrowser_msg.append(succeed('过场动画'))
