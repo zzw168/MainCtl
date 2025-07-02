@@ -1,5 +1,6 @@
 import copy
 import json
+import multiprocessing
 import os.path
 import re
 import subprocess
@@ -531,18 +532,18 @@ def obs_script_request():
 #     cap.release()
 #     return ['', '[1]', 'rtsp']
 def get_rtsp(r_url, timeout=20):
-    def inner_get_rtsp(rt_url):
+    def inner_get_rtsp(rt_url, queue):
         cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
         cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
         jpg_base64 = ''
         if cap.isOpened():
             for i in range(3):
                 ret = False
-                frame = ''
+                frame = None
                 for j in range(3):
                     ret, frame = cap.read()
 
-                if ret:
+                if ret and frame is not None:
                     try:
                         if len(area_Code['net']) > 0:
                             area = area_Code['net'][0]['coordinates']
@@ -577,7 +578,9 @@ def get_rtsp(r_url, timeout=20):
                                     f.write(r_img)
                             flg_start['ai_end'] = True
                             cap.release()
-                            return r_list
+                            # 通过 queue 返回结果
+                            queue.put(r_list)
+                            return
                         else:
                             print("jpg_base64 转换错误！")
                             continue
@@ -590,15 +593,23 @@ def get_rtsp(r_url, timeout=20):
         else:
             print('无法打开摄像头')
         cap.release()
-        return [jpg_base64, '[1]', 'rtsp']
+        queue.put([jpg_base64, '[1]', 'rtsp'])  # 返回空结果
 
     # 添加超时控制
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        future = executor.submit(inner_get_rtsp, r_url)
-        try:
-            return future.result(timeout=timeout)
-        except concurrent.futures.TimeoutError:
-            print(f'⛔ get_rtsp 超时（>{timeout}s），自动放弃！')
+    p_queue = multiprocessing.Queue()
+    p = multiprocessing.Process(target=inner_get_rtsp, args=(r_url, p_queue))
+    p.start()
+    p.join(timeout)
+    if p.is_alive():
+        p.terminate()
+        p.join()
+        print(f'⛔ get_rtsp 超时（>{timeout}s），自动放弃！')
+        return ['', '[1]', 'rtsp']
+    else:
+        if not p_queue.empty():
+            return p_queue.get()
+        else:
+            print('⚠️ inner_get_rtsp 无返回结果')
             return ['', '[1]', 'rtsp']
 
 
