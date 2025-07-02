@@ -5079,7 +5079,7 @@ class MapLabel(QLabel):
                             for i in range(len(positions_temp)):  # 排序
                                 if positions_temp[i][1] == ranking_temp[num][5]:
                                     positions_temp[i], positions_temp[num] = positions_temp[num], positions_temp[i]
-                                    positions_temp[num][3] = ranking_temp[num][9]  # 圈数
+                                    # positions_temp[num][3] = ranking_temp[num][9]  # 圈数
                                     if (positions_temp[num][6] != abs(ranking_temp[num][8])
                                             and positions_temp[num][4] < p - 30):
                                         positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
@@ -5099,6 +5099,9 @@ class MapLabel(QLabel):
                                 index = len(self.path_points[0]) - 1
                             else:
                                 index = len(self.path_points[0]) - 1 - num * self.ball_space
+                        elif positions_temp[num][3] != ranking_temp[num][9]:  # 圈数
+                            positions_temp[num][3] = ranking_temp[num][9]  # 圈数
+                            index = 0
                         else:
                             if ranking_temp[num][8] < 0:
                                 positions_temp[num][0] = p  # 判断分岔路交汇点
