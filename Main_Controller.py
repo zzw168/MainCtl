@@ -5059,7 +5059,6 @@ class MapLabel(QLabel):
             self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间, 路线, 方向, x, y]
             for num in range(balls_count):
                 self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0, 0, 0])
-        area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
         ranking_temp = copy.deepcopy(ranking_array)
         if not ball_stop:
             positions_temp = copy.deepcopy(self.positions)
@@ -5098,8 +5097,10 @@ class MapLabel(QLabel):
                                         positions_temp[num][5] = round(time.time(), 2)
                         if positions_temp[num][3] != ranking_temp[num][9]:  # 圈数
                             positions_temp[num][3] = ranking_temp[num][9]  # 圈数
-                            if ranking_temp[num][6] <= area_limit:
+                            if positions_temp[num][0] <= 100:
                                 index = 0
+                            else:
+                                index = positions_temp[num][0]
                         elif ranking_temp[num][6] <= 1:  # 起点 and ranking_temp[num][9] == 0
                             if num == 0:
                                 index = len(ranking_temp) * self.ball_space
