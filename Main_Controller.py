@@ -2564,6 +2564,7 @@ class ObsEndThread(QThread):
             print('结算页面运行！')
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）实时数据停止标志
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
+            map_label_big.map_action = 0
             # if ui.checkBox_Ai.isChecked():
             # self.signal.emit('发送Ai解说停止信号！%s' % ui.lineEdit_Ai_addr.text())
             # udp_text = json.dumps({term: 'stop'})
