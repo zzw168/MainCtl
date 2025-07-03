@@ -5100,7 +5100,7 @@ class MapLabel(QLabel):
                             if positions_temp[num][0] <= 100:
                                 index = 0
                             else:
-                                index = positions_temp[num][0]
+                                index = positions_temp[num][0] + 1
                         elif ranking_temp[num][6] <= 1:  # 起点 and ranking_temp[num][9] == 0
                             if num == 0:
                                 index = len(ranking_temp) * self.ball_space
