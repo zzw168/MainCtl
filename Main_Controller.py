@@ -2042,12 +2042,11 @@ class ReStartThread(QThread):
                         else:
                             self.countdown = str(self.countdown)
                         break
-                    elif term == response['term']:
-                        self.signal.emit('term_error')
-                        self.run_flg = False
                     elif i == 2:  # 封盘模式，退出循环
-                        # tcp_result_thread.send_type = 'time'
-                        self.signal.emit('error')
+                        if term == response['term']:
+                            self.signal.emit('term_error')
+                        else:
+                            self.signal.emit('error')
                         self.run_flg = False
                 if not self.run_flg:
                     continue
