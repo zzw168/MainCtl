@@ -5097,7 +5097,7 @@ class MapLabel(QLabel):
                                         positions_temp[num][5] = round(time.time(), 2)
                         if positions_temp[num][3] != ranking_temp[num][9]:  # 圈数
                             positions_temp[num][3] = ranking_temp[num][9]  # 圈数
-                            if positions_temp[num][0] <= 100:
+                            if ranking_temp[num][6] < 5:
                                 index = 0
                             else:
                                 index = positions_temp[num][0] + 1
