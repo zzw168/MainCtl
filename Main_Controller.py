@@ -2175,7 +2175,7 @@ def restartsignal_accept(msg):
     elif msg == 'term_error':
         ui.radioButton_stop_betting.click()
         sc.GASetExtDoBit(int(ui.lineEdit_alarm.text()) - 1, 1)
-        show_message("注意", "期号重复！%s期结果未正常结束！请重新上传或取消该期号赛事！" % term)
+        show_message("注意", "期号重复！%s期结果未正常结束！请检查上传赛果或取消该期号赛事！" % term)
         ui.textBrowser.append(msg)
         ui.textBrowser_msg.append(msg)
         scroll_to_bottom(ui.textBrowser)
