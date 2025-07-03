@@ -1954,7 +1954,6 @@ class ReStartThread(QThread):
             ready_flg = True  # 准备动作开启信号
             ball_stop = False  # 保留卡珠信号
             ball_stop_time = 0  # 卡珠提醒时间
-            map_label_big.map_action = 0
             map_label.pos_stop = []  # 每个球的停止位置索引
             map_label1.pos_stop = []  # 每个球的停止位置索引
             map_label_big.pos_stop = []  # 每个球的停止位置索引
@@ -2442,6 +2441,7 @@ class PlanBallNumThread(QThread):
                     time.sleep(1)
                 ScreenShot_Thread.run_flg = True  # 终点截图识别线程
             lottery_term[8] = term_comment
+            map_label_big.map_action = 0  # 禁止运动信号再次启动计球线程
             ObsEnd_Thread.ball_flg = True  # 结算页标志2
             print('ObsEnd_Thread.ball_flg:%s' % ObsEnd_Thread.ball_flg, '~~~~~~~~~~~~~~~~~~~~~~')
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
@@ -2564,7 +2564,6 @@ class ObsEndThread(QThread):
             print('结算页面运行！')
             lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）实时数据停止标志
             Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
-            map_label_big.map_action = 0
             # if ui.checkBox_Ai.isChecked():
             # self.signal.emit('发送Ai解说停止信号！%s' % ui.lineEdit_Ai_addr.text())
             # udp_text = json.dumps({term: 'stop'})
