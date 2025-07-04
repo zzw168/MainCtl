@@ -5212,7 +5212,7 @@ class MapLabel(QLabel):
                     # b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2 + 50, 2)
                     b = float(int(self.positions[i][0] / len(self.path_points[0]) * 5000 + 5000) / 100)
                 if b < 1:
-                    b = int(0)
+                    b = 0
                 elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
                       and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
                     b = 100
