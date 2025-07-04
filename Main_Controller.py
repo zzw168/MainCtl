@@ -5221,7 +5221,7 @@ class MapLabel(QLabel):
                 if b == 100 and z_end_time[i] != 0:
                     balls_ranking_time[i] = z_end_time[i]
                 res.append(
-                    {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
+                    {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": round(b, 2),
                      "b": int(b), "t": balls_ranking_time[i]})
             positions_live = {
                 "raceTrackID": Track_number,
