@@ -5212,7 +5212,7 @@ class MapLabel(QLabel):
                     # b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2 + 50, 2)
                     b = float(int(self.positions[i][0] / len(self.path_points[0]) * 5000 + 5000) / 100)
                 if b < 1:
-                    b = 0
+                    b = int(0)
                 elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
                       and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
                     b = 100
@@ -5220,9 +5220,14 @@ class MapLabel(QLabel):
                     balls_ranking_time[i] = int((time.time() - ranking_time_start) * 1000)
                 if b == 100 and z_end_time[i] != 0:
                     balls_ranking_time[i] = z_end_time[i]
-                res.append(
-                    {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": round(b, 2),
-                     "b": int(b), "t": balls_ranking_time[i]})
+                if b < 1:
+                    res.append(
+                        {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": 0,
+                         "b": int(b), "t": balls_ranking_time[i]})
+                else:
+                    res.append(
+                        {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
+                         "b": int(b), "t": balls_ranking_time[i]})
             positions_live = {
                 "raceTrackID": Track_number,
                 "term": term,
