@@ -5206,9 +5206,11 @@ class MapLabel(QLabel):
                 x = self.positions[i][8]
                 y = self.positions[i][9]
                 if self.positions[i][3] < 1:
-                    b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2, 2)
+                    # b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2, 2)
+                    b = float(int(self.positions[i][0] / len(self.path_points[0]) * 10000 / 2) / 100)
                 else:
-                    b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2 + 50, 2)
+                    # b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2 + 50, 2)
+                    b = float(int(self.positions[i][0] / len(self.path_points[0]) * 5000 + 5000) / 100)
                 if b < 1:
                     b = 0
                 elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
