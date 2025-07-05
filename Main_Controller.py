@@ -5222,7 +5222,7 @@ class MapLabel(QLabel):
                     balls_ranking_time[i] = z_end_time[i]
                 if b < 1:
                     res.append(
-                        {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": 0,
+                        {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": int(0),
                          "b": int(b), "t": balls_ranking_time[i]})
                 else:
                     res.append(
