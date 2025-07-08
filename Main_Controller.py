@@ -5164,7 +5164,10 @@ class MapLabel(QLabel):
             self.positions = copy.deepcopy(positions_temp)
             # print(self.positions)
         # 模拟排名
-        if ranking_temp and ranking_temp[0][6] < max_area_count - 2 and ranking_temp[0][10] == 0:
+        if (ranking_temp
+                and ((ranking_temp[0][6] < max_area_count - 2 and ranking_temp[0][10] == 0)
+                or (ranking_temp[1][6] < max_area_count - 2 and ranking_temp[1][10] == 0)
+                or (ranking_temp[2][6] < max_area_count - 2 and ranking_temp[2][10] == 0))):
             positions_temp = copy.deepcopy(self.positions)
             positions_temp.sort(key=lambda a: (-a[3], -a[0]))
             self.positions = copy.deepcopy(positions_temp)
