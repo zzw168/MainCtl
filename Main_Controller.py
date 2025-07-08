@@ -1384,7 +1384,9 @@ class DealUdpThread(QThread):
                     con_data.append(
                         [con_item['name'], con_item['position'], con_item['lapCount'], con_item['x1'],
                          con_item['y1']])
-                if ranking_array[0][10] != 0:
+                if (ranking_array[0][10] != 0
+                        and ranking_array[1][10] != 0
+                        and ranking_array[2][10] != 0):
                     color_to_num(ranking_array)
 
 
