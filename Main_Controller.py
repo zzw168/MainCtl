@@ -5028,7 +5028,7 @@ class MapLabel(QLabel):
                 self.path_points.append([])
                 self.path_direction.append(int(fcc_data[i]["labels"]["labelName"]))
                 for p in fcc_data[i]["content"]:
-                    self.path_points[i].append((int(p['x'] * map_scale), int(p['y'] * map_scale)))
+                    self.path_points[i].append((float(p['x'] * map_scale), float(p['y'] * map_scale)))
             self.path_points[0] = divide_path(self.path_points[0], self.step_length)
             print('地图长度:%s' % len(self.path_points[0]))
             print(self.path_direction, '方向~~~~~')
@@ -5254,7 +5254,8 @@ class MapLabel(QLabel):
         painter.setRenderHint(QPainter.Antialiasing)
 
         if ui.checkBox_show_orbit.isChecked():  # 绘制路径
-            part = math.ceil(len(self.path_points[0]) / (max_area_count - balls_count))
+            # part = math.ceil(len(self.path_points[0]) / (max_area_count - balls_count))
+            part = len(self.path_points[0]) / (max_area_count - balls_count)
             for index in range(len(self.path_points[0])):
                 if index % int(part) == 0:
                     painter.setBrush(QBrush(QColor(255, 0, 0), Qt.SolidPattern))
