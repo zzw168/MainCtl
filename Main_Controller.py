@@ -1386,7 +1386,8 @@ class DealUdpThread(QThread):
                          con_item['y1']])
                 if (ranking_array[0][10] != 0
                         and ranking_array[1][10] != 0
-                        and ranking_array[2][10] != 0):
+                        # and ranking_array[2][10] != 0
+                ):
                     color_to_num(ranking_array)
 
 
@@ -5169,7 +5170,8 @@ class MapLabel(QLabel):
         if (ranking_temp
                 and ((ranking_temp[0][6] < max_area_count - 2 and ranking_temp[0][10] == 0)
                 or (ranking_temp[1][6] < max_area_count - 2 and ranking_temp[1][10] == 0)
-                or (ranking_temp[2][6] < max_area_count - 2 and ranking_temp[2][10] == 0))):
+                # or (ranking_temp[2][6] < max_area_count - 2 and ranking_temp[2][10] == 0)
+                )):
             positions_temp = copy.deepcopy(self.positions)
             positions_temp.sort(key=lambda a: (-a[3], -a[0]))
             self.positions = copy.deepcopy(positions_temp)
