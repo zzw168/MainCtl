@@ -5169,7 +5169,7 @@ class MapLabel(QLabel):
         # 模拟排名
         if (ranking_temp
                 and ((ranking_temp[0][6] < max_area_count - 2 and ranking_temp[0][10] == 0)
-                or (ranking_temp[1][6] < max_area_count - 2 and ranking_temp[1][10] == 0)
+                # or (ranking_temp[1][6] < max_area_count - 2 and ranking_temp[1][10] == 0)
                 # or (ranking_temp[2][6] < max_area_count - 2 and ranking_temp[2][10] == 0)
                 )):
             positions_temp = copy.deepcopy(self.positions)
@@ -7203,7 +7203,16 @@ def my_test():
     global ranking_array
     global wakeup_addr
     print('~~~~~~~~~~~~~~~~~~~')
-    get_rtsp(rtsp_url)
+    # get_rtsp(rtsp_url)
+
+    # ranking_array = []  # 前0~3是坐标↖↘,4=镜头号，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
+    ranking_array[0][5] = "yellow"
+    ranking_array[0][6] = 50
+    ranking_array[0][10] = 1
+    if ranking_array[0][8] == 1:
+        ranking_array[0][8] = 0
+    else:
+        ranking_array[0][8] = 1
     # tcp_result_thread.send_type = ''
     # tcp_result_thread.run_flg = True
     # my_def()
