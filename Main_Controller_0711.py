@@ -5747,35 +5747,35 @@ class AudioThread(QThread):
                         and (area_old != action_area)
                         and (audio_points[index][plan_index][0][0]
                              in [action_area[0], action_area[0] + 1, action_area[0] - 1])):
-                    tb_audio = ui.tableWidget_Audio
-                    sound_file = tb_audio.item(index - 1, 0).text()
-                    sound_times = int(tb_audio.item(index - 1, 1).text())
-                    sound_delay = int(float(tb_audio.item(index - 1, 2).text()) * 10)
-                    sound_volume = float(tb_audio.item(index - 1, 3).text())
-                    print(sound_file, sound_times, sound_delay)
-                    volume = pygame.mixer.music.get_volume()
-                    pygame.mixer.music.set_volume(volume * 0.8)
-                    # 加载音效
-                    sound_effect = pygame.mixer.Sound(sound_file)
-                    sound_effect.set_volume(sound_volume)
-                    sound_effect.play(loops=sound_times, maxtime=sound_delay * 100)  # 播放音效
+                    try:
+                        tb_audio = ui.tableWidget_Audio
+                        sound_file = tb_audio.item(index - 1, 0).text()
+                        sound_times = int(tb_audio.item(index - 1, 1).text())
+                        sound_delay = int(float(tb_audio.item(index - 1, 2).text()) * 10)
+                        sound_volume = float(tb_audio.item(index - 1, 3).text())
+                        print(sound_file, sound_times, sound_delay)
+                        volume = pygame.mixer.music.get_volume()
+                        pygame.mixer.music.set_volume(volume * 0.8)
+                        # 加载音效
+                        sound_effect = pygame.mixer.Sound(sound_file)
+                        sound_effect.set_volume(sound_volume)
+                        sound_effect.play(loops=sound_times, maxtime=sound_delay * 100)  # 播放音效
 
-                    for i in range(sound_delay):
-                        if not self.run_flg:
-                            break
-                        time.sleep(0.1)
-                    pygame.mixer.music.set_volume(volume)
-
+                        for i in range(sound_delay):
+                            if not self.run_flg:
+                                break
+                            time.sleep(0.1)
+                        pygame.mixer.music.set_volume(volume)
+                    except:
+                        self.signal.emit(fail('%s声音文件播放出错！' % sound_file))
                     area_old = copy.deepcopy(action_area)
                     print('Audio~~~~~~~~~~~~~', area_old, audio_points[index][plan_index][0][0], action_area[0])
                     break
 
 
 def audiosignal_accept(msg):
-    try:
-        print(msg)
-    except:
-        print("轴数据显示错误！")
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 
 class AiThread(QThread):
@@ -5824,10 +5824,8 @@ class AiThread(QThread):
 
 
 def aisignal_accept(msg):
-    try:
-        print(msg)
-    except:
-        print("轴数据显示错误！")
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 
 def music_ctl():
