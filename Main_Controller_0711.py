@@ -673,7 +673,6 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
     global ranking_array
     global array_temp
     global ball_sort
-    global laps_count
     global update_two_time
     if (len(array_temp) < balls_count
             and cam_num not in {item[4] for item in array_temp}):
@@ -688,17 +687,13 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
     if (len(array_temp) >= balls_count
             or time.time() - update_two_time > 0.5):
         # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
-        array_temp.sort(key=lambda x: x[6], reverse=True)
+        array_temp.sort(key=lambda x: x[6], reverse=False)
         ranking_temp.sort(key=lambda x: (x[2] + x[3] + x[6]), reverse=False)
         area_end = max_area_count - balls_count
-        area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
+        # area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
         # 统计跨圈珠子数量
-        for i in range(len(array_temp)):
-            if array_temp[i][6] == area_end:
-                ranking_temp[i][2] = area_end
-            if (array_temp[i][6] == area_end - 1
-                    and ranking_temp[i][2] == area_end):
-                ranking_temp[i][3] = area_end - 1
+        for i in range(laps_count):
+            array_temp[i][2] = area_end
 
         for r_index in range(0, len(array_temp)):
             if ranking_temp[r_index][6] <= max_area_count:
