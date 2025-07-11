@@ -2294,6 +2294,41 @@ def cam_signal_accept(msg):
 
 
 '''
+    BallsLapCountThread(QThread) 摄像头运动方案线程
+'''
+
+
+class BallsLapCountThread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(BallsLapCountThread, self).__init__()
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        global laps_count
+        while self.running:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
+            res = sc.GASetDiReverseCount()  # 输入次数归0
+            if res == 0:
+                while self.run_flg:
+                    res, value = sc.GAGetDiReverseCount()
+                    if res == 0:
+                        laps_count = math.ceil(value[0] / 2)  # 小数进一
+                        if laps_count >= balls_count:
+                            self.run_flg = False
+                    time.sleep(0.01)
+
+
+'''
     PlanBallNumThread(QThread) 摄像头运动方案线程
 '''
 
@@ -3535,6 +3570,16 @@ class PlanCmdThread(QThread):
                             #         t = threading.Thread(target=send_data, args=(ai_text, ui.lineEdit_Ai_addr.text()),
                             #                              daemon=True)
                             #         t.start()
+
+                            if (not ui.checkBox_test.isChecked()
+                                    and not self.end_state
+                                    and not self.ready_state
+                                    and not self.background_state
+                                    and ui.checkBox_Two_Color.isChecked()
+                                    and (map_label_big.map_action >=
+                                         len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
+                                    and (action_area[1] < max_lap_count - 1)):
+                                pass1
 
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
@@ -5169,8 +5214,8 @@ class MapLabel(QLabel):
         # 模拟排名
         if (ranking_temp
                 and ((ranking_temp[0][6] < max_area_count - 2 and ranking_temp[0][10] == 0)
-                # or (ranking_temp[1][6] < max_area_count - 2 and ranking_temp[1][10] == 0)
-                # or (ranking_temp[2][6] < max_area_count - 2 and ranking_temp[2][10] == 0)
+                        # or (ranking_temp[1][6] < max_area_count - 2 and ranking_temp[1][10] == 0)
+                        # or (ranking_temp[2][6] < max_area_count - 2 and ranking_temp[2][10] == 0)
                 )):
             positions_temp = copy.deepcopy(self.positions)
             positions_temp.sort(key=lambda a: (-a[3], -a[0]))
@@ -7160,6 +7205,18 @@ def red_line():
         scroll_to_bottom(ui.textBrowser_save_msg)
 
 
+def balls_lap_count():  # 获取跨圈珠子数量
+    global laps_count
+    res = sc.GASetDiReverseCount()  # 输入次数归0
+    if res == 0:
+        while laps_count < balls_count:
+            res, value = sc.GAGetDiReverseCount()
+            # print(res, value)
+            if res == 0:
+                laps_count = math.ceil(value[0] / 2)  # 小数进一
+            time.sleep(0.01)
+
+
 def test_end():
     try:
         tcp_result_thread.send_type = 'updata'
@@ -7917,6 +7974,10 @@ if __name__ == '__main__':
     PlanCam_Thread = CamThread()  # 摄像头运行方案 4
     PlanCam_Thread.signal.connect(cam_signal_accept)
     PlanCam_Thread.start()
+
+    BallsLapCount_Thread = PlanBallNumThread()  # 统计过终点的球数 5
+    BallsLapCount_Thread.signal.connect(PlanBallNumsignal_accept)
+    BallsLapCount_Thread.start()
 
     PlanBallNum_Thread = PlanBallNumThread()  # 统计过终点的球数 5
     PlanBallNum_Thread.signal.connect(PlanBallNumsignal_accept)
