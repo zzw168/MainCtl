@@ -5555,7 +5555,7 @@ class AudioThread(QThread):
                     sound_volume = float(tb_audio.item(index - 1, 3).text())
                     print(sound_file, sound_times, sound_delay)
                     volume = pygame.mixer.music.get_volume()
-                    pygame.mixer.music.set_volume(volume / 2)
+                    pygame.mixer.music.set_volume(volume * 0.8)
                     # 加载音效
                     sound_effect = pygame.mixer.Sound(sound_file)
                     sound_effect.set_volume(sound_volume)

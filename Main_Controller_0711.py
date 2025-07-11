@@ -2323,9 +2323,17 @@ class BallsLapCountThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     if res == 0:
                         laps_count = math.ceil(value[0] / 2)  # 小数进一
+                        self.signal.emit('跨圈珠子数量:%s' % laps_count)
                         if laps_count >= balls_count:
                             self.run_flg = False
                     time.sleep(0.01)
+
+
+def BallsLapCount_accept(msg):
+    ui.textBrowser.append(msg)
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 
 '''
@@ -5751,7 +5759,7 @@ class AudioThread(QThread):
                     sound_volume = float(tb_audio.item(index - 1, 3).text())
                     print(sound_file, sound_times, sound_delay)
                     volume = pygame.mixer.music.get_volume()
-                    pygame.mixer.music.set_volume(volume / 2)
+                    pygame.mixer.music.set_volume(volume * 0.8)
                     # 加载音效
                     sound_effect = pygame.mixer.Sound(sound_file)
                     sound_effect.set_volume(sound_volume)
@@ -7435,6 +7443,7 @@ class ZApp(QApplication):
             deal_udp_thread.stop()
             CheckFile_Thread.stop()
             ObsShot_Thread.stop()  # obs终点排序线程
+            BallsLapCount_Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -7494,6 +7503,8 @@ class ZApp(QApplication):
             print('udp_thread')
             ObsShot_Thread.wait()  # obs终点排序线程
             print('ObsShot_Thread')
+            BallsLapCount_Thread.wait()  # 跨圈计数线程
+            print('BallsLapCount_Thread')
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -7975,8 +7986,8 @@ if __name__ == '__main__':
     PlanCam_Thread.signal.connect(cam_signal_accept)
     PlanCam_Thread.start()
 
-    BallsLapCount_Thread = PlanBallNumThread()  # 统计过终点的球数 5
-    BallsLapCount_Thread.signal.connect(PlanBallNumsignal_accept)
+    BallsLapCount_Thread = BallsLapCountThread()  # 统计跨圈的球数
+    BallsLapCount_Thread.signal.connect(BallsLapCount_accept)
     BallsLapCount_Thread.start()
 
     PlanBallNum_Thread = PlanBallNumThread()  # 统计过终点的球数 5
