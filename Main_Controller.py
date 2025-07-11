@@ -5221,6 +5221,7 @@ class MapLabel(QLabel):
                 if b < 1:
                     b = 0
                 elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
+                      and z_end_time[i] != 0
                       and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
                     b = 100
                 if self.bet_running[i]:
