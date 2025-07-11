@@ -3586,8 +3586,8 @@ class PlanCmdThread(QThread):
                                     and ui.checkBox_Two_Color.isChecked()
                                     and (map_label_big.map_action >=
                                          len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
-                                    and (action_area[1] < max_lap_count - 1)):
-                                pass1
+                                    and laps_count == 0):
+                                BallsLapCount_Thread.run_flg = True
 
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
@@ -6548,6 +6548,7 @@ class ResetRankingThread(QThread):
                 for i in range(balls_count):
                     ranking_array[i][6] = 1  # 强制在第一区
             balls_start = 0  # 起点球数
+            BallsLapCount_Thread.run_flg = False  # 停止跨圈计数线程
             laps_count = 0  # 初始化跨圈数量
             if con_data:
                 for row in range(0, len(init_array)):
