@@ -2294,7 +2294,7 @@ def cam_signal_accept(msg):
 
 
 '''
-    BallsLapCountThread(QThread) 摄像头运动方案线程
+    BallsLapCountThread(QThread) 计算跨圈珠子数量线程
 '''
 
 
