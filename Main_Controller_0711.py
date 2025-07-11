@@ -734,7 +734,7 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
     #     for j in range(0, len(ranking_temp) - i - 1):
     #         if ranking_temp[j][9] < ranking_temp[j + 1][9]:
     #             ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
-    ranking_temp.sort(key=lambda x: x[9], reverse=True)
+    # ranking_temp.sort(key=lambda x: x[9], reverse=True)
 
     # 4.寄存器保存固定每个区域的最新排位（因为ranking_temp 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
     if ranking_temp[0][6] == 1:
