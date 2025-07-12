@@ -696,7 +696,7 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
             array_temp[i][2] = area_end
             ranking_temp[i][9] = 1
 
-        for r_index in range(0, len(array_temp)):
+        for r_index in range(0, len(ranking_temp)):
             if ranking_temp[r_index][6] <= max_area_count:
                 for r_i in range(0, len(array_temp[r_index])):
                     ranking_temp[r_index][r_i] = copy.deepcopy(array_temp[r_index][r_i])  # 更新 ranking_temp
