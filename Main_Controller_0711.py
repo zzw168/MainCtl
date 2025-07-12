@@ -5126,28 +5126,17 @@ class MapLabel(QLabel):
                         p = int(len(self.path_points[0]) * (ranking_temp[num][6] / area_num))
                         if p >= len(self.path_points[0]):
                             p = len(self.path_points[0]) - 1
-                        if ui.checkBox_Two_Color.isChecked():
-                            positions_temp[num][1] = ranking_temp[num][5]
-                            positions_temp[num][3] = ranking_temp[num][9]  # 圈数
-                            if (positions_temp[num][6] != abs(ranking_temp[num][8])
-                                    and positions_temp[num][4] < p - 30):
-                                positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
-                                positions_temp[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
-                            if positions_temp[num][4] != p:
-                                positions_temp[num][4] = p
-                                positions_temp[num][5] = round(time.time(), 2)
-                        else:
-                            for i in range(len(positions_temp)):  # 排序
-                                if positions_temp[i][1] == ranking_temp[num][5]:
-                                    positions_temp[i], positions_temp[num] = positions_temp[num], positions_temp[i]
-                                    # positions_temp[num][3] = ranking_temp[num][9]  # 圈数
-                                    if (positions_temp[num][6] != abs(ranking_temp[num][8])
-                                            and positions_temp[num][4] < p - 30):
-                                        positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
-                                        positions_temp[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
-                                    if positions_temp[num][4] != p:
-                                        positions_temp[num][4] = p
-                                        positions_temp[num][5] = round(time.time(), 2)
+                        for i in range(len(positions_temp)):  # 排序
+                            if positions_temp[i][1] == ranking_temp[num][5]:
+                                positions_temp[i], positions_temp[num] = positions_temp[num], positions_temp[i]
+                                # positions_temp[num][3] = ranking_temp[num][9]  # 圈数
+                                if (positions_temp[num][6] != abs(ranking_temp[num][8])
+                                        and positions_temp[num][4] < p - 30):
+                                    positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
+                                    positions_temp[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
+                                if positions_temp[num][4] != p:
+                                    positions_temp[num][4] = p
+                                    positions_temp[num][5] = round(time.time(), 2)
                         if positions_temp[num][3] != ranking_temp[num][9]:  # 圈数
                             positions_temp[num][3] = ranking_temp[num][9]  # 圈数
                             if ranking_temp[num][6] < 5:
