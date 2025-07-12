@@ -738,7 +738,7 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
     color_two = [[], []]  # 第一种颜色，第二种颜色
     color_set = [["yellow", "blue", "red"], ["purple", "pink", "green"]]
     for i in range(len(ranking_temp)):
-        if ranking_temp[i][5] == init_array[0][5]:
+        if ranking_temp[i][5] == init_array[2][5]:
             color_two[0].append(i)
         else:
             color_two[1].append(i)
