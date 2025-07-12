@@ -742,9 +742,9 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
             color_two[0].append(i)
         else:
             color_two[1].append(i)
-    for i in range(len(color_set[0])):  # 着色
+    for i in range(len(color_two[0])):  # 着色
         ranking_temp[color_two[0][i]][5] = color_set[0][i]
-    for i in range(len(color_set[1])):
+    for i in range(len(color_two[1])):
         ranking_temp[color_two[1][i]][5] = color_set[1][i]
 
     # 4.寄存器保存固定每个区域的最新排位（因为ranking_temp 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
