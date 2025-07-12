@@ -673,7 +673,6 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
     global ranking_array
     global array_temp
     global ball_sort
-    global laps_count
     global update_two_time
     if (len(array_temp) < balls_count
             and cam_num not in {item[4] for item in array_temp}):
@@ -688,28 +687,19 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
     if (len(array_temp) >= balls_count
             or time.time() - update_two_time > 0.5):
         # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
-        array_temp.sort(key=lambda x: x[6], reverse=True)
-        ranking_temp.sort(key=lambda x: (x[2] + x[3] + x[6]), reverse=False)
+        array_temp.sort(key=lambda x: x[6], reverse=False)
+        ranking_temp.sort(key=lambda x: x[6], reverse=False)
         area_end = max_area_count - balls_count
-        area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
+        # area_limit = max_area_count / int(ui.lineEdit_area_limit.text())
         # 统计跨圈珠子数量
-        for i in range(len(array_temp)):
-            if array_temp[i][6] == area_end:
-                ranking_temp[i][2] = area_end
-            if (array_temp[i][6] == area_end - 1
-                    and ranking_temp[i][2] == area_end):
-                ranking_temp[i][3] = area_end - 1
+        for i in range(laps_count):
+            array_temp[i][2] = area_end
+            ranking_temp[i][9] = 1
 
         for r_index in range(0, len(array_temp)):
             if ranking_temp[r_index][6] <= max_area_count:
                 for r_i in range(0, len(array_temp[r_index])):
                     ranking_temp[r_index][r_i] = copy.deepcopy(array_temp[r_index][r_i])  # 更新 ranking_temp
-        quotient = laps_count // balls_count  # 整数部分
-        remainder = laps_count % balls_count  # 余数
-        for item in ranking_temp:
-            item[9] = quotient
-        for i in range(remainder):
-            ranking_temp[i][9] += 1
 
         array_temp = []
 
@@ -744,33 +734,40 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
     #     for j in range(0, len(ranking_temp) - i - 1):
     #         if ranking_temp[j][9] < ranking_temp[j + 1][9]:
     #             ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
-    ranking_temp.sort(key=lambda x: x[9], reverse=True)
+    # ranking_temp.sort(key=lambda x: x[9], reverse=True)
+    color_two = [[], []]  # 第一种颜色，第二种颜色
+    color_set = [["yellow", "blue", "red"], ["purple", "pink", "green"]]
+    for i in range(len(ranking_temp)):
+        if ranking_temp[i][5] == init_array[0][5]:
+            color_two[0].append(i)
+        else:
+            color_two[1].append(i)
+    for i in range(len(color_set[0])):  # 着色
+        ranking_temp[color_two[0][i]][5] = color_set[0][i]
+    for i in range(len(color_set[1])):
+        ranking_temp[color_two[1][i]][5] = color_set[1][i]
 
     # 4.寄存器保存固定每个区域的最新排位（因为ranking_temp 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
-    if ranking_temp[0][6] == 1:
-        for i in range(0, len(ranking_temp)):
-            if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
-                continue
-            if len(ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]) < balls_count:
-                ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(
-                    copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
-
+    for i in range(0, len(ranking_temp)):
+        if len(ball_sort_temp) - 1 < ranking_temp[i][6]:
+            continue
+        if not (ranking_temp[i][5] in ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]]):
+            ball_sort_temp[ranking_temp[i][6]][ranking_temp[i][9]].append(
+                copy.deepcopy(ranking_temp[i][5]))  # 添加寄存器球排序
     # 5.按照寄存器位置，重新排序排名同圈数同区域内的球
-    if ranking_temp[0][6] > max_area_count:
-        for i in range(len(ranking_temp)):
-            for j in range(len(ranking_temp) - i - 1):
-                a, b = ranking_temp[j], ranking_temp[j + 1]
-                if a[6] == b[6] and a[9] == b[9] and a[5] != b[5]:
-                    area, round_ = a[6], a[9]
-                    ball_list = ball_sort_temp[area][round_]
-                    try:
-                        a_index = ball_list.index(a[5])
-                        b_index = ball_list.index(b[5])
-                        if a_index > b_index:
-                            ranking_temp[j], ranking_temp[j + 1] = b, a
-                    except ValueError:
-                        # 如果某个球不在 ball_list 中，跳过处理或根据需要处理
-                        pass
+    for i in range(0, len(ranking_temp)):
+        for j in range(0, len(ranking_temp) - i - 1):
+            if (ranking_temp[j][6] == ranking_temp[j + 1][6]) and (ranking_temp[j][9] == ranking_temp[j + 1][9]):
+                m = 0
+                n = 0
+
+                for k in range(0, len(ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]])):
+                    if ranking_temp[j][5] == ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]][k]:
+                        n = k
+                    elif ranking_temp[j + 1][5] == ball_sort_temp[ranking_temp[j][6]][ranking_temp[j][9]][k]:
+                        m = k
+                if n > m:  # 把区域排位索引最小的球（即排名最前的球）放前面
+                    ranking_temp[j], ranking_temp[j + 1] = ranking_temp[j + 1], ranking_temp[j]
 
     with ball_sort_lock:
         ball_sort = copy.deepcopy(ball_sort_temp)
@@ -2294,6 +2291,49 @@ def cam_signal_accept(msg):
 
 
 '''
+    BallsLapCountThread(QThread) 计算跨圈珠子数量线程
+'''
+
+
+class BallsLapCountThread(QThread):
+    signal = Signal(object)
+
+    def __init__(self):
+        super(BallsLapCountThread, self).__init__()
+        self.run_flg = False
+        self.running = True
+
+    def stop(self):
+        self.run_flg = False
+        self.running = False  # 修改标志位，线程优雅退出
+        self.quit()  # 退出线程事件循环
+
+    def run(self) -> None:
+        global laps_count
+        while self.running:
+            time.sleep(0.1)
+            if not self.run_flg:
+                continue
+            res = sc.GASetDiReverseCount()  # 输入次数归0
+            if res == 0:
+                while self.run_flg:
+                    res, value = sc.GAGetDiReverseCount()
+                    if res == 0:
+                        laps_count = math.ceil(value[0] / 2)  # 小数进一
+                        self.signal.emit('跨圈珠子数量:%s' % laps_count)
+                        if laps_count >= balls_count:
+                            self.run_flg = False
+                    time.sleep(0.01)
+
+
+def BallsLapCount_accept(msg):
+    ui.textBrowser.append(msg)
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser)
+    scroll_to_bottom(ui.textBrowser_msg)
+
+
+'''
     PlanBallNumThread(QThread) 摄像头运动方案线程
 '''
 
@@ -3535,6 +3575,16 @@ class PlanCmdThread(QThread):
                             #         t = threading.Thread(target=send_data, args=(ai_text, ui.lineEdit_Ai_addr.text()),
                             #                              daemon=True)
                             #         t.start()
+
+                            if (not ui.checkBox_test.isChecked()
+                                    and not self.end_state
+                                    and not self.ready_state
+                                    and not self.background_state
+                                    and ui.checkBox_Two_Color.isChecked()
+                                    and (map_label_big.map_action >=
+                                         len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
+                                    and laps_count == 0):
+                                BallsLapCount_Thread.run_flg = True
 
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
@@ -5076,28 +5126,17 @@ class MapLabel(QLabel):
                         p = int(len(self.path_points[0]) * (ranking_temp[num][6] / area_num))
                         if p >= len(self.path_points[0]):
                             p = len(self.path_points[0]) - 1
-                        if ui.checkBox_Two_Color.isChecked():
-                            positions_temp[num][1] = ranking_temp[num][5]
-                            positions_temp[num][3] = ranking_temp[num][9]  # 圈数
-                            if (positions_temp[num][6] != abs(ranking_temp[num][8])
-                                    and positions_temp[num][4] < p - 30):
-                                positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
-                                positions_temp[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
-                            if positions_temp[num][4] != p:
-                                positions_temp[num][4] = p
-                                positions_temp[num][5] = round(time.time(), 2)
-                        else:
-                            for i in range(len(positions_temp)):  # 排序
-                                if positions_temp[i][1] == ranking_temp[num][5]:
-                                    positions_temp[i], positions_temp[num] = positions_temp[num], positions_temp[i]
-                                    # positions_temp[num][3] = ranking_temp[num][9]  # 圈数
-                                    if (positions_temp[num][6] != abs(ranking_temp[num][8])
-                                            and positions_temp[num][4] < p - 30):
-                                        positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
-                                        positions_temp[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
-                                    if positions_temp[num][4] != p:
-                                        positions_temp[num][4] = p
-                                        positions_temp[num][5] = round(time.time(), 2)
+                        for i in range(len(positions_temp)):  # 排序
+                            if positions_temp[i][1] == ranking_temp[num][5]:
+                                positions_temp[i], positions_temp[num] = positions_temp[num], positions_temp[i]
+                                # positions_temp[num][3] = ranking_temp[num][9]  # 圈数
+                                if (positions_temp[num][6] != abs(ranking_temp[num][8])
+                                        and positions_temp[num][4] < p - 30):
+                                    positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
+                                    positions_temp[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
+                                if positions_temp[num][4] != p:
+                                    positions_temp[num][4] = p
+                                    positions_temp[num][5] = round(time.time(), 2)
                         if positions_temp[num][3] != ranking_temp[num][9]:  # 圈数
                             positions_temp[num][3] = ranking_temp[num][9]  # 圈数
                             if ranking_temp[num][6] < 5:
@@ -5169,8 +5208,8 @@ class MapLabel(QLabel):
         # 模拟排名
         if (ranking_temp
                 and ((ranking_temp[0][6] < max_area_count - 2 and ranking_temp[0][10] == 0)
-                # or (ranking_temp[1][6] < max_area_count - 2 and ranking_temp[1][10] == 0)
-                # or (ranking_temp[2][6] < max_area_count - 2 and ranking_temp[2][10] == 0)
+                        # or (ranking_temp[1][6] < max_area_count - 2 and ranking_temp[1][10] == 0)
+                        # or (ranking_temp[2][6] < max_area_count - 2 and ranking_temp[2][10] == 0)
                 )):
             positions_temp = copy.deepcopy(self.positions)
             positions_temp.sort(key=lambda a: (-a[3], -a[0]))
@@ -5699,35 +5738,35 @@ class AudioThread(QThread):
                         and (area_old != action_area)
                         and (audio_points[index][plan_index][0][0]
                              in [action_area[0], action_area[0] + 1, action_area[0] - 1])):
-                    tb_audio = ui.tableWidget_Audio
-                    sound_file = tb_audio.item(index - 1, 0).text()
-                    sound_times = int(tb_audio.item(index - 1, 1).text())
-                    sound_delay = int(float(tb_audio.item(index - 1, 2).text()) * 10)
-                    sound_volume = float(tb_audio.item(index - 1, 3).text())
-                    print(sound_file, sound_times, sound_delay)
-                    volume = pygame.mixer.music.get_volume()
-                    pygame.mixer.music.set_volume(volume / 2)
-                    # 加载音效
-                    sound_effect = pygame.mixer.Sound(sound_file)
-                    sound_effect.set_volume(sound_volume)
-                    sound_effect.play(loops=sound_times, maxtime=sound_delay * 100)  # 播放音效
+                    try:
+                        tb_audio = ui.tableWidget_Audio
+                        sound_file = tb_audio.item(index - 1, 0).text()
+                        sound_times = int(tb_audio.item(index - 1, 1).text())
+                        sound_delay = int(float(tb_audio.item(index - 1, 2).text()) * 10)
+                        sound_volume = float(tb_audio.item(index - 1, 3).text())
+                        print(sound_file, sound_times, sound_delay)
+                        volume = pygame.mixer.music.get_volume()
+                        pygame.mixer.music.set_volume(volume * 0.8)
+                        # 加载音效
+                        sound_effect = pygame.mixer.Sound(sound_file)
+                        sound_effect.set_volume(sound_volume)
+                        sound_effect.play(loops=sound_times, maxtime=sound_delay * 100)  # 播放音效
 
-                    for i in range(sound_delay):
-                        if not self.run_flg:
-                            break
-                        time.sleep(0.1)
-                    pygame.mixer.music.set_volume(volume)
-
+                        for i in range(sound_delay):
+                            if not self.run_flg:
+                                break
+                            time.sleep(0.1)
+                        pygame.mixer.music.set_volume(volume)
+                    except:
+                        self.signal.emit(fail('%s声音文件播放出错！' % sound_file))
                     area_old = copy.deepcopy(action_area)
                     print('Audio~~~~~~~~~~~~~', area_old, audio_points[index][plan_index][0][0], action_area[0])
                     break
 
 
 def audiosignal_accept(msg):
-    try:
-        print(msg)
-    except:
-        print("轴数据显示错误！")
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 
 class AiThread(QThread):
@@ -5776,10 +5815,8 @@ class AiThread(QThread):
 
 
 def aisignal_accept(msg):
-    try:
-        print(msg)
-    except:
-        print("轴数据显示错误！")
+    ui.textBrowser_msg.append(msg)
+    scroll_to_bottom(ui.textBrowser_msg)
 
 
 def music_ctl():
@@ -6495,6 +6532,7 @@ class ResetRankingThread(QThread):
                 for i in range(balls_count):
                     ranking_array[i][6] = 1  # 强制在第一区
             balls_start = 0  # 起点球数
+            BallsLapCount_Thread.run_flg = False  # 停止跨圈计数线程
             laps_count = 0  # 初始化跨圈数量
             if con_data:
                 for row in range(0, len(init_array)):
@@ -7378,6 +7416,7 @@ class ZApp(QApplication):
             deal_udp_thread.stop()
             CheckFile_Thread.stop()
             ObsShot_Thread.stop()  # obs终点排序线程
+            BallsLapCount_Thread.stop()
             pygame.quit()
         except Exception as e:
             print(f"Error stopping threads: {e}")
@@ -7437,6 +7476,8 @@ class ZApp(QApplication):
             print('udp_thread')
             ObsShot_Thread.wait()  # obs终点排序线程
             print('ObsShot_Thread')
+            BallsLapCount_Thread.wait()  # 跨圈计数线程
+            print('BallsLapCount_Thread')
         except Exception as e:
             print(f"Error waiting threads: {e}")
 
@@ -7917,6 +7958,10 @@ if __name__ == '__main__':
     PlanCam_Thread = CamThread()  # 摄像头运行方案 4
     PlanCam_Thread.signal.connect(cam_signal_accept)
     PlanCam_Thread.start()
+
+    BallsLapCount_Thread = BallsLapCountThread()  # 统计跨圈的球数
+    BallsLapCount_Thread.signal.connect(BallsLapCount_accept)
+    BallsLapCount_Thread.start()
 
     PlanBallNum_Thread = PlanBallNumThread()  # 统计过终点的球数 5
     PlanBallNum_Thread.signal.connect(PlanBallNumsignal_accept)

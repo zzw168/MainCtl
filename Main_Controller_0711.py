@@ -7198,18 +7198,6 @@ def red_line():
         scroll_to_bottom(ui.textBrowser_save_msg)
 
 
-def balls_lap_count():  # 获取跨圈珠子数量
-    global laps_count
-    res = sc.GASetDiReverseCount()  # 输入次数归0
-    if res == 0:
-        while laps_count < balls_count:
-            res, value = sc.GAGetDiReverseCount()
-            # print(res, value)
-            if res == 0:
-                laps_count = math.ceil(value[0] / 2)  # 小数进一
-            time.sleep(0.01)
-
-
 def test_end():
     try:
         tcp_result_thread.send_type = 'updata'
