@@ -5272,10 +5272,12 @@ class MapLabel(QLabel):
                 elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
                       and z_end_time[i] != 0
                       and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
+                    b = 99.99
+                elif (z_end_time[i] != 0) and (time.time() - z_end_time[i] > 0.5):
                     b = 100
                 if self.bet_running[i]:
                     balls_ranking_time[i] = int((time.time() - ranking_time_start) * 1000)
-                if b == 100 and z_end_time[i] != 0:
+                if b >= 99.99 and z_end_time[i] != 0:
                     balls_ranking_time[i] = z_end_time[i]
                 res.append(
                     {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
