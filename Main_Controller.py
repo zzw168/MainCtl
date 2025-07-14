@@ -683,9 +683,14 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
                 array_temp.append(q_item)
                 if len(array_temp) >= balls_count:
                     break
-    ranking_temp = copy.deepcopy(ranking_array)
+    # print('array_temp:', array_temp)
+    if len(ranking_array) != balls_count:
+        ranking_temp = copy.deepcopy(init_array)
+    else:
+        ranking_temp = copy.deepcopy(ranking_array)
     if (len(array_temp) >= balls_count
-            or time.time() - update_two_time > 0.5):
+            # or time.time() - update_two_time > 0.5
+    ):
         # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
         array_temp.sort(key=lambda x: x[6], reverse=False)
         ranking_temp.sort(key=lambda x: x[6], reverse=False)
@@ -695,11 +700,12 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
         for i in range(laps_count):
             array_temp[i][2] = area_end
             ranking_temp[i][9] = 1
-
-        for r_index in range(0, len(ranking_temp)):
-            if ranking_temp[r_index][6] <= max_area_count:
-                for r_i in range(0, len(array_temp[r_index])):
-                    ranking_temp[r_index][r_i] = copy.deepcopy(array_temp[r_index][r_i])  # 更新 ranking_temp
+        if len(array_temp) <= balls_count:
+            for r_index in range(0, len(array_temp)):
+                if ranking_temp[r_index][6] <= max_area_count:
+                    for r_i in range(0, len(array_temp[r_index])):
+                        ranking_temp[r_index][r_i] = copy.deepcopy(array_temp[r_index][r_i])  # 更新 ranking_temp
+                ranking_temp[r_index][10] = 1
 
         array_temp = []
 
@@ -742,10 +748,13 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
             color_two[0].append(i)
         else:
             color_two[1].append(i)
-    for i in range(len(color_two[0])):  # 着色
-        ranking_temp[color_two[0][i]][5] = color_set[0][i]
-    for i in range(len(color_two[1])):
-        ranking_temp[color_two[1][i]][5] = color_set[1][i]
+    if len(color_two[0]) >= int(balls_count / 2):
+        for i in range(int(balls_count / 2)):  # 着色
+            # print('color_two:', color_two)
+            # print('ranking_temp:', ranking_temp)
+            ranking_temp[color_two[0][i]][5] = color_set[0][i]
+        for i in range(len(color_two[1])):
+            ranking_temp[color_two[1][i]][5] = color_set[1][i]
 
     # 4.寄存器保存固定每个区域的最新排位（因为ranking_temp 变量会因实时动态变动，需要寄存器辅助固定每个区域排位）
     for i in range(0, len(ranking_temp)):
@@ -1227,12 +1236,12 @@ class TcpRankingThread(QThread):
                                                 Script_Thread.run_type = 'period'
                                                 Script_Thread.run_flg = True
                                 else:
-                                    if ui.checkBox_Two_Color.isChecked():
-                                        for i in z_ranking_res:
-                                            if z_ranking_res[i] > balls_count / 2:
-                                                z_ranking_res[i] = 1
-                                            else:
-                                                z_ranking_res[i] = 0
+                                    # if ui.checkBox_Two_Color.isChecked():
+                                    #     for i in z_ranking_res:
+                                    #         if z_ranking_res[i] > balls_count / 2:
+                                    #             z_ranking_res[i] = 1
+                                    #         else:
+                                    #             z_ranking_res[i] = 0
                                     d = {'data': z_ranking_res, 'type': 'pm'}
                                     ws.send(json.dumps(d))
                         except Exception as e:
@@ -5207,6 +5216,7 @@ class MapLabel(QLabel):
             # print(self.positions)
         # 模拟排名
         if (ranking_temp
+                and (not ui.checkBox_Two_Color.isChecked())
                 and ((ranking_temp[0][6] < max_area_count - 2 and ranking_temp[0][10] == 0)
                         # or (ranking_temp[1][6] < max_area_count - 2 and ranking_temp[1][10] == 0)
                         # or (ranking_temp[2][6] < max_area_count - 2 and ranking_temp[2][10] == 0)
