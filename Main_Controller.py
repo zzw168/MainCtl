@@ -3107,7 +3107,7 @@ class ObsShotThread(QThread):
     def run(self) -> None:
         global ranking_array
         global camera_list
-        global balls_final
+        # global balls_final
         while self.running:
             time.sleep(0.1)
             if not self.run_flg:
@@ -3133,8 +3133,8 @@ class ObsShotThread(QThread):
                     with ball_sort_lock:
                         ball_sort[max_area_count + 1][max_lap_count - 1] = copy.deepcopy(obs_list)
                     deal_end()  # 终点排序
-                    for i in range(obs_num):
-                        balls_final[i] = True
+                    # for i in range(obs_num):
+                    #     balls_final[i] = True
                     print(ball_sort[max_area_count + 1][max_lap_count - 1], '~~~~~~~~~~~~~~~~~~~')
                 self.signal.emit(obs_res)
             self.run_flg = False
