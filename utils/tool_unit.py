@@ -214,6 +214,66 @@ def interpolate_x_from_y(polyline, y_value):
         return None
 
 
+def closest_point_on_segment(p, a, b):
+    """
+    计算点 p 到线段 ab 的最近点
+    p: 目标点
+    a, b: 线段的两个端点
+    返回: 最近点坐标, 距离
+    """
+    ab = b - a
+    ap = p - a
+    # 计算投影比例 t
+    t = np.dot(ap, ab) / np.dot(ab, ab)
+    # 限制 t 在 [0, 1] 区间，确保点在线段上
+    t = max(0, min(1, t))
+    # 计算最近点
+    closest = a + t * ab
+    distance = np.sqrt(np.sum((closest - p) ** 2))
+    return closest, distance
+
+
+def find_closest_point_on_curve(curve_points, target_point, interpolate=True):
+    """
+    找到曲线离目标点最近的位置
+    curve_points: 曲线上的点列表 [(x1,y1), (x2,y2), ...]
+    target_point: 目标点坐标 (x,y)
+    interpolate: 是否考虑折线段插值（True: 折线段，False: 仅离散点）
+    返回: 最近点坐标, 最小距离, 最近点所在的索引（离散点）或线段索引（折线）
+    """
+    curve_points = np.array(curve_points, dtype=float)
+    target_point = np.array(target_point, dtype=float)
+
+    if not interpolate:
+        # 仅考虑离散点
+        distances = np.sqrt(np.sum((curve_points - target_point) ** 2, axis=1))
+        closest_index = np.argmin(distances)
+        min_distance = distances[closest_index]
+        closest_point = curve_points[closest_index]
+        return closest_point, min_distance, closest_index
+    else:
+        # 考虑折线段
+        min_distance = float('inf')
+        closest_point = None
+        closest_index = None
+
+        for i in range(len(curve_points) - 1):
+            # 对每条线段计算最近点
+            point, dist = closest_point_on_segment(target_point, curve_points[i], curve_points[i + 1])
+            if dist < min_distance:
+                min_distance = dist
+                closest_point = point
+                closest_index = i  # 记录所在线段的起点索引
+
+        # 检查最后一个点（避免遗漏）
+        last_dist = np.sqrt(np.sum((curve_points[-1] - target_point) ** 2))
+        if last_dist < min_distance:
+            min_distance = last_dist
+            closest_point = curve_points[-1]
+            closest_index = len(curve_points) - 1
+
+        return closest_point
+
 def divide_path(path_points, step_length):
     """
     按照固定的步长分割路径。

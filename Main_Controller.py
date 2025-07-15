@@ -2394,7 +2394,8 @@ class PlanBallNumThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     # print(res, value)
                     if res == 0:
-                        self.balls_num = math.ceil(value[0] / 2)  # 小数进一
+                        # self.balls_num = math.ceil(value[0] / 2)  # 小数进一
+                        self.balls_num = int(value[0] / 2)
                         if self.balls_num > len(z_ranking_time):
                             self.balls_num = len(z_ranking_time)
                         if self.balls_num > num_old:
@@ -3107,7 +3108,7 @@ class ObsShotThread(QThread):
     def run(self) -> None:
         global ranking_array
         global camera_list
-        # global balls_final
+        global balls_final
         while self.running:
             time.sleep(0.1)
             if not self.run_flg:
@@ -3133,8 +3134,8 @@ class ObsShotThread(QThread):
                     with ball_sort_lock:
                         ball_sort[max_area_count + 1][max_lap_count - 1] = copy.deepcopy(obs_list)
                     deal_end()  # 终点排序
-                    # for i in range(obs_num):
-                    #     balls_final[i] = True
+                    for i in range(obs_num):
+                        balls_final[i] = True
                     print(ball_sort[max_area_count + 1][max_lap_count - 1], '~~~~~~~~~~~~~~~~~~~')
                 self.signal.emit(obs_res)
             self.run_flg = False
@@ -5122,6 +5123,7 @@ class MapLabel(QLabel):
         global ball_stop_time
         global lapTimes
         global lapTimes_thread
+        global balls_final
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
             self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间, 路线, 方向, x, y]
@@ -5202,7 +5204,10 @@ class MapLabel(QLabel):
                                 positions_temp[num][0] = positions_temp[num][0] - self.ball_space
                             x, y = self.path_points[0][positions_temp[num][0]]
                             if positions_temp[num][6] != 0:  # 分岔路线
-                                if 0 < positions_temp[num][7] < 10:  # 小于10是X轴
+                                if positions_temp[num][7] < 0:  # 小于0是就近点
+                                    x, y = find_closest_point_on_curve(self.path_points[positions_temp[num][6]], (x, y),
+                                                                       interpolate=True)
+                                elif 0 < positions_temp[num][7] < 10:  # 小于10是X轴
                                     y1 = interpolate_y_from_x(self.path_points[positions_temp[num][6]], x)
                                     if math.isfinite(y1):
                                         y = y1
@@ -5214,7 +5219,7 @@ class MapLabel(QLabel):
                                         x = x1
                                     else:
                                         print(x1, '~~~~~~~~~~~~~~~~x1')
-                                elif positions_temp[num][7] < 0:  # 小于0是 一个点
+                                elif positions_temp[num][7] == 0:  # 等于0是 一个点
                                     x, y = self.path_points[positions_temp[num][6]][0]
                             positions_temp[num][8] = x
                             positions_temp[num][9] = y
@@ -5277,6 +5282,7 @@ class MapLabel(QLabel):
                     b = 0
                 elif (z_end_time[i] != 0) and (int((time.time() - ranking_time_start) * 1000) - z_end_time[i] > 500):
                     b = 100
+                    balls_final[i] = True
                 elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
                       and z_end_time[i] != 0
                       and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
@@ -7266,12 +7272,9 @@ def my_test():
 
     # ranking_array = []  # 前0~3是坐标↖↘,4=镜头号，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
     ranking_array[0][5] = "yellow"
-    ranking_array[0][6] = 50
+    ranking_array[0][6] = 67
     ranking_array[0][10] = 1
-    if ranking_array[0][8] == 1:
-        ranking_array[0][8] = 0
-    else:
-        ranking_array[0][8] = 1
+    ranking_array[0][8] = 2
     # tcp_result_thread.send_type = ''
     # tcp_result_thread.run_flg = True
     # my_def()
