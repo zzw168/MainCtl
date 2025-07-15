@@ -2910,6 +2910,7 @@ class ScreenShotThread(QThread):
         global term_comment
         global main_Camera, monitor_Camera, fit_Camera
         global camera_list
+        global balls_final
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -3007,6 +3008,8 @@ class ScreenShotThread(QThread):
                 ball_sort = copy.deepcopy(ball_sort_temp)
             deal_end()  # 终点排序
             z_ranking_end = copy.deepcopy(z_ranking_res)  # 对齐结算页和最终结果截图排名
+            for i in range(len(balls_final)):
+                balls_final[i] = True
             if lottery_term[4] != '':
                 lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             self.signal.emit('核对完成')
@@ -3104,6 +3107,7 @@ class ObsShotThread(QThread):
     def run(self) -> None:
         global ranking_array
         global camera_list
+        global balls_final
         while self.running:
             time.sleep(0.1)
             if not self.run_flg:
@@ -3129,6 +3133,8 @@ class ObsShotThread(QThread):
                     with ball_sort_lock:
                         ball_sort[max_area_count + 1][max_lap_count - 1] = copy.deepcopy(obs_list)
                     deal_end()  # 终点排序
+                    for i in range(obs_num):
+                        balls_final[i] = True
                     print(ball_sort[max_area_count + 1][max_lap_count - 1], '~~~~~~~~~~~~~~~~~~~')
                 self.signal.emit(obs_res)
             self.run_flg = False
@@ -5269,19 +5275,19 @@ class MapLabel(QLabel):
                     b = float(int(self.positions[i][0] / len(self.path_points[0]) * 5000 + 5000) / 100)
                 if b < 1:
                     b = 0
+                elif (z_end_time[i] != 0) and (int((time.time() - ranking_time_start) * 1000) - z_end_time[i] > 500):
+                    b = 100
                 elif (self.positions[i][3] >= max_lap_count - 1  # 最后一圈处理:
                       and z_end_time[i] != 0
                       and self.positions[i][0] >= len(self.path_points[0]) - i * self.ball_space - 20):
                     b = 99.99
-                elif (z_end_time[i] != 0) and (time.time() - z_end_time[i] > 0.5):
-                    b = 100
                 if self.bet_running[i]:
                     balls_ranking_time[i] = int((time.time() - ranking_time_start) * 1000)
                 if b >= 99.99 and z_end_time[i] != 0:
                     balls_ranking_time[i] = z_end_time[i]
                 res.append(
                     {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
-                     "b": int(b), "t": balls_ranking_time[i]})
+                     "b": int(b), "t": balls_ranking_time[i], "final": balls_final[i]})
             positions_live = {
                 "raceTrackID": Track_number,
                 "term": term,
@@ -6521,6 +6527,7 @@ class ResetRankingThread(QThread):
         global balls_ranking_time
         global ranking_check
         global laps_count
+        global balls_final
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -6569,6 +6576,7 @@ class ResetRankingThread(QThread):
             term_comment = ''
             lapTimes = [[0.0] * balls_count, [0.0] * balls_count]
             balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
+            balls_final = [False] * balls_count  # 每个球识别结束
             ranking_check = {'yellow': [-1, -1],
                              'blue': [-1, -1],
                              'red': [-1, -1],
@@ -8307,6 +8315,7 @@ if __name__ == '__main__':
     map_orbit = []  # 地图轨迹
     previous_channel = None  # 音效通道
     balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
+    balls_final = [False] * balls_count  # 每个球识别结束
     positions_live = {
         "raceTrackID": "D",
         "term": "5712844",
