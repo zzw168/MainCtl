@@ -1160,12 +1160,6 @@ class TcpRankingThread(QThread):
                                                 Script_Thread.run_type = 'period'
                                                 Script_Thread.run_flg = True
                                 else:
-                                    # if ui.checkBox_Two_Color.isChecked():
-                                    #     for i in z_ranking_res:
-                                    #         if z_ranking_res[i] > balls_count / 2:
-                                    #             z_ranking_res[i] = 1
-                                    #         else:
-                                    #             z_ranking_res[i] = 0
                                     d = {'data': z_ranking_res, 'type': 'pm'}
                                     ws.send(json.dumps(d))
                         except Exception as e:
@@ -3516,15 +3510,15 @@ class PlanCmdThread(QThread):
                             #                              daemon=True)
                             #         t.start()
 
-                            if (not ui.checkBox_test.isChecked()
-                                    and not self.end_state
-                                    and not self.ready_state
-                                    and not self.background_state
-                                    and ui.checkBox_Two_Color.isChecked()
-                                    and (map_label_big.map_action >=
-                                         len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
-                                    and laps_count == 0):
-                                BallsLapCount_Thread.run_flg = True
+                            # if (not ui.checkBox_test.isChecked()
+                            #         and not self.end_state
+                            #         and not self.ready_state
+                            #         and not self.background_state
+                            #         and ui.checkBox_Two_Color.isChecked()
+                            #         and (map_label_big.map_action >=
+                            #              len(map_label_big.path_points[0]) / 10 * int(ui.lineEdit_Map_Action.text()))
+                            #         and laps_count == 0):
+                            #     BallsLapCount_Thread.run_flg = True
 
                             if (not ui.checkBox_test.isChecked()
                                     and not self.end_state
@@ -5151,7 +5145,6 @@ class MapLabel(QLabel):
             # print(self.positions)
         # 模拟排名
         if (ranking_temp
-                and (not ui.checkBox_Two_Color.isChecked())
                 and ((ranking_temp[0][6] < max_area_count - 2 and ranking_temp[0][10] == 0)
                         # or (ranking_temp[1][6] < max_area_count - 2 and ranking_temp[1][10] == 0)
                         # or (ranking_temp[2][6] < max_area_count - 2 and ranking_temp[2][10] == 0)
