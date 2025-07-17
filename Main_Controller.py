@@ -2318,8 +2318,8 @@ class PlanBallNumThread(QThread):
                     res, value = sc.GAGetDiReverseCount()
                     # print(res, value)
                     if res == 0:
-                        # self.balls_num = math.ceil(value[0] / 2)  # 小数进一
-                        self.balls_num = int(value[0] / 2)
+                        self.balls_num = math.ceil(value[0] / 2)  # 小数进一
+                        # self.balls_num = int(value[0] / 2)
                         if self.balls_num > len(z_ranking_time):
                             self.balls_num = len(z_ranking_time)
                         if self.balls_num > num_old:
