@@ -364,8 +364,8 @@ def get_obs(scence_current):
                 if ui.checkBox_Main_Vertica.isChecked():
                     cropped_image = cv2.flip(cropped_image, 0)  # 🔁 5. 垂直翻转图片
 
-                _, buffer = cv2.imencode('.jpg', cropped_image)  # 5. 可选：转换裁剪后的图片回 Base64
-                img = base64.b64encode(buffer).decode("utf-8")
+                _, buffer_ = cv2.imencode('.jpg', cropped_image)  # 5. 可选：转换裁剪后的图片回 Base64
+                img = base64.b64encode(buffer_).decode("utf-8")
             else:
                 img = resp.image_data[22:]
 
@@ -373,11 +373,18 @@ def get_obs(scence_current):
                 img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time() * 1000))
                 str2image_file(img, img_file)  # 保存图片
 
-            form_data = {
-                'CameraType': 'obs',
-                'img': img,
-                'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
-            }
+            if ui.checkBox_Two_Color.isChecked():
+                form_data = {
+                    'CameraType': ['obs', 'Two_Color'],
+                    'img': img,
+                    'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+                }
+            else:
+                form_data = {
+                    'CameraType': 'obs',
+                    'img': img,
+                    'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+                }
             try:
                 res = requests.post(url=recognition_addr, data=form_data, timeout=8)
                 r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
@@ -566,11 +573,18 @@ def get_rtsp(r_url, timeout=20):
                                     ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000))
                                 str2image_file(jpg_base64, img_file)
 
-                            form_data = {
-                                'CameraType': 'rtsp',
-                                'img': jpg_base64,
-                                'sort': ui.lineEdit_monitor_sort.text(),
-                            }
+                            if ui.checkBox_Two_Color.isChecked():
+                                form_data = {
+                                    'CameraType': ['rtsp', 'Two_Color'],
+                                    'img': jpg_base64,
+                                    'sort': ui.lineEdit_monitor_sort.text(),
+                                }
+                            else:
+                                form_data = {
+                                    'CameraType': 'rtsp',
+                                    'img': jpg_base64,
+                                    'sort': ui.lineEdit_monitor_sort.text(),
+                                }
                             res = requests.post(url=recognition_addr, data=form_data, timeout=8)
                             r_list = eval(res.text)
                             r_img = r_list[0]
@@ -669,6 +683,24 @@ def deal_action():
         action_area[0] = int(ranking_array[0][6])  # 触发区域
 
 
+def set_color(array_temp_, color_num=2):
+    color_two = [[], []]  # 第一种颜色，第二种颜色
+    color_set = [["yellow", "blue", "red"], ["purple", "pink", "green"]]
+    for i in range(len(array_temp_)):
+        if array_temp_[i][5] == init_array[color_num][5]:
+            color_two[0].append(i)
+        else:
+            color_two[1].append(i)
+    if len(color_two[0]) >= int(balls_count / 2):
+        for i in range(int(balls_count / 2)):  # 着色
+            # print('color_two:', color_two)
+            # print('ranking_temp:', ranking_temp)
+            array_temp_[color_two[0][i]][5] = color_set[0][i]
+        for i in range(len(color_two[1])):
+            array_temp_[color_two[1][i]][5] = color_set[1][i]
+    return array_temp_
+
+
 def deal_rank_two_color(integration_qiu_array, cam_num):
     global ranking_array
     global array_temp
@@ -688,23 +720,8 @@ def deal_rank_two_color(integration_qiu_array, cam_num):
             # or time.time() - update_two_time > 0.5
     ):
         # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
-        array_temp.sort(key=lambda x: x[6], reverse=False)
-
-        color_two = [[], []]  # 第一种颜色，第二种颜色
-        color_set = [["yellow", "blue", "red"], ["purple", "pink", "green"]]
-        for i in range(len(array_temp)):
-            if array_temp[i][5] == init_array[2][5]:
-                color_two[0].append(i)
-            else:
-                color_two[1].append(i)
-        if len(color_two[0]) >= int(balls_count / 2):
-            for i in range(int(balls_count / 2)):  # 着色
-                # print('color_two:', color_two)
-                # print('ranking_temp:', ranking_temp)
-                array_temp[color_two[0][i]][5] = color_set[0][i]
-            for i in range(len(color_two[1])):
-                array_temp[color_two[1][i]][5] = color_set[1][i]
-
+        array_temp.sort(key=lambda x: x[6], reverse=True)
+        array_temp = set_color(array_temp)
         deal_rank(array_temp)
 
 
