@@ -2339,7 +2339,8 @@ class PlanBallNumThread(QThread):
                                 end_t = t - ranking_time_start
                                 if z_end_time[i] == 0:
                                     z_end_time[i] = int(end_t * 1000)  # 记录结束时间
-                                if z_ranking_time[i] in ['TRAP', 'OUT', '']:
+                                # if z_ranking_time[i] in ['TRAP', 'OUT', '']:
+                                if z_ranking_time[i] in ['']:
                                     z_ranking_time[i] = '%.2f' % end_t
                                 if lapTimes[1][i] == 0:
                                     lapTimes[1][i] = round(end_t, 2)
