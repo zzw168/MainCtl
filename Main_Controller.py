@@ -958,9 +958,7 @@ def color_to_num(res):  # 按最新排名排列数组
     if not z_ranking_res:
         return
     for r in res:
-        for i in range(0, balls_count):
-            if r[5] == init_array[i][5]:
-                arr_res.append(i + 1)
+        arr_res.append(int(color_number[r[5]]))
     if len(z_ranking_res) == len(arr_res):
         with z_lock:
             z_ranking_res = copy.deepcopy(arr_res)
@@ -972,13 +970,11 @@ def color_to_num(res):  # 按最新排名排列数组
 
 def camera_to_num(res):  # 按最新排名排列数组
     camera_response = []
-    for i in range(1, balls_count + 1):
-        camera_response.append(i)
+    for i in range(balls_count):
+        camera_response.append(int(color_number[init_array[i][5]]))
     arr_res = []
     for r in res:
-        for arr in range(0, len(init_array)):
-            if r == init_array[arr][5]:
-                arr_res.append(arr + 1)
+        arr_res.append(int(color_number[r[5]]))
     # return arr_res
     for arr in range(0, len(arr_res)):
         for cam in range(0, len(camera_response)):
@@ -2339,8 +2335,8 @@ class PlanBallNumThread(QThread):
                                 end_t = t - ranking_time_start
                                 if z_end_time[i] == 0:
                                     z_end_time[i] = int(end_t * 1000)  # 记录结束时间
-                                # if z_ranking_time[i] in ['TRAP', 'OUT', '']:
-                                if z_ranking_time[i] in ['']:
+                                if z_ranking_time[i] in ['TRAP', 'OUT', '']:
+                                # if z_ranking_time[i] in ['']:
                                     z_ranking_time[i] = '%.2f' % end_t
                                 if lapTimes[1][i] == 0:
                                     lapTimes[1][i] = round(end_t, 2)
@@ -2919,7 +2915,10 @@ class ScreenShotThread(QThread):
                 lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
             camera_list = []
             for i in range(balls_count):
-                camera_list.append(init_array[z_ranking_end[i] - 1][5])
+                for key in color_number.keys():
+                    if color_number[key] == z_ranking_end[i]:
+                        camera_list.append(key)
+                        break
             temp_lap = []
             for i in range(max_lap_count):
                 temp_lap.append([])
@@ -4275,6 +4274,7 @@ def plan_refresh():  # 刷新方案列表
 def save_main_json():
     global init_array
     global color_ch
+    global color_number
     global udpServer_addr
     global tcpServer_addr
     global result_tcpServer_addr
@@ -4370,6 +4370,7 @@ def save_main_json():
             # 赋值变量
             init_array = main_all['init_array']
             color_ch = main_all['color_ch']
+            color_number = main_all['color_No']
             wakeup_addr = main_all['wakeup_addr']
             balls_count = int(main_all['balls_count'])
             rtsp_url = main_all['rtsp_url']
@@ -4394,6 +4395,7 @@ def save_main_json():
 def load_main_json():
     global init_array
     global color_ch
+    global color_number
     global udpServer_addr
     global tcpServer_addr
     global result_tcpServer_addr
@@ -4484,6 +4486,7 @@ def load_main_json():
         init_array = copy.deepcopy(main_all['init_array'])
         print(init_array)
         color_ch = main_all['color_ch']
+        color_number = main_all['color_No']
         udpServer_addr = (main_all['udpServer_addr'][0], int(main_all['udpServer_addr'][1]))
         tcpServer_addr = (main_all['tcpServer_addr'][0], int(main_all['tcpServer_addr'][1]))
         result_tcpServer_addr = (main_all['result_tcpServer_addr'][0], int(main_all['result_tcpServer_addr'][1]))
@@ -4505,8 +4508,10 @@ def load_main_json():
         for index in range(1, balls_count + 1):
             eng = main_all['init_array'][index - 1][5]
             ch = main_all['color_ch'][eng]
+            number = main_all['color_No'][eng]
             getattr(ui, 'lineEdit_Color_Eng_%s' % index).setText(eng)
             getattr(ui, 'lineEdit_Color_Ch_%s' % index).setText(ch)
+            getattr(ui, 'lineEdit_Color_No_%s' % index).setText(number)
         for i in range(balls_count, 10):
             getattr(ui, 'lineEdit_result_%s' % i).hide()
             getattr(result_ui, 'lineEdit_result_%s' % i).hide()
@@ -5135,9 +5140,7 @@ class MapLabel(QLabel):
                             index = positions_temp[num][0] + self.speed
                         if index < len(self.path_points[0]) and ranking_temp[num][9] < max_lap_count:
                             positions_temp[num][0] = index
-                            for color_index in range(len(init_array)):
-                                if init_array[color_index][5] == ranking_temp[num][5]:
-                                    positions_temp[num][2] = color_index + 1
+                            positions_temp[num][2] = int(color_number[ranking_temp[num][5]])
                             if num > 0 and positions_temp[num][0] == positions_temp[num - 1][0]:  # 禁止重叠
                                 positions_temp[num][0] = positions_temp[num][0] - self.ball_space
                             x, y = self.path_points[0][positions_temp[num][0]]
@@ -6506,9 +6509,9 @@ class ResetRankingThread(QThread):
             action_area = [0, 0, 0]  # 初始化触发区域
             z_ranking_res = []
             z_ranking_end = []
-            for i in range(1, balls_count + 1):
-                z_ranking_res.append(i)  # 初始化网页排名
-                z_ranking_end.append(i)  # 初始化终点排名
+            for i in range(balls_count):
+                z_ranking_res.append(color_number[init_array[i][5]])  # 初始化网页排名
+                z_ranking_end.append(color_number[init_array[i][5]])  # 初始化终点排名
             print(z_ranking_res)
             z_ranking_time = [''] * balls_count  # 初始化网页排名时间
             z_end_time = [0] * balls_count  # 记录结束时间
@@ -8139,6 +8142,16 @@ if __name__ == '__main__':
                 'black': '黑',
                 'pink': '粉',
                 'White': '白'}
+    color_number = {'yellow': '1',
+                    'blue': '2',
+                    'red': '3',
+                    'purple': '4',
+                    'orange': '9',
+                    'green': '6',
+                    'Brown': '10',
+                    'black': '8',
+                    'pink': '5',
+                    'White': '7'}
     udpServer_addr = ('0.0.0.0', 19734)  # 接收图像识别结果
     tcpServer_addr = ('0.0.0.0', 9999)  # pingpong 发送网页排名
     result_tcpServer_addr = ('0.0.0.0', 8888)  # pingpong 发送网页排名
