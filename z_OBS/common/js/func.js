@@ -83,7 +83,7 @@ function fisherYates(array,t) {
 const QueryParams =(k)=>{
   let url = window.location.search
   let  data = {},  ks
-  console.log(" QueryParams ks",url)
+
   if(url.indexOf("?")>-1){
 			
     let us = url.split("?")[1]
@@ -151,6 +151,7 @@ function getSocketFn ({
                     reconnect();//断开重连
                  },
                  onMessage:function(result,nTime){
+                  
                  //我这用result == 'pong'有个大大大的前提，就是ping给后台的时候，后台是直接推送pong回来给我的，所以我这里可以直接的判断result == 'pong'
                  let res 
                  try {
@@ -160,7 +161,7 @@ function getSocketFn ({
                  }
                    
                      if(result == 'pong'){
-//                         console.log('pong');
+                         console.log('pong');
                          //如果获取到消息，心跳检测重置 
                          //拿到任何消息都说明当前连接是正常的 
                          heartCheck.reset().start();

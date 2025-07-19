@@ -4,12 +4,17 @@
 let _config = {
     rankConfig:{
         port:9999,
-        test:0
+        test:0,
+        
     },
-    sd:8,
+    qiu:8,
+    colorArr:{
+        lv:1,
+        hong:2,
+    },
+    sd:11,
     jiesuanConfg:{
         port:8888,
-   
         test:0,
         // 右边数据 赛道 长度
         rtxt1:'2,100 CM',//长度
@@ -18,19 +23,19 @@ let _config = {
         rtxt4:1,//圈数
         rTopTxt:'MAP DESERT' 
     },
-    ip:'127.0.0.1',
-    
+    ip:'127.0.0.1',  
 }
+
 let {jiesuanConfg,rankConfig} = _config
 
 if(QueryParams('sd')) _config.sd = QueryParams('sd')
 if(QueryParams('ip')) _config.ip = QueryParams('ip')
 if(QueryParams('len')) jiesuanConfg.rtxt1 = QueryParams('len')
-if(QueryParams('truns')) jiesuanConfg.rtxt2 = QueryParams('truns')
-if(QueryParams('qiu')) jiesuanConfg.rtxt3 = QueryParams('qiu')
+if(QueryParams('turns')) jiesuanConfg.rtxt2 = QueryParams('turns')
+if(QueryParams('qiu')) jiesuanConfg.rtxt3 = QueryParams('qiu'),_config.qiu = QueryParams('qiu')
 if(QueryParams('laps')) jiesuanConfg.rtxt4 = QueryParams('laps')
 if(QueryParams('test')){
 jiesuanConfg.test = QueryParams('test')
 rankConfig.test = QueryParams('test')
 }
-console.log("rankConfigrankConfig",QueryParams(),rankConfig,_config.sd)
+console.log("rankConfigrankConfig",QueryParams(),_config,rankConfig,_config.sd)

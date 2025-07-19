@@ -4,7 +4,8 @@ let config =  {
     port:conf.port,
     rankUrl:conf.rankUrl,//"jiesuan",
     test:conf.test,
-    sd:_config.sd
+    sd:_config.sd,
+    qiu:_config.qiu
 }
 
 

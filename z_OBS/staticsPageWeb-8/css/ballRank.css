@@ -173,6 +173,14 @@
 			position: relative;
 			overflow: hidden;
         }
+		/* .grid{
+			display: grid;
+			
+			grid-template-columns: repeat(2, 1fr);
+		} */
+		.f2{
+			grid-template-columns: repeat(3, 1fr);
+		}
 		.flip-card-back 	.ball{
 				/* padding-left: 110px; */
 				/* text-align: center; */
@@ -225,10 +233,10 @@
 				/* left:5px; */
 			}
 			.qh{
-				color:#fff;
+				
 				font-weight: 700;
-				font-family: 'dinb';
-				font-size: 56px;
+				
+				font-size: 59px;
 				letter-spacing: 1px;
 				line-height: 1;
 				/* text-shadow: 0px 0px 4px #e2e2e2;	 */
@@ -238,7 +246,7 @@
 				color: #1DF54D;
 				font-weight: 700;
 				font-family: 'dinb';
-				font-size: 60px;
+				font-size: 56px;
 			}
 			.fonImg{
                 height: 36px;
@@ -256,6 +264,45 @@
 			
               }
 			  /* 球数量区分 */
+			   /* 6球 */
+					/* 8球 */
+					.rankView.ballNum6 .view-right{
+						width: 350px;
+						height: 433px;
+						padding:0 30px;
+					}
+					.rankView.ballNum6 .rtxt >div:first-child{
+						font-size: 25px;
+					}
+					.rankView.ballNum6 .rtxt>div[class*=rtxt] {
+						font-size: 28px;
+					}
+					.rankView.ballNum6 .TextpadLeft {
+						padding:0 16px
+					}
+					.rankView.ballNum6  .coutBox .txt{
+						margin: 16px auto 8px auto;
+				
+					}
+					.ballNum6  #next{
+						height:72px
+					}
+					.rankView.ballNum6 .rtxt.em2 {
+						text-indent: 2em;	
+						width: 110px;
+					}
+					.rankView.ballNum6 .rtxt{
+						width: 110px;
+						padding-bottom: 6px;
+						/* min-width: 80px;
+						display: inline-block; */
+					}
+					.rankView.ballNum6 .pathImg{
+				
+						width: 200px;
+						
+						margin-bottom: 8px; 
+					}
 					/* 8球 */
 					.rankView.ballNum8 .view-right{
 						width: 400px;

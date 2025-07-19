@@ -55,7 +55,7 @@ window.onload = ()=>{
 
     let flips =clock?.querySelectorAll('.flip')
     console.log("flips",flips)
-    $('#clock').html('Next Race Term <span class="padLeft">  '+ days+"  </span>")
+    $('#clock').html('Next Race <span class="padLeft">  #'+ days+"  </span>")
     // let cutNow = now
     
     }}
@@ -74,20 +74,19 @@ function formatSeconds(seconds) {
 
 const weihuFn=(text)=>{
     clearInterval(timeVal)
-    $("#clock").hide()
-    $(".txt2").hide()
-//   $("#coutDown .weihu").show().html(`${text||'赛道维护'}</div>`)
-  $("#clock").html('赛道维护')
+    $("#clock").show()
+    $('#clock').html('<span>赛道维护</span>')
+
 }
 
 // // 测试
 if(config.test){
   
     renderFn(datalist,()=>{
-        toRunTime(9555060)
-        weihuFn()
+//        toRunTime(9555060)
+//        weihuFn()
         setTimeout(()=>{
-          // renderFn(datalist)
+//           renderFn(datalist)
           toRunTime(9555060)
         },3000)
       })
