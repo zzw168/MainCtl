@@ -23,9 +23,9 @@ let pstNumArr=  [{idx:1,name:'A',time:'20:39'},
                pstNumArr.forEach(function(el,i) {
                 let htm = `<li data-origin="0px" class="list-item" style="float: none;left: 0px;">
                 <div class="rank_idx flex-box center " style="color:#333;background:rgba(247,247,247,.5);height:62px;width:50px" >  <p><font size="6">${i+1} </font></p> </div> 
-                <div class="rank_label ranks${i} flex-box center">
+                <div class="rank_label ranks${el.idx-1} flex-box center">
        
-                <img src="./img/${i+1}.png" />
+                <img src="./img/${el.idx}.png" />
           
                 </div> 
                 <div class="time rank_label flex-box center"><div class="flex-box tBox center" style="display:none;">${el.time}</div> </div>
