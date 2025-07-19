@@ -8167,32 +8167,12 @@
                    <string>颜色号码设置</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_52">
-                   <item row="9" column="5">
-                    <widget class="QLabel" name="label_62">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Eng_5">
+                   <item row="10" column="9" colspan="2">
+                    <widget class="QLineEdit" name="lineEdit_Color_Ch_10">
                      <property name="minimumSize">
                       <size>
-                       <width>100</width>
+                       <width>280</width>
                        <height>0</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>80</width>
-                       <height>16777215</height>
                       </size>
                      </property>
                      <property name="font">
@@ -8206,14 +8186,34 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>pink</string>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
+                      <string/>
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="7" colspan="2">
+                   <item row="9" column="9" colspan="2">
+                    <widget class="QLineEdit" name="lineEdit_Color_Ch_9">
+                     <property name="minimumSize">
+                      <size>
+                       <width>280</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="9" colspan="2">
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_3">
                      <property name="minimumSize">
                       <size>
@@ -8236,7 +8236,21 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="4" column="2" colspan="2">
+                   <item row="0" column="7">
+                    <widget class="QLabel" name="label_49">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="4" colspan="2">
                     <widget class="QLineEdit" name="lineEdit_Color_Eng_4">
                      <property name="minimumSize">
                       <size>
@@ -8268,427 +8282,7 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="9" column="0">
-                    <widget class="QLabel" name="label_63">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>9号：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Eng_3">
-                     <property name="minimumSize">
-                      <size>
-                       <width>100</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>80</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>red</string>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="10" column="5">
-                    <widget class="QLabel" name="label_64">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="0">
-                    <widget class="QLabel" name="label_59">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>6号：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="10" column="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Eng_10">
-                     <property name="minimumSize">
-                      <size>
-                       <width>100</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>80</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string/>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="8" column="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Eng_8">
-                     <property name="minimumSize">
-                      <size>
-                       <width>100</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>80</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>black</string>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="7" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Ch_2">
-                     <property name="minimumSize">
-                      <size>
-                       <width>280</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>蓝</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="8" column="0" colspan="2">
-                    <widget class="QLabel" name="label_56">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>8号：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="5">
-                    <widget class="QLabel" name="label_39">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="0">
-                    <widget class="QLabel" name="label_37">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>3号：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="8" column="5">
-                    <widget class="QLabel" name="label_55">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_50">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>1号：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="2" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Eng_1">
-                     <property name="minimumSize">
-                      <size>
-                       <width>100</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>80</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>yellow</string>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
-                    <widget class="QLabel" name="label_44">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>4号：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Eng_2">
-                     <property name="minimumSize">
-                      <size>
-                       <width>100</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>80</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>blue</string>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="5">
-                    <widget class="QLabel" name="label_57">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="7" column="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Eng_7">
-                     <property name="minimumSize">
-                      <size>
-                       <width>100</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="maximumSize">
-                      <size>
-                       <width>80</width>
-                       <height>16777215</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>White</string>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_52">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>2号：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="7" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Ch_1">
-                     <property name="minimumSize">
-                      <size>
-                       <width>280</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>黄</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="10" column="0">
-                    <widget class="QLabel" name="label_61">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>10号：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="7" column="0" colspan="2">
-                    <widget class="QLabel" name="label_54">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>7号：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="7" column="5">
+                   <item row="7" column="7">
                     <widget class="QLabel" name="label_53">
                      <property name="font">
                       <font>
@@ -8702,7 +8296,7 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="6" column="2">
+                   <item row="6" column="4">
                     <widget class="QLineEdit" name="lineEdit_Color_Eng_6">
                      <property name="minimumSize">
                       <size>
@@ -8734,8 +8328,22 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="5">
-                    <widget class="QLabel" name="label_51">
+                   <item row="3" column="2">
+                    <widget class="QLabel" name="label_37">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>号：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="8" column="7">
+                    <widget class="QLabel" name="label_55">
                      <property name="font">
                       <font>
                        <family>微软雅黑</family>
@@ -8748,7 +8356,99 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="9" column="2">
+                   <item row="2" column="0">
+                    <widget class="QLineEdit" name="lineEdit_Color_No_2">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>2</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="7">
+                    <widget class="QLabel" name="label_39">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="7">
+                    <widget class="QLabel" name="label_57">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="8" column="4">
+                    <widget class="QLineEdit" name="lineEdit_Color_Eng_8">
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>black</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="9" column="4">
                     <widget class="QLineEdit" name="lineEdit_Color_Eng_9">
                      <property name="minimumSize">
                       <size>
@@ -8780,63 +8480,7 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="5">
-                    <widget class="QLabel" name="label_49">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="0" colspan="2">
-                    <widget class="QLabel" name="label_60">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>5号：</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="5">
-                    <widget class="QLabel" name="label_58">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="5" colspan="2">
-                    <widget class="QLabel" name="label_43">
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>12</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="text">
-                      <string>:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="7" colspan="2">
+                   <item row="4" column="9" colspan="2">
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_4">
                      <property name="minimumSize">
                       <size>
@@ -8859,7 +8503,39 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="5" column="7" colspan="2">
+                   <item row="10" column="4">
+                    <widget class="QLineEdit" name="lineEdit_Color_Eng_10">
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="9" colspan="2">
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_5">
                      <property name="minimumSize">
                       <size>
@@ -8882,8 +8558,54 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="6" column="7" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Ch_6">
+                   <item row="10" column="7">
+                    <widget class="QLabel" name="label_64">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="4">
+                    <widget class="QLineEdit" name="lineEdit_Color_Eng_5">
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>pink</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="9" colspan="2">
+                    <widget class="QLineEdit" name="lineEdit_Color_Ch_1">
                      <property name="minimumSize">
                       <size>
                        <width>280</width>
@@ -8901,34 +8623,11 @@
                       <string/>
                      </property>
                      <property name="text">
-                      <string>绿</string>
+                      <string>黄</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="7" column="7" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Ch_7">
-                     <property name="minimumSize">
-                      <size>
-                       <width>280</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                     <property name="font">
-                      <font>
-                       <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
-                       <bold>false</bold>
-                      </font>
-                     </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
-                     <property name="text">
-                      <string>白</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="8" column="7" colspan="2">
+                   <item row="8" column="9" colspan="2">
                     <widget class="QLineEdit" name="lineEdit_Color_Ch_8">
                      <property name="minimumSize">
                       <size>
@@ -8951,31 +8650,36 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="9" column="7" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Ch_9">
-                     <property name="minimumSize">
-                      <size>
-                       <width>280</width>
-                       <height>0</height>
-                      </size>
-                     </property>
+                   <item row="9" column="7">
+                    <widget class="QLabel" name="label_62">
                      <property name="font">
                       <font>
                        <family>微软雅黑</family>
-                       <pointsize>10</pointsize>
+                       <pointsize>12</pointsize>
                        <bold>false</bold>
                       </font>
                      </property>
-                     <property name="toolTip">
-                      <string/>
-                     </property>
                      <property name="text">
-                      <string/>
+                      <string>:</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="10" column="7" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_Color_Ch_10">
+                   <item row="2" column="7">
+                    <widget class="QLabel" name="label_51">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="9" colspan="2">
+                    <widget class="QLineEdit" name="lineEdit_Color_Ch_6">
                      <property name="minimumSize">
                       <size>
                        <width>280</width>
@@ -8993,7 +8697,623 @@
                       <string/>
                      </property>
                      <property name="text">
+                      <string>绿</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="7" column="9" colspan="2">
+                    <widget class="QLineEdit" name="lineEdit_Color_Ch_7">
+                     <property name="minimumSize">
+                      <size>
+                       <width>280</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
                       <string/>
+                     </property>
+                     <property name="text">
+                      <string>白</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="7">
+                    <widget class="QLabel" name="label_58">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="0">
+                    <widget class="QLineEdit" name="lineEdit_Color_No_3">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>3</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="3" column="4">
+                    <widget class="QLineEdit" name="lineEdit_Color_Eng_3">
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>red</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLineEdit" name="lineEdit_Color_No_1">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>1</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="7" column="4">
+                    <widget class="QLineEdit" name="lineEdit_Color_Eng_7">
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>White</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="7" colspan="2">
+                    <widget class="QLabel" name="label_43">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="4">
+                    <widget class="QLineEdit" name="lineEdit_Color_Eng_2">
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>blue</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="2">
+                    <widget class="QLabel" name="label_52">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>号：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="2">
+                    <widget class="QLabel" name="label_50">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>号：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="9" colspan="2">
+                    <widget class="QLineEdit" name="lineEdit_Color_Ch_2">
+                     <property name="minimumSize">
+                      <size>
+                       <width>280</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>蓝</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="4" colspan="2">
+                    <widget class="QLineEdit" name="lineEdit_Color_Eng_1">
+                     <property name="minimumSize">
+                      <size>
+                       <width>100</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>80</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>yellow</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="2">
+                    <widget class="QLabel" name="label_44">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>号：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="2">
+                    <widget class="QLabel" name="label_60">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>号：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="2">
+                    <widget class="QLabel" name="label_59">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>号：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="7" column="2">
+                    <widget class="QLabel" name="label_54">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>号：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="8" column="2">
+                    <widget class="QLabel" name="label_56">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>号：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="9" column="2">
+                    <widget class="QLabel" name="label_63">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>号：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="10" column="2">
+                    <widget class="QLabel" name="label_61">
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>12</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>号：</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="0">
+                    <widget class="QLineEdit" name="lineEdit_Color_No_4">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>4</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="0">
+                    <widget class="QLineEdit" name="lineEdit_Color_No_5">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>5</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0">
+                    <widget class="QLineEdit" name="lineEdit_Color_No_6">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>6</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="7" column="0">
+                    <widget class="QLineEdit" name="lineEdit_Color_No_7">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>7</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="8" column="0">
+                    <widget class="QLineEdit" name="lineEdit_Color_No_8">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>8</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="9" column="0">
+                    <widget class="QLineEdit" name="lineEdit_Color_No_9">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>9</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="10" column="0">
+                    <widget class="QLineEdit" name="lineEdit_Color_No_10">
+                     <property name="minimumSize">
+                      <size>
+                       <width>30</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>30</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="font">
+                      <font>
+                       <family>微软雅黑</family>
+                       <pointsize>10</pointsize>
+                       <bold>false</bold>
+                      </font>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>10</string>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
