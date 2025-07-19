@@ -4362,8 +4362,10 @@ def save_main_json():
             for index in range(1, balls_count + 1):
                 eng = getattr(ui, 'lineEdit_Color_Eng_%s' % index).text()
                 ch = getattr(ui, 'lineEdit_Color_Ch_%s' % index).text()
+                number = getattr(ui, 'lineEdit_Color_No_%s' % index).text()
                 main_all['init_array'][index - 1][5] = eng
                 main_all['color_ch'][eng] = ch
+                main_all['color_No'][eng] = number
 
             # 赋值变量
             init_array = main_all['init_array']
