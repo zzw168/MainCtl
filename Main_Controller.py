@@ -974,7 +974,7 @@ def camera_to_num(res):  # 按最新排名排列数组
         camera_response.append(int(color_number[init_array[i][5]]))
     arr_res = []
     for r in res:
-        arr_res.append(int(color_number[r[5]]))
+        arr_res.append(int(color_number[r]))
     # return arr_res
     for arr in range(0, len(arr_res)):
         for cam in range(0, len(camera_response)):
