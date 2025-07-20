@@ -1898,9 +1898,10 @@ class ReStartThread(QThread):
             map_label1.pos_stop = []  # 每个球的停止位置索引
             map_label_big.pos_stop = []  # 每个球的停止位置索引
             TrapBall_ui.trap_flg = False  # 卡珠标记
-            if (ui.checkBox_key.isChecked()
+            if (ui.radioButton_start_betting.isChecked()
+                    and(ui.checkBox_key.isChecked()
                     or ui.checkBox_test.isChecked()
-                    or ui.checkBox_key_stop.isChecked()):
+                    or ui.checkBox_key_stop.isChecked())):
                 self.signal.emit(fail('键盘控制！打开状态'))
                 self.run_flg = False
                 continue
@@ -2916,7 +2917,7 @@ class ScreenShotThread(QThread):
             camera_list = []
             for i in range(balls_count):
                 for key in color_number.keys():
-                    if color_number[key] == z_ranking_end[i]:
+                    if int(color_number[key]) == z_ranking_end[i]:
                         camera_list.append(key)
                         break
             temp_lap = []
@@ -5789,10 +5790,11 @@ def music_ctl():
             if getattr(ui, 'radioButton_music_%s' % index).isChecked():
                 mp3_name = getattr(ui, 'lineEdit_music_%s' % index).text()
                 # 加载并播放背景音乐
-                pygame.mixer.music.load(mp3_name)
-                pygame.mixer.music.set_volume(float(getattr(ui, 'lineEdit_volume_%s' % index).text()))
-                pygame.mixer.music.play(-1)  # 循环播放背景音乐
-                break
+                if os.path.exists(mp3_name):
+                    pygame.mixer.music.load(mp3_name)
+                    pygame.mixer.music.set_volume(float(getattr(ui, 'lineEdit_volume_%s' % index).text()))
+                    pygame.mixer.music.play(-1)  # 循环播放背景音乐
+                    break
     else:
         pygame.mixer.music.stop()
 
