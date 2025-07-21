@@ -42,7 +42,7 @@ const datalist ={
       },
       {
         "mc": 1,
-        "time": "138.18"
+        "time": "138.18\""
       }
     
   ]
@@ -143,7 +143,6 @@ if(i<qius){
                   <div class="time flex-box center">${el.time||"'"}</div>
                 </div>
            </div>
-
     </div>
     `
 }

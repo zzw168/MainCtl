@@ -1295,8 +1295,11 @@ class DealUdpThread(QThread):
                 array_data = filter_max_value(array_data)  # 非双色则开启同色过滤
             if not array_data or len(array_data) < 1:
                 continue
-            cam_num = array_data[0][6]
-            array_data = deal_area(array_data, cam_num)  # 收集统计区域内的球
+            for i in range(len(array_data)):
+                cam_num = array_data[i][6]
+                array_data[i] = copy.deepcopy(deal_area_simple(array_data[i], cam_num))
+            # cam_num = array_data[0][6]
+            # array_data = deal_area(array_data, cam_num)  # 收集统计区域内的球
             if not array_data or len(array_data) < 1:
                 continue
             if len(array_data[0]) < 8:
@@ -1307,8 +1310,7 @@ class DealUdpThread(QThread):
                 continue
             # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
             if ui.checkBox_Two_Color.isChecked():
-                # deal_rank_two_color(array_data, cam_num)
-                deal_rank(array_data)
+                deal_rank_two_color(array_data, cam_num)
             else:
                 deal_rank(array_data)
             if ball_sort and balls_start != len(ball_sort[1][0]):
@@ -1425,6 +1427,41 @@ def load_area():  # 载入位置文件初始化区域列表
                         polgon_array['road_path'] = 0
                     area_Code[key].append(polgon_array)
     print(area_Code)
+
+
+def deal_area_simple(ball, cap_num):  # 找出该摄像头内所有球的区域
+    if len(ball) < 9:
+        for i in range(8, len(ball) - 1, -1):
+            ball.append(0)
+    # x = (ball[0] + ball[2]) / 2
+    # y = (ball[1] + ball[3]) / 2
+    x = ball[0]
+    y = ball[1]
+    point = (x, y)
+    if cap_num in area_Code.keys():
+        for area in area_Code[cap_num]:
+            if (map_label_big and map_label_big.map_action and map_label_big.path_points
+                    and area['area_code'] == 1  # 防止起点和终点区域冲突
+                    and ui.checkBox_end_2.isChecked()
+                    and map_label_big.map_action >
+                    len(map_label_big.path_points[0]) * 0.2):
+                continue
+            if (map_label_big and map_label_big.map_action and map_label_big.path_points
+                    and area['area_code'] > max_area_count - balls_count  # 防止起点和终点区域冲突
+                    and ui.checkBox_end_2.isChecked()
+                    and map_label_big.map_action <
+                    len(map_label_big.path_points[0]) * 0.2):
+                continue
+            pts = np.array(area['coordinates'], np.int32)
+            res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
+            if res > -1 and len(ball) >= 9:
+                ball[2] = 0  # 把X2位置修改为第二圈计数
+                ball[3] = 0  # 把Y2位置修改为第三圈计数
+                ball[4] = cap_num  # 把置信度位置修改为镜头号码
+                ball[6] = area['area_code']
+                ball[7] = area['direction']
+                ball[8] = area['road_path']  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向,路线
+    return ball  # [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
 
 
 def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
@@ -1901,9 +1938,9 @@ class ReStartThread(QThread):
             map_label_big.pos_stop = []  # 每个球的停止位置索引
             TrapBall_ui.trap_flg = False  # 卡珠标记
             if (ui.radioButton_start_betting.isChecked()
-                    and(ui.checkBox_key.isChecked()
-                    or ui.checkBox_test.isChecked()
-                    or ui.checkBox_key_stop.isChecked())):
+                    and (ui.checkBox_key.isChecked()
+                         or ui.checkBox_test.isChecked()
+                         or ui.checkBox_key_stop.isChecked())):
                 self.signal.emit(fail('键盘控制！打开状态'))
                 self.run_flg = False
                 continue
@@ -2339,7 +2376,7 @@ class PlanBallNumThread(QThread):
                                 if z_end_time[i] == 0:
                                     z_end_time[i] = int(end_t * 1000)  # 记录结束时间
                                 if z_ranking_time[i] in ['TRAP', 'OUT', '']:
-                                # if z_ranking_time[i] in ['']:
+                                    # if z_ranking_time[i] in ['']:
                                     z_ranking_time[i] = '%.2f' % end_t
                                 if lapTimes[1][i] == 0:
                                     lapTimes[1][i] = round(end_t, 2)
@@ -5215,12 +5252,14 @@ class MapLabel(QLabel):
             for i in range(balls_count):
                 x = self.positions[i][8]
                 y = self.positions[i][9]
-                if self.positions[i][3] < 1:
-                    # b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2, 2)
-                    b = float(int(self.positions[i][0] / len(self.path_points[0]) * 10000 / 2) / 100)
-                else:
-                    # b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2 + 50, 2)
-                    b = float(int(self.positions[i][0] / len(self.path_points[0]) * 5000 + 5000) / 100)
+                # if self.positions[i][3] < 1:
+                #     # b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2, 2)
+                #     b = float(int(self.positions[i][0] / len(self.path_points[0]) * 10000 / max_lap_count) / 100)
+                # else:
+                #     # b = round(self.positions[i][0] / len(self.path_points[0]) * 100 / 2 + 50, 2)
+                lap_num = 10000 / max_lap_count
+                b = float(
+                    int((self.positions[i][0] / len(self.path_points[0]) + self.positions[i][3]) * lap_num) / 100)
                 if b < 1:
                     b = 0
                 elif (z_end_time[i] != 0) and (int((time.time() - ranking_time_start) * 1000) - z_end_time[i] > 500):
@@ -5243,6 +5282,7 @@ class MapLabel(QLabel):
                 "timestampMs": int(time.time() * 1000),
                 "result": res
             }
+            print(res)
 
         # 保留卡珠位置
         if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
