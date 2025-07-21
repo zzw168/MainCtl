@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'BallsNumDlg_Ui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -122,10 +122,10 @@ class Ui_Dialog_BallsNum(object):
 
     def retranslateUi(self, Dialog_BallsNum):
         Dialog_BallsNum.setWindowTitle(QCoreApplication.translate("Dialog_BallsNum", u"\u8d77\u70b9\u786e\u8ba4", None))
-        self.label_2.setText(QCoreApplication.translate("Dialog_BallsNum", u"Please confirm that there are 8 balls at the starting point", None))
+        self.label_2.setText(QCoreApplication.translate("Dialog_BallsNum", u"Please confirm that there are enough balls at the starting point", None))
         self.label_3.setText("")
         self.pushButton_continue.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u7ee7\u7eed\u5f00\u8d5b(Continue)", None))
-        self.label.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u8bf7\u786e\u8ba4\u8d77\u70b9\u67098\u9897\u7403", None))
+        self.label.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u8bf7\u786e\u8ba4\u8d77\u70b9\u73e0\u5b50\u6570\u91cf", None))
         self.label_4.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u8bf7\u9009\u62e9\u662f\u5426\u5c01\u76d8", None))
         self.pushButton_close.setText(QCoreApplication.translate("Dialog_BallsNum", u"\u5c01\u76d8(Closing)", None))
     # retranslateUi

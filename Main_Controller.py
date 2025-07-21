@@ -685,7 +685,8 @@ def deal_action():
 
 def set_color(array_temp_, color_num=2):
     color_two = [[], []]  # 第一种颜色，第二种颜色
-    color_set = [["yellow", "blue", "red"], ["purple", "pink", "green"]]
+    color_set = [[init_array[0][5], [init_array[1][5]], [init_array[2][5]]],
+                 [init_array[3][5], [init_array[4][5]], [init_array[5][5]]]]
     for i in range(len(array_temp_)):
         if array_temp_[i][5] == init_array[color_num][5]:
             color_two[0].append(i)
@@ -1306,7 +1307,8 @@ class DealUdpThread(QThread):
                 continue
             # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
             if ui.checkBox_Two_Color.isChecked():
-                deal_rank_two_color(array_data, cam_num)
+                # deal_rank_two_color(array_data, cam_num)
+                deal_rank(array_data)
             else:
                 deal_rank(array_data)
             if ball_sort and balls_start != len(ball_sort[1][0]):
