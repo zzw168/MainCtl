@@ -3711,6 +3711,7 @@ class PlanCmdThread(QThread):
 
                 # 背景模式不循环
                 if self.background_state or self.ready_state or self.end_state:
+                    action_area[1] = 0
                     Audio_Thread.run_flg = False  # 停止卫星图音效播放线程
                     # if ui.checkBox_Ai.isChecked():
                     #     Ai_Thread.run_flg = False  # 停止卫星图AI播放线程
@@ -3738,6 +3739,7 @@ class PlanCmdThread(QThread):
                 # 强制中断情况处理
                 if not ui.checkBox_test.isChecked() and not self.run_flg:  # 强制中断情况下的动作
                     # 强制中断则打开终点开关，关闭闸门，关闭弹射
+                    action_area[1] = 0
                     self.background_state = False
                     self.ready_state = False
                     self.end_state = False
@@ -3757,6 +3759,7 @@ class PlanCmdThread(QThread):
                     self.signal.emit(succeed("运动流程：中断！"))
                 if ui.checkBox_test.isChecked():
                     self.signal.emit(succeed("测试流程：完成！"))
+                    action_area[1] = 0
                     self.background_state = False
                     self.ready_state = False
                     self.end_state = False
@@ -3786,6 +3789,7 @@ class PlanCmdThread(QThread):
                 print('动作已完成！')
                 if not flg_start['card']:
                     self.signal.emit(fail("运动卡未链接！"))
+                action_area[1] = 0
                 self.background_state = False
                 self.ready_state = False
                 self.end_state = False
@@ -4624,6 +4628,8 @@ def cmd_next():
 
 # 关闭动作循环
 def cmd_stop():
+    global action_area
+    action_area[1] = 0
     PlanCmd_Thread.run_flg = False  # 停止运动
     PlanCmd_Thread.background_state = False
     PlanCmd_Thread.end_state = False
