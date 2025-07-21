@@ -702,24 +702,14 @@ def set_color(array_temp_, color_num=2):
     return array_temp_
 
 
-def deal_rank_two_color(integration_qiu_array, cam_num):
+def deal_rank_two_color(integration_qiu_array):
     global ranking_array
     global array_temp
     global ball_sort
     global update_two_time
-    if (len(array_temp) < balls_count
-            and cam_num not in {item[4] for item in array_temp}):
-        update_two_time = time.time()
-        for q_item in integration_qiu_array:
-            color_num = len([a_item for a_item in array_temp if q_item[5] == a_item[5]])
-            if color_num < balls_count / 2:
-                array_temp.append(q_item)
-                if len(array_temp) >= balls_count:
-                    break
+    array_temp = copy.deepcopy(integration_qiu_array)
     # print('array_temp:', array_temp)
-    if (len(array_temp) >= balls_count
-            # or time.time() - update_two_time > 0.5
-    ):
+    if len(array_temp) >= balls_count:
         # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
         array_temp.sort(key=lambda x: x[6], reverse=True)
         array_temp = set_color(array_temp)
@@ -1295,9 +1285,7 @@ class DealUdpThread(QThread):
                 array_data = filter_max_value(array_data)  # 非双色则开启同色过滤
             if not array_data or len(array_data) < 1:
                 continue
-            for i in range(len(array_data)):
-                cam_num = array_data[i][6]
-                array_data[i] = copy.deepcopy(deal_area_simple(array_data[i], cam_num))
+            array_data = deal_area_simple(array_data)
             # cam_num = array_data[0][6]
             # array_data = deal_area(array_data, cam_num)  # 收集统计区域内的球
             if not array_data or len(array_data) < 1:
@@ -1310,7 +1298,7 @@ class DealUdpThread(QThread):
                 continue
             # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
             if ui.checkBox_Two_Color.isChecked():
-                deal_rank_two_color(array_data, cam_num)
+                deal_rank_two_color(array_data)
             else:
                 deal_rank(array_data)
             if ball_sort and balls_start != len(ball_sort[1][0]):
@@ -1429,39 +1417,48 @@ def load_area():  # 载入位置文件初始化区域列表
     print(area_Code)
 
 
-def deal_area_simple(ball, cap_num):  # 找出该摄像头内所有球的区域
-    if len(ball) < 9:
-        for i in range(8, len(ball) - 1, -1):
-            ball.append(0)
-    # x = (ball[0] + ball[2]) / 2
-    # y = (ball[1] + ball[3]) / 2
-    x = ball[0]
-    y = ball[1]
-    point = (x, y)
-    if cap_num in area_Code.keys():
-        for area in area_Code[cap_num]:
-            if (map_label_big and map_label_big.map_action and map_label_big.path_points
-                    and area['area_code'] == 1  # 防止起点和终点区域冲突
-                    and ui.checkBox_end_2.isChecked()
-                    and map_label_big.map_action >
-                    len(map_label_big.path_points[0]) * 0.2):
-                continue
-            if (map_label_big and map_label_big.map_action and map_label_big.path_points
-                    and area['area_code'] > max_area_count - balls_count  # 防止起点和终点区域冲突
-                    and ui.checkBox_end_2.isChecked()
-                    and map_label_big.map_action <
-                    len(map_label_big.path_points[0]) * 0.2):
-                continue
-            pts = np.array(area['coordinates'], np.int32)
-            res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
-            if res > -1 and len(ball) >= 9:
-                ball[2] = 0  # 把X2位置修改为第二圈计数
-                ball[3] = 0  # 把Y2位置修改为第三圈计数
-                ball[4] = cap_num  # 把置信度位置修改为镜头号码
-                ball[6] = area['area_code']
-                ball[7] = area['direction']
-                ball[8] = area['road_path']  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向,路线
-    return ball  # [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
+def deal_area_simple(ball_array):  # 找出该摄像头内所有球的区域
+    ball_area_array = []
+    if len(ball_array) < 1:
+        return
+    for ball in ball_array:
+        # print(ball)
+        if ball[4] < 0.05 or ball[6] == '':  # 置信度小于 0.45 的数据不处理
+            continue
+        if len(ball) < 9:
+            for i in range(8, len(ball) - 1, -1):
+                ball.append(0)
+        # x = (ball[0] + ball[2]) / 2
+        # y = (ball[1] + ball[3]) / 2
+        x = ball[0]
+        y = ball[1]
+        point = (x, y)
+        cap_num = int(ball[6])
+        if cap_num in area_Code.keys():
+            for area in area_Code[cap_num]:
+                if (map_label_big and map_label_big.map_action and map_label_big.path_points
+                        and area['area_code'] == 1  # 防止起点和终点区域冲突
+                        and ui.checkBox_end_2.isChecked()
+                        and map_label_big.map_action >
+                        len(map_label_big.path_points[0]) * 0.2):
+                    continue
+                if (map_label_big and map_label_big.map_action and map_label_big.path_points
+                        and area['area_code'] > max_area_count - balls_count  # 防止起点和终点区域冲突
+                        and ui.checkBox_end_2.isChecked()
+                        and map_label_big.map_action <
+                        len(map_label_big.path_points[0]) * 0.2):
+                    continue
+                pts = np.array(area['coordinates'], np.int32)
+                res = cv2.pointPolygonTest(pts, point, False)  # -1=在外部,0=在线上，1=在内部
+                if res > -1 and len(ball) >= 9:
+                    ball[2] = 0  # 把X2位置修改为第二圈计数
+                    ball[3] = 0  # 把Y2位置修改为第三圈计数
+                    ball[4] = cap_num  # 把置信度位置修改为镜头号码
+                    ball[6] = area['area_code']
+                    ball[7] = area['direction']
+                    ball[8] = area['road_path']
+                    ball_area_array.append(copy.deepcopy(ball))  # ball结构：x1,y1,x2,y2,置信度,球名,区域号,方向,路线
+    return ball_area_array  # ball_area_array = [[x1,y1,x2,y2,置信度,球名,区域号,方向]]
 
 
 def deal_area(ball_array, cap_num):  # 找出该摄像头内所有球的区域
