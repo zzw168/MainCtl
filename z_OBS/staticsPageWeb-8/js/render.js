@@ -103,11 +103,10 @@ $("#wrap").html(`
         </div>
      </div>
     <div id="coutDown" class="flex-box center animate__animated  animate__bounceInUp ballNum${qius}">
-               <img id="next"  src="./assets/next.png" alt="" />
-             <div class="clock"  id="clock">
-            </div>
-              <div class="weihu" style="display:none">${'赛道维护'}</div>
-            </div>
+             <img id="next"  src="./assets/next.png" alt="" />
+             <div class="clock"  id="clock"></div>
+             <div class="weihu" style="display:none">${'赛道维护'}</div>
+    </div>
 `)
 //    <img class=" fon2Img" src="./assets/fon2.png" alt="" />
 $(_=>{
@@ -133,7 +132,7 @@ if(i<qius){
          ">
 
                 <div class="box-left flip-card-front center flex-box center" >
-                ${i<=2?'<img src="./assets/t'+(i+1)+'.png" alt="" />':''}
+                    ${i<=2?'<img src="./assets/t'+(i+1)+'.png" alt="" />':''}
                 </div>
                 <div class="box-right flip-card-back flex-box between">
                     <div class="ball  center  flex-box animate__animated flex">
