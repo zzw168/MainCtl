@@ -2027,9 +2027,9 @@ class ReStartThread(QThread):
                             temp = []
                             for index in range(balls_count):
                                 if z_ranking_res[index] < 5:
-                                    temp.append(1)
+                                    temp.append(3)
                                 else:
-                                    temp.append(2)
+                                    temp.append(6)
                             pos = str(temp)
                         else:
                             pos = str(z_ranking_res[:balls_count])
@@ -2731,9 +2731,9 @@ class ObsEndThread(QThread):
                     temp = []
                     for index in range(balls_count):
                         if z_ranking_end[index] < 5:
-                            temp.append(1)
+                            temp.append(3)
                         else:
-                            temp.append(2)
+                            temp.append(6)
                     pos = temp
                 else:
                     pos = z_ranking_end[0:balls_count]
@@ -5340,9 +5340,9 @@ class MapLabel(QLabel):
                     balls_ranking_time[i] = z_end_time[i]
                 if ui.checkBox_Two_Color.isChecked():
                     if self.positions[i][2] < 5:
-                        pos = 1
+                        pos = 3
                     else:
-                        pos = 2
+                        pos = 6
                 else:
                     pos = self.positions[i][2]
                 res.append(
