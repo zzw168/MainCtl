@@ -2410,12 +2410,20 @@ class PlanBallNumThread(QThread):
                                 if z_ranking_time[i] in ['TRAP', 'OUT', '']:
                                     # if z_ranking_time[i] in ['']:
                                     z_ranking_time[i] = '%.2f' % end_t
-                                if lapTimes[1][i] == 0:
-                                    lapTimes[1][i] = round(end_t, 2)
-                                    lapTimes_thread[1][i] = threading.Thread(target=post_lap_time,
-                                                                             args=(i + 21, lapTimes[1][i]),
-                                                                             daemon=True)
-                                    lapTimes_thread[1][i].start()
+                                if max_lap_count == 1:
+                                    if lapTimes[0][i] == 0:
+                                        lapTimes[0][i] = round(end_t, 2)
+                                        lapTimes_thread[0][i] = threading.Thread(target=post_lap_time,
+                                                                                 args=(i + 1, lapTimes[1][i]),
+                                                                                 daemon=True)
+                                        lapTimes_thread[0][i].start()
+                                else:
+                                    if lapTimes[1][i] == 0:
+                                        lapTimes[1][i] = round(end_t, 2)
+                                        lapTimes_thread[1][i] = threading.Thread(target=post_lap_time,
+                                                                                 args=(i + 21, lapTimes[1][i]),
+                                                                                 daemon=True)
+                                        lapTimes_thread[1][i].start()
 
                             if self.balls_num == 1:
                                 betting_end_time = int(time.time())
