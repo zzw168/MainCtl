@@ -1944,7 +1944,8 @@ class ReStartThread(QThread):
             time.sleep(1)
             if ball_stop_time != 0:
                 self.signal.emit('卡珠倒数')
-            if not self.run_flg:
+            if not self.run_flg or ui.radioButton_stop_betting.isChecked():
+                self.run_flg = False
                 continue
             action_area = [0, 0, 0]  # 初始化触发区域
             ready_flg = True  # 准备动作开启信号
@@ -6909,9 +6910,10 @@ def start_game():  # OBS黑屏
             Kaj789_Thread.run_type = 'post_start'
             Kaj789_Thread.run_flg = True
     else:
-        if not Kaj789_Thread.run_flg:
-            Kaj789_Thread.run_type = 'post_stop'
-            Kaj789_Thread.run_flg = True
+        while Kaj789_Thread.run_flg:
+            time.sleep(1)
+        Kaj789_Thread.run_type = 'post_stop'
+        Kaj789_Thread.run_flg = True
 
 
 def organ_shoot():  # 弹射开关
@@ -7117,8 +7119,7 @@ def stop_betting():
         else:
             ui.radioButton_start_betting.setChecked(True)
             return
-    while Kaj789_Thread.run_flg:
-        time.sleep(1)
+    ReStart_Thread.run_flg = False
     betting_loop_flg = False
 
 
