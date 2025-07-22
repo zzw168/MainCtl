@@ -5313,7 +5313,7 @@ class MapLabel(QLabel):
                 "timestampMs": int(time.time() * 1000),
                 "result": res
             }
-            print(res)
+            # print(res)
 
         # 保留卡珠位置
         if ObsEnd_Thread.ball_flg and ObsEnd_Thread.screen_flg:
@@ -6898,13 +6898,15 @@ def maintain_screen():  # OBS维护
 
 def start_game():  # OBS黑屏
     if ui.checkBox_start_game.isChecked():
-        if not Kaj789_Thread.run_flg:
-            Kaj789_Thread.run_type = 'post_start'
-            Kaj789_Thread.run_flg = True
+        print('on')
+        # if not Kaj789_Thread.run_flg:
+        #     Kaj789_Thread.run_type = 'post_start'
+        #     Kaj789_Thread.run_flg = True
     else:
-        if not Kaj789_Thread.run_flg:
-            Kaj789_Thread.run_type = 'post_stop'
-            Kaj789_Thread.run_flg = True
+        print('off')
+        # if not Kaj789_Thread.run_flg:
+        #     Kaj789_Thread.run_type = 'post_stop'
+        #     Kaj789_Thread.run_flg = True
 
 
 def organ_shoot():  # 弹射开关
