@@ -4699,7 +4699,7 @@ def card_close_all():
 
 def end_all():
     global axis_reset
-    res = QMessageBox.warning(z_window, '提示', '是否关闭直播，和所有机关！',
+    res = QMessageBox.warning(z_window, '提示', '是否封盘，关闭直播，和所有机关！',
                               QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes)
     print(res)
     if res == QMessageBox.Yes:
@@ -4710,6 +4710,10 @@ def end_all():
                 sc.GASetExtDoBit(index, 0)
         if flg_start['live']:
             cl_request.stop_stream()
+        while Kaj789_Thread.run_flg:
+            time.sleep(1)
+        Kaj789_Thread.run_type = 'post_stop'
+        Kaj789_Thread.run_flg = True
 
 
 def card_on_off_all():
@@ -6898,15 +6902,13 @@ def maintain_screen():  # OBS维护
 
 def start_game():  # OBS黑屏
     if ui.checkBox_start_game.isChecked():
-        print('on')
-        # if not Kaj789_Thread.run_flg:
-        #     Kaj789_Thread.run_type = 'post_start'
-        #     Kaj789_Thread.run_flg = True
+        if not Kaj789_Thread.run_flg:
+            Kaj789_Thread.run_type = 'post_start'
+            Kaj789_Thread.run_flg = True
     else:
-        print('off')
-        # if not Kaj789_Thread.run_flg:
-        #     Kaj789_Thread.run_type = 'post_stop'
-        #     Kaj789_Thread.run_flg = True
+        if not Kaj789_Thread.run_flg:
+            Kaj789_Thread.run_type = 'post_stop'
+            Kaj789_Thread.run_flg = True
 
 
 def organ_shoot():  # 弹射开关
