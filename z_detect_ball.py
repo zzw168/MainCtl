@@ -125,7 +125,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
             qiu_rank = []
             for i in range(len(qiu_array)):
-                if qiu_array[i][5] not in qiu_rank:
+                if (qiu_array[i][5] not in qiu_rank
+                        and post_data['CameraType'][1] != 'Two_Color'):
                     qiu_rank.append(qiu_array[i][5])
             qiu_rank = json.dumps(qiu_rank)
             print(qiu_rank)

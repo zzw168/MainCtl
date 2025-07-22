@@ -213,9 +213,9 @@
                  </widget>
                 </item>
                 <item row="3" column="0">
-                 <widget class="QCheckBox" name="checkBox_black_screen">
+                 <widget class="QCheckBox" name="checkBox_start_game">
                   <property name="text">
-                   <string>黑屏</string>
+                   <string>开赛</string>
                   </property>
                  </widget>
                 </item>

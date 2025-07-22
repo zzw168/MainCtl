@@ -683,10 +683,29 @@ def deal_action():
         action_area[0] = int(ranking_array[0][6])  # 触发区域
 
 
+def set_camera_color(array_temp_, color_num=2):
+    color_two = [[], []]  # 第一种颜色，第二种颜色
+    color_set = [[init_array[0][5], init_array[1][5], init_array[2][5]],
+                 [init_array[3][5], init_array[4][5], init_array[5][5]]]
+    for i in range(len(array_temp_)):
+        if array_temp_[i] == init_array[color_num][5]:
+            color_two[0].append(i)
+        else:
+            color_two[1].append(i)
+    # if len(color_two[0]) >= int(balls_count / 2):
+    for i in range(len(color_two[0])):  # 着色
+        # print('color_two:', color_two)
+        # print('ranking_temp:', ranking_temp)
+        array_temp_[color_two[0][i]] = color_set[0][i]
+    for i in range(len(color_two[1])):
+        array_temp_[color_two[1][i]] = color_set[1][i]
+    return array_temp_
+
+
 def set_color(array_temp_, color_num=2):
     color_two = [[], []]  # 第一种颜色，第二种颜色
-    color_set = [[init_array[0][5], [init_array[1][5]], [init_array[2][5]]],
-                 [init_array[3][5], [init_array[4][5]], [init_array[5][5]]]]
+    color_set = [[init_array[0][5], init_array[1][5], init_array[2][5]],
+                 [init_array[3][5], init_array[4][5], init_array[5][5]]]
     for i in range(len(array_temp_)):
         if array_temp_[i][5] == init_array[color_num][5]:
             color_two[0].append(i)
@@ -1298,7 +1317,8 @@ class DealUdpThread(QThread):
                 continue
             # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
             if ui.checkBox_Two_Color.isChecked():
-                deal_rank_two_color(array_data)
+                # deal_rank_two_color(array_data)
+                deal_rank(array_data)
             else:
                 deal_rank(array_data)
             if ball_sort and balls_start != len(ball_sort[1][0]):
@@ -2892,12 +2912,18 @@ class ScreenShotThread(QThread):
             obs_res = get_obs(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])
+                if ui.checkBox_Two_Color.isChecked():
+                    print('obs_list:', obs_list)
+                    obs_list = set_camera_color(obs_list)
+                    print('obs_end:', obs_list)
                 main_Camera = camera_to_num(obs_list)
                 self.signal.emit(obs_res)
 
             rtsp_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
             if rtsp_res:
                 rtsp_list = eval(rtsp_res[1])
+                if ui.checkBox_Two_Color.isChecked():
+                    rtsp_list = set_camera_color(rtsp_list)
                 monitor_Camera = camera_to_num(rtsp_list)
                 self.signal.emit(rtsp_res)
 
@@ -3089,6 +3115,8 @@ class ObsShotThread(QThread):
             obs_res = get_obs(ui.lineEdit_source_end.text())  # 拍摄来源
             if obs_res:
                 obs_list = eval(obs_res[1])
+                if ui.checkBox_Two_Color.isChecked():
+                    obs_list = set_camera_color(obs_list)
                 camera_list = copy.deepcopy(obs_list)
                 obs_num = len(obs_list)
                 if obs_num > 2 and ranking_array[0][6] != 1:
@@ -6868,21 +6896,15 @@ def maintain_screen():  # OBS维护
             flg_start['obs'] = False
 
 
-def black_screen():  # OBS黑屏
-    if ui.checkBox_black_screen.isChecked() and flg_start['obs']:
-        try:
-            cl_request.set_current_program_scene('黑屏')
-        except:
-            print('obs 黑屏 错误！')
-            ui.textBrowser_msg.append(fail('obs 黑屏 错误！'))
-            flg_start['obs'] = False
+def start_game():  # OBS黑屏
+    if ui.checkBox_start_game.isChecked():
+        if not Kaj789_Thread.run_flg:
+            Kaj789_Thread.run_type = 'post_start'
+            Kaj789_Thread.run_flg = True
     else:
-        try:
-            cl_request.set_current_program_scene(obs_data['obs_scene'])
-        except:
-            print('obs %s 错误！' % obs_data['obs_scene'])
-            ui.textBrowser_msg.append(fail('obs %s 错误！' % obs_data['obs_scene']))
-            flg_start['obs'] = False
+        if not Kaj789_Thread.run_flg:
+            Kaj789_Thread.run_type = 'post_stop'
+            Kaj789_Thread.run_flg = True
 
 
 def organ_shoot():  # 弹射开关
@@ -7060,9 +7082,7 @@ def send_result():
 
 
 def start_betting():
-    if not Kaj789_Thread.run_flg:
-        Kaj789_Thread.run_type = 'post_start'
-        Kaj789_Thread.run_flg = True
+    pass
 
 
 def stop_betting():
@@ -7093,8 +7113,6 @@ def stop_betting():
     while Kaj789_Thread.run_flg:
         time.sleep(1)
     betting_loop_flg = False
-    Kaj789_Thread.run_type = 'post_stop'
-    Kaj789_Thread.run_flg = True
 
 
 def test_betting():
@@ -8542,7 +8560,7 @@ if __name__ == '__main__':
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
     ui.radioButton_test_game.clicked.connect(test_betting)  # 模拟
-    ui.checkBox_black_screen.checkStateChanged.connect(black_screen)
+    ui.checkBox_start_game.checkStateChanged.connect(start_game)    # 发送开盘信号
     ui.checkBox_maintain.checkStateChanged.connect(maintain_screen)
 
     ui.pushButton_close_all.clicked.connect(card_close_all)

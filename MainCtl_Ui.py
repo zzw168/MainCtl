@@ -124,10 +124,10 @@ class Ui_MainWindow(object):
 
         self.gridLayout_9.addWidget(self.radioButton_test_game, 2, 0, 1, 1)
 
-        self.checkBox_black_screen = QCheckBox(self.groupBox)
-        self.checkBox_black_screen.setObjectName(u"checkBox_black_screen")
+        self.checkBox_start_game = QCheckBox(self.groupBox)
+        self.checkBox_start_game.setObjectName(u"checkBox_start_game")
 
-        self.gridLayout_9.addWidget(self.checkBox_black_screen, 3, 0, 1, 1)
+        self.gridLayout_9.addWidget(self.checkBox_start_game, 3, 0, 1, 1)
 
 
         self.gridLayout_12.addWidget(self.groupBox, 0, 0, 3, 1)
@@ -3835,7 +3835,7 @@ class Ui_MainWindow(object):
         self.radioButton_start_betting.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u76d8", None))
         self.radioButton_stop_betting.setText(QCoreApplication.translate("MainWindow", u"\u5c01\u76d8", None))
         self.radioButton_test_game.setText(QCoreApplication.translate("MainWindow", u"\u6a21\u62df", None))
-        self.checkBox_black_screen.setText(QCoreApplication.translate("MainWindow", u"\u9ed1\u5c4f", None))
+        self.checkBox_start_game.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u8d5b", None))
         self.groupBox_status.setTitle(QCoreApplication.translate("MainWindow", u"\u72b6\u60011", None))
         self.status_live.setText(QCoreApplication.translate("MainWindow", u"\u76f4\u64ad\u72b6\u6001", None))
         self.status_road.setText(QCoreApplication.translate("MainWindow", u"\u8d5b\u9053\u72b6\u6001", None))
