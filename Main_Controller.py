@@ -2405,7 +2405,7 @@ class PlanBallNumThread(QThread):
                                     if lapTimes[0][i] == 0:
                                         lapTimes[0][i] = round(end_t, 2)
                                         lapTimes_thread[0][i] = threading.Thread(target=post_lap_time,
-                                                                                 args=(i + 1, lapTimes[1][i]),
+                                                                                 args=(i + 1, lapTimes[0][i]),
                                                                                  daemon=True)
                                         lapTimes_thread[0][i].start()
                                 else:
