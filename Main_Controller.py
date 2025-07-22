@@ -758,15 +758,6 @@ def deal_rank(integration_qiu_array):
                                 6] < max_area_count + 1)):  # 处理圈数（上一次位置，和当前位置的差值大于等于12为一圈）
                     result_count = ranking_temp[r_index][6] - q_item[6]
                     if result_count >= max_area_count - area_limit - balls_count:
-                        if (ranking_temp[r_index][9] == 0  # 第0圈
-                                and lapTimes[0][r_index] == 0):
-                            lapTimes[0][r_index] = round(time.time() - ranking_time_start, 2)
-                            lapTimes_thread[0][r_index] = threading.Thread(target=post_lapTime,
-                                                                           args=(
-                                                                               term, r_index + 1, lapTimes[0][r_index],
-                                                                               Track_number),
-                                                                           daemon=True)
-                            lapTimes_thread[0][r_index].start()
                         if r_index == 0:
                             for i in range(len(ranking_temp)):
                                 ranking_check[ranking_temp[i][5]] = [-1, -1]  # 换圈复位记号
