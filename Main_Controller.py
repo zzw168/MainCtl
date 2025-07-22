@@ -2859,7 +2859,7 @@ def ObsEndsignal_accept(msg):
         if not betting_loop_flg:
             ui.radioButton_stop_betting.click()  # 封盘
             if ui.checkBox_end_BlackScreen.isChecked():
-                ui.checkBox_black_screen.click()
+                pass
         ui.checkBox_main_music.setChecked(False)
         ui.lineEdit_balls_start.setText('0')
         ui.lineEdit_ball_start.setText('0')
