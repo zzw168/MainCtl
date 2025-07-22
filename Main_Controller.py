@@ -2011,7 +2011,7 @@ class ReStartThread(QThread):
                     ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
-                if  not ui.checkBox_start_game.isChecked():
+                if not ui.checkBox_start_game.isChecked():
                     self.signal.emit(fail('请先开赛！'))
                     self.run_flg = False
                     continue
@@ -2023,11 +2023,21 @@ class ReStartThread(QThread):
                         term = response['term']
                         betting_start_time = response['scheduledGameStartTime']
                         betting_end_time = response['scheduledResultOpeningTime']
+                        if ui.checkBox_Two_Color.isChecked():
+                            temp = []
+                            for index in range(balls_count):
+                                if z_ranking_res[index] < 5:
+                                    temp.append(1)
+                                else:
+                                    temp.append(2)
+                            pos = str(temp)
+                        else:
+                            pos = str(z_ranking_res[:balls_count])
                         self.countdown = int(betting_start_time) - int(time.time())
                         self.signal.emit('term_ok')
                         for j in range(3):
                             res_start = post_start(term=term, betting_start_time=betting_start_time,
-                                                   starting_Position=str(z_ranking_res[:balls_count])[1:-1],
+                                                   starting_Position=pos[1:-1],
                                                    Track_number=Track_number)  # 发送开始信号给服务器
                             if str(res_start) == 'OK':
                                 break
@@ -2717,20 +2727,30 @@ class ObsEndThread(QThread):
 
             # lottery_term[3] = '已结束'  # 新一期比赛的状态（0.已结束）
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
+                if ui.checkBox_Two_Color.isChecked():
+                    temp = []
+                    for index in range(balls_count):
+                        if z_ranking_end[index] < 5:
+                            temp.append(1)
+                        else:
+                            temp.append(2)
+                    pos = temp
+                else:
+                    pos = z_ranking_end[0:balls_count]
                 result_data = {"raceTrackID": Track_number, "term": str(term),
                                "actualResultOpeningTime": betting_end_time,
-                               "result": z_ranking_end[0:balls_count],
+                               "result": pos,
                                "timings": "[]",
                                "lapTime": abs(lapTimes[0][0])}
                 data_temp = []
                 for index in range(balls_count):
                     if is_natural_num(z_ranking_time[index]):
                         data_temp.append(
-                            {"pm": index + 1, "id": z_ranking_end[index],
+                            {"pm": index + 1, "id": pos[index],
                              "time": float(z_ranking_time[index])})
                     else:
                         data_temp.append(
-                            {"pm": index + 1, "id": z_ranking_end[index],
+                            {"pm": index + 1, "id": pos[index],
                              "time": z_ranking_time[index]})
                 result_data["timings"] = json.dumps(data_temp)
                 lottery_term[12] = json.dumps(result_data)
@@ -5318,8 +5338,15 @@ class MapLabel(QLabel):
                     balls_ranking_time[i] = int((time.time() - ranking_time_start) * 1000)
                 if b >= 99.99 and z_end_time[i] != 0:
                     balls_ranking_time[i] = z_end_time[i]
+                if ui.checkBox_Two_Color.isChecked():
+                    if self.positions[i][2] < 5:
+                        pos = 1
+                    else:
+                        pos = 2
+                else:
+                    pos = self.positions[i][2]
                 res.append(
-                    {"pm": i + 1, "id": self.positions[i][2], "x": int(x), "y": int(y), "bFloat": b,
+                    {"pm": i + 1, "id": pos, "x": int(x), "y": int(y), "bFloat": b,
                      "b": int(b), "t": balls_ranking_time[i], "final": balls_final[i]})
             positions_live = {
                 "raceTrackID": Track_number,
@@ -8574,7 +8601,7 @@ if __name__ == '__main__':
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
     ui.radioButton_test_game.clicked.connect(test_betting)  # 模拟
-    ui.checkBox_start_game.checkStateChanged.connect(start_game)    # 发送开盘信号
+    ui.checkBox_start_game.checkStateChanged.connect(start_game)  # 发送开盘信号
     ui.checkBox_maintain.checkStateChanged.connect(maintain_screen)
 
     ui.pushButton_close_all.clicked.connect(card_close_all)
