@@ -5099,13 +5099,18 @@ class MapLabel(QLabel):
         self.setMaximumSize(picture_size, picture_size)
         self.setPixmap(pixmap)
         self.setScaledContents(True)
-
-        self.color_names = {'red': QColor(255, 0, 0), 'green': QColor(0, 255, 0), 'blue': QColor(0, 0, 255),
-                            'pink': QColor(255, 0, 255), 'yellow': QColor(255, 255, 0), 'black': QColor(0, 0, 0),
-                            'purple': QColor(128, 0, 128), 'orange': QColor(255, 165, 0),
-                            'White': QColor(248, 248, 255),
-                            'Brown': QColor(139, 69, 19)}
-
+        if ui.checkBox_Two_Color.isChecked():
+            self.color_names = {'red': QColor(255, 0, 0), 'green': QColor(0, 255, 0), 'blue': QColor(255, 0, 0),
+                                'pink': QColor(0, 255, 0), 'yellow': QColor(255, 0, 0), 'black': QColor(0, 255, 0),
+                                'purple': QColor(255, 0, 0), 'orange': QColor(255, 0, 0),
+                                'White': QColor(0, 255, 0),
+                                'Brown': QColor(0, 255, 0)}
+        else:
+            self.color_names = {'red': QColor(255, 0, 0), 'green': QColor(0, 255, 0), 'blue': QColor(0, 0, 255),
+                                'pink': QColor(255, 0, 255), 'yellow': QColor(255, 255, 0), 'black': QColor(0, 0, 0),
+                                'purple': QColor(128, 0, 128), 'orange': QColor(255, 165, 0),
+                                'White': QColor(248, 248, 255),
+                                'Brown': QColor(139, 69, 19)}
         self.path_points = []
         self.path_direction = []
         if os.path.exists(map_data[1]):
@@ -6904,7 +6909,7 @@ def maintain_screen():  # OBS维护
             flg_start['obs'] = False
 
 
-def start_game():  # OBS黑屏
+def start_game():  # 开盘信号
     if ui.checkBox_start_game.isChecked():
         if not Kaj789_Thread.run_flg:
             Kaj789_Thread.run_type = 'post_start'
