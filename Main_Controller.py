@@ -2010,6 +2010,9 @@ class ReStartThread(QThread):
                     ball_sort[1][0] = []
             time.sleep(1)  # 有充足时间重新排名
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
+                if  not ui.checkBox_start_game.isChecked():
+                    self.signal.emit(fail('请先开赛！'))
+                    continue
                 for i in range(3):
                     response = get_term(Track_number)
                     if (isinstance(response, dict)
