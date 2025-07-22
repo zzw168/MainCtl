@@ -2013,6 +2013,7 @@ class ReStartThread(QThread):
             if ui.radioButton_start_betting.isChecked():  # 开盘模式
                 if  not ui.checkBox_start_game.isChecked():
                     self.signal.emit(fail('请先开赛！'))
+                    self.run_flg = False
                     continue
                 for i in range(3):
                     response = get_term(Track_number)
