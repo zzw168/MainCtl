@@ -3214,6 +3214,19 @@ class Ui_MainWindow(object):
 
         self.gridLayout_38.addWidget(self.checkBox_Two_Color, 0, 0, 1, 1)
 
+        self.frame_25 = QFrame(self.groupBox_balls)
+        self.frame_25.setObjectName(u"frame_25")
+        self.frame_25.setMinimumSize(QSize(130, 0))
+        self.frame_25.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_25.setFrameShadow(QFrame.Shadow.Raised)
+
+        self.gridLayout_38.addWidget(self.frame_25, 0, 3, 1, 3)
+
+        self.pushButton_Save_Ball = QPushButton(self.groupBox_balls)
+        self.pushButton_Save_Ball.setObjectName(u"pushButton_Save_Ball")
+
+        self.gridLayout_38.addWidget(self.pushButton_Save_Ball, 0, 9, 1, 1)
+
         self.groupBox_15 = QGroupBox(self.groupBox_balls)
         self.groupBox_15.setObjectName(u"groupBox_15")
         self.groupBox_15.setMaximumSize(QSize(600, 600))
@@ -3608,19 +3621,6 @@ class Ui_MainWindow(object):
         self.lineEdit_balls_count.setReadOnly(False)
 
         self.gridLayout_38.addWidget(self.lineEdit_balls_count, 0, 7, 1, 1)
-
-        self.frame_25 = QFrame(self.groupBox_balls)
-        self.frame_25.setObjectName(u"frame_25")
-        self.frame_25.setMinimumSize(QSize(10, 0))
-        self.frame_25.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_25.setFrameShadow(QFrame.Shadow.Raised)
-
-        self.gridLayout_38.addWidget(self.frame_25, 0, 3, 1, 3)
-
-        self.pushButton_Save_Ball = QPushButton(self.groupBox_balls)
-        self.pushButton_Save_Ball.setObjectName(u"pushButton_Save_Ball")
-
-        self.gridLayout_38.addWidget(self.pushButton_Save_Ball, 0, 9, 1, 1)
 
 
         self.gridLayout_51.addWidget(self.groupBox_balls, 3, 0, 1, 1)
@@ -4451,6 +4451,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_color_one.setText(QCoreApplication.translate("MainWindow", u"red", None))
         self.checkBox_Two_Color.setText(QCoreApplication.translate("MainWindow", u"\u53cc\u8272   ", None))
+        self.pushButton_Save_Ball.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u5f39\u73e0", None))
         self.groupBox_15.setTitle(QCoreApplication.translate("MainWindow", u"\u989c\u8272\u53f7\u7801\u8bbe\u7f6e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_Color_Ch_10.setToolTip("")
@@ -4597,7 +4598,6 @@ class Ui_MainWindow(object):
         self.lineEdit_balls_count.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_balls_count.setText(QCoreApplication.translate("MainWindow", u"8", None))
-        self.pushButton_Save_Ball.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u5f39\u73e0", None))
         self.groupBox_27.setTitle(QCoreApplication.translate("MainWindow", u"\u8f85\u52a9\u63a7\u5236", None))
         self.groupBox_20.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u5934\u5f55\u56fe\u64cd\u4f5c", None))
         self.checkBox_saveImgs_monitor.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc\u6444\u50cf\u5934", None))

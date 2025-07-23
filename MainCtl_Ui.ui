@@ -8179,6 +8179,29 @@
                   </property>
                  </widget>
                 </item>
+                <item row="0" column="3" colspan="3">
+                 <widget class="QFrame" name="frame_25">
+                  <property name="minimumSize">
+                   <size>
+                    <width>130</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="frameShape">
+                   <enum>QFrame::Shape::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Shadow::Raised</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="9">
+                 <widget class="QPushButton" name="pushButton_Save_Ball">
+                  <property name="text">
+                   <string>保存弹珠</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="1" column="0" colspan="10">
                  <widget class="QGroupBox" name="groupBox_15">
                   <property name="maximumSize">
@@ -9397,29 +9420,6 @@
                   </property>
                   <property name="readOnly">
                    <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="3" colspan="3">
-                 <widget class="QFrame" name="frame_25">
-                  <property name="minimumSize">
-                   <size>
-                    <width>10</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::Shape::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Shadow::Raised</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="9">
-                 <widget class="QPushButton" name="pushButton_Save_Ball">
-                  <property name="text">
-                   <string>保存弹珠</string>
                   </property>
                  </widget>
                 </item>
