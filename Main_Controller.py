@@ -2965,7 +2965,7 @@ class ScreenShotThread(QThread):
                 obs_list = eval(obs_res[1])
                 if ui.checkBox_Two_Color.isChecked():
                     print('obs_list:', obs_list)
-                    obs_list = set_camera_color(obs_list)
+                    obs_list = set_camera_color(obs_list, ui.lineEdit_color_one.text())
                     print('obs_end:', obs_list)
                 main_Camera = camera_to_num(obs_list)
                 self.signal.emit(obs_res)
@@ -2981,7 +2981,7 @@ class ScreenShotThread(QThread):
             if rtsp_res:
                 rtsp_list = eval(rtsp_res[1])
                 if ui.checkBox_Two_Color.isChecked():
-                    rtsp_list = set_camera_color(rtsp_list)
+                    rtsp_list = set_camera_color(rtsp_list, ui.lineEdit_color_one.text())
                 monitor_Camera = camera_to_num(rtsp_list)
                 self.signal.emit(rtsp_res)
 
@@ -3182,7 +3182,7 @@ class ObsShotThread(QThread):
             if obs_res:
                 obs_list = eval(obs_res[1])
                 if ui.checkBox_Two_Color.isChecked():
-                    obs_list = set_camera_color(obs_list)
+                    obs_list = set_camera_color(obs_list, ui.lineEdit_color_one.text())
                 camera_list = copy.deepcopy(obs_list)
                 obs_num = len(obs_list)
                 if obs_num > 2 and ranking_array[0][6] != 1:
@@ -4435,6 +4435,7 @@ def save_main_json():
             main_all['five_axis'] = eval(ui.lineEdit_five_axis.text())
             main_all['five_key'] = eval(ui.lineEdit_five_key.text())
             main_all['balls_count'] = ui.lineEdit_balls_count.text()
+            main_all['lineEdit_color_one'] = ui.lineEdit_color_one.text()
             main_all['wakeup_addr'] = eval(ui.lineEdit_wakeup_addr.text())
             main_all['rtsp_url'] = ui.lineEdit_rtsp_url.text()
             main_all['recognition_addr'] = ui.lineEdit_recognition_addr.text()
@@ -4558,6 +4559,7 @@ def load_main_json():
         ui.lineEdit_five_axis.setText(str(main_all['five_axis']))
         ui.lineEdit_five_key.setText(str(main_all['five_key']))
         ui.lineEdit_balls_count.setText(main_all['balls_count'])
+        ui.lineEdit_color_one.setText(main_all['lineEdit_color_one'])
         ui.lineEdit_balls_auto.setText(main_all['balls_count'])
         ui.lineEdit_monitor_sort.setText(main_all['monitor_sort'])
         ui.lineEdit_sony_sort.setText(main_all['sony_sort'])

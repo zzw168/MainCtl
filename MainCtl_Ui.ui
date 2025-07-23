@@ -8110,6 +8110,55 @@
                 <string>弹珠设置</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_38">
+                <item row="0" column="1">
+                 <widget class="QLabel" name="label_77">
+                  <property name="maximumSize">
+                   <size>
+                    <width>40</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>色壹：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="2">
+                 <widget class="QLineEdit" name="lineEdit_color_one">
+                  <property name="maximumSize">
+                   <size>
+                    <width>50</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>red</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
                 <item row="0" column="0">
                  <widget class="QCheckBox" name="checkBox_Two_Color">
                   <property name="maximumSize">
@@ -8130,59 +8179,7 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="11">
-                 <widget class="QPushButton" name="pushButton_Save_Ball">
-                  <property name="text">
-                   <string>保存弹珠</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="9">
-                 <widget class="QLineEdit" name="lineEdit_balls_count">
-                  <property name="maximumSize">
-                   <size>
-                    <width>30</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
-                  <property name="text">
-                   <string>8</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="10">
-                 <widget class="QFrame" name="frame_25">
-                  <property name="minimumSize">
-                   <size>
-                    <width>10</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="frameShape">
-                   <enum>QFrame::Shape::StyledPanel</enum>
-                  </property>
-                  <property name="frameShadow">
-                   <enum>QFrame::Shadow::Raised</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0" colspan="12">
+                <item row="1" column="0" colspan="10">
                  <widget class="QGroupBox" name="groupBox_15">
                   <property name="maximumSize">
                    <size>
@@ -9354,7 +9351,7 @@
                   </layout>
                  </widget>
                 </item>
-                <item row="0" column="8">
+                <item row="0" column="6">
                  <widget class="QLabel" name="label_35">
                   <property name="maximumSize">
                    <size>
@@ -9374,31 +9371,11 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="1">
-                 <widget class="QLabel" name="label_77">
+                <item row="0" column="7">
+                 <widget class="QLineEdit" name="lineEdit_balls_count">
                   <property name="maximumSize">
                    <size>
-                    <width>40</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>色壹：</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="2">
-                 <widget class="QLineEdit" name="lineEdit_color_one">
-                  <property name="maximumSize">
-                   <size>
-                    <width>50</width>
+                    <width>30</width>
                     <height>16777215</height>
                    </size>
                   </property>
@@ -9413,7 +9390,7 @@
                    <string/>
                   </property>
                   <property name="text">
-                   <string>red</string>
+                   <string>8</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -9423,52 +9400,26 @@
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="3">
-                 <widget class="QLabel" name="label_76">
-                  <property name="maximumSize">
+                <item row="0" column="3" colspan="3">
+                 <widget class="QFrame" name="frame_25">
+                  <property name="minimumSize">
                    <size>
-                    <width>40</width>
-                    <height>16777215</height>
+                    <width>10</width>
+                    <height>0</height>
                    </size>
                   </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>false</bold>
-                   </font>
+                  <property name="frameShape">
+                   <enum>QFrame::Shape::StyledPanel</enum>
                   </property>
-                  <property name="text">
-                   <string>色贰：</string>
+                  <property name="frameShadow">
+                   <enum>QFrame::Shadow::Raised</enum>
                   </property>
                  </widget>
                 </item>
-                <item row="0" column="4">
-                 <widget class="QLineEdit" name="lineEdit_color_two">
-                  <property name="maximumSize">
-                   <size>
-                    <width>50</width>
-                    <height>16777215</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>false</bold>
-                   </font>
-                  </property>
-                  <property name="toolTip">
-                   <string/>
-                  </property>
+                <item row="0" column="9">
+                 <widget class="QPushButton" name="pushButton_Save_Ball">
                   <property name="text">
-                   <string>green</string>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignmentFlag::AlignCenter</set>
-                  </property>
-                  <property name="readOnly">
-                   <bool>false</bool>
+                   <string>保存弹珠</string>
                   </property>
                  </widget>
                 </item>
