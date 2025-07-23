@@ -1555,74 +1555,6 @@
                 <string notr="true"/>
                </property>
                <layout class="QGridLayout" name="gridLayout_5">
-                <item row="3" column="2">
-                 <widget class="QPushButton" name="pushButton_Backup_Camera">
-                  <property name="text">
-                   <string>选</string>
-                  </property>
-                  <property name="autoDefault">
-                   <bool>false</bool>
-                  </property>
-                  <property name="default">
-                   <bool>true</bool>
-                  </property>
-                  <property name="flat">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_4">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>主摄像机：  </string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QLineEdit" name="lineEdit_Main_Camera">
-                  <property name="palette">
-                   <palette>
-                    <active/>
-                    <inactive/>
-                    <disabled/>
-                   </palette>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="autoFillBackground">
-                   <bool>false</bool>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true"/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="2">
-                 <widget class="QCheckBox" name="checkBox_Auto_Send">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>自动</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="4" column="0" colspan="2">
                  <widget class="QLineEdit" name="lineEdit_Send_Result">
                   <property name="enabled">
@@ -1650,6 +1582,20 @@
                   </property>
                  </widget>
                 </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_4">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>主摄像机：  </string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="2" column="2">
                  <widget class="QPushButton" name="pushButton_Main_Camera">
                   <property name="text">
@@ -1666,17 +1612,19 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_5">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>12</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
+                <item row="3" column="2">
+                 <widget class="QPushButton" name="pushButton_Backup_Camera">
                   <property name="text">
-                   <string>后备摄像机：</string>
+                   <string>选</string>
+                  </property>
+                  <property name="autoDefault">
+                   <bool>false</bool>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
@@ -1758,6 +1706,54 @@
                   </layout>
                  </widget>
                 </item>
+                <item row="3" column="1">
+                 <widget class="QLineEdit" name="lineEdit_Backup_Camera">
+                  <property name="palette">
+                   <palette>
+                    <active/>
+                    <inactive/>
+                    <disabled/>
+                   </palette>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="lineEdit_Main_Camera">
+                  <property name="palette">
+                   <palette>
+                    <active/>
+                    <inactive/>
+                    <disabled/>
+                   </palette>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="styleSheet">
+                   <string notr="true"/>
+                  </property>
+                 </widget>
+                </item>
                 <item row="1" column="0" colspan="2">
                  <widget class="QPushButton" name="pushButton_term">
                   <property name="minimumSize">
@@ -1790,27 +1786,17 @@
                   </property>
                  </widget>
                 </item>
-                <item row="3" column="1">
-                 <widget class="QLineEdit" name="lineEdit_Backup_Camera">
-                  <property name="palette">
-                   <palette>
-                    <active/>
-                    <inactive/>
-                    <disabled/>
-                   </palette>
-                  </property>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_5">
                   <property name="font">
                    <font>
                     <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
+                    <pointsize>12</pointsize>
                     <bold>true</bold>
                    </font>
                   </property>
-                  <property name="autoFillBackground">
-                   <bool>false</bool>
-                  </property>
-                  <property name="styleSheet">
-                   <string notr="true"/>
+                  <property name="text">
+                   <string>后备摄像机：</string>
                   </property>
                  </widget>
                 </item>
@@ -1825,6 +1811,22 @@
                   </property>
                   <property name="text">
                    <string>结算页</string>
+                  </property>
+                  <property name="autoDefault">
+                   <bool>false</bool>
+                  </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
+                  <property name="flat">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="2">
+                 <widget class="QPushButton" name="pushButton_screenshot">
+                  <property name="text">
+                   <string>识别启动</string>
                   </property>
                   <property name="autoDefault">
                    <bool>false</bool>
