@@ -6976,15 +6976,22 @@ def maintain_screen():  # OBS维护
 
 def start_game():  # 开盘信号
     if ui.checkBox_start_game.isChecked():
-        if not Kaj789_Thread.run_flg:
-            Kaj789_Thread.run_type = 'post_start'
-            Kaj789_Thread.run_flg = True
+        response = messagebox.askquestion("提示", "是否发送开盘信号到前端？")
+        if "yes" in response:
+            if not Kaj789_Thread.run_flg:
+                Kaj789_Thread.run_type = 'post_start'
+                Kaj789_Thread.run_flg = True
+        else:
+            ui.checkBox_start_game.setChecked(not ui.checkBox_start_game.isChecked())
     else:
-        while Kaj789_Thread.run_flg:
-            time.sleep(1)
-        Kaj789_Thread.run_type = 'post_stop'
-        Kaj789_Thread.run_flg = True
-
+        response = messagebox.askquestion("提示", "是否发送封盘信号到前端？")
+        if "yes" in response:
+            while Kaj789_Thread.run_flg:
+                time.sleep(1)
+            Kaj789_Thread.run_type = 'post_stop'
+            Kaj789_Thread.run_flg = True
+        else:
+            ui.checkBox_start_game.setChecked(not ui.checkBox_start_game.isChecked())
 
 def organ_shoot():  # 弹射开关
     if not flg_start['card']:
@@ -7322,7 +7329,8 @@ def test_end():
 
 
 def test_screenshot():
-    ScreenShot_Thread.run_flg = True
+    if not ui.radioButton_start_betting.isChecked():
+        ScreenShot_Thread.run_flg = True
 
 
 def my_def():
@@ -8639,7 +8647,7 @@ if __name__ == '__main__':
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
     ui.radioButton_test_game.clicked.connect(test_betting)  # 模拟
-    ui.checkBox_start_game.checkStateChanged.connect(start_game)  # 发送开盘信号
+    ui.checkBox_start_game.clicked.connect(start_game)  # 发送开盘信号
     ui.checkBox_maintain.checkStateChanged.connect(maintain_screen)
 
     ui.pushButton_close_all.clicked.connect(card_close_all)

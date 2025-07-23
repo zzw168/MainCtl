@@ -1826,7 +1826,7 @@
                 <item row="4" column="2">
                  <widget class="QPushButton" name="pushButton_screenshot">
                   <property name="text">
-                   <string>识别启动</string>
+                   <string>识别测试</string>
                   </property>
                   <property name="autoDefault">
                    <bool>false</bool>

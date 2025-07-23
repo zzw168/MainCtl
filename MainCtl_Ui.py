@@ -3900,7 +3900,7 @@ class Ui_MainWindow(object):
         self.pushButton_term.setText(QCoreApplication.translate("MainWindow", u"\u8d5b\u679c\u786e\u8ba4 \u8bc6\u522b\u72b6\u6001", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u540e\u5907\u6444\u50cf\u673a\uff1a", None))
         self.pushButton_Test_End.setText(QCoreApplication.translate("MainWindow", u"\u7ed3\u7b97\u9875", None))
-        self.pushButton_screenshot.setText(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u542f\u52a8", None))
+        self.pushButton_screenshot.setText(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u6d4b\u8bd5", None))
         self.pushButton_TRAP.setText(QCoreApplication.translate("MainWindow", u"\u5361\u73e0", None))
         self.pushButton_TRAP_1.setText(QCoreApplication.translate("MainWindow", u"1", None))
         self.pushButton_TRAP_2.setText(QCoreApplication.translate("MainWindow", u"2", None))
