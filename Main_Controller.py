@@ -696,12 +696,16 @@ def deal_action():
         action_area[0] = int(ranking_array[0][6])  # 触发区域
 
 
-def set_camera_color(array_temp_, color_num=2):
+def set_camera_color(array_temp_, color_num='red'):
     color_two = [[], []]  # 第一种颜色，第二种颜色
-    color_set = [[init_array[0][5], init_array[1][5], init_array[2][5]],
-                 [init_array[3][5], init_array[4][5], init_array[5][5]]]
+    color_set = [[], []]
+    for i in range(balls_count):
+        if i < balls_count / 2:
+            color_set[0].append(init_array[i][5])
+        else:
+            color_set[1].append(init_array[i][5])
     for i in range(len(array_temp_)):
-        if array_temp_[i] == init_array[color_num][5]:
+        if array_temp_[i] == color_num:
             color_two[0].append(i)
         else:
             color_two[1].append(i)
@@ -6992,6 +6996,7 @@ def start_game():  # 开盘信号
             Kaj789_Thread.run_flg = True
         else:
             ui.checkBox_start_game.setChecked(not ui.checkBox_start_game.isChecked())
+
 
 def organ_shoot():  # 弹射开关
     if not flg_start['card']:
