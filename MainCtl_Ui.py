@@ -3191,19 +3191,34 @@ class Ui_MainWindow(object):
         self.groupBox_balls.setFont(font1)
         self.gridLayout_38 = QGridLayout(self.groupBox_balls)
         self.gridLayout_38.setObjectName(u"gridLayout_38")
-        self.label_35 = QLabel(self.groupBox_balls)
-        self.label_35.setObjectName(u"label_35")
-        self.label_35.setMaximumSize(QSize(80, 16777215))
-        self.label_35.setFont(font7)
-
-        self.gridLayout_38.addWidget(self.label_35, 0, 3, 1, 1)
-
         self.checkBox_Two_Color = QCheckBox(self.groupBox_balls)
         self.checkBox_Two_Color.setObjectName(u"checkBox_Two_Color")
-        self.checkBox_Two_Color.setMaximumSize(QSize(16777215, 16777215))
+        self.checkBox_Two_Color.setMaximumSize(QSize(60, 16777215))
         self.checkBox_Two_Color.setFont(font7)
 
-        self.gridLayout_38.addWidget(self.checkBox_Two_Color, 0, 2, 1, 1)
+        self.gridLayout_38.addWidget(self.checkBox_Two_Color, 0, 0, 1, 1)
+
+        self.pushButton_Save_Ball = QPushButton(self.groupBox_balls)
+        self.pushButton_Save_Ball.setObjectName(u"pushButton_Save_Ball")
+
+        self.gridLayout_38.addWidget(self.pushButton_Save_Ball, 0, 11, 1, 1)
+
+        self.lineEdit_balls_count = QLineEdit(self.groupBox_balls)
+        self.lineEdit_balls_count.setObjectName(u"lineEdit_balls_count")
+        self.lineEdit_balls_count.setMaximumSize(QSize(30, 16777215))
+        self.lineEdit_balls_count.setFont(font6)
+        self.lineEdit_balls_count.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_balls_count.setReadOnly(False)
+
+        self.gridLayout_38.addWidget(self.lineEdit_balls_count, 0, 9, 1, 1)
+
+        self.frame_25 = QFrame(self.groupBox_balls)
+        self.frame_25.setObjectName(u"frame_25")
+        self.frame_25.setMinimumSize(QSize(10, 0))
+        self.frame_25.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_25.setFrameShadow(QFrame.Shadow.Raised)
+
+        self.gridLayout_38.addWidget(self.frame_25, 0, 10, 1, 1)
 
         self.groupBox_15 = QGroupBox(self.groupBox_balls)
         self.groupBox_15.setObjectName(u"groupBox_15")
@@ -3582,28 +3597,46 @@ class Ui_MainWindow(object):
         self.gridLayout_52.addWidget(self.lineEdit_Color_No_10, 10, 0, 1, 1)
 
 
-        self.gridLayout_38.addWidget(self.groupBox_15, 1, 0, 1, 7)
+        self.gridLayout_38.addWidget(self.groupBox_15, 1, 0, 1, 12)
 
-        self.pushButton_Save_Ball = QPushButton(self.groupBox_balls)
-        self.pushButton_Save_Ball.setObjectName(u"pushButton_Save_Ball")
+        self.label_35 = QLabel(self.groupBox_balls)
+        self.label_35.setObjectName(u"label_35")
+        self.label_35.setMaximumSize(QSize(70, 16777215))
+        self.label_35.setFont(font7)
 
-        self.gridLayout_38.addWidget(self.pushButton_Save_Ball, 0, 6, 1, 1)
+        self.gridLayout_38.addWidget(self.label_35, 0, 8, 1, 1)
 
-        self.frame_25 = QFrame(self.groupBox_balls)
-        self.frame_25.setObjectName(u"frame_25")
-        self.frame_25.setMinimumSize(QSize(180, 0))
-        self.frame_25.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_25.setFrameShadow(QFrame.Shadow.Raised)
+        self.label_77 = QLabel(self.groupBox_balls)
+        self.label_77.setObjectName(u"label_77")
+        self.label_77.setMaximumSize(QSize(40, 16777215))
+        self.label_77.setFont(font7)
 
-        self.gridLayout_38.addWidget(self.frame_25, 0, 5, 1, 1)
+        self.gridLayout_38.addWidget(self.label_77, 0, 1, 1, 1)
 
-        self.lineEdit_balls_count = QLineEdit(self.groupBox_balls)
-        self.lineEdit_balls_count.setObjectName(u"lineEdit_balls_count")
-        self.lineEdit_balls_count.setMaximumSize(QSize(50, 16777215))
-        self.lineEdit_balls_count.setFont(font6)
-        self.lineEdit_balls_count.setReadOnly(False)
+        self.lineEdit_color_one = QLineEdit(self.groupBox_balls)
+        self.lineEdit_color_one.setObjectName(u"lineEdit_color_one")
+        self.lineEdit_color_one.setMaximumSize(QSize(50, 16777215))
+        self.lineEdit_color_one.setFont(font6)
+        self.lineEdit_color_one.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_color_one.setReadOnly(False)
 
-        self.gridLayout_38.addWidget(self.lineEdit_balls_count, 0, 4, 1, 1)
+        self.gridLayout_38.addWidget(self.lineEdit_color_one, 0, 2, 1, 1)
+
+        self.label_76 = QLabel(self.groupBox_balls)
+        self.label_76.setObjectName(u"label_76")
+        self.label_76.setMaximumSize(QSize(40, 16777215))
+        self.label_76.setFont(font7)
+
+        self.gridLayout_38.addWidget(self.label_76, 0, 3, 1, 1)
+
+        self.lineEdit_color_two = QLineEdit(self.groupBox_balls)
+        self.lineEdit_color_two.setObjectName(u"lineEdit_color_two")
+        self.lineEdit_color_two.setMaximumSize(QSize(50, 16777215))
+        self.lineEdit_color_two.setFont(font6)
+        self.lineEdit_color_two.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_color_two.setReadOnly(False)
+
+        self.gridLayout_38.addWidget(self.lineEdit_color_two, 0, 4, 1, 1)
 
 
         self.gridLayout_51.addWidget(self.groupBox_balls, 3, 0, 1, 1)
@@ -4428,8 +4461,12 @@ class Ui_MainWindow(object):
         self.lineEdit_recognition_addr.setText(QCoreApplication.translate("MainWindow", u"http://127.0.0.1:6066", None))
         self.label_32.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc\u6444\u50cf\u5934\u7f51\u5740\uff1a", None))
         self.groupBox_balls.setTitle(QCoreApplication.translate("MainWindow", u"\u5f39\u73e0\u8bbe\u7f6e", None))
-        self.label_35.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u73e0\u6570\u91cf\uff1a", None))
         self.checkBox_Two_Color.setText(QCoreApplication.translate("MainWindow", u"\u53cc\u8272   ", None))
+        self.pushButton_Save_Ball.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u5f39\u73e0", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_balls_count.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_balls_count.setText(QCoreApplication.translate("MainWindow", u"8", None))
         self.groupBox_15.setTitle(QCoreApplication.translate("MainWindow", u"\u989c\u8272\u53f7\u7801\u8bbe\u7f6e", None))
 #if QT_CONFIG(tooltip)
         self.lineEdit_Color_Ch_10.setToolTip("")
@@ -4571,11 +4608,17 @@ class Ui_MainWindow(object):
         self.lineEdit_Color_No_10.setToolTip("")
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_Color_No_10.setText(QCoreApplication.translate("MainWindow", u"10", None))
-        self.pushButton_Save_Ball.setText(QCoreApplication.translate("MainWindow", u"\u4fdd\u5b58\u5f39\u73e0", None))
+        self.label_35.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u73e0\u6570\u91cf\uff1a", None))
+        self.label_77.setText(QCoreApplication.translate("MainWindow", u"\u8272\u58f9\uff1a", None))
 #if QT_CONFIG(tooltip)
-        self.lineEdit_balls_count.setToolTip("")
+        self.lineEdit_color_one.setToolTip("")
 #endif // QT_CONFIG(tooltip)
-        self.lineEdit_balls_count.setText(QCoreApplication.translate("MainWindow", u"8", None))
+        self.lineEdit_color_one.setText(QCoreApplication.translate("MainWindow", u"red", None))
+        self.label_76.setText(QCoreApplication.translate("MainWindow", u"\u8272\u8d30\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_color_two.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_color_two.setText(QCoreApplication.translate("MainWindow", u"green", None))
         self.groupBox_27.setTitle(QCoreApplication.translate("MainWindow", u"\u8f85\u52a9\u63a7\u5236", None))
         self.groupBox_20.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u5934\u5f55\u56fe\u64cd\u4f5c", None))
         self.checkBox_saveImgs_monitor.setText(QCoreApplication.translate("MainWindow", u"\u7f51\u7edc\u6444\u50cf\u5934", None))
