@@ -725,20 +725,31 @@ def set_camera_color(array_temp_, color_num='red'):
     return res_array
 
 
-def set_color(array_temp_, color_num=2):
+def set_color(array_temp_, color_num='red'):
     color_two = [[], []]  # 第一种颜色，第二种颜色
-    color_set = [[init_array[0][5], init_array[1][5], init_array[2][5]],
-                 [init_array[3][5], init_array[4][5], init_array[5][5]]]
+    color_set = [[], []]
+    res_array = [''] * balls_count
+    for i in range(balls_count):
+        if i < balls_count / 2:
+            color_set[0].append(init_array[i][5])
+        else:
+            color_set[1].append(init_array[i][5])
     for i in range(len(array_temp_)):
-        if array_temp_[i][5] == init_array[color_num][5]:
+        if array_temp_[i] == color_num:
             color_two[0].append(i)
         else:
             color_two[1].append(i)
-    if len(color_two[0]) >= int(balls_count / 2):
+
+    if len(color_two[0]) > int(balls_count / 2):
         for i in range(int(balls_count / 2)):  # 着色
-            # print('color_two:', color_two)
-            # print('ranking_temp:', ranking_temp)
             array_temp_[color_two[0][i]][5] = color_set[0][i]
+    else:
+        for i in range(len(color_two[0])):  # 着色
+            array_temp_[color_two[0][i]][5] = color_set[0][i]
+    if len(color_two[1]) > int(balls_count / 2):
+        for i in range(int(balls_count / 2)):  # 着色
+            array_temp_[color_two[1][i]][5] = color_set[1][i]
+    else:
         for i in range(len(color_two[1])):
             array_temp_[color_two[1][i]][5] = color_set[1][i]
     return array_temp_
