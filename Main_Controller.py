@@ -699,6 +699,7 @@ def deal_action():
 def set_camera_color(array_temp_, color_num='red'):
     color_two = [[], []]  # 第一种颜色，第二种颜色
     color_set = [[], []]
+    res_array = [''] * balls_count
     for i in range(balls_count):
         if i < balls_count / 2:
             color_set[0].append(init_array[i][5])
@@ -709,14 +710,19 @@ def set_camera_color(array_temp_, color_num='red'):
             color_two[0].append(i)
         else:
             color_two[1].append(i)
-    # if len(color_two[0]) >= int(balls_count / 2):
-    for i in range(len(color_two[0])):  # 着色
-        # print('color_two:', color_two)
-        # print('ranking_temp:', ranking_temp)
-        array_temp_[color_two[0][i]] = color_set[0][i]
-    for i in range(len(color_two[1])):
-        array_temp_[color_two[1][i]] = color_set[1][i]
-    return array_temp_
+    if len(color_two[0]) > int(balls_count / 2):
+        for i in range(int(balls_count / 2)):  # 着色
+            res_array[color_two[0][i]] = color_set[0][i]
+    else:
+        for i in range(len(color_two[0])):  # 着色
+            res_array[color_two[0][i]] = color_set[0][i]
+    if len(color_two[1]) > int(balls_count / 2):
+        for i in range(int(balls_count / 2)):  # 着色
+            res_array[color_two[1][i]] = color_set[1][i]
+    else:
+        for i in range(len(color_two[1])):
+            res_array[color_two[1][i]] = color_set[1][i]
+    return res_array
 
 
 def set_color(array_temp_, color_num=2):
@@ -992,7 +998,8 @@ def camera_to_num(res):  # 按最新排名排列数组
         camera_response.append(int(color_number[init_array[i][5]]))
     arr_res = []
     for r in res:
-        arr_res.append(int(color_number[r]))
+        if r in color_number.keys():
+            arr_res.append(int(color_number[r]))
     # return arr_res
     for arr in range(0, len(arr_res)):
         for cam in range(0, len(camera_response)):
@@ -2950,6 +2957,7 @@ class ScreenShotThread(QThread):
                 continue
             print('截图结果识别运行！')
             self.signal.emit(succeed('截图结果识别运行！'))
+            time.sleep(1)
             ObsEnd_Thread.screen_flg = False  # 结算页标志1
             obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
             rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
@@ -3181,6 +3189,8 @@ class ObsShotThread(QThread):
                 time.sleep(1)
             if obs_res:
                 obs_list = eval(obs_res[1])
+                if len(obs_list) <= balls_count:
+                    pass
                 if ui.checkBox_Two_Color.isChecked():
                     obs_list = set_camera_color(obs_list, ui.lineEdit_color_one.text())
                 camera_list = copy.deepcopy(obs_list)
