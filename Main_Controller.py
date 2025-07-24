@@ -1001,7 +1001,10 @@ def camera_to_num(res):  # 按最新排名排列数组
         if r in color_number.keys():
             arr_res.append(int(color_number[r]))
     # return arr_res
-    for arr in range(0, len(arr_res)):
+    res_num = len(arr_res)
+    if res_num > balls_count:
+        res_num = balls_count
+    for arr in range(0, res_num):
         for cam in range(0, len(camera_response)):
             if arr_res[arr] == camera_response[cam]:
                 camera_response[arr], camera_response[cam] = camera_response[cam], camera_response[arr]
