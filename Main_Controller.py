@@ -728,7 +728,6 @@ def set_camera_color(array_temp_, color_num='red'):
 def set_color(array_temp_, color_num='red'):
     color_two = [[], []]  # 第一种颜色，第二种颜色
     color_set = [[], []]
-    res_array = [''] * balls_count
     for i in range(balls_count):
         if i < balls_count / 2:
             color_set[0].append(init_array[i][5])
