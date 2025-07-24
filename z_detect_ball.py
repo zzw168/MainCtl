@@ -42,7 +42,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
         if post_data['CameraType'][0] in ['obs', 'rtsp']:
             model = models['obs'] if post_data['CameraType'][0] == 'obs' else models['rtsp']
-            conf_num = 0.7 if post_data['CameraType'][0] == 'obs' else 0.5
+            conf_num = 0.5 if post_data['CameraType'][0] == 'obs' else 0.5
             np_array = np.frombuffer(base64.b64decode(post_data['img'][0].encode('ascii')), np.uint8)
             img = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
 
@@ -63,11 +63,12 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
                     array = [int(r[0].item()), int(r[1].item()), int(r[2].item()), int(r[3].item()),
                              round(r[4].item(), 2), names[int(r[5].item())]]
                     qiu_array.append(array)
-            print(qiu_array)
+            print(post_data['CameraType'])
             if len(post_data['CameraType']) > 1 and post_data['CameraType'][1] == 'Two_Color':
                 pass
             else:
                 qiu_array = filter_max_value(qiu_array)
+            print(qiu_array)
             if len(area_Code[post_data['CameraType'][0]]) > 0:  # 画线范围内
                 qiu_array, img = deal_area(qiu_array, img, post_data['CameraType'][0])
 
@@ -125,9 +126,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
 
             qiu_rank = []
             for i in range(len(qiu_array)):
-                if (qiu_array[i][5] not in qiu_rank
-                        and post_data['CameraType'][1] != 'Two_Color'):
-                    qiu_rank.append(qiu_array[i][5])
+                qiu_rank.append(qiu_array[i][5])
             qiu_rank = json.dumps(qiu_rank)
             print(qiu_rank)
             # cv2 图片转换为图片字符串

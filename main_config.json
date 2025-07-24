@@ -154,7 +154,7 @@
     "checkBox_Cycle": true,
     "checkBox_Start_Flash": false,
     "checkBox_Ai": false,
-    "checkBox_Two_Color": false,
+    "checkBox_Two_Color": true,
     "checkBox_main_camera_set": false,
     "checkBox_saveImgs_mark": false,
     "checkBox_end_2": false,
