@@ -266,7 +266,7 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.press_input_properties_button("结算页", "refreshnocache")
             time.sleep(1)
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
-            cl_request.press_input_properties_button("浏览器", "refreshnocache")
+            # cl_request.press_input_properties_button("浏览器", "refreshnocache")
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
             # time.sleep(1)
             # cl_request.press_input_properties_button("浏览器", "refreshnocache")
@@ -6802,6 +6802,9 @@ class CheckFileThread(QThread):
             video_part = os.path.join(os.path.dirname(path2), '录像').replace("\\", "/")
             if os.path.exists(video_part):
                 limit_folder_size(video_part, max_files=800)  # 限制文件夹数量
+            data_part = os.path.join(os.path.dirname(path2), '复盘').replace("\\", "/")
+            if os.path.exists(data_part):
+                limit_folder_size(data_part, max_files=800)  # 限制文件夹数量
             if os.path.exists('D:/ApowerREC'):
                 limit_folder_size('D:/ApowerREC', max_files=30)  # 限制文件夹数量
             # if os.path.exists(path_mark):
