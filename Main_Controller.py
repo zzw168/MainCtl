@@ -266,9 +266,10 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.press_input_properties_button("结算页", "refreshnocache")
             time.sleep(1)
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
-            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
-            time.sleep(1)
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
+            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
+            # time.sleep(1)
+            # cl_request.press_input_properties_button("浏览器", "refreshnocache")
             return True
         except:
             try:
@@ -2711,7 +2712,7 @@ class ObsEndThread(QThread):
                 try:
                     tcp_result_thread.send_type = 'updata'
                     tcp_result_thread.run_flg = True
-
+                    cl_request.press_input_properties_button("浏览器", "refreshnocache")
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                       False)  # 关闭排名来源
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
@@ -7393,7 +7394,13 @@ def my_test():
     global ranking_array
     global wakeup_addr
     print('~~~~~~~~~~~~~~~~~~~')
-    ScreenShot_Thread.run_flg = True
+    tcp_result_thread.send_type = 'updata'
+    tcp_result_thread.run_flg = True
+    cl_request.press_input_properties_button("浏览器", "refreshnocache")
+    cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
+                                      False)  # 关闭排名来源
+    cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
+                                      True)  # 打开结果来源
     # tcp_result_thread.send_type = ''
     # tcp_result_thread.run_flg = True
     # my_def()
