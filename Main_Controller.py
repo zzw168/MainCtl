@@ -263,12 +263,16 @@ def activate_browser():  # 程序开始，刷新浏览器
     for i in range(5):
         try:
             # 刷新 "浏览器来源"（Browser Source）
+            cl_request.press_input_properties_button("浏览器", "refreshnocache")
+            time.sleep(1)
             cl_request.press_input_properties_button("结算页", "refreshnocache")
             time.sleep(1)
-            cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
             time.sleep(1)
-            cl_request.press_input_properties_button("浏览器", "refreshnocache")
+            cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
+
+            # time.sleep(1)
+            # cl_request.press_input_properties_button("浏览器", "refreshnocache")
             return True
         except:
             try:
@@ -7393,7 +7397,7 @@ def my_test():
     global ranking_array
     global wakeup_addr
     print('~~~~~~~~~~~~~~~~~~~')
-    ScreenShot_Thread.run_flg = True
+    activate_browser()
     # tcp_result_thread.send_type = ''
     # tcp_result_thread.run_flg = True
     # my_def()

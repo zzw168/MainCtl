@@ -336,7 +336,7 @@ def post_status(status=True, Track_number='M'):  # 发送开盘封盘状态，�
 
 if __name__ == '__main__':
     # get_marble_settings()
-    # get_stream()
+    get_stream('A')
     # test_server()
     # post_status(True, 'M')
     # get_term('M')
@@ -346,4 +346,4 @@ if __name__ == '__main__':
     # post_end(9667595, 1741157610, 1,'M')
     # post_upload('./1.png')
     # post_result(9613161, 1730369497)
-    post_status(False, 'M')
+    # post_status(False, 'M')
