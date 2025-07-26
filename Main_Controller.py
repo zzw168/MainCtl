@@ -266,10 +266,9 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.press_input_properties_button("结算页", "refreshnocache")
             time.sleep(1)
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
-            # cl_request.press_input_properties_button("浏览器", "refreshnocache")
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
-            # time.sleep(1)
-            # cl_request.press_input_properties_button("浏览器", "refreshnocache")
+            time.sleep(1)
+            cl_request.press_input_properties_button("浏览器", "refreshnocache")
             return True
         except:
             try:
