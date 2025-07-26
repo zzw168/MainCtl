@@ -754,6 +754,20 @@ def set_color(array_temp_, color_num='red'):
     return array_temp_
 
 
+def set_color_ranking(array_temp_):
+    temp = []
+    arr = []
+    for i in range(len(array_temp_)):
+        for j in range(balls_count):
+            if (array_temp_[i][6] >= ranking_array[j][6]
+                    and ranking_array[j][5] not in temp):
+                array_temp_[i][5] = ranking_array[j][5]
+                arr.append(array_temp_[i])
+                temp.append(ranking_array[j][5])
+                break
+    return arr
+
+
 def deal_rank_two_color(integration_qiu_array):
     global ranking_array
     global array_temp
@@ -765,7 +779,10 @@ def deal_rank_two_color(integration_qiu_array):
         # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
         array_temp.sort(key=lambda x: x[6], reverse=True)
         array_temp = set_color(array_temp)
-        deal_rank(array_temp)
+    else:
+        array_temp.sort(key=lambda x: x[6], reverse=True)
+        array_temp = set_color_ranking(array_temp)
+    deal_rank(array_temp)
 
 
 # 处理排名
