@@ -754,17 +754,12 @@ def set_color(array_temp_, color_num='red'):
 
 
 def set_color_ranking(array_temp_):
-    temp = []
-    arr = []
     for i in range(len(array_temp_)):
-        for j in range(balls_count):
-            if (array_temp_[i][6] >= ranking_array[j][6]
-                    and ranking_array[j][5] not in temp):
-                array_temp_[i][5] = ranking_array[j][5]
-                arr.append(array_temp_[i])
-                temp.append(ranking_array[j][5])
-                break
-    return arr
+        for j in range(balls_count - 1):
+            if (array_temp_[i][6] < ranking_array[j][6]
+                    and array_temp_[i][5] == ranking_array[j][5]):
+                array_temp_[i][5] = ranking_array[j + 1][5]
+    return array_temp_
 
 
 def deal_rank_two_color(integration_qiu_array):
