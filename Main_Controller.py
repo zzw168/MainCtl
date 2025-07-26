@@ -775,13 +775,13 @@ def deal_rank_two_color(integration_qiu_array):
     global update_two_time
     array_temp = copy.deepcopy(integration_qiu_array)
     # print('array_temp:', array_temp)
-    if len(array_temp) >= balls_count:
-        # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
-        array_temp.sort(key=lambda x: x[6], reverse=True)
-        array_temp = set_color(array_temp)
-    else:
-        array_temp.sort(key=lambda x: x[6], reverse=True)
-        array_temp = set_color_ranking(array_temp)
+    # if len(array_temp) >= balls_count:
+    #     # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
+    #     array_temp.sort(key=lambda x: x[6], reverse=True)
+    #     array_temp = set_color(array_temp)
+    # else:
+    array_temp.sort(key=lambda x: x[6], reverse=True)
+    array_temp = set_color_ranking(array_temp)
     deal_rank(array_temp)
 
 
