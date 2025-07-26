@@ -437,7 +437,7 @@ def obs_save_image():
                                                       '%s/%s.jpg' % (save_path, int(time.time() * 1000)), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
-                        time.sleep(2)
+                        time.sleep(1)
                         if int(ui.lineEdit_end.text()) > 0:
                             sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
                             time.sleep(2)
@@ -734,11 +734,10 @@ def set_color(array_temp_, color_num='red'):
         else:
             color_set[1].append(init_array[i][5])
     for i in range(len(array_temp_)):
-        if array_temp_[i] == color_num:
+        if array_temp_[i][5] == color_num:
             color_two[0].append(i)
         else:
             color_two[1].append(i)
-
     if len(color_two[0]) > int(balls_count / 2):
         for i in range(int(balls_count / 2)):  # 着色
             array_temp_[color_two[0][i]][5] = color_set[0][i]
@@ -776,12 +775,12 @@ def deal_rank_two_color(integration_qiu_array):
     array_temp = copy.deepcopy(integration_qiu_array)
     # print('array_temp:', array_temp)
     # if len(array_temp) >= balls_count:
-    #     # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
-    #     array_temp.sort(key=lambda x: x[6], reverse=True)
-    #     array_temp = set_color(array_temp)
-    # else:
+    # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
     array_temp.sort(key=lambda x: x[6], reverse=True)
-    array_temp = set_color_ranking(array_temp)
+    array_temp = set_color(array_temp)
+    # else:
+    #     array_temp.sort(key=lambda x: x[6], reverse=True)
+    # array_temp = set_color_ranking(array_temp)
     deal_rank(array_temp)
 
 
@@ -1362,8 +1361,8 @@ class DealUdpThread(QThread):
                 continue
             # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
             if ui.checkBox_Two_Color.isChecked():
-                # deal_rank_two_color(array_data)
-                deal_rank(array_data)
+                deal_rank_two_color(array_data)
+                # deal_rank(array_data)
             else:
                 deal_rank(array_data)
             if ball_sort and balls_start != len(ball_sort[1][0]):
