@@ -1,6 +1,6 @@
 {
     "Track_number": "M",
-    "balls_count": "8",
+    "balls_count": "6",
     "cardNo": "15",
     "color_ch": {
         "Brown": "棕 ⑩",
@@ -184,8 +184,8 @@
     "lineEdit_start": "2",
     "lineEdit_start_count": "9",
     "lineEdit_upload_Path": "D:/数据/上报",
-    "map_line": "./img/08_草原.json",
-    "map_picture": "./img/08_草原.png",
+    "map_line": "./img/03_火山.json",
+    "map_picture": "./img/03_火山.png",
     "map_size": "680",
     "monitor_sort": "1",
     "music_1": [

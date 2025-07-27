@@ -697,30 +697,30 @@ def deal_action():
 
 
 def set_camera_color(array_temp_, color_num='red'):
-    color_two = [[], []]  # 第一种颜色，第二种颜色
+    color_two_ = [[], []]  # 第一种颜色，第二种颜色
     res_array = [''] * balls_count
     for i in range(len(array_temp_)):
         if array_temp_[i] == color_num:
-            color_two[0].append(i)
+            color_two_[0].append(i)
         else:
-            color_two[1].append(i)
-    if len(color_two[0]) > int(balls_count / 2):
+            color_two_[1].append(i)
+    if len(color_two_[0]) > int(balls_count / 2):
         for i in range(int(balls_count / 2)):  # 着色
-            res_array[color_two[0][i]] = color_set[0][i]
+            res_array[color_two_[0][i]] = color_set[0][i]
     else:
-        for i in range(len(color_two[0])):  # 着色
-            res_array[color_two[0][i]] = color_set[0][i]
-    if len(color_two[1]) > int(balls_count / 2):
+        for i in range(len(color_two_[0])):  # 着色
+            res_array[color_two_[0][i]] = color_set[0][i]
+    if len(color_two_[1]) > int(balls_count / 2):
         for i in range(int(balls_count / 2)):  # 着色
-            res_array[color_two[1][i]] = color_set[1][i]
+            res_array[color_two_[1][i]] = color_set[1][i]
     else:
-        for i in range(len(color_two[1])):
-            res_array[color_two[1][i]] = color_set[1][i]
+        for i in range(len(color_two_[1])):
+            res_array[color_two_[1][i]] = color_set[1][i]
     return res_array
 
 
 def set_color(array_temp_, color_num='red'):
-    color_two = [[], []]  # 第一种颜色，第二种颜色
+    global color_two
     for i in range(len(array_temp_)):
         if array_temp_[i][5] == color_num:
             color_two[0].append(i)
@@ -750,7 +750,9 @@ def set_color_ranking(array_temp_):
                         if array_temp_[i][5] in color_set[k]:
                             for l in range(len(color_set[k]) - 1):
                                 if color_set[k][l] == array_temp_[i][5]:
-                                    array_temp_[i][5] = color_set[k][l + 1]
+                                    for n, m in enumerate(color_two[k]):
+                                        if m >= i and (n + l < len(color_set[k])):
+                                            array_temp_[m][5] = color_set[k][n + l + 1]
                 else:
                     break
     return array_temp_
@@ -8285,6 +8287,7 @@ if __name__ == '__main__':
     balls_start = 0  # 起点球数量
     laps_count = 0  # 跨圈计数
     color_set = [[], []]  # 双色数组
+    color_two = [[], []]  # 第一种颜色，第二种颜色
     update_two_time = time.time()  # 记录两种颜色珠子的更新时间
     ranking_lock = threading.Lock()  # 排名线程锁
     ranking_array = []  # 前0~3是坐标↖↘,4=镜头号，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
