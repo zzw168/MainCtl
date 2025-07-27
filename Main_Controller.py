@@ -744,13 +744,15 @@ def set_color(array_temp_, color_num='red'):
 def set_color_ranking(array_temp_):
     for i in range(len(array_temp_)):
         for j in range(balls_count - 1):
-            if (array_temp_[i][6] < ranking_array[j][6]
-                    and array_temp_[i][5] == ranking_array[j][5]):
-                for k in range(len(color_set)):
-                    if array_temp_[i][5] in color_set[k]:
-                        for l in range(len(color_set[k]) - 1):
-                            if color_set[k][l] == array_temp_[i][5]:
-                                array_temp_[i][5] = color_set[k][l + 1]
+            if array_temp_[i][5] == ranking_array[j][5]:
+                if array_temp_[i][6] < ranking_array[j][6]:
+                    for k in range(len(color_set)):
+                        if array_temp_[i][5] in color_set[k]:
+                            for l in range(len(color_set[k]) - 1):
+                                if color_set[k][l] == array_temp_[i][5]:
+                                    array_temp_[i][5] = color_set[k][l + 1]
+                else:
+                    break
     return array_temp_
 
 
@@ -761,13 +763,11 @@ def deal_rank_two_color(integration_qiu_array):
     global update_two_time
     array_temp = copy.deepcopy(integration_qiu_array)
     # print('array_temp:', array_temp)
-    # if len(array_temp) >= balls_count:
     # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
     array_temp.sort(key=lambda x: x[6], reverse=True)
     array_temp = set_color(array_temp)
-    # else:
-    #     array_temp.sort(key=lambda x: x[6], reverse=True)
-    # array_temp = set_color_ranking(array_temp)
+    if len(array_temp) < balls_count:
+        array_temp = set_color_ranking(array_temp)
     deal_rank(array_temp)
 
 
