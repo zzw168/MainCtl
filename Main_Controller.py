@@ -698,13 +698,7 @@ def deal_action():
 
 def set_camera_color(array_temp_, color_num='red'):
     color_two = [[], []]  # 第一种颜色，第二种颜色
-    color_set = [[], []]
     res_array = [''] * balls_count
-    for i in range(balls_count):
-        if i < balls_count / 2:
-            color_set[0].append(init_array[i][5])
-        else:
-            color_set[1].append(init_array[i][5])
     for i in range(len(array_temp_)):
         if array_temp_[i] == color_num:
             color_two[0].append(i)
@@ -727,12 +721,6 @@ def set_camera_color(array_temp_, color_num='red'):
 
 def set_color(array_temp_, color_num='red'):
     color_two = [[], []]  # 第一种颜色，第二种颜色
-    color_set = [[], []]
-    for i in range(balls_count):
-        if i < balls_count / 2:
-            color_set[0].append(init_array[i][5])
-        else:
-            color_set[1].append(init_array[i][5])
     for i in range(len(array_temp_)):
         if array_temp_[i][5] == color_num:
             color_two[0].append(i)
@@ -758,7 +746,11 @@ def set_color_ranking(array_temp_):
         for j in range(balls_count - 1):
             if (array_temp_[i][6] < ranking_array[j][6]
                     and array_temp_[i][5] == ranking_array[j][5]):
-                array_temp_[i][5] = ranking_array[j + 1][5]
+                for k in range(len(color_set)):
+                    if array_temp_[i][5] in color_set[k]:
+                        for l in range(len(color_set[k]) - 1):
+                            if color_set[k][l] == array_temp_[i][5]:
+                                array_temp_[i][5] = color_set[k][l + 1]
     return array_temp_
 
 
@@ -4578,6 +4570,7 @@ def load_main_json():
     global five_axis
     global five_key
     global Track_number
+    global color_set
     file = "main_config.json"
     if os.path.exists(file):
         # try:
@@ -4683,6 +4676,11 @@ def load_main_json():
             getattr(ui, 'lineEdit_Color_Eng_%s' % index).setText(eng)
             getattr(ui, 'lineEdit_Color_Ch_%s' % index).setText(ch)
             getattr(ui, 'lineEdit_Color_No_%s' % index).setText(number)
+        for i in range(balls_count):
+            if i < balls_count / 2:
+                color_set[0].append(init_array[i][5])
+            else:
+                color_set[1].append(init_array[i][5])
         for i in range(balls_count, 10):
             getattr(ui, 'lineEdit_result_%s' % i).hide()
             getattr(result_ui, 'lineEdit_result_%s' % i).hide()
@@ -8286,6 +8284,7 @@ if __name__ == '__main__':
     balls_count = 8  # 运行球数
     balls_start = 0  # 起点球数量
     laps_count = 0  # 跨圈计数
+    color_set = [[], []]  # 双色数组
     update_two_time = time.time()  # 记录两种颜色珠子的更新时间
     ranking_lock = threading.Lock()  # 排名线程锁
     ranking_array = []  # 前0~3是坐标↖↘,4=镜头号，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
