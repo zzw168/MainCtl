@@ -2049,7 +2049,10 @@ class ReStartThread(QThread):
                     self.signal.emit('等待主摄像头识别~~~~~~~')
                     time.sleep(1)
                 with ball_sort_lock:
-                    ball_sort[1][0] = copy.deepcopy(camera_list)
+                    if len(camera_list) == balls_count:
+                        ball_sort[1][0] = copy.deepcopy(camera_list)
+                    else:
+                        ball_sort[1][0] = []
             else:
                 with ball_sort_lock:
                     ball_sort[1][0] = []
