@@ -266,9 +266,10 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.press_input_properties_button("结算页", "refreshnocache")
             time.sleep(1)
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
-            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
-            time.sleep(1)
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
+            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
+            # time.sleep(1)
+            # cl_request.press_input_properties_button("浏览器", "refreshnocache")
             return True
         except:
             try:
@@ -760,8 +761,10 @@ def set_color_ranking(array_temp_):
                     for k in range(len(color_set)):
                         if array_temp_[i][5] in color_set[k]:
                             for n, m in enumerate(color_two[k]):
-                                if m > i and (array_temp_[i][5] == color_set[k][n]):
-                                    if n + 1 > len(color_set[k]):
+                                if (m > i
+                                        and n < len(color_set[k])
+                                        and (array_temp_[i][5] == color_set[k][n])):
+                                    if n + 1 < len(color_set[k]):
                                         array_temp_[m][5] = color_set[k][n + 1]
                                     else:
                                         array_temp_[m][5] = color_set[k][-1]
