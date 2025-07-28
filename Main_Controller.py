@@ -721,6 +721,7 @@ def set_camera_color(array_temp_, color_num='red'):
 
 def set_color(array_temp_, color_num='red'):
     global color_two
+    color_two = [[], []]
     for i in range(len(array_temp_)):
         if array_temp_[i][5] == color_num:
             color_two[0].append(i)
@@ -744,16 +745,26 @@ def set_color(array_temp_, color_num='red'):
 def set_color_ranking(array_temp_):
     for i in range(len(array_temp_)):
         for j in range(balls_count - 1):
-            if array_temp_[i][5] == ranking_array[j][5]:
+            if ranking_array and array_temp_[i][5] == ranking_array[j][5]:
                 if array_temp_[i][6] < ranking_array[j][6]:
                     for k in range(len(color_set)):
                         if array_temp_[i][5] in color_set[k]:
                             for l in range(len(color_set[k]) - 1):
                                 if color_set[k][l] == array_temp_[i][5]:
-                                    for n, m in enumerate(color_two[k]):
-                                        if m >= i and (n + l < len(color_set[k])):
-                                            array_temp_[m][5] = color_set[k][n + l + 1]
+                                    array_temp_[i][5] = color_set[k][l + 1]
+                                    break
+                                    # for n, m in enumerate(color_two[k]):
+                                    #     if m >= i and (n + l < len(color_set[k])):
+                                    #         array_temp_[m][5] = color_set[k][n + l + 1]
                 else:
+                    for k in range(len(color_set)):
+                        if array_temp_[i][5] in color_set[k]:
+                            for n, m in enumerate(color_two[k]):
+                                if m > i and (array_temp_[i][5] == color_set[k][n]):
+                                    if n + 1 > len(color_set[k]):
+                                        array_temp_[m][5] = color_set[k][n + 1]
+                                    else:
+                                        array_temp_[m][5] = color_set[k][-1]
                     break
     return array_temp_
 
