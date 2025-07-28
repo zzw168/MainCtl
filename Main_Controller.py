@@ -3221,8 +3221,6 @@ class ObsShotThread(QThread):
                 time.sleep(1)
             if obs_res:
                 obs_list = eval(obs_res[1])
-                if len(obs_list) <= balls_count:
-                    pass
                 if ui.checkBox_Two_Color.isChecked():
                     obs_list = set_camera_color(obs_list, ui.lineEdit_color_one.text())
                 camera_list = copy.deepcopy(obs_list)
