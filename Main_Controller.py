@@ -699,7 +699,7 @@ def deal_action():
 
 def set_camera_color(array_temp_, color_num='red'):
     color_two_ = [[], []]  # 第一种颜色，第二种颜色
-    res_array = [''] * balls_count
+    res_array = [''] * len(array_temp_)
     for i in range(len(array_temp_)):
         if array_temp_[i] == color_num:
             color_two_[0].append(i)
@@ -2134,7 +2134,9 @@ class ReStartThread(QThread):
             if lottery:
                 self.signal.emit(lottery)
             if self.countdown.isdigit():
-                self.countdown = int(self.countdown)
+                self.countdown = int(self.countdown) - int(ui.lineEdit_Reserve_time.text())
+                if self.countdown < 5:
+                    self.countdown = 10
             else:
                 self.countdown = 60
             for t in range(self.countdown, -1, -1):

@@ -787,12 +787,12 @@
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>50</width>
+                    <width>40</width>
                     <height>16777215</height>
                    </size>
                   </property>
                   <property name="text">
-                   <string>8</string>
+                   <string>0</string>
                   </property>
                   <property name="alignment">
                    <set>Qt::AlignmentFlag::AlignCenter</set>

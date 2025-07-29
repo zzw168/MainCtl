@@ -352,7 +352,7 @@ class Ui_MainWindow(object):
         self.lineEdit_Reserve_time = QLineEdit(self.groupBox_3)
         self.lineEdit_Reserve_time.setObjectName(u"lineEdit_Reserve_time")
         self.lineEdit_Reserve_time.setEnabled(True)
-        self.lineEdit_Reserve_time.setMaximumSize(QSize(50, 16777215))
+        self.lineEdit_Reserve_time.setMaximumSize(QSize(40, 16777215))
         self.lineEdit_Reserve_time.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.lineEdit_Reserve_time.setReadOnly(False)
 
@@ -3888,7 +3888,7 @@ class Ui_MainWindow(object):
         self.checkBox_shoot_1.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c04", None))
         self.checkBox_end_stop.setText(QCoreApplication.translate("MainWindow", u"\u672c\u5c40\u7ed3\u675f\u540e\u81ea\u52a8\u5c01\u76d8", None))
         self.label_104.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u8d5b\u9884\u7559\u65f6\u95f4:", None))
-        self.lineEdit_Reserve_time.setText(QCoreApplication.translate("MainWindow", u"8", None))
+        self.lineEdit_Reserve_time.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u7ef4\u62a4\u529f\u80fd", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"\u5012\u6570\uff1a", None))
         self.lineEdit_times_count.setText(QCoreApplication.translate("MainWindow", u"0", None))
