@@ -746,7 +746,9 @@ def set_color(array_temp_, color_num='red'):
 def set_color_ranking(array_temp_):
     for i in range(len(array_temp_)):
         for j in range(balls_count - 1):
-            if ranking_array and array_temp_[i][5] == ranking_array[j][5]:
+            if (ranking_array
+                    and array_temp_[i][6] < max_area_count - balls_count
+                    and array_temp_[i][5] == ranking_array[j][5]):
                 if array_temp_[i][6] < ranking_array[j][6]:
                     for k in range(len(color_set)):
                         if array_temp_[i][5] in color_set[k]:
