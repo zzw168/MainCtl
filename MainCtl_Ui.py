@@ -282,18 +282,6 @@ class Ui_MainWindow(object):
         self.groupBox_3.setFont(font1)
         self.gridLayout_16 = QGridLayout(self.groupBox_3)
         self.gridLayout_16.setObjectName(u"gridLayout_16")
-        self.checkBox_end_BlackScreen = QCheckBox(self.groupBox_3)
-        self.checkBox_end_BlackScreen.setObjectName(u"checkBox_end_BlackScreen")
-        self.checkBox_end_BlackScreen.setFont(font1)
-
-        self.gridLayout_16.addWidget(self.checkBox_end_BlackScreen, 0, 3, 1, 2)
-
-        self.checkBox_alarm = QCheckBox(self.groupBox_3)
-        self.checkBox_alarm.setObjectName(u"checkBox_alarm")
-        self.checkBox_alarm.setFont(font1)
-
-        self.gridLayout_16.addWidget(self.checkBox_alarm, 2, 3, 1, 1)
-
         self.checkBox_Pass_Ranking_Twice = QCheckBox(self.groupBox_3)
         self.checkBox_Pass_Ranking_Twice.setObjectName(u"checkBox_Pass_Ranking_Twice")
         self.checkBox_Pass_Ranking_Twice.setMinimumSize(QSize(180, 0))
@@ -303,6 +291,19 @@ class Ui_MainWindow(object):
 
         self.gridLayout_16.addWidget(self.checkBox_Pass_Ranking_Twice, 1, 0, 1, 3)
 
+        self.label_85 = QLabel(self.groupBox_3)
+        self.label_85.setObjectName(u"label_85")
+        self.label_85.setEnabled(True)
+        self.label_85.setFont(font1)
+
+        self.gridLayout_16.addWidget(self.label_85, 2, 2, 1, 1)
+
+        self.checkBox_alarm = QCheckBox(self.groupBox_3)
+        self.checkBox_alarm.setObjectName(u"checkBox_alarm")
+        self.checkBox_alarm.setFont(font1)
+
+        self.gridLayout_16.addWidget(self.checkBox_alarm, 2, 3, 1, 1)
+
         self.checkBox_Pass_Recognition_Start = QCheckBox(self.groupBox_3)
         self.checkBox_Pass_Recognition_Start.setObjectName(u"checkBox_Pass_Recognition_Start")
         self.checkBox_Pass_Recognition_Start.setMaximumSize(QSize(150, 16777215))
@@ -311,17 +312,14 @@ class Ui_MainWindow(object):
 
         self.gridLayout_16.addWidget(self.checkBox_Pass_Recognition_Start, 0, 0, 1, 2)
 
-        self.checkBox_end_stop = QCheckBox(self.groupBox_3)
-        self.checkBox_end_stop.setObjectName(u"checkBox_end_stop")
-        self.checkBox_end_stop.setFont(font1)
+        self.lineEdit_balls_auto = QLineEdit(self.groupBox_3)
+        self.lineEdit_balls_auto.setObjectName(u"lineEdit_balls_auto")
+        self.lineEdit_balls_auto.setEnabled(True)
+        self.lineEdit_balls_auto.setMaximumSize(QSize(30, 16777215))
+        self.lineEdit_balls_auto.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_balls_auto.setReadOnly(False)
 
-        self.gridLayout_16.addWidget(self.checkBox_end_stop, 1, 3, 1, 2)
-
-        self.checkBox_shoot_1 = QCheckBox(self.groupBox_3)
-        self.checkBox_shoot_1.setObjectName(u"checkBox_shoot_1")
-        self.checkBox_shoot_1.setFont(font1)
-
-        self.gridLayout_16.addWidget(self.checkBox_shoot_1, 2, 4, 1, 1)
+        self.gridLayout_16.addWidget(self.lineEdit_balls_auto, 2, 1, 1, 1)
 
         self.checkBox_shoot_0 = QCheckBox(self.groupBox_3)
         self.checkBox_shoot_0.setObjectName(u"checkBox_shoot_0")
@@ -332,21 +330,33 @@ class Ui_MainWindow(object):
 
         self.gridLayout_16.addWidget(self.checkBox_shoot_0, 2, 0, 1, 1)
 
-        self.label_85 = QLabel(self.groupBox_3)
-        self.label_85.setObjectName(u"label_85")
-        self.label_85.setEnabled(True)
-        self.label_85.setFont(font1)
+        self.checkBox_shoot_1 = QCheckBox(self.groupBox_3)
+        self.checkBox_shoot_1.setObjectName(u"checkBox_shoot_1")
+        self.checkBox_shoot_1.setFont(font1)
 
-        self.gridLayout_16.addWidget(self.label_85, 2, 2, 1, 1)
+        self.gridLayout_16.addWidget(self.checkBox_shoot_1, 2, 4, 1, 1)
 
-        self.lineEdit_balls_auto = QLineEdit(self.groupBox_3)
-        self.lineEdit_balls_auto.setObjectName(u"lineEdit_balls_auto")
-        self.lineEdit_balls_auto.setEnabled(True)
-        self.lineEdit_balls_auto.setMaximumSize(QSize(30, 16777215))
-        self.lineEdit_balls_auto.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.lineEdit_balls_auto.setReadOnly(False)
+        self.checkBox_end_stop = QCheckBox(self.groupBox_3)
+        self.checkBox_end_stop.setObjectName(u"checkBox_end_stop")
+        self.checkBox_end_stop.setFont(font1)
 
-        self.gridLayout_16.addWidget(self.lineEdit_balls_auto, 2, 1, 1, 1)
+        self.gridLayout_16.addWidget(self.checkBox_end_stop, 1, 3, 1, 2)
+
+        self.label_104 = QLabel(self.groupBox_3)
+        self.label_104.setObjectName(u"label_104")
+        self.label_104.setEnabled(True)
+        self.label_104.setFont(font1)
+
+        self.gridLayout_16.addWidget(self.label_104, 0, 3, 1, 1)
+
+        self.lineEdit_Reserve_time = QLineEdit(self.groupBox_3)
+        self.lineEdit_Reserve_time.setObjectName(u"lineEdit_Reserve_time")
+        self.lineEdit_Reserve_time.setEnabled(True)
+        self.lineEdit_Reserve_time.setMaximumSize(QSize(50, 16777215))
+        self.lineEdit_Reserve_time.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.lineEdit_Reserve_time.setReadOnly(False)
+
+        self.gridLayout_16.addWidget(self.lineEdit_Reserve_time, 0, 4, 1, 1)
 
 
         self.gridLayout_12.addWidget(self.groupBox_3, 0, 3, 2, 2)
@@ -3869,15 +3879,16 @@ class Ui_MainWindow(object):
         self.status_s485.setText(QCoreApplication.translate("MainWindow", u"\u4e3b\u955c\u5934", None))
         self.status_obs.setText(QCoreApplication.translate("MainWindow", u"OBS\u72b6\u6001", None))
         self.groupBox_3.setTitle(QCoreApplication.translate("MainWindow", u"\u529f\u80fd", None))
-        self.checkBox_end_BlackScreen.setText(QCoreApplication.translate("MainWindow", u"\u672c\u5c40\u7ed3\u675f\u540e\u81ea\u52a8\u9ed1\u5c4f", None))
-        self.checkBox_alarm.setText(QCoreApplication.translate("MainWindow", u"\u5173\u8b66\u62a5(-)", None))
         self.checkBox_Pass_Ranking_Twice.setText(QCoreApplication.translate("MainWindow", u"\u8df3\u8fc7\u4e8c\u6b21\u6392\u540d", None))
-        self.checkBox_Pass_Recognition_Start.setText(QCoreApplication.translate("MainWindow", u"\u8df3\u8fc7\u8d77\u70b9\u8bc6\u522b", None))
-        self.checkBox_end_stop.setText(QCoreApplication.translate("MainWindow", u"\u672c\u5c40\u7ed3\u675f\u540e\u81ea\u52a8\u5c01\u76d8", None))
-        self.checkBox_shoot_1.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c04", None))
-        self.checkBox_shoot_0.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u4e0a\u73e0", None))
         self.label_85.setText(QCoreApplication.translate("MainWindow", u"\u7c92", None))
+        self.checkBox_alarm.setText(QCoreApplication.translate("MainWindow", u"\u5173\u8b66\u62a5(-)", None))
+        self.checkBox_Pass_Recognition_Start.setText(QCoreApplication.translate("MainWindow", u"\u8df3\u8fc7\u8d77\u70b9\u8bc6\u522b", None))
         self.lineEdit_balls_auto.setText(QCoreApplication.translate("MainWindow", u"8", None))
+        self.checkBox_shoot_0.setText(QCoreApplication.translate("MainWindow", u"\u81ea\u52a8\u4e0a\u73e0", None))
+        self.checkBox_shoot_1.setText(QCoreApplication.translate("MainWindow", u"\u5f39\u5c04", None))
+        self.checkBox_end_stop.setText(QCoreApplication.translate("MainWindow", u"\u672c\u5c40\u7ed3\u675f\u540e\u81ea\u52a8\u5c01\u76d8", None))
+        self.label_104.setText(QCoreApplication.translate("MainWindow", u"\u5f00\u8d5b\u9884\u7559\u65f6\u95f4:", None))
+        self.lineEdit_Reserve_time.setText(QCoreApplication.translate("MainWindow", u"8", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainWindow", u"\u7ef4\u62a4\u529f\u80fd", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"\u5012\u6570\uff1a", None))
         self.lineEdit_times_count.setText(QCoreApplication.translate("MainWindow", u"0", None))

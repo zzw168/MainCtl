@@ -604,34 +604,6 @@
                 <string>功能</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_16">
-                <item row="0" column="3" colspan="2">
-                 <widget class="QCheckBox" name="checkBox_end_BlackScreen">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>本局结束后自动黑屏</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="3">
-                 <widget class="QCheckBox" name="checkBox_alarm">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>关警报(-)</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="1" column="0" colspan="3">
                  <widget class="QCheckBox" name="checkBox_Pass_Ranking_Twice">
                   <property name="minimumSize">
@@ -661,6 +633,37 @@
                   </property>
                  </widget>
                 </item>
+                <item row="2" column="2">
+                 <widget class="QLabel" name="label_85">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>粒</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="3">
+                 <widget class="QCheckBox" name="checkBox_alarm">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>关警报(-)</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="0" column="0" colspan="2">
                  <widget class="QCheckBox" name="checkBox_Pass_Recognition_Start">
                   <property name="maximumSize">
@@ -684,31 +687,25 @@
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="3" colspan="2">
-                 <widget class="QCheckBox" name="checkBox_end_stop">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="lineEdit_balls_auto">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>30</width>
+                    <height>16777215</height>
+                   </size>
                   </property>
                   <property name="text">
-                   <string>本局结束后自动封盘</string>
+                   <string>8</string>
                   </property>
-                 </widget>
-                </item>
-                <item row="2" column="4">
-                 <widget class="QCheckBox" name="checkBox_shoot_1">
-                  <property name="font">
-                   <font>
-                    <family>微软雅黑</family>
-                    <pointsize>10</pointsize>
-                    <bold>true</bold>
-                   </font>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
-                  <property name="text">
-                   <string>弹射</string>
+                  <property name="readOnly">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
@@ -738,8 +735,36 @@
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="2">
-                 <widget class="QLabel" name="label_85">
+                <item row="2" column="4">
+                 <widget class="QCheckBox" name="checkBox_shoot_1">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>弹射</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="3" colspan="2">
+                 <widget class="QCheckBox" name="checkBox_end_stop">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>true</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>本局结束后自动封盘</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3">
+                 <widget class="QLabel" name="label_104">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -751,18 +776,18 @@
                    </font>
                   </property>
                   <property name="text">
-                   <string>粒</string>
+                   <string>开赛预留时间:</string>
                   </property>
                  </widget>
                 </item>
-                <item row="2" column="1">
-                 <widget class="QLineEdit" name="lineEdit_balls_auto">
+                <item row="0" column="4">
+                 <widget class="QLineEdit" name="lineEdit_Reserve_time">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
                   <property name="maximumSize">
                    <size>
-                    <width>30</width>
+                    <width>50</width>
                     <height>16777215</height>
                    </size>
                   </property>

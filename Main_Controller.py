@@ -2887,9 +2887,6 @@ class ObsEndThread(QThread):
             if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
                 betting_loop_flg = False
 
-            if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
-                betting_loop_flg = False
-
             self.signal.emit(succeed('第%s期 结束！' % term))
 
             if betting_loop_flg:
@@ -2942,8 +2939,6 @@ def ObsEndsignal_accept(msg):
                 tb_result.viewport().update()
         if not betting_loop_flg:
             ui.radioButton_stop_betting.click()  # 封盘
-            if ui.checkBox_end_BlackScreen.isChecked():
-                pass
         ui.checkBox_main_music.setChecked(False)
         ui.lineEdit_balls_start.setText('0')
         ui.lineEdit_ball_start.setText('0')
@@ -3945,7 +3940,6 @@ def cmd_signal_accept(msg):
         else:
             if msg == 'end_state':
                 ui.checkBox_end_stop.setChecked(False)
-                ui.checkBox_end_BlackScreen.setChecked(False)
             if msg == '音乐':
                 if not ui.checkBox_test.isChecked():  # 如果是测试模式，不播放主题音乐
                     num = random.randint(1, 3)
@@ -4519,6 +4513,7 @@ def save_main_json():
             main_all['lineEdit_Start_Path'] = ui.lineEdit_Start_Path.text()
             main_all['lineEdit_Map_Action'] = ui.lineEdit_Map_Action.text()
             main_all['lineEdit_GPS_Num'] = ui.lineEdit_GPS_Num.text()
+            main_all['lineEdit_Reserve_time'] = ui.lineEdit_Reserve_time.text()
             main_all['lineEdit_End_Num'] = ui.lineEdit_End_Num.text()
             main_all['lineEdit_lost'] = ui.lineEdit_lost.text()
             main_all['checkBox_Cycle'] = ui.checkBox_Cycle.isChecked()
@@ -4645,6 +4640,7 @@ def load_main_json():
         ui.lineEdit_volume_3.setText(main_all['lineEdit_volume_3'])
         ui.lineEdit_Map_Action.setText(str(main_all['lineEdit_Map_Action']))
         ui.lineEdit_GPS_Num.setText(main_all['lineEdit_GPS_Num'])
+        ui.lineEdit_Reserve_time.setText(main_all['lineEdit_Reserve_time'])
         ui.lineEdit_End_Num.setText(main_all['lineEdit_End_Num'])
         ui.lineEdit_background_Path.setText(main_all['lineEdit_background_Path'])
         ui.lineEdit_Start_Path.setText(main_all['lineEdit_Start_Path'])
@@ -6844,6 +6840,7 @@ class CheckFileThread(QThread):
                     ui.checkBox_Pass_Recognition_Start.setEnabled(True)
                     ui.checkBox_Pass_Ranking_Twice.setEnabled(True)
                     ui.lineEdit_balls_auto.setEnabled(True)
+                    ui.lineEdit_Reserve_time.setEnabled(True)
                     ui.groupBox_6.setEnabled(True)
                     ui.frame_13.setEnabled(True)
             else:
@@ -6855,6 +6852,7 @@ class CheckFileThread(QThread):
                     ui.checkBox_Pass_Recognition_Start.setEnabled(False)
                     ui.checkBox_Pass_Ranking_Twice.setEnabled(False)
                     ui.lineEdit_balls_auto.setEnabled(False)
+                    ui.lineEdit_Reserve_time.setEnabled(False)
                     ui.groupBox_6.setEnabled(False)
                     ui.frame_13.setEnabled(False)
 
@@ -8666,6 +8664,7 @@ if __name__ == '__main__':
     ui.lineEdit_Map_Action.editingFinished.connect(save_main_json)
     ui.lineEdit_End_Num.editingFinished.connect(save_main_json)
     ui.lineEdit_GPS_Num.editingFinished.connect(save_main_json)
+    ui.lineEdit_Reserve_time.editingFinished.connect(save_main_json)
     ui.lineEdit_background_Path.editingFinished.connect(save_main_json)
     ui.lineEdit_Start_Path.editingFinished.connect(save_main_json)
     ui.lineEdit_lost.editingFinished.connect(save_main_json)
