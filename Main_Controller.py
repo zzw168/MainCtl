@@ -268,10 +268,11 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
+            # time.sleep(1)
+            cl_request.press_input_properties_button(ui.lineEdit_source_end.text(), "activate")  # 刷新终点摄像头
             time.sleep(1)
-            cl_request.press_input_properties_button("终点1", "activate")  # 刷新终点摄像头
-            time.sleep(0.1)
-            cl_request.press_input_properties_button("终点1", "activate")  # 刷新终点摄像头
+            cl_request.press_input_properties_button(ui.lineEdit_source_end.text(), "activate")  # 刷新终点摄像头
+
             return True
         except:
             try:
@@ -2740,6 +2741,7 @@ class ObsEndThread(QThread):
                     tcp_result_thread.send_type = 'updata'
                     tcp_result_thread.run_flg = True
                     cl_request.press_input_properties_button("浏览器", "refreshnocache")
+                    time.sleep(0.1)
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                       False)  # 关闭排名来源
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
@@ -3060,7 +3062,9 @@ class ScreenShotThread(QThread):
                             for i in range(len(z_ranking_res)):
                                 if getattr(ui, 'lineEdit_result_%s' % i).text().isdigit():
                                     num = int(getattr(ui, 'lineEdit_result_%s' % i).text())
-                                    if num not in send_list:
+                                    if ui.checkBox_Two_Color.isChecked():
+                                        send_list.append(num)
+                                    elif num not in send_list:
                                         send_list.append(num)
                             if len(send_list) >= balls_count:
                                 self.signal.emit('send_ok')
@@ -3073,6 +3077,17 @@ class ScreenShotThread(QThread):
                             break
                         time.sleep(1)
                     Send_Result_End = False
+                    if ui.checkBox_Two_Color.isChecked():
+                        temp_two = [[], []]
+                        for i in range(balls_count):
+                            if send_list[i] <= balls_count / 2:
+                                temp_two[0].append(i)
+                            else:
+                                temp_two[1].append(i)
+                        for i in range(len(temp_two[0])):
+                            send_list[temp_two[0][i]] = color_set_num[0][i]
+                        for i in range(len(temp_two[1])):
+                            send_list[temp_two[1][i]] = color_set_num[1][i]
                     for i in range(0, len(send_list)):
                         for j in range(0, len(z_ranking_end)):
                             if send_list[i] == z_ranking_end[j]:
@@ -3157,7 +3172,16 @@ def ScreenShotsignal_accept(msg):
             painter.setPen(QColor(255, 0, 0))  # 设定颜色（红色）
             painter.drawText(10, 60, "1")  # (x, y, "文本")
             painter.end()  # 结束绘制
-            ui.lineEdit_Main_Camera.setText(str(main_Camera[:balls_count]))
+            if ui.checkBox_Two_Color.isChecked():
+                temp_obs = []
+                for i in range(balls_count):
+                    if main_Camera[:balls_count][i] <= balls_count / 2:
+                        temp_obs.append(3)
+                    else:
+                        temp_obs.append(6)
+                ui.lineEdit_Main_Camera.setText(str(temp_obs))
+            else:
+                ui.lineEdit_Main_Camera.setText(str(main_Camera[:balls_count]))
             # if ui.checkBox_main_camera.isChecked():
             ui.label_main_picture.setPixmap(pixmap)
             # 获取 label 的当前大小
@@ -3171,7 +3195,16 @@ def ScreenShotsignal_accept(msg):
             painter.setPen(QColor(0, 255, 0))  # 设定颜色（红色）
             painter.drawText(10, 60, "2")  # (x, y, "文本")
             painter.end()  # 结束绘制
-            ui.lineEdit_Backup_Camera.setText(str(monitor_Camera[:balls_count]))
+            if ui.checkBox_Two_Color.isChecked():
+                temp_rtsp = []
+                for i in range(balls_count):
+                    if monitor_Camera[:balls_count][i] <= balls_count / 2:
+                        temp_rtsp.append(3)
+                    else:
+                        temp_rtsp.append(6)
+                ui.lineEdit_Backup_Camera.setText(str(temp_rtsp))
+            else:
+                ui.lineEdit_Backup_Camera.setText(str(monitor_Camera[:balls_count]))
             # if ui.checkBox_monitor_cam.isChecked():
             ui.label_monitor_picture.setPixmap(pixmap)
             # 获取 label 的当前大小
@@ -3183,8 +3216,16 @@ def ScreenShotsignal_accept(msg):
         for index in range(len(main_Camera)):
             fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
             if fit_Camera[index]:
-                getattr(ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
-                getattr(result_ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
+                if ui.checkBox_Two_Color.isChecked():
+                    if main_Camera[index] <= balls_count / 2:
+                        getattr(ui, 'lineEdit_result_%s' % index).setText('3')
+                        getattr(result_ui, 'lineEdit_result_%s' % index).setText('3')
+                    else:
+                        getattr(ui, 'lineEdit_result_%s' % index).setText('6')
+                        getattr(result_ui, 'lineEdit_result_%s' % index).setText('6')
+                else:
+                    getattr(ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
+                    getattr(result_ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
             else:
                 getattr(ui, 'lineEdit_result_%s' % index).setText('')
                 getattr(result_ui, 'lineEdit_result_%s' % index).setText('')
@@ -4609,6 +4650,7 @@ def load_main_json():
     global five_key
     global Track_number
     global color_set
+    global color_set_num
     file = "main_config.json"
     if os.path.exists(file):
         # try:
@@ -4718,8 +4760,11 @@ def load_main_json():
         for i in range(balls_count):
             if i < balls_count / 2:
                 color_set[0].append(init_array[i][5])
+                color_set_num[0].append(int(color_number[init_array[i][5]]))
             else:
                 color_set[1].append(init_array[i][5])
+                color_set_num[1].append(int(color_number[init_array[i][5]]))
+        # print('color_set_num:', color_set_num)
         for i in range(balls_count, 10):
             getattr(ui, 'lineEdit_result_%s' % i).hide()
             getattr(result_ui, 'lineEdit_result_%s' % i).hide()
@@ -6155,7 +6200,16 @@ def set_result_class():
 
 def set_result(msg):
     print(msg)
-    balls = msg[:balls_count]
+    if ui.checkBox_Two_Color.isChecked():
+        temp = []
+        for i in range(balls_count):
+            if msg[:balls_count][i] <= balls_count / 2:
+                temp.append(3)
+            else:
+                temp.append(6)
+        balls = temp  # 排名
+    else:
+        balls = msg[:balls_count]
     for index, item in enumerate(balls):
         getattr(ui, 'lineEdit_result_%s' % index, None).setText(str(item))
         getattr(result_ui, 'lineEdit_result_%s' % index, None).setText(str(item))
@@ -8322,6 +8376,7 @@ if __name__ == '__main__':
     balls_start = 0  # 起点球数量
     laps_count = 0  # 跨圈计数
     color_set = [[], []]  # 双色数组
+    color_set_num = [[], []]  # 双色数组数字
     color_two = [[], []]  # 第一种颜色，第二种颜色
     update_two_time = time.time()  # 记录两种颜色珠子的更新时间
     ranking_lock = threading.Lock()  # 排名线程锁

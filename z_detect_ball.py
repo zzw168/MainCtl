@@ -69,7 +69,8 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             else:
                 qiu_array = filter_max_value(qiu_array)
             print(qiu_array)
-            if len(area_Code[post_data['CameraType'][0]]) > 0:  # 画线范围内
+            if (len(area_Code[post_data['CameraType'][0]]) > 0
+                    and len(qiu_array)>1):  # 画线范围内
                 qiu_array, img = deal_area(qiu_array, img, post_data['CameraType'][0])
 
             if post_data['sort'][0] == '0':
