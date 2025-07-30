@@ -268,8 +268,10 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
-            # time.sleep(1)
-            # cl_request.press_input_properties_button("浏览器", "refreshnocache")
+            time.sleep(1)
+            cl_request.press_input_properties_button("终点1", "activate")  # 刷新终点摄像头
+            time.sleep(0.1)
+            cl_request.press_input_properties_button("终点1", "activate")  # 刷新终点摄像头
             return True
         except:
             try:
@@ -3075,7 +3077,17 @@ class ScreenShotThread(QThread):
                         for j in range(0, len(z_ranking_end)):
                             if send_list[i] == z_ranking_end[j]:
                                 z_ranking_end[i], z_ranking_end[j] = z_ranking_end[j], z_ranking_end[i]
-                lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
+                # lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
+                if ui.checkBox_Two_Color.isChecked():
+                    temp = []
+                    for i in range(len(z_ranking_end)):
+                        if z_ranking_end[i] <= balls_count / 2:
+                            temp.append(3)
+                        else:
+                            temp.append(6)
+                    lottery_term[5] = str(temp)  # 排名
+                else:
+                    lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
             camera_list = []
             for i in range(balls_count):
                 for key in color_number.keys():
@@ -3110,7 +3122,17 @@ class ScreenShotThread(QThread):
             for i in range(len(balls_final)):
                 balls_final[i] = True
             if lottery_term[4] != '':
-                lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+                # lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+                if ui.checkBox_Two_Color.isChecked():
+                    temp = []
+                    for i in range(len(z_ranking_end)):
+                        if z_ranking_end[i] <= balls_count / 2:
+                            temp.append(3)
+                        else:
+                            temp.append(6)
+                    lottery_term[4] = str(temp)  # 排名
+                else:
+                    lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             self.signal.emit('核对完成')
             time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
@@ -7424,13 +7446,9 @@ def my_test():
     global ranking_array
     global wakeup_addr
     print('~~~~~~~~~~~~~~~~~~~')
-    tcp_result_thread.send_type = 'updata'
-    tcp_result_thread.run_flg = True
-    cl_request.press_input_properties_button("浏览器", "refreshnocache")
-    cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
-                                      False)  # 关闭排名来源
-    cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
-                                      True)  # 打开结果来源
+    cl_request.press_input_properties_button("终点1", "activate")  # 刷新终点摄像头
+    time.sleep(0.1)
+    cl_request.press_input_properties_button("终点1", "activate")  # 刷新终点摄像头
     # tcp_result_thread.send_type = ''
     # tcp_result_thread.run_flg = True
     # my_def()
