@@ -3097,9 +3097,9 @@ class ScreenShotThread(QThread):
                     temp = []
                     for i in range(len(z_ranking_end)):
                         if z_ranking_end[i] <= balls_count / 2:
-                            temp.append(3)
+                            temp.append(int(color_number[ui.lineEdit_color_one.text()]))
                         else:
-                            temp.append(6)
+                            temp.append(int(color_number[ui.lineEdit_color_two.text()]))
                     lottery_term[5] = str(temp)  # 排名
                 else:
                     lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
@@ -3142,9 +3142,9 @@ class ScreenShotThread(QThread):
                     temp = []
                     for i in range(len(z_ranking_end)):
                         if z_ranking_end[i] <= balls_count / 2:
-                            temp.append(3)
+                            temp.append(int(color_number[ui.lineEdit_color_one.text()]))
                         else:
-                            temp.append(6)
+                            temp.append(int(color_number[ui.lineEdit_color_two.text()]))
                     lottery_term[4] = str(temp)  # 排名
                 else:
                     lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
@@ -3173,13 +3173,13 @@ def ScreenShotsignal_accept(msg):
             painter.drawText(10, 60, "1")  # (x, y, "文本")
             painter.end()  # 结束绘制
             if ui.checkBox_Two_Color.isChecked():
-                temp_obs = []
+                temp = []
                 for i in range(balls_count):
                     if main_Camera[:balls_count][i] <= balls_count / 2:
-                        temp_obs.append(3)
+                        temp.append(int(color_number[ui.lineEdit_color_one.text()]))
                     else:
-                        temp_obs.append(6)
-                ui.lineEdit_Main_Camera.setText(str(temp_obs))
+                        temp.append(int(color_number[ui.lineEdit_color_two.text()]))
+                ui.lineEdit_Main_Camera.setText(str(temp))
             else:
                 ui.lineEdit_Main_Camera.setText(str(main_Camera[:balls_count]))
             # if ui.checkBox_main_camera.isChecked():
@@ -3196,13 +3196,13 @@ def ScreenShotsignal_accept(msg):
             painter.drawText(10, 60, "2")  # (x, y, "文本")
             painter.end()  # 结束绘制
             if ui.checkBox_Two_Color.isChecked():
-                temp_rtsp = []
+                temp = []
                 for i in range(balls_count):
                     if monitor_Camera[:balls_count][i] <= balls_count / 2:
-                        temp_rtsp.append(3)
+                        temp.append(int(color_number[ui.lineEdit_color_one.text()]))
                     else:
-                        temp_rtsp.append(6)
-                ui.lineEdit_Backup_Camera.setText(str(temp_rtsp))
+                        temp.append(int(color_number[ui.lineEdit_color_two.text()]))
+                ui.lineEdit_Backup_Camera.setText(str(temp))
             else:
                 ui.lineEdit_Backup_Camera.setText(str(monitor_Camera[:balls_count]))
             # if ui.checkBox_monitor_cam.isChecked():
@@ -4540,6 +4540,7 @@ def save_main_json():
             main_all['five_key'] = eval(ui.lineEdit_five_key.text())
             main_all['balls_count'] = ui.lineEdit_balls_count.text()
             main_all['lineEdit_color_one'] = ui.lineEdit_color_one.text()
+            main_all['lineEdit_color_two'] = ui.lineEdit_color_two.text()
             main_all['wakeup_addr'] = eval(ui.lineEdit_wakeup_addr.text())
             main_all['rtsp_url'] = ui.lineEdit_rtsp_url.text()
             main_all['recognition_addr'] = ui.lineEdit_recognition_addr.text()
@@ -4667,6 +4668,7 @@ def load_main_json():
         ui.lineEdit_five_key.setText(str(main_all['five_key']))
         ui.lineEdit_balls_count.setText(main_all['balls_count'])
         ui.lineEdit_color_one.setText(main_all['lineEdit_color_one'])
+        ui.lineEdit_color_two.setText(main_all['lineEdit_color_two'])
         ui.lineEdit_balls_auto.setText(main_all['balls_count'])
         ui.lineEdit_monitor_sort.setText(main_all['monitor_sort'])
         ui.lineEdit_sony_sort.setText(main_all['sony_sort'])
@@ -6204,9 +6206,9 @@ def set_result(msg):
         temp = []
         for i in range(balls_count):
             if msg[:balls_count][i] <= balls_count / 2:
-                temp.append(3)
+                temp.append(int(color_number[ui.lineEdit_color_one.text()]))
             else:
-                temp.append(6)
+                temp.append(int(color_number[ui.lineEdit_color_two.text()]))
         balls = temp  # 排名
     else:
         balls = msg[:balls_count]
