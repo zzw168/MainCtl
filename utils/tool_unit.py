@@ -34,20 +34,22 @@ def limit_folder_count(parent_path, max_folders=5):
 
 def limit_folder_size(folder_path, max_files=5000):  # 保持文件夹里最大文件数量
     # 获取文件列表，并按修改时间排序（最早修改的在前）
-    files = sorted(
-        [os.path.join(folder_path, f) for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))],
-        key=os.path.getmtime
-    )
+    try:
+        files = sorted(
+            [os.path.join(folder_path, f) for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))],
+            key=os.path.getmtime
+        )
 
-    # 计算多出的文件数量
-    excess_files = len(files) - max_files
+        # 计算多出的文件数量
+        excess_files = len(files) - max_files
 
-    # 如果文件数量超过限制，删除最旧的文件
-    if excess_files > 0:
-        for i in range(excess_files):
-            os.remove(files[i])
-            print(f"Deleted: {files[i]}")
-
+        # 如果文件数量超过限制，删除最旧的文件
+        if excess_files > 0:
+            for i in range(excess_files):
+                os.remove(files[i])
+                print(f"Deleted: {files[i]}")
+    except:
+        print('文件删除出错！')
 
 # 示例：监控 "C:/logs" 文件夹，并保持最大数量 5000
 # limit_folder_size("C:/logs", 5000)
