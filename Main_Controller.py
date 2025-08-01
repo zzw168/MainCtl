@@ -783,7 +783,7 @@ def filtrate_color(array_temp_):  # 在终点区域，过滤掉同区域珠子
         if array_temp_[i][6] not in area_temp.keys():
             area_temp[array_temp_[i][6]] = array_temp_[i]
     for i in area_temp.keys():
-        temp.append(area_temp[array_temp_[i][6]])
+        temp.append(area_temp[i])
     return temp
 
 
