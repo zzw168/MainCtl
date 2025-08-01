@@ -266,9 +266,13 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.press_input_properties_button("结算页", "refreshnocache")
             time.sleep(1)
             cl_request.set_scene_item_enabled(obs_scene, item_ranking, True)  # 打开排位组件
-            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
-            time.sleep(1)
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
+            cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
+            # time.sleep(1)
+            cl_request.press_input_properties_button(ui.lineEdit_source_end.text(), "activate")  # 刷新终点摄像头
+            time.sleep(1)
+            cl_request.press_input_properties_button(ui.lineEdit_source_end.text(), "activate")  # 刷新终点摄像头
+
             return True
         except:
             try:
@@ -340,13 +344,15 @@ def scenes_change():  # 变换场景
 
 
 # 截取OBS图片
-def get_obs(scence_current):
+def get_obs():
     global lottery_term
     global cl_request
+    global obs_res
     image_byte = ''
     for i in range(5):
         try:
-            resp = cl_request.get_source_screenshot(scence_current, "jpg", 1920, 1080, 100)
+            resp = cl_request.get_source_screenshot(ui.lineEdit_source_end.text(),
+                                                    "jpg", 1920, 1080, 100)
             if len(area_Code['main']) > 0:
                 Screenshot = resp.image_data
                 base64_string = Screenshot.replace('data:image/jpg;base64,', '')
@@ -395,13 +401,14 @@ def get_obs(scence_current):
                     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
                     image_json.close()
                 flg_start['ai_end'] = True
-                return r_list
+                obs_res = copy.deepcopy(r_list)
+                return
             except:
                 flg_start['ai_end'] = False
                 image_byte = base64.b64decode(img.encode('ascii'))
                 print('终点识别服务没有开启！')
                 continue
-                # return [image_byte, '[1]', 'obs']
+                # return [image_byte, '["%s"]'%init_array[0][5], 'obs']
         except:
             try:
                 cl_request.disconnect()
@@ -413,7 +420,7 @@ def get_obs(scence_current):
                 print('链接OBS失败~~~~~~~~~~~~')
             continue
     flg_start['obs'] = False
-    return [image_byte, '[1]', 'obs']
+    obs_res = [image_byte, '["%s"]' % init_array[0][5], 'obs']
 
 
 def obs_save_image():
@@ -434,7 +441,7 @@ def obs_save_image():
                                                       '%s/%s.jpg' % (save_path, int(time.time() * 1000)), 1920,
                                                       1080, 100)
                     if not ui.checkBox_saveImgs_auto.isChecked():
-                        time.sleep(2)
+                        time.sleep(1)
                         if int(ui.lineEdit_end.text()) > 0:
                             sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
                             time.sleep(2)
@@ -474,153 +481,163 @@ def obs_script_request():
 
 
 # 获取网络摄像头图片
-# def get_rtsp(rt_url):
-#     # try:
-#     #     ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
-#     #     requests.get(ip_address)
-#     # except:
-#     #     return ['', '[1]', 'rtsp']
-#     # cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
-#     cap = cv2.VideoCapture(rt_url)
-#     # cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-#     if cap.isOpened():
-#         for i in range(3):
-#             # ret = False
-#             # frame = ''
-#             # for j in range(10):
-#             ret, frame = cap.read()
-#             if ret:
-#                 try:
-#                     if len(area_Code['net']) > 0:
-#                         # 获取裁剪区域坐标
-#                         area = area_Code['net'][0]['coordinates']
-#                         x1, x2 = area[0][0], area[1][0]
-#                         y1, y2 = area[1][1], area[2][1]
-#                         frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
-#                         if ui.checkBox_Monitor_Horizontal.isChecked():
-#                             frame = cv2.flip(frame, 1)  # 水平翻转图片
-#                         if ui.checkBox_Monitor_Vertica.isChecked():
-#                             frame = cv2.flip(frame, 0)  # 垂直翻转图片
-#                     success, jpeg_data = cv2.imencode('.jpg', frame)
-#                     if success:
-#                         # 将 JPEG 数据转换为 Base64 字符串
-#                         jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
-#                         if os.path.exists(ui.lineEdit_end2_Path.text()):
-#                             img_file = '%s/rtsp_%s_%s.jpg' % (
-#                                 ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
-#                             str2image_file(jpg_base64, img_file)  # 保存图片
-#
-#                         form_data = {
-#                             'CameraType': 'rtsp',
-#                             'img': jpg_base64,
-#                             'sort': ui.lineEdit_monitor_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
-#                         }
-#                         res = requests.post(url=recognition_addr, data=form_data, timeout=8)
-#                         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
-#                         r_img = r_list[0]
-#                         if os.path.exists(ui.lineEdit_end2_Path.text()):
-#                             image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
-#                                               'wb')
-#                             image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-#                             image_json.close()
-#                         flg_start['ai_end'] = True
-#                         cap.release()
-#                         return r_list
-#                     else:
-#                         print("jpg_base64 转换错误！")
-#                         continue
-#                 except:
-#                     print("图片错误或识别服务器未开启！")
-#                     continue
-#             else:
-#                 print("无法读取视频帧")
-#                 continue
-#     else:
-#         print(f'无法打开摄像头')
-#     cap.release()
-#     return ['', '[1]', 'rtsp']
-def get_rtsp(r_url, timeout=20):
-    result = []
+def get_rtsp():
+    global rtsp_res
+    try:
+        ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
+        requests.get(ip_address, timeout=5)
+    except:
+        rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
+        return
+    cap = cv2.VideoCapture(rtsp_url)
+    if cap.isOpened():
+        for i in range(3):
+            ret = False
+            frame = ''
+            for j in range(3):
+                ret, frame = cap.read()
+            if ret:
+                try:
+                    if len(area_Code['net']) > 0:
+                        # 获取裁剪区域坐标
+                        area = area_Code['net'][0]['coordinates']
+                        x1, x2 = area[0][0], area[1][0]
+                        y1, y2 = area[1][1], area[2][1]
+                        frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
+                        if ui.checkBox_Monitor_Horizontal.isChecked():
+                            frame = cv2.flip(frame, 1)  # 水平翻转图片
+                        if ui.checkBox_Monitor_Vertica.isChecked():
+                            frame = cv2.flip(frame, 0)  # 垂直翻转图片
+                    success, jpeg_data = cv2.imencode('.jpg', frame)
+                    if success:
+                        # 将 JPEG 数据转换为 Base64 字符串
+                        jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
+                        if os.path.exists(ui.lineEdit_end2_Path.text()):
+                            img_file = '%s/rtsp_%s_%s.jpg' % (
+                                ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+                            str2image_file(jpg_base64, img_file)  # 保存图片
 
-    def inner_get_rtsp(rt_url):
-        cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
-        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-        jpg_base64 = ''
-        if cap.isOpened():
-            for i in range(3):
-                ret = False
-                frame = ''
-                for j in range(3):
-                    ret, frame = cap.read()
-
-                if ret:
-                    try:
-                        if len(area_Code['net']) > 0:
-                            area = area_Code['net'][0]['coordinates']
-                            x1, x2 = area[0][0], area[1][0]
-                            y1, y2 = area[1][1], area[2][1]
-                            frame = frame[y1:y2, x1:x2]
-                            if ui.checkBox_Monitor_Horizontal.isChecked():
-                                frame = cv2.flip(frame, 1)
-                            if ui.checkBox_Monitor_Vertica.isChecked():
-                                frame = cv2.flip(frame, 0)
-
-                        success, jpeg_data = cv2.imencode('.jpg', frame)
-                        if success:
-                            jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
-                            if os.path.exists(ui.lineEdit_end2_Path.text()):
-                                img_file = '%s/rtsp_%s_%s.jpg' % (
-                                    ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000))
-                                str2image_file(jpg_base64, img_file)
-
-                            if ui.checkBox_Two_Color.isChecked():
-                                form_data = {
-                                    'CameraType': ['rtsp', 'Two_Color'],
-                                    'img': jpg_base64,
-                                    'sort': ui.lineEdit_monitor_sort.text(),
-                                }
-                            else:
-                                form_data = {
-                                    'CameraType': 'rtsp',
-                                    'img': jpg_base64,
-                                    'sort': ui.lineEdit_monitor_sort.text(),
-                                }
-                            res = requests.post(url=recognition_addr, data=form_data, timeout=8)
-                            r_list = eval(res.text)
-                            r_img = r_list[0]
-                            if os.path.exists(ui.lineEdit_end2_Path.text()):
-                                with open('%s/rtsp_end_%s_%s.jpg' %
-                                          (ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000)),
-                                          'wb') as f:
-                                    f.write(r_img)
-                            flg_start['ai_end'] = True
-                            cap.release()
-                            result.append(r_list)
-                            return
+                        if ui.checkBox_Two_Color.isChecked():
+                            form_data = {
+                                'CameraType': ['rtsp', 'Two_Color'],
+                                'img': jpg_base64,
+                                'sort': ui.lineEdit_monitor_sort.text(),
+                            }
                         else:
-                            print("jpg_base64 转换错误！")
-                            continue
-                    except Exception as e:
-                        print("图片处理或识别异常：", e)
+                            form_data = {
+                                'CameraType': 'rtsp',
+                                'img': jpg_base64,
+                                'sort': ui.lineEdit_monitor_sort.text(),
+                            }
+                        res = requests.post(url=recognition_addr, data=form_data, timeout=8)
+                        r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
+                        r_img = r_list[0]
+                        if os.path.exists(ui.lineEdit_end2_Path.text()):
+                            image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
+                                              'wb')
+                            image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+                            image_json.close()
+                        flg_start['ai_end'] = True
+                        cap.release()
+                        rtsp_res = copy.deepcopy(r_list)
+                        return
+                    else:
+                        print("jpg_base64 转换错误！")
                         continue
-                else:
-                    print("无法读取视频帧")
+                except:
+                    print("图片错误或识别服务器未开启！")
                     continue
-        else:
-            print('无法打开摄像头')
-        cap.release()
-        result.append([jpg_base64, '[1]', 'rtsp'])
-
-    t = threading.Thread(target=inner_get_rtsp, args=(r_url,))
-    t.start()
-    t.join(timeout)
-
-    if t.is_alive():
-        print(f'⛔ get_rtsp 超时（>{timeout}s），自动放弃！')
-        # 线程还在运行，但主线程返回默认值
-        return ['', '[1]', 'rtsp']
+            else:
+                print("无法读取视频帧")
+                continue
     else:
-        return result[0] if result else ['', '[1]', 'rtsp']
+        print(f'无法打开摄像头')
+    cap.release()
+    rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
+
+
+# def get_rtsp(r_url, timeout=20):
+#     result = []
+#
+#     def inner_get_rtsp(rt_url):
+#         cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
+#         cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+#         jpg_base64 = ''
+#         if cap.isOpened():
+#             for i in range(3):
+#                 ret = False
+#                 frame = ''
+#                 for j in range(3):
+#                     ret, frame = cap.read()
+#
+#                 if ret:
+#                     try:
+#                         if len(area_Code['net']) > 0:
+#                             area = area_Code['net'][0]['coordinates']
+#                             x1, x2 = area[0][0], area[1][0]
+#                             y1, y2 = area[1][1], area[2][1]
+#                             frame = frame[y1:y2, x1:x2]
+#                             if ui.checkBox_Monitor_Horizontal.isChecked():
+#                                 frame = cv2.flip(frame, 1)
+#                             if ui.checkBox_Monitor_Vertica.isChecked():
+#                                 frame = cv2.flip(frame, 0)
+#
+#                         success, jpeg_data = cv2.imencode('.jpg', frame)
+#                         if success:
+#                             jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
+#                             if os.path.exists(ui.lineEdit_end2_Path.text()):
+#                                 img_file = '%s/rtsp_%s_%s.jpg' % (
+#                                     ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000))
+#                                 str2image_file(jpg_base64, img_file)
+#
+#                             if ui.checkBox_Two_Color.isChecked():
+#                                 form_data = {
+#                                     'CameraType': ['rtsp', 'Two_Color'],
+#                                     'img': jpg_base64,
+#                                     'sort': ui.lineEdit_monitor_sort.text(),
+#                                 }
+#                             else:
+#                                 form_data = {
+#                                     'CameraType': 'rtsp',
+#                                     'img': jpg_base64,
+#                                     'sort': ui.lineEdit_monitor_sort.text(),
+#                                 }
+#                             res = requests.post(url=recognition_addr, data=form_data, timeout=8)
+#                             r_list = eval(res.text)
+#                             r_img = r_list[0]
+#                             if os.path.exists(ui.lineEdit_end2_Path.text()):
+#                                 with open('%s/rtsp_end_%s_%s.jpg' %
+#                                           (ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000)),
+#                                           'wb') as f:
+#                                     f.write(r_img)
+#                             flg_start['ai_end'] = True
+#                             cap.release()
+#                             result.append(r_list)
+#                             return
+#                         else:
+#                             print("jpg_base64 转换错误！")
+#                             continue
+#                     except Exception as e:
+#                         print("图片处理或识别异常：", e)
+#                         continue
+#                 else:
+#                     print("无法读取视频帧")
+#                     continue
+#         else:
+#             print('无法打开摄像头')
+#         cap.release()
+#         result.append([jpg_base64, '["%s"]'%init_array[0][5], 'rtsp'])
+#
+#     t = threading.Thread(target=inner_get_rtsp, args=(r_url,))
+#     t.start()
+#     t.join(timeout)
+#
+#     if t.is_alive():
+#         print(f'⛔ get_rtsp 超时（>{timeout}s），自动放弃！')
+#         # 线程还在运行，但主线程返回默认值
+#         return ['', '["%s"]'%init_array[0][5], 'rtsp']
+#     else:
+#         return result[0] if result else ['', '["%s"]'%init_array[0][5], 'rtsp']
 
 
 def rtsp_save_image():
@@ -683,42 +700,91 @@ def deal_action():
         action_area[0] = int(ranking_array[0][6])  # 触发区域
 
 
-def set_camera_color(array_temp_, color_num=2):
-    color_two = [[], []]  # 第一种颜色，第二种颜色
-    color_set = [[init_array[0][5], init_array[1][5], init_array[2][5]],
-                 [init_array[3][5], init_array[4][5], init_array[5][5]]]
+def set_camera_color(array_temp_, color_num='red'):
+    color_two_ = [[], []]  # 第一种颜色，第二种颜色
+    res_array = [''] * len(array_temp_)
     for i in range(len(array_temp_)):
-        if array_temp_[i] == init_array[color_num][5]:
-            color_two[0].append(i)
+        if array_temp_[i] == color_num:
+            color_two_[0].append(i)
         else:
-            color_two[1].append(i)
-    # if len(color_two[0]) >= int(balls_count / 2):
-    for i in range(len(color_two[0])):  # 着色
-        # print('color_two:', color_two)
-        # print('ranking_temp:', ranking_temp)
-        array_temp_[color_two[0][i]] = color_set[0][i]
-    for i in range(len(color_two[1])):
-        array_temp_[color_two[1][i]] = color_set[1][i]
-    return array_temp_
-
-
-def set_color(array_temp_, color_num=2):
-    color_two = [[], []]  # 第一种颜色，第二种颜色
-    color_set = [[init_array[0][5], init_array[1][5], init_array[2][5]],
-                 [init_array[3][5], init_array[4][5], init_array[5][5]]]
-    for i in range(len(array_temp_)):
-        if array_temp_[i][5] == init_array[color_num][5]:
-            color_two[0].append(i)
-        else:
-            color_two[1].append(i)
-    if len(color_two[0]) >= int(balls_count / 2):
+            color_two_[1].append(i)
+    if len(color_two_[0]) > int(balls_count / 2):
         for i in range(int(balls_count / 2)):  # 着色
-            # print('color_two:', color_two)
-            # print('ranking_temp:', ranking_temp)
+            res_array[color_two_[0][i]] = color_set[0][i]
+    else:
+        for i in range(len(color_two_[0])):  # 着色
+            res_array[color_two_[0][i]] = color_set[0][i]
+    if len(color_two_[1]) > int(balls_count / 2):
+        for i in range(int(balls_count / 2)):  # 着色
+            res_array[color_two_[1][i]] = color_set[1][i]
+    else:
+        for i in range(len(color_two_[1])):
+            res_array[color_two_[1][i]] = color_set[1][i]
+    return res_array
+
+
+def set_color(array_temp_, color_num='red'):
+    global color_two
+    color_two = [[], []]
+    for i in range(len(array_temp_)):
+        if array_temp_[i][5] == color_num:
+            color_two[0].append(i)
+        else:
+            color_two[1].append(i)
+    if len(color_two[0]) > int(balls_count / 2):
+        for i in range(int(balls_count / 2)):  # 着色
             array_temp_[color_two[0][i]][5] = color_set[0][i]
+    else:
+        for i in range(len(color_two[0])):  # 着色
+            array_temp_[color_two[0][i]][5] = color_set[0][i]
+    if len(color_two[1]) > int(balls_count / 2):
+        for i in range(int(balls_count / 2)):  # 着色
+            array_temp_[color_two[1][i]][5] = color_set[1][i]
+    else:
         for i in range(len(color_two[1])):
             array_temp_[color_two[1][i]][5] = color_set[1][i]
     return array_temp_
+
+
+def set_color_ranking(array_temp_):
+    for i in range(len(array_temp_)):
+        for j in range(balls_count - 1):
+            if (ranking_array
+                    and array_temp_[i][5] == ranking_array[j][5]):
+                if array_temp_[i][6] < ranking_array[j][6]:
+                    for k in range(len(color_set)):
+                        if array_temp_[i][5] in color_set[k]:
+                            for l in range(len(color_set[k]) - 1):
+                                if color_set[k][l] == array_temp_[i][5]:
+                                    array_temp_[i][5] = color_set[k][l + 1]
+                                    break
+                                    # for n, m in enumerate(color_two[k]):
+                                    #     if m >= i and (n + l < len(color_set[k])):
+                                    #         array_temp_[m][5] = color_set[k][n + l + 1]
+                else:
+                    for k in range(len(color_set)):
+                        if array_temp_[i][5] in color_set[k]:
+                            for n, m in enumerate(color_two[k]):
+                                if (m > i
+                                        and n < len(color_set[k])
+                                        and (array_temp_[i][5] == color_set[k][n])):
+                                    if n + 1 < len(color_set[k]):
+                                        array_temp_[m][5] = color_set[k][n + 1]
+                                    else:
+                                        array_temp_[m][5] = color_set[k][-1]
+                    break
+    return array_temp_
+
+
+def filtrate_color(array_temp_):  # 在终点区域，过滤掉同区域珠子
+    area_temp = {}
+    temp = []
+    for i in range(len(array_temp_)):
+        if array_temp_[i][6] not in area_temp.keys():
+            area_temp[array_temp_[i][6]] = array_temp_[i]
+    for i in area_temp.keys():
+        temp.append(area_temp[i])
+    return temp
 
 
 def deal_rank_two_color(integration_qiu_array):
@@ -728,11 +794,16 @@ def deal_rank_two_color(integration_qiu_array):
     global update_two_time
     array_temp = copy.deepcopy(integration_qiu_array)
     # print('array_temp:', array_temp)
-    if len(array_temp) >= balls_count:
-        # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
-        array_temp.sort(key=lambda x: x[6], reverse=True)
+    # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
+    array_temp.sort(key=lambda x: x[6], reverse=True)
+    if array_temp[0][6] > max_area_count - balls_count:
+        array_temp = filtrate_color(array_temp)
         array_temp = set_color(array_temp)
-        deal_rank(array_temp)
+    else:
+        array_temp = set_color(array_temp)
+        if len(array_temp) < balls_count:
+            array_temp = set_color_ranking(array_temp)
+    deal_rank(array_temp)
 
 
 # 处理排名
@@ -975,9 +1046,13 @@ def camera_to_num(res):  # 按最新排名排列数组
         camera_response.append(int(color_number[init_array[i][5]]))
     arr_res = []
     for r in res:
-        arr_res.append(int(color_number[r]))
+        if r in color_number.keys():
+            arr_res.append(int(color_number[r]))
     # return arr_res
-    for arr in range(0, len(arr_res)):
+    res_num = len(arr_res)
+    if res_num > balls_count:
+        res_num = balls_count
+    for arr in range(0, res_num):
         for cam in range(0, len(camera_response)):
             if arr_res[arr] == camera_response[cam]:
                 camera_response[arr], camera_response[cam] = camera_response[cam], camera_response[arr]
@@ -1308,8 +1383,8 @@ class DealUdpThread(QThread):
                 continue
             # print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~2', array_data)
             if ui.checkBox_Two_Color.isChecked():
-                # deal_rank_two_color(array_data)
-                deal_rank(array_data)
+                deal_rank_two_color(array_data)
+                # deal_rank(array_data)
             else:
                 deal_rank(array_data)
             if ball_sort and balls_start != len(ball_sort[1][0]):
@@ -1933,7 +2008,7 @@ class ReStartThread(QThread):
         global ranking_array
         while self.running:
             time.sleep(1)
-            if ball_stop_time != 0:
+            if ball_stop_time and ball_stop_time != 0:
                 self.signal.emit('卡珠倒数')
             if not self.run_flg or ui.radioButton_stop_betting.isChecked():
                 self.run_flg = False
@@ -1996,7 +2071,10 @@ class ReStartThread(QThread):
                     self.signal.emit('等待主摄像头识别~~~~~~~')
                     time.sleep(1)
                 with ball_sort_lock:
-                    ball_sort[1][0] = copy.deepcopy(camera_list)
+                    if len(camera_list) == balls_count:
+                        ball_sort[1][0] = copy.deepcopy(camera_list)
+                    else:
+                        ball_sort[1][0] = []
             else:
                 with ball_sort_lock:
                     ball_sort[1][0] = []
@@ -2018,9 +2096,9 @@ class ReStartThread(QThread):
                             temp = []
                             for index in range(balls_count):
                                 if z_ranking_res[index] < 5:
-                                    temp.append(3)
+                                    temp.append(1)
                                 else:
-                                    temp.append(6)
+                                    temp.append(2)
                             pos = str(temp)
                         else:
                             pos = str(z_ranking_res[:balls_count])
@@ -2075,7 +2153,9 @@ class ReStartThread(QThread):
             if lottery:
                 self.signal.emit(lottery)
             if self.countdown.isdigit():
-                self.countdown = int(self.countdown)
+                self.countdown = int(self.countdown) - int(ui.lineEdit_Reserve_time.text())
+                if self.countdown < 5:
+                    self.countdown = 10
             else:
                 self.countdown = 60
             for t in range(self.countdown, -1, -1):
@@ -2383,6 +2463,7 @@ class PlanBallNumThread(QThread):
             term_status = 1
             screen_sort = True
             ObsEnd_Thread.ball_flg = False  # 结算页标志2
+            ObsEnd_Thread.screen_flg = False  # 结算页标志1
             if res == 0:
                 while self.run_flg:
                     res, value = sc.GAGetDiReverseCount()
@@ -2673,7 +2754,8 @@ class ObsEndThread(QThread):
                 try:
                     tcp_result_thread.send_type = 'updata'
                     tcp_result_thread.run_flg = True
-
+                    cl_request.press_input_properties_button("浏览器", "refreshnocache")
+                    time.sleep(0.1)
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                       False)  # 关闭排名来源
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
@@ -2730,9 +2812,9 @@ class ObsEndThread(QThread):
                     temp = []
                     for index in range(balls_count):
                         if z_ranking_end[index] < 5:
-                            temp.append(3)
+                            temp.append(1)
                         else:
-                            temp.append(6)
+                            temp.append(2)
                     pos = temp
                 else:
                     pos = z_ranking_end[0:balls_count]
@@ -2827,9 +2909,6 @@ class ObsEndThread(QThread):
             if ui.checkBox_end_stop.isChecked():  # 本局结束自动封盘
                 betting_loop_flg = False
 
-            if ui.checkBox_end_BlackScreen.isChecked():  # 本局结束自动封盘黑屏
-                betting_loop_flg = False
-
             self.signal.emit(succeed('第%s期 结束！' % term))
 
             if betting_loop_flg:
@@ -2882,8 +2961,6 @@ def ObsEndsignal_accept(msg):
                 tb_result.viewport().update()
         if not betting_loop_flg:
             ui.radioButton_stop_betting.click()  # 封盘
-            if ui.checkBox_end_BlackScreen.isChecked():
-                pass
         ui.checkBox_main_music.setChecked(False)
         ui.lineEdit_balls_start.setText('0')
         ui.lineEdit_ball_start.setText('0')
@@ -2925,6 +3002,7 @@ class ScreenShotThread(QThread):
         global main_Camera, monitor_Camera, fit_Camera
         global camera_list
         global balls_final
+        global obs_res, rtsp_res
         while self.running:
             time.sleep(1)
             if not self.run_flg:
@@ -2933,25 +3011,41 @@ class ScreenShotThread(QThread):
             self.signal.emit(succeed('截图结果识别运行！'))
             time.sleep(1)
             ObsEnd_Thread.screen_flg = False  # 结算页标志1
-            obs_res = get_obs(ui.lineEdit_source_end.text())  # 拍摄来源
+            obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
+            rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
+            time_old = 0
+            t_obs = threading.Thread(target=get_obs, daemon=True)  # 拍摄来源
+            t_obs.start()
+            while obs_res[1] == '["%s"]' % init_array[0][5] and time_old < 20:
+                time_old += 1
+                print('obs time_old:', time_old)
+                self.signal.emit('obs time_old:%s' % time_old)
+                time.sleep(1)
             if obs_res:
                 obs_list = eval(obs_res[1])
                 if ui.checkBox_Two_Color.isChecked():
                     print('obs_list:', obs_list)
-                    obs_list = set_camera_color(obs_list)
+                    obs_list = set_camera_color(obs_list, ui.lineEdit_color_one.text())
                     print('obs_end:', obs_list)
                 main_Camera = camera_to_num(obs_list)
                 self.signal.emit(obs_res)
 
-            rtsp_res = get_rtsp(rtsp_url)  # 网络摄像头拍摄
+            t_rtsp = threading.Thread(target=get_rtsp, daemon=True)  # 拍摄来源
+            t_rtsp.start()
+            time_old = 0
+            while rtsp_res[1] == '["%s"]' % init_array[0][5] and time_old < 20:
+                time_old += 1
+                print('rtsp time_old:', time_old)
+                self.signal.emit('rtsp time_old:%s' % time_old)
+                time.sleep(1)
             if rtsp_res:
                 rtsp_list = eval(rtsp_res[1])
                 if ui.checkBox_Two_Color.isChecked():
-                    rtsp_list = set_camera_color(rtsp_list)
+                    rtsp_list = set_camera_color(rtsp_list, ui.lineEdit_color_one.text())
                 monitor_Camera = camera_to_num(rtsp_list)
                 self.signal.emit(rtsp_res)
 
-            if obs_res[1] != '[1]' and main_Camera == monitor_Camera:
+            if obs_res[1] != '["%s"]' % init_array[0][5] and main_Camera == monitor_Camera:
                 term_status = 1
                 print('主镜头识别正确:', main_Camera)
                 z_ranking_end = copy.deepcopy(main_Camera)
@@ -2982,7 +3076,9 @@ class ScreenShotThread(QThread):
                             for i in range(len(z_ranking_res)):
                                 if getattr(ui, 'lineEdit_result_%s' % i).text().isdigit():
                                     num = int(getattr(ui, 'lineEdit_result_%s' % i).text())
-                                    if num not in send_list:
+                                    if ui.checkBox_Two_Color.isChecked():
+                                        send_list.append(num)
+                                    elif num not in send_list:
                                         send_list.append(num)
                             if len(send_list) >= balls_count:
                                 self.signal.emit('send_ok')
@@ -2995,11 +3091,32 @@ class ScreenShotThread(QThread):
                             break
                         time.sleep(1)
                     Send_Result_End = False
+                    if ui.checkBox_Two_Color.isChecked():
+                        temp_two = [[], []]
+                        for i in range(balls_count):
+                            if send_list[i] <= balls_count / 2:
+                                temp_two[0].append(i)
+                            else:
+                                temp_two[1].append(i)
+                        for i in range(len(temp_two[0])):
+                            send_list[temp_two[0][i]] = color_set_num[0][i]
+                        for i in range(len(temp_two[1])):
+                            send_list[temp_two[1][i]] = color_set_num[1][i]
                     for i in range(0, len(send_list)):
                         for j in range(0, len(z_ranking_end)):
                             if send_list[i] == z_ranking_end[j]:
                                 z_ranking_end[i], z_ranking_end[j] = z_ranking_end[j], z_ranking_end[i]
-                lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
+                # lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
+                if ui.checkBox_Two_Color.isChecked():
+                    temp = []
+                    for i in range(len(z_ranking_end)):
+                        if z_ranking_end[i] <= balls_count / 2:
+                            temp.append(int(color_number[ui.lineEdit_color_one.text()]))
+                        else:
+                            temp.append(int(color_number[ui.lineEdit_color_two.text()]))
+                    lottery_term[5] = str(temp)  # 排名
+                else:
+                    lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
             camera_list = []
             for i in range(balls_count):
                 for key in color_number.keys():
@@ -3034,7 +3151,17 @@ class ScreenShotThread(QThread):
             for i in range(len(balls_final)):
                 balls_final[i] = True
             if lottery_term[4] != '':
-                lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+                # lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
+                if ui.checkBox_Two_Color.isChecked():
+                    temp = []
+                    for i in range(len(z_ranking_end)):
+                        if z_ranking_end[i] <= balls_count / 2:
+                            temp.append(int(color_number[ui.lineEdit_color_one.text()]))
+                        else:
+                            temp.append(int(color_number[ui.lineEdit_color_two.text()]))
+                    lottery_term[4] = str(temp)  # 排名
+                else:
+                    lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
             self.signal.emit('核对完成')
             time.sleep(3)
             ObsEnd_Thread.screen_flg = True  # 结算页标志1
@@ -3059,7 +3186,16 @@ def ScreenShotsignal_accept(msg):
             painter.setPen(QColor(255, 0, 0))  # 设定颜色（红色）
             painter.drawText(10, 60, "1")  # (x, y, "文本")
             painter.end()  # 结束绘制
-            ui.lineEdit_Main_Camera.setText(str(main_Camera[:balls_count]))
+            if ui.checkBox_Two_Color.isChecked():
+                temp = []
+                for i in range(balls_count):
+                    if main_Camera[:balls_count][i] <= balls_count / 2:
+                        temp.append(int(color_number[ui.lineEdit_color_one.text()]))
+                    else:
+                        temp.append(int(color_number[ui.lineEdit_color_two.text()]))
+                ui.lineEdit_Main_Camera.setText(str(temp))
+            else:
+                ui.lineEdit_Main_Camera.setText(str(main_Camera[:balls_count]))
             # if ui.checkBox_main_camera.isChecked():
             ui.label_main_picture.setPixmap(pixmap)
             # 获取 label 的当前大小
@@ -3073,7 +3209,16 @@ def ScreenShotsignal_accept(msg):
             painter.setPen(QColor(0, 255, 0))  # 设定颜色（红色）
             painter.drawText(10, 60, "2")  # (x, y, "文本")
             painter.end()  # 结束绘制
-            ui.lineEdit_Backup_Camera.setText(str(monitor_Camera[:balls_count]))
+            if ui.checkBox_Two_Color.isChecked():
+                temp = []
+                for i in range(balls_count):
+                    if monitor_Camera[:balls_count][i] <= balls_count / 2:
+                        temp.append(int(color_number[ui.lineEdit_color_one.text()]))
+                    else:
+                        temp.append(int(color_number[ui.lineEdit_color_two.text()]))
+                ui.lineEdit_Backup_Camera.setText(str(temp))
+            else:
+                ui.lineEdit_Backup_Camera.setText(str(monitor_Camera[:balls_count]))
             # if ui.checkBox_monitor_cam.isChecked():
             ui.label_monitor_picture.setPixmap(pixmap)
             # 获取 label 的当前大小
@@ -3085,8 +3230,16 @@ def ScreenShotsignal_accept(msg):
         for index in range(len(main_Camera)):
             fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
             if fit_Camera[index]:
-                getattr(ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
-                getattr(result_ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
+                if ui.checkBox_Two_Color.isChecked():
+                    if main_Camera[index] <= balls_count / 2:
+                        getattr(ui, 'lineEdit_result_%s' % index).setText('3')
+                        getattr(result_ui, 'lineEdit_result_%s' % index).setText('3')
+                    else:
+                        getattr(ui, 'lineEdit_result_%s' % index).setText('6')
+                        getattr(result_ui, 'lineEdit_result_%s' % index).setText('6')
+                else:
+                    getattr(ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
+                    getattr(result_ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
             else:
                 getattr(ui, 'lineEdit_result_%s' % index).setText('')
                 getattr(result_ui, 'lineEdit_result_%s' % index).setText('')
@@ -3131,16 +3284,24 @@ class ObsShotThread(QThread):
         global ranking_array
         global camera_list
         global balls_final
+        global obs_res
         while self.running:
             time.sleep(0.1)
             if not self.run_flg:
                 continue
             print('OBS运行')
-            obs_res = get_obs(ui.lineEdit_source_end.text())  # 拍摄来源
+            obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
+            time_old = 0
+            t_obs = threading.Thread(target=get_obs, daemon=True)  # 拍摄来源
+            t_obs.start()
+            while obs_res[1] == '["%s"]' % init_array[0][5] and time_old < 20:
+                time_old += 1
+                print('obs time_old:', time_old)
+                time.sleep(1)
             if obs_res:
                 obs_list = eval(obs_res[1])
                 if ui.checkBox_Two_Color.isChecked():
-                    obs_list = set_camera_color(obs_list)
+                    obs_list = set_camera_color(obs_list, ui.lineEdit_color_one.text())
                 camera_list = copy.deepcopy(obs_list)
                 obs_num = len(obs_list)
                 if obs_num > 2 and ranking_array[0][6] != 1:
@@ -3860,7 +4021,6 @@ def cmd_signal_accept(msg):
         else:
             if msg == 'end_state':
                 ui.checkBox_end_stop.setChecked(False)
-                ui.checkBox_end_BlackScreen.setChecked(False)
             if msg == '音乐':
                 if not ui.checkBox_test.isChecked():  # 如果是测试模式，不播放主题音乐
                     num = random.randint(1, 3)
@@ -4393,6 +4553,8 @@ def save_main_json():
             main_all['five_axis'] = eval(ui.lineEdit_five_axis.text())
             main_all['five_key'] = eval(ui.lineEdit_five_key.text())
             main_all['balls_count'] = ui.lineEdit_balls_count.text()
+            main_all['lineEdit_color_one'] = ui.lineEdit_color_one.text()
+            main_all['lineEdit_color_two'] = ui.lineEdit_color_two.text()
             main_all['wakeup_addr'] = eval(ui.lineEdit_wakeup_addr.text())
             main_all['rtsp_url'] = ui.lineEdit_rtsp_url.text()
             main_all['recognition_addr'] = ui.lineEdit_recognition_addr.text()
@@ -4433,6 +4595,7 @@ def save_main_json():
             main_all['lineEdit_Start_Path'] = ui.lineEdit_Start_Path.text()
             main_all['lineEdit_Map_Action'] = ui.lineEdit_Map_Action.text()
             main_all['lineEdit_GPS_Num'] = ui.lineEdit_GPS_Num.text()
+            main_all['lineEdit_Reserve_time'] = ui.lineEdit_Reserve_time.text()
             main_all['lineEdit_End_Num'] = ui.lineEdit_End_Num.text()
             main_all['lineEdit_lost'] = ui.lineEdit_lost.text()
             main_all['checkBox_Cycle'] = ui.checkBox_Cycle.isChecked()
@@ -4501,6 +4664,8 @@ def load_main_json():
     global five_axis
     global five_key
     global Track_number
+    global color_set
+    global color_set_num
     file = "main_config.json"
     if os.path.exists(file):
         # try:
@@ -4516,6 +4681,8 @@ def load_main_json():
         ui.lineEdit_five_axis.setText(str(main_all['five_axis']))
         ui.lineEdit_five_key.setText(str(main_all['five_key']))
         ui.lineEdit_balls_count.setText(main_all['balls_count'])
+        ui.lineEdit_color_one.setText(main_all['lineEdit_color_one'])
+        ui.lineEdit_color_two.setText(main_all['lineEdit_color_two'])
         ui.lineEdit_balls_auto.setText(main_all['balls_count'])
         ui.lineEdit_monitor_sort.setText(main_all['monitor_sort'])
         ui.lineEdit_sony_sort.setText(main_all['sony_sort'])
@@ -4557,6 +4724,7 @@ def load_main_json():
         ui.lineEdit_volume_3.setText(main_all['lineEdit_volume_3'])
         ui.lineEdit_Map_Action.setText(str(main_all['lineEdit_Map_Action']))
         ui.lineEdit_GPS_Num.setText(main_all['lineEdit_GPS_Num'])
+        ui.lineEdit_Reserve_time.setText(main_all['lineEdit_Reserve_time'])
         ui.lineEdit_End_Num.setText(main_all['lineEdit_End_Num'])
         ui.lineEdit_background_Path.setText(main_all['lineEdit_background_Path'])
         ui.lineEdit_Start_Path.setText(main_all['lineEdit_Start_Path'])
@@ -4605,6 +4773,14 @@ def load_main_json():
             getattr(ui, 'lineEdit_Color_Eng_%s' % index).setText(eng)
             getattr(ui, 'lineEdit_Color_Ch_%s' % index).setText(ch)
             getattr(ui, 'lineEdit_Color_No_%s' % index).setText(number)
+        for i in range(balls_count):
+            if i < balls_count / 2:
+                color_set[0].append(init_array[i][5])
+                color_set_num[0].append(int(color_number[init_array[i][5]]))
+            else:
+                color_set[1].append(init_array[i][5])
+                color_set_num[1].append(int(color_number[init_array[i][5]]))
+        # print('color_set_num:', color_set_num)
         for i in range(balls_count, 10):
             getattr(ui, 'lineEdit_result_%s' % i).hide()
             getattr(result_ui, 'lineEdit_result_%s' % i).hide()
@@ -5339,9 +5515,9 @@ class MapLabel(QLabel):
                     balls_ranking_time[i] = z_end_time[i]
                 if ui.checkBox_Two_Color.isChecked():
                     if self.positions[i][2] < 5:
-                        pos = 3
+                        pos = 1
                     else:
-                        pos = 6
+                        pos = 2
                 else:
                     pos = self.positions[i][2]
                 res.append(
@@ -6040,7 +6216,16 @@ def set_result_class():
 
 def set_result(msg):
     print(msg)
-    balls = msg[:balls_count]
+    if ui.checkBox_Two_Color.isChecked():
+        temp = []
+        for i in range(balls_count):
+            if msg[:balls_count][i] <= balls_count / 2:
+                temp.append(int(color_number[ui.lineEdit_color_one.text()]))
+            else:
+                temp.append(int(color_number[ui.lineEdit_color_two.text()]))
+        balls = temp  # 排名
+    else:
+        balls = msg[:balls_count]
     for index, item in enumerate(balls):
         getattr(ui, 'lineEdit_result_%s' % index, None).setText(str(item))
         getattr(result_ui, 'lineEdit_result_%s' % index, None).setText(str(item))
@@ -6734,6 +6919,9 @@ class CheckFileThread(QThread):
             video_part = os.path.join(os.path.dirname(path2), '录像').replace("\\", "/")
             if os.path.exists(video_part):
                 limit_folder_size(video_part, max_files=800)  # 限制文件夹数量
+            data_part = os.path.join(os.path.dirname(path2), '复盘').replace("\\", "/")
+            if os.path.exists(data_part):
+                limit_folder_size(data_part, max_files=800)  # 限制文件夹数量
             if os.path.exists('D:/ApowerREC'):
                 limit_folder_size('D:/ApowerREC', max_files=30)  # 限制文件夹数量
             # if os.path.exists(path_mark):
@@ -6748,6 +6936,7 @@ class CheckFileThread(QThread):
                     ui.checkBox_Pass_Recognition_Start.setEnabled(True)
                     ui.checkBox_Pass_Ranking_Twice.setEnabled(True)
                     ui.lineEdit_balls_auto.setEnabled(True)
+                    ui.lineEdit_Reserve_time.setEnabled(True)
                     ui.groupBox_6.setEnabled(True)
                     ui.frame_13.setEnabled(True)
             else:
@@ -6759,6 +6948,7 @@ class CheckFileThread(QThread):
                     ui.checkBox_Pass_Recognition_Start.setEnabled(False)
                     ui.checkBox_Pass_Ranking_Twice.setEnabled(False)
                     ui.lineEdit_balls_auto.setEnabled(False)
+                    ui.lineEdit_Reserve_time.setEnabled(False)
                     ui.groupBox_6.setEnabled(False)
                     ui.frame_13.setEnabled(False)
 
@@ -6938,14 +7128,22 @@ def maintain_screen():  # OBS维护
 
 def start_game():  # 开盘信号
     if ui.checkBox_start_game.isChecked():
-        if not Kaj789_Thread.run_flg:
-            Kaj789_Thread.run_type = 'post_start'
-            Kaj789_Thread.run_flg = True
+        response = messagebox.askquestion("提示", "是否发送开盘信号到前端？")
+        if "yes" in response:
+            if not Kaj789_Thread.run_flg:
+                Kaj789_Thread.run_type = 'post_start'
+                Kaj789_Thread.run_flg = True
+        else:
+            ui.checkBox_start_game.setChecked(not ui.checkBox_start_game.isChecked())
     else:
-        while Kaj789_Thread.run_flg:
-            time.sleep(1)
-        Kaj789_Thread.run_type = 'post_stop'
-        Kaj789_Thread.run_flg = True
+        response = messagebox.askquestion("提示", "是否发送封盘信号到前端？")
+        if "yes" in response:
+            while Kaj789_Thread.run_flg:
+                time.sleep(1)
+            Kaj789_Thread.run_type = 'post_stop'
+            Kaj789_Thread.run_flg = True
+        else:
+            ui.checkBox_start_game.setChecked(not ui.checkBox_start_game.isChecked())
 
 
 def organ_shoot():  # 弹射开关
@@ -7283,6 +7481,11 @@ def test_end():
         flg_start['obs'] = False
 
 
+def test_screenshot():
+    if not ui.radioButton_start_betting.isChecked():
+        ScreenShot_Thread.run_flg = True
+
+
 def my_def():
     global ranking_array
     global ball_sort
@@ -7313,13 +7516,9 @@ def my_test():
     global ranking_array
     global wakeup_addr
     print('~~~~~~~~~~~~~~~~~~~')
-    # get_rtsp(rtsp_url)
-
-    # ranking_array = []  # 前0~3是坐标↖↘,4=镜头号，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
-    ranking_array[0][5] = "yellow"
-    ranking_array[0][6] = 67
-    ranking_array[0][10] = 1
-    ranking_array[0][8] = 2
+    cl_request.press_input_properties_button("终点1", "activate")  # 刷新终点摄像头
+    time.sleep(0.1)
+    cl_request.press_input_properties_button("终点1", "activate")  # 刷新终点摄像头
     # tcp_result_thread.send_type = ''
     # tcp_result_thread.run_flg = True
     # my_def()
@@ -8192,6 +8391,9 @@ if __name__ == '__main__':
     balls_count = 8  # 运行球数
     balls_start = 0  # 起点球数量
     laps_count = 0  # 跨圈计数
+    color_set = [[], []]  # 双色数组
+    color_set_num = [[], []]  # 双色数组数字
+    color_two = [[], []]  # 第一种颜色，第二种颜色
     update_two_time = time.time()  # 记录两种颜色珠子的更新时间
     ranking_lock = threading.Lock()  # 排名线程锁
     ranking_array = []  # 前0~3是坐标↖↘,4=镜头号，5=名称,6=赛道区域,7=方向排名,8=路线,9=圈数,10=0不可见 1可见,.
@@ -8457,6 +8659,8 @@ if __name__ == '__main__':
     fit_Camera = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # 两个镜头的对比
     perfect_Camera = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]  # 完美情况
     camera_list = []  # 上局结果
+    obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
+    rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
 
     main_camera_layout = QVBoxLayout(ui.widget_camera_sony)
     main_camera_layout.setContentsMargins(0, 9, 0, 0)
@@ -8553,6 +8757,7 @@ if __name__ == '__main__':
     ui.lineEdit_Map_Action.editingFinished.connect(save_main_json)
     ui.lineEdit_End_Num.editingFinished.connect(save_main_json)
     ui.lineEdit_GPS_Num.editingFinished.connect(save_main_json)
+    ui.lineEdit_Reserve_time.editingFinished.connect(save_main_json)
     ui.lineEdit_background_Path.editingFinished.connect(save_main_json)
     ui.lineEdit_Start_Path.editingFinished.connect(save_main_json)
     ui.lineEdit_lost.editingFinished.connect(save_main_json)
@@ -8594,13 +8799,14 @@ if __name__ == '__main__':
     ui.pushButton_Send_End.clicked.connect(send_end)
     ui.pushButton_Cancel_End.clicked.connect(cancel_end)
     ui.pushButton_Test_End.clicked.connect(test_end)
+    ui.pushButton_screenshot.clicked.connect(test_screenshot)
     ui.radioButton_ready.clicked.connect(ready_btn)
     ui.radioButton_wide.clicked.connect(wide_btn)
 
     ui.radioButton_start_betting.clicked.connect(start_betting)  # 开盘
     ui.radioButton_stop_betting.clicked.connect(stop_betting)  # 封盘
     ui.radioButton_test_game.clicked.connect(test_betting)  # 模拟
-    ui.checkBox_start_game.checkStateChanged.connect(start_game)  # 发送开盘信号
+    ui.checkBox_start_game.clicked.connect(start_game)  # 发送开盘信号
     ui.checkBox_maintain.checkStateChanged.connect(maintain_screen)
 
     ui.pushButton_close_all.clicked.connect(card_close_all)
