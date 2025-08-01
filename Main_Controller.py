@@ -750,7 +750,6 @@ def set_color_ranking(array_temp_):
     for i in range(len(array_temp_)):
         for j in range(balls_count - 1):
             if (ranking_array
-                    and array_temp_[i][6] < max_area_count - balls_count
                     and array_temp_[i][5] == ranking_array[j][5]):
                 if array_temp_[i][6] < ranking_array[j][6]:
                     for k in range(len(color_set)):
@@ -777,6 +776,17 @@ def set_color_ranking(array_temp_):
     return array_temp_
 
 
+def filtrate_color(array_temp_):  # 在终点区域，过滤掉同区域珠子
+    area_temp = {}
+    temp = []
+    for i in range(len(array_temp_)):
+        if array_temp_[i][6] not in area_temp.keys():
+            area_temp[array_temp_[i][6]] = array_temp_[i]
+    for i in area_temp.keys():
+        temp.append(area_temp[array_temp_[i][6]])
+    return temp
+
+
 def deal_rank_two_color(integration_qiu_array):
     global ranking_array
     global array_temp
@@ -786,9 +796,13 @@ def deal_rank_two_color(integration_qiu_array):
     # print('array_temp:', array_temp)
     # 给最新的珠子位置赋值圈数，从区域最小的珠子开始赋值圈数
     array_temp.sort(key=lambda x: x[6], reverse=True)
-    array_temp = set_color(array_temp)
-    if len(array_temp) < balls_count:
-        array_temp = set_color_ranking(array_temp)
+    if array_temp[0][6] > max_area_count - balls_count:
+        array_temp = filtrate_color(array_temp)
+        array_temp = set_color(array_temp)
+    else:
+        array_temp = set_color(array_temp)
+        if len(array_temp) < balls_count:
+            array_temp = set_color_ranking(array_temp)
     deal_rank(array_temp)
 
 
