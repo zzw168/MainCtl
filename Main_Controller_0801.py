@@ -344,84 +344,192 @@ def scenes_change():  # 变换场景
 
 
 # 截取OBS图片
+# def get_obs():
+#     global lottery_term
+#     global cl_request
+#     global obs_res
+#     image_byte = ''
+#     for i in range(5):
+#         try:
+#             resp = cl_request.get_source_screenshot(ui.lineEdit_source_end.text(),
+#                                                     "jpg", 1920, 1080, 100)
+#             if len(area_Code['main']) > 0:
+#                 Screenshot = resp.image_data
+#                 base64_string = Screenshot.replace('data:image/jpg;base64,', '')
+#                 image_data = base64.b64decode(base64_string)  # 1. 解码 Base64 字符串为二进制数据
+#                 nparr = np.frombuffer(image_data, np.uint8)  # 2. 转换为 NumPy 数组
+#                 image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)  # 3. 使用 OpenCV 读取图片
+#
+#                 area = area_Code['main'][0]['coordinates']  # 4. 定义裁剪区域 (y1:y2, x1:x2)
+#                 x1, x2 = area[0][0], area[1][0]
+#                 y1, y2 = area[1][1], area[2][1]
+#                 cropped_image = image[y1:y2, x1:x2]
+#
+#                 if ui.checkBox_Main_Horizontal.isChecked():
+#                     cropped_image = cv2.flip(cropped_image, 1)  # 🔁 5. 水平翻转图片
+#                 if ui.checkBox_Main_Vertica.isChecked():
+#                     cropped_image = cv2.flip(cropped_image, 0)  # 🔁 5. 垂直翻转图片
+#
+#                 _, buffer_ = cv2.imencode('.jpg', cropped_image)  # 5. 可选：转换裁剪后的图片回 Base64
+#                 img = base64.b64encode(buffer_).decode("utf-8")
+#             else:
+#                 img = resp.image_data[22:]
+#
+#             if os.path.exists(ui.lineEdit_end1_Path.text()):
+#                 img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time() * 1000))
+#                 str2image_file(img, img_file)  # 保存图片
+#
+#             if ui.checkBox_Two_Color.isChecked():
+#                 form_data = {
+#                     'CameraType': ['obs', 'Two_Color'],
+#                     'img': img,
+#                     'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+#                 }
+#             else:
+#                 form_data = {
+#                     'CameraType': 'obs',
+#                     'img': img,
+#                     'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
+#                 }
+#             try:
+#                 res = requests.post(url=recognition_addr, data=form_data, timeout=8)
+#                 r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
+#                 r_img = r_list[0]
+#                 if os.path.exists(ui.lineEdit_end1_Path.text()):
+#                     image_json = open('%s/obs_end_%s_%s.jpg' %
+#                                       (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time() * 1000)), 'wb')
+#                     image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+#                     image_json.close()
+#                 flg_start['ai_end'] = True
+#                 obs_res = copy.deepcopy(r_list)
+#                 return
+#             except:
+#                 flg_start['ai_end'] = False
+#                 image_byte = base64.b64decode(img.encode('ascii'))
+#                 print('终点识别服务没有开启！')
+#                 continue
+#                 # return [image_byte, '["%s"]'%init_array[0][5], 'obs']
+#         except:
+#             try:
+#                 cl_request.disconnect()
+#                 time.sleep(0.5)
+#                 cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
+#                 print('重连OBS~~~~~~~~~~~~')
+#                 time.sleep(0.5)
+#             except:
+#                 print('链接OBS失败~~~~~~~~~~~~')
+#             continue
+#     flg_start['obs'] = False
+#     obs_res = [image_byte, '["%s"]' % init_array[0][5], 'obs']
+#
+#
+# def obs_save_image():
+#     save_path = ui.lineEdit_end1_Path.text()
+#     if os.path.exists(save_path):
+#         if not ui.checkBox_saveImgs_auto.isChecked():
+#             res = sc.GASetDiReverseCount()  # 输入次数归0
+#             if res != 0:
+#                 print('无法读取计球器！')
+#                 return
+#         while ui.checkBox_saveImgs_main.isChecked():
+#             res, value = sc.GAGetDiReverseCount()
+#             if res == 0:
+#                 num = int(value[0] / 2)
+#                 if num >= balls_count or ui.checkBox_saveImgs_auto.isChecked():
+#                     time.sleep(1)
+#                     cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
+#                                                       '%s/%s.jpg' % (save_path, int(time.time() * 1000)), 1920,
+#                                                       1080, 100)
+#                     if not ui.checkBox_saveImgs_auto.isChecked():
+#                         time.sleep(1)
+#                         if int(ui.lineEdit_end.text()) > 0:
+#                             sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 0)  # 打开终点开关
+#                             time.sleep(2)
+#                             sc.GASetExtDoBit(int(ui.lineEdit_end.text()) - 1, 1)  # 打开终点开关
+#                             time.sleep(2)
+#                             sc.GASetDiReverseCount()  # 输入次数归0
+#                         else:
+#                             sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 1)  # 打开终点开关
+#                             time.sleep(2)
+#                             sc.GASetExtDoBit(abs(int(ui.lineEdit_end.text())) - 1, 0)  # 打开终点开关
+#                             time.sleep(2)
+#                             sc.GASetDiReverseCount()  # 输入次数归0
+#             if ui.checkBox_saveImgs_auto.isChecked():
+#                 break
+#             time.sleep(1)
+
+# 获取网络摄像头图片
 def get_obs():
-    global lottery_term
-    global cl_request
     global obs_res
     image_byte = ''
-    for i in range(5):
-        try:
-            resp = cl_request.get_source_screenshot(ui.lineEdit_source_end.text(),
-                                                    "jpg", 1920, 1080, 100)
-            if len(area_Code['main']) > 0:
-                Screenshot = resp.image_data
-                base64_string = Screenshot.replace('data:image/jpg;base64,', '')
-                image_data = base64.b64decode(base64_string)  # 1. 解码 Base64 字符串为二进制数据
-                nparr = np.frombuffer(image_data, np.uint8)  # 2. 转换为 NumPy 数组
-                image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)  # 3. 使用 OpenCV 读取图片
+    end_num = ui.lineEdit_source_end.text()
+    if not end_num.isdigit():
+        return [image_byte, '["%s"]' % init_array[0][5], 'obs']
+    cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
+    if cap.isOpened():
+        for i in range(3):
+            ret = False
+            frame = ''
+            for j in range(3):
+                ret, frame = cap.read()
+            if ret:
+                try:
+                    if len(area_Code['main']) > 0:
+                        # 获取裁剪区域坐标
+                        area = area_Code['main'][0]['coordinates']
+                        x1, x2 = area[0][0], area[1][0]
+                        y1, y2 = area[1][1], area[2][1]
+                        frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
+                        if ui.checkBox_Monitor_Horizontal.isChecked():
+                            frame = cv2.flip(frame, 1)  # 水平翻转图片
+                        if ui.checkBox_Monitor_Vertica.isChecked():
+                            frame = cv2.flip(frame, 0)  # 垂直翻转图片
+                    success, jpeg_data = cv2.imencode('.jpg', frame)
+                    if success:
+                        # 将 JPEG 数据转换为 Base64 字符串
+                        jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
+                        if os.path.exists(ui.lineEdit_end2_Path.text()):
+                            img_file = '%s/obs_%s_%s.jpg' % (
+                                ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+                            str2image_file(jpg_base64, img_file)  # 保存图片
 
-                area = area_Code['main'][0]['coordinates']  # 4. 定义裁剪区域 (y1:y2, x1:x2)
-                x1, x2 = area[0][0], area[1][0]
-                y1, y2 = area[1][1], area[2][1]
-                cropped_image = image[y1:y2, x1:x2]
-
-                if ui.checkBox_Main_Horizontal.isChecked():
-                    cropped_image = cv2.flip(cropped_image, 1)  # 🔁 5. 水平翻转图片
-                if ui.checkBox_Main_Vertica.isChecked():
-                    cropped_image = cv2.flip(cropped_image, 0)  # 🔁 5. 垂直翻转图片
-
-                _, buffer_ = cv2.imencode('.jpg', cropped_image)  # 5. 可选：转换裁剪后的图片回 Base64
-                img = base64.b64encode(buffer_).decode("utf-8")
+                        if ui.checkBox_Two_Color.isChecked():
+                            form_data = {
+                                'CameraType': ['obs', 'Two_Color'],
+                                'img': jpg_base64,
+                                'sort': ui.lineEdit_sony_sort.text(),
+                            }
+                        else:
+                            form_data = {
+                                'CameraType': 'obs',
+                                'img': jpg_base64,
+                                'sort': ui.lineEdit_sony_sort.text(),
+                            }
+                        res = requests.post(url=recognition_addr, data=form_data, timeout=8)
+                        r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
+                        r_img = r_list[0]
+                        if os.path.exists(ui.lineEdit_end1_Path.text()):
+                            image_json = open('%s/obs_%s_end.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0]),
+                                              'wb')
+                            image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+                            image_json.close()
+                        flg_start['ai_end'] = True
+                        cap.release()
+                        obs_res = copy.deepcopy(r_list)
+                        return
+                    else:
+                        print("jpg_base64 转换错误！")
+                        continue
+                except:
+                    print("图片错误或识别服务器未开启！")
+                    continue
             else:
-                img = resp.image_data[22:]
-
-            if os.path.exists(ui.lineEdit_end1_Path.text()):
-                img_file = '%s/obs_%s_%s.jpg' % (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time() * 1000))
-                str2image_file(img, img_file)  # 保存图片
-
-            if ui.checkBox_Two_Color.isChecked():
-                form_data = {
-                    'CameraType': ['obs', 'Two_Color'],
-                    'img': img,
-                    'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
-                }
-            else:
-                form_data = {
-                    'CameraType': 'obs',
-                    'img': img,
-                    'sort': ui.lineEdit_sony_sort.text(),  # 排序方向: 0:→ , 1:←, 10:↑, 11:↓
-                }
-            try:
-                res = requests.post(url=recognition_addr, data=form_data, timeout=8)
-                r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
-                r_img = r_list[0]
-                if os.path.exists(ui.lineEdit_end1_Path.text()):
-                    image_json = open('%s/obs_end_%s_%s.jpg' %
-                                      (ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time() * 1000)), 'wb')
-                    image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-                    image_json.close()
-                flg_start['ai_end'] = True
-                obs_res = copy.deepcopy(r_list)
-                return
-            except:
-                flg_start['ai_end'] = False
-                image_byte = base64.b64decode(img.encode('ascii'))
-                print('终点识别服务没有开启！')
+                print("无法读取视频帧")
                 continue
-                # return [image_byte, '["%s"]'%init_array[0][5], 'obs']
-        except:
-            try:
-                cl_request.disconnect()
-                time.sleep(0.5)
-                cl_request = obs.ReqClient(host='127.0.0.1', port=4455, password="")
-                print('重连OBS~~~~~~~~~~~~')
-                time.sleep(0.5)
-            except:
-                print('链接OBS失败~~~~~~~~~~~~')
-            continue
-    flg_start['obs'] = False
+    else:
+        print(f'无法打开摄像头')
+    cap.release()
     obs_res = [image_byte, '["%s"]' % init_array[0][5], 'obs']
-
 
 def obs_save_image():
     save_path = ui.lineEdit_end1_Path.text()
@@ -437,9 +545,23 @@ def obs_save_image():
                 num = int(value[0] / 2)
                 if num >= balls_count or ui.checkBox_saveImgs_auto.isChecked():
                     time.sleep(1)
-                    cl_request.save_source_screenshot(ui.lineEdit_source_end.text(), "jpg",
-                                                      '%s/%s.jpg' % (save_path, int(time.time() * 1000)), 1920,
-                                                      1080, 100)
+                    cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_FFMPEG)
+                    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+                    if cap.isOpened():
+                        ret = False
+                        for i in range(3):
+                            ret, frame = cap.read()
+                        cap.release()
+                        if ret:
+                            f = '%s/%s.jpg' % (save_path, int(time.time() * 1000))
+                            cv2.imwrite(f, frame)
+                        else:
+                            print("无法读取视频帧")
+                            return
+                    else:
+                        cap.release()
+                        print(f'无法打开摄像头')
+                        return
                     if not ui.checkBox_saveImgs_auto.isChecked():
                         time.sleep(1)
                         if int(ui.lineEdit_end.text()) > 0:
@@ -663,7 +785,7 @@ def rtsp_save_image():
                     cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
                     if cap.isOpened():
                         ret = False
-                        for i in range(10):
+                        for i in range(3):
                             ret, frame = cap.read()
                         cap.release()
                         if ret:
@@ -676,8 +798,8 @@ def rtsp_save_image():
                         cap.release()
                         print(f'无法打开摄像头')
                         return
-                    if not ui.checkBox_saveImgs_auto.isChecked():
-                        sc.GASetDiReverseCount()  # 输入次数归0
+                    # if not ui.checkBox_saveImgs_auto.isChecked():
+                    #     sc.GASetDiReverseCount()  # 输入次数归0
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
             time.sleep(1)
