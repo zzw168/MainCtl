@@ -7790,6 +7790,7 @@ class ZApp(QApplication):
     def stop_all_threads(self):
         """停止所有线程的函数。"""
         try:
+            obs_cap.release()
             stop_server()
             PlanCmd_Thread.stop()
             PlanObs_Thread.stop()
