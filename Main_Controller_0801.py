@@ -269,9 +269,9 @@ def activate_browser():  # 程序开始，刷新浏览器
             cl_request.press_input_properties_button("浏览器", "refreshnocache")
             cl_request.set_scene_item_enabled(obs_scene, item_settlement, False)  # 关闭结算页
             # time.sleep(1)
-            cl_request.press_input_properties_button(ui.lineEdit_source_end.text(), "activate")  # 刷新终点摄像头
-            time.sleep(1)
-            cl_request.press_input_properties_button(ui.lineEdit_source_end.text(), "activate")  # 刷新终点摄像头
+            # cl_request.press_input_properties_button(ui.lineEdit_source_end.text(), "activate")  # 刷新终点摄像头
+            # time.sleep(1)
+            # cl_request.press_input_properties_button(ui.lineEdit_source_end.text(), "activate")  # 刷新终点摄像头
 
             return True
         except:
@@ -461,17 +461,17 @@ def scenes_change():  # 变换场景
 # 获取网络摄像头图片
 def get_obs():
     global obs_res
+    global obs_cap
     image_byte = ''
     end_num = ui.lineEdit_source_end.text()
     if not end_num.isdigit():
         return [image_byte, '["%s"]' % init_array[0][5], 'obs']
-    cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
-    if cap.isOpened():
+    if obs_cap.isOpened():
         for i in range(3):
             ret = False
             frame = ''
             for j in range(3):
-                ret, frame = cap.read()
+                ret, frame = obs_cap.read()
             if ret:
                 try:
                     if len(area_Code['main']) > 0:
@@ -514,7 +514,6 @@ def get_obs():
                             image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
                             image_json.close()
                         flg_start['ai_end'] = True
-                        cap.release()
                         obs_res = copy.deepcopy(r_list)
                         return
                     else:
@@ -525,13 +524,25 @@ def get_obs():
                     continue
             else:
                 print("无法读取视频帧")
+                obs_cap.release()
+                obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
+                obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
+                obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
+                # obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.75)  # 设置亮度（尝试范围 0.0 - 1.0，具体范围视设备而定）
+                time.sleep(0.2)
                 continue
     else:
         print(f'无法打开摄像头')
-    cap.release()
+        obs_cap.release()
+        obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
+        obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
+        obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
+        # obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.75)  # 设置亮度（尝试范围 0.0 - 1.0，具体范围视设备而定）
     obs_res = [image_byte, '["%s"]' % init_array[0][5], 'obs']
 
+
 def obs_save_image():
+    global obs_cap
     save_path = ui.lineEdit_end1_Path.text()
     if os.path.exists(save_path):
         if not ui.checkBox_saveImgs_auto.isChecked():
@@ -545,13 +556,10 @@ def obs_save_image():
                 num = int(value[0] / 2)
                 if num >= balls_count or ui.checkBox_saveImgs_auto.isChecked():
                     time.sleep(1)
-                    cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_FFMPEG)
-                    cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-                    if cap.isOpened():
+                    if obs_cap.isOpened():
                         ret = False
                         for i in range(3):
-                            ret, frame = cap.read()
-                        cap.release()
+                            ret, frame = obs_cap.read()
                         if ret:
                             f = '%s/%s.jpg' % (save_path, int(time.time() * 1000))
                             cv2.imwrite(f, frame)
@@ -559,7 +567,11 @@ def obs_save_image():
                             print("无法读取视频帧")
                             return
                     else:
-                        cap.release()
+                        obs_cap.release()
+                        obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
+                        obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
+                        obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
+                        obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.75)  # 设置亮度（尝试范围 0.0 - 1.0，具体范围视设备而定）
                         print(f'无法打开摄像头')
                         return
                     if not ui.checkBox_saveImgs_auto.isChecked():
@@ -8783,6 +8795,10 @@ if __name__ == '__main__':
     camera_list = []  # 上局结果
     obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
+    obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
+    obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
+    obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
+    obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.75)  # 设置亮度（尝试范围 0.0 - 1.0，具体范围视设备而定）
 
     main_camera_layout = QVBoxLayout(ui.widget_camera_sony)
     main_camera_layout.setContentsMargins(0, 9, 0, 0)
