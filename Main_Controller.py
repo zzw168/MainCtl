@@ -465,7 +465,7 @@ def get_obs():
     image_byte = ''
     end_num = ui.lineEdit_source_end.text()
     if not end_num.isdigit():
-        return [image_byte, '["%s"]' % init_array[0][5], 'obs']
+        obs_res = [image_byte, '["%s"]' % init_array[0][5], 'obs']
     if not obs_cap.isOpened():
         obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
         obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
