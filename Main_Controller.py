@@ -466,6 +466,10 @@ def get_obs():
     end_num = ui.lineEdit_source_end.text()
     if not end_num.isdigit():
         return [image_byte, '["%s"]' % init_array[0][5], 'obs']
+    if not obs_cap.isOpened():
+        obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
+        obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
+        obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
     if obs_cap.isOpened():
         obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.75)  # 设置亮度（尝试范围 0.0 - 1.0，具体范围视设备而定）
         for i in range(3):
@@ -538,7 +542,6 @@ def get_obs():
         obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
         obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
         obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
-        # obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.75)  # 设置亮度（尝试范围 0.0 - 1.0，具体范围视设备而定）
     obs_res = [image_byte, '["%s"]' % init_array[0][5], 'obs']
 
 
@@ -8797,9 +8800,13 @@ if __name__ == '__main__':
     camera_list = []  # 上局结果
     obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
-    obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
-    obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
-    obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
+
+    if ui.lineEdit_source_end.text().isdigit():
+        obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
+        obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
+        obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
+    else:
+        obs_cap = cv2.VideoCapture(1)
 
     main_camera_layout = QVBoxLayout(ui.widget_camera_sony)
     main_camera_layout.setContentsMargins(0, 9, 0, 0)
