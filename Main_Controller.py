@@ -479,6 +479,7 @@ def get_obs():
                 ret, frame = obs_cap.read()
             if ret:
                 try:
+                    # frame = cv2.convertScaleAbs(frame, alpha=1, beta=60)  # beta 增加亮度
                     if len(area_Code['main']) > 0:
                         # 获取裁剪区域坐标
                         area = area_Code['main'][0]['coordinates']
