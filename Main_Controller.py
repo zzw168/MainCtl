@@ -7637,7 +7637,11 @@ def test_brightness():
                                        % (float(ui.lineEdit_brightness.text()), current, success))
         ret, frame = obs_cap.read()
         if ret:
-            cv2.imshow("Frame", frame)
+            # 创建窗口并设置大小（例如 640x480）
+            window_name = "Frame"
+            cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)  # WINDOW_NORMAL 允许调整窗口大小
+            cv2.resizeWindow(window_name, 640, 480)  # 设置窗口宽度和高度
+            cv2.imshow(window_name, frame)
             cv2.waitKey(0)
             cv2.destroyAllWindows()
     else:
