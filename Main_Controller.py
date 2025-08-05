@@ -628,7 +628,7 @@ def get_rtsp():
     except:
         rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
         return
-    cap = cv2.VideoCapture(rtsp_url)
+    cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
     if cap.isOpened():
         for i in range(3):
             ret = False
@@ -695,90 +695,6 @@ def get_rtsp():
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
 
 
-# def get_rtsp(r_url, timeout=20):
-#     result = []
-#
-#     def inner_get_rtsp(rt_url):
-#         cap = cv2.VideoCapture(rt_url, cv2.CAP_FFMPEG)
-#         cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
-#         jpg_base64 = ''
-#         if cap.isOpened():
-#             for i in range(3):
-#                 ret = False
-#                 frame = ''
-#                 for j in range(3):
-#                     ret, frame = cap.read()
-#
-#                 if ret:
-#                     try:
-#                         if len(area_Code['net']) > 0:
-#                             area = area_Code['net'][0]['coordinates']
-#                             x1, x2 = area[0][0], area[1][0]
-#                             y1, y2 = area[1][1], area[2][1]
-#                             frame = frame[y1:y2, x1:x2]
-#                             if ui.checkBox_Monitor_Horizontal.isChecked():
-#                                 frame = cv2.flip(frame, 1)
-#                             if ui.checkBox_Monitor_Vertica.isChecked():
-#                                 frame = cv2.flip(frame, 0)
-#
-#                         success, jpeg_data = cv2.imencode('.jpg', frame)
-#                         if success:
-#                             jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
-#                             if os.path.exists(ui.lineEdit_end2_Path.text()):
-#                                 img_file = '%s/rtsp_%s_%s.jpg' % (
-#                                     ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000))
-#                                 str2image_file(jpg_base64, img_file)
-#
-#                             if ui.checkBox_Two_Color.isChecked():
-#                                 form_data = {
-#                                     'CameraType': ['rtsp', 'Two_Color'],
-#                                     'img': jpg_base64,
-#                                     'sort': ui.lineEdit_monitor_sort.text(),
-#                                 }
-#                             else:
-#                                 form_data = {
-#                                     'CameraType': 'rtsp',
-#                                     'img': jpg_base64,
-#                                     'sort': ui.lineEdit_monitor_sort.text(),
-#                                 }
-#                             res = requests.post(url=recognition_addr, data=form_data, timeout=8)
-#                             r_list = eval(res.text)
-#                             r_img = r_list[0]
-#                             if os.path.exists(ui.lineEdit_end2_Path.text()):
-#                                 with open('%s/rtsp_end_%s_%s.jpg' %
-#                                           (ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time() * 1000)),
-#                                           'wb') as f:
-#                                     f.write(r_img)
-#                             flg_start['ai_end'] = True
-#                             cap.release()
-#                             result.append(r_list)
-#                             return
-#                         else:
-#                             print("jpg_base64 转换错误！")
-#                             continue
-#                     except Exception as e:
-#                         print("图片处理或识别异常：", e)
-#                         continue
-#                 else:
-#                     print("无法读取视频帧")
-#                     continue
-#         else:
-#             print('无法打开摄像头')
-#         cap.release()
-#         result.append([jpg_base64, '["%s"]'%init_array[0][5], 'rtsp'])
-#
-#     t = threading.Thread(target=inner_get_rtsp, args=(r_url,))
-#     t.start()
-#     t.join(timeout)
-#
-#     if t.is_alive():
-#         print(f'⛔ get_rtsp 超时（>{timeout}s），自动放弃！')
-#         # 线程还在运行，但主线程返回默认值
-#         return ['', '["%s"]'%init_array[0][5], 'rtsp']
-#     else:
-#         return result[0] if result else ['', '["%s"]'%init_array[0][5], 'rtsp']
-
-
 def rtsp_save_image():
     save_path = ui.lineEdit_end2_Path.text()
     if os.path.exists(save_path):
@@ -815,8 +731,8 @@ def rtsp_save_image():
                         cap.release()
                         print(f'无法打开摄像头')
                         return
-                    # if not ui.checkBox_saveImgs_auto.isChecked():
-                    #     sc.GASetDiReverseCount()  # 输入次数归0
+                    if not ui.checkBox_saveImgs_auto.isChecked():
+                        sc.GASetDiReverseCount()  # 输入次数归0
             if ui.checkBox_saveImgs_auto.isChecked():
                 break
             time.sleep(1)
