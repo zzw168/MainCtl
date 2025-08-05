@@ -148,6 +148,7 @@
     ],
     "lineEdit_alarm": "1",
     "lineEdit_Reserve_time": "0",
+    "lineEdit_brightness": "100",
     "lineEdit_color_one": "red",
     "lineEdit_color_two": "green",
     "comboBox_plan": 2,

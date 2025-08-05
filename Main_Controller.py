@@ -471,7 +471,7 @@ def get_obs():
         obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
         obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
     if obs_cap.isOpened():
-        obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, 0.75)  # 设置亮度（尝试范围 0.0 - 1.0，具体范围视设备而定）
+        obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, float(ui.lineEdit_brightness.text()))  # 设置亮度（尝试范围 0.0 - 1.0，具体范围视设备而定）
         for i in range(3):
             ret = False
             frame = ''
@@ -4714,6 +4714,7 @@ def save_main_json():
             main_all['source_picture'] = ui.lineEdit_source_picture.text()
             main_all['source_settlement'] = ui.lineEdit_source_settlement.text()
             main_all['source_end'] = ui.lineEdit_source_end.text()
+            main_all['lineEdit_brightness'] = ui.lineEdit_brightness.text()
             main_all['monitor_sort'] = ui.lineEdit_monitor_sort.text()
             main_all['sony_sort'] = ui.lineEdit_sony_sort.text()
             main_all['lineEdit_start'] = ui.lineEdit_start.text()
@@ -4845,6 +4846,7 @@ def load_main_json():
         ui.lineEdit_source_picture.setText(main_all['source_picture'])
         ui.lineEdit_source_settlement.setText(main_all['source_settlement'])
         ui.lineEdit_source_end.setText(main_all['source_end'])
+        ui.lineEdit_brightness.setText(main_all['lineEdit_brightness'])
         ui.lineEdit_shoot.setText(main_all['lineEdit_shoot'])
         ui.lineEdit_start.setText(main_all['lineEdit_start'])
         ui.lineEdit_shake.setText(main_all['lineEdit_shake'])
@@ -7625,6 +7627,23 @@ def test_screenshot():
         ScreenShot_Thread.run_flg = True
 
 
+def test_brightness():
+    if obs_cap.isOpened():
+        brightness = obs_cap.get(cv2.CAP_PROP_BRIGHTNESS)  # 获取当前亮度
+        ui.textBrowser_save_msg.append('当前亮度:%s' % brightness)
+        success = obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, float(ui.lineEdit_brightness.text()))
+        current = obs_cap.get(cv2.CAP_PROP_BRIGHTNESS)
+        ui.textBrowser_save_msg.append(f"尝试设置亮度为:%s, 实际亮度:%s, 设置成功:%s"
+                                       % (float(ui.lineEdit_brightness.text()), current, success))
+        ret, frame = obs_cap.read()
+        if ret:
+            cv2.imshow("Frame", frame)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+    else:
+        ui.textBrowser_save_msg.append('摄像头打开失败！')
+
+
 def my_def():
     global ranking_array
     global ball_sort
@@ -8882,6 +8901,7 @@ if __name__ == '__main__':
     ui.lineEdit_source_picture.editingFinished.connect(save_main_json)
     ui.lineEdit_source_settlement.editingFinished.connect(save_main_json)
     ui.lineEdit_source_end.editingFinished.connect(save_main_json)
+    ui.lineEdit_brightness.editingFinished.connect(save_main_json)
     ui.lineEdit_music_1.editingFinished.connect(save_main_json)
     ui.lineEdit_music_2.editingFinished.connect(save_main_json)
     ui.lineEdit_music_3.editingFinished.connect(save_main_json)
@@ -8929,6 +8949,7 @@ if __name__ == '__main__':
     ui.pushButton_Save_Ball.clicked.connect(save_main_json)
     ui.pushButton_Organ.clicked.connect(organ_show)
     ui.pushButton_NetCamera.clicked.connect(net_camera)
+    ui.pushButton_test_brightness.clicked.connect(test_brightness)
 
     ui.checkBox_Flip_Horizontal.clicked.connect(flip_horizontal)
     ui.checkBox_Flip_Vertica.clicked.connect(flip_vertica)
