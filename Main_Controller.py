@@ -494,9 +494,9 @@ def get_obs():
                     if success:
                         # 将 JPEG 数据转换为 Base64 字符串
                         jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
-                        if os.path.exists(ui.lineEdit_end2_Path.text()):
+                        if os.path.exists(ui.lineEdit_end1_Path.text()):
                             img_file = '%s/obs_%s_%s.jpg' % (
-                                ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+                                ui.lineEdit_end1_Path.text(), lottery_term[0], int(time.time()))
                             str2image_file(jpg_base64, img_file)  # 保存图片
 
                         if ui.checkBox_Two_Color.isChecked():
