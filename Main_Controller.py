@@ -650,51 +650,52 @@ def get_rtsp():
             return
         time.sleep(1)
     frame = copy.deepcopy(rtsp_frame)
-    try:
-        if len(area_Code['net']) > 0:
-            # 获取裁剪区域坐标
-            area = area_Code['net'][0]['coordinates']
-            x1, x2 = area[0][0], area[1][0]
-            y1, y2 = area[1][1], area[2][1]
-            frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
-            if ui.checkBox_Monitor_Horizontal.isChecked():
-                frame = cv2.flip(frame, 1)  # 水平翻转图片
-            if ui.checkBox_Monitor_Vertica.isChecked():
-                frame = cv2.flip(frame, 0)  # 垂直翻转图片
-        success, jpeg_data = cv2.imencode('.jpg', frame)
-        if success:
-            # 将 JPEG 数据转换为 Base64 字符串
-            jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
-            if os.path.exists(ui.lineEdit_end2_Path.text()):
-                img_file = '%s/rtsp_%s_%s.jpg' % (
-                    ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
-                str2image_file(jpg_base64, img_file)  # 保存图片
+    for i in range(3):
+        try:
+            if len(area_Code['net']) > 0:
+                # 获取裁剪区域坐标
+                area = area_Code['net'][0]['coordinates']
+                x1, x2 = area[0][0], area[1][0]
+                y1, y2 = area[1][1], area[2][1]
+                frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
+                if ui.checkBox_Monitor_Horizontal.isChecked():
+                    frame = cv2.flip(frame, 1)  # 水平翻转图片
+                if ui.checkBox_Monitor_Vertica.isChecked():
+                    frame = cv2.flip(frame, 0)  # 垂直翻转图片
+            success, jpeg_data = cv2.imencode('.jpg', frame)
+            if success:
+                # 将 JPEG 数据转换为 Base64 字符串
+                jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
+                if os.path.exists(ui.lineEdit_end2_Path.text()):
+                    img_file = '%s/rtsp_%s_%s.jpg' % (
+                        ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+                    str2image_file(jpg_base64, img_file)  # 保存图片
 
-            if ui.checkBox_Two_Color.isChecked():
-                form_data = {
-                    'CameraType': ['rtsp', 'Two_Color'],
-                    'img': jpg_base64,
-                    'sort': ui.lineEdit_monitor_sort.text(),
-                }
-            else:
-                form_data = {
-                    'CameraType': 'rtsp',
-                    'img': jpg_base64,
-                    'sort': ui.lineEdit_monitor_sort.text(),
-                }
-            res = requests.post(url=recognition_addr, data=form_data, timeout=8)
-            r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
-            r_img = r_list[0]
-            if os.path.exists(ui.lineEdit_end2_Path.text()):
-                image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
-                                  'wb')
-                image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-                image_json.close()
-            flg_start['ai_end'] = True
-            rtsp_res = copy.deepcopy(r_list)
-            return
-    except:
-        pass
+                if ui.checkBox_Two_Color.isChecked():
+                    form_data = {
+                        'CameraType': ['rtsp', 'Two_Color'],
+                        'img': jpg_base64,
+                        'sort': ui.lineEdit_monitor_sort.text(),
+                    }
+                else:
+                    form_data = {
+                        'CameraType': 'rtsp',
+                        'img': jpg_base64,
+                        'sort': ui.lineEdit_monitor_sort.text(),
+                    }
+                res = requests.post(url=recognition_addr, data=form_data, timeout=8)
+                r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
+                r_img = r_list[0]
+                if os.path.exists(ui.lineEdit_end2_Path.text()):
+                    image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
+                                      'wb')
+                    image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+                    image_json.close()
+                flg_start['ai_end'] = True
+                rtsp_res = copy.deepcopy(r_list)
+                return
+        except:
+            pass
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
 
 # 获取网络摄像头图片
