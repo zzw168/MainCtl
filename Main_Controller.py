@@ -617,82 +617,160 @@ def obs_script_request():
 "******************************OBS结束*************************************"
 
 "******************************网络摄像头*************************************"
-
+def connect_rtsp():
+    global rtsp_frame
+    global get_flg
+    get_flg = False
+    while True:
+        os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp|timeout;5000000"  # 超时 5 秒
+        cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
+        while cap.isOpened():
+            cap.grab()  # 仅获取帧
+            if get_flg:
+                ret, frame = cap.retrieve()  # 解码帧
+                if ret:
+                    rtsp_frame = copy.deepcopy(frame)
+                    get_flg = False
+            else:
+                time.sleep(1)  # 等待后重试
+        cap.release()
 
 # 获取网络摄像头图片
 def get_rtsp():
     global rtsp_res
+    global rtsp_frame
+    global get_flg
+    rtsp_frame = ''
+    get_flg = True
+    t = 0
+    while rtsp_frame == '':
+        t += 1
+        if t > 20:
+            rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
+            return
+        time.sleep(1)
+    frame = copy.deepcopy(rtsp_frame)
     try:
-        ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
-        requests.get(ip_address, timeout=5)
-    except:
-        rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
-        return
-    cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
-    if cap.isOpened():
-        for i in range(3):
-            ret = False
-            frame = ''
-            for j in range(3):
-                ret, frame = cap.read()
-            if ret:
-                try:
-                    if len(area_Code['net']) > 0:
-                        # 获取裁剪区域坐标
-                        area = area_Code['net'][0]['coordinates']
-                        x1, x2 = area[0][0], area[1][0]
-                        y1, y2 = area[1][1], area[2][1]
-                        frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
-                        if ui.checkBox_Monitor_Horizontal.isChecked():
-                            frame = cv2.flip(frame, 1)  # 水平翻转图片
-                        if ui.checkBox_Monitor_Vertica.isChecked():
-                            frame = cv2.flip(frame, 0)  # 垂直翻转图片
-                    success, jpeg_data = cv2.imencode('.jpg', frame)
-                    if success:
-                        # 将 JPEG 数据转换为 Base64 字符串
-                        jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
-                        if os.path.exists(ui.lineEdit_end2_Path.text()):
-                            img_file = '%s/rtsp_%s_%s.jpg' % (
-                                ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
-                            str2image_file(jpg_base64, img_file)  # 保存图片
+        if len(area_Code['net']) > 0:
+            # 获取裁剪区域坐标
+            area = area_Code['net'][0]['coordinates']
+            x1, x2 = area[0][0], area[1][0]
+            y1, y2 = area[1][1], area[2][1]
+            frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
+            if ui.checkBox_Monitor_Horizontal.isChecked():
+                frame = cv2.flip(frame, 1)  # 水平翻转图片
+            if ui.checkBox_Monitor_Vertica.isChecked():
+                frame = cv2.flip(frame, 0)  # 垂直翻转图片
+        success, jpeg_data = cv2.imencode('.jpg', frame)
+        if success:
+            # 将 JPEG 数据转换为 Base64 字符串
+            jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
+            if os.path.exists(ui.lineEdit_end2_Path.text()):
+                img_file = '%s/rtsp_%s_%s.jpg' % (
+                    ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+                str2image_file(jpg_base64, img_file)  # 保存图片
 
-                        if ui.checkBox_Two_Color.isChecked():
-                            form_data = {
-                                'CameraType': ['rtsp', 'Two_Color'],
-                                'img': jpg_base64,
-                                'sort': ui.lineEdit_monitor_sort.text(),
-                            }
-                        else:
-                            form_data = {
-                                'CameraType': 'rtsp',
-                                'img': jpg_base64,
-                                'sort': ui.lineEdit_monitor_sort.text(),
-                            }
-                        res = requests.post(url=recognition_addr, data=form_data, timeout=8)
-                        r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
-                        r_img = r_list[0]
-                        if os.path.exists(ui.lineEdit_end2_Path.text()):
-                            image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
-                                              'wb')
-                            image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
-                            image_json.close()
-                        flg_start['ai_end'] = True
-                        cap.release()
-                        rtsp_res = copy.deepcopy(r_list)
-                        return
-                    else:
-                        print("jpg_base64 转换错误！")
-                        continue
-                except:
-                    print("图片错误或识别服务器未开启！")
-                    continue
+            if ui.checkBox_Two_Color.isChecked():
+                form_data = {
+                    'CameraType': ['rtsp', 'Two_Color'],
+                    'img': jpg_base64,
+                    'sort': ui.lineEdit_monitor_sort.text(),
+                }
             else:
-                print("无法读取视频帧")
-                continue
-    else:
-        print(f'无法打开摄像头')
-    cap.release()
+                form_data = {
+                    'CameraType': 'rtsp',
+                    'img': jpg_base64,
+                    'sort': ui.lineEdit_monitor_sort.text(),
+                }
+            res = requests.post(url=recognition_addr, data=form_data, timeout=8)
+            r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
+            r_img = r_list[0]
+            if os.path.exists(ui.lineEdit_end2_Path.text()):
+                image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
+                                  'wb')
+                image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+                image_json.close()
+            flg_start['ai_end'] = True
+            rtsp_res = copy.deepcopy(r_list)
+            return
+    except:
+        pass
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
+
+# 获取网络摄像头图片
+# def get_rtsp():
+#     global rtsp_res
+#     try:
+#         ip_address = 'http://%s' % re.search(r'(\d+\.\d+\.\d+\.\d+)', rtsp_url).group(0)
+#         requests.get(ip_address, timeout=5)
+#     except:
+#         rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
+#         return
+#     cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
+#     if cap.isOpened():
+#         for i in range(3):
+#             ret = False
+#             frame = ''
+#             for j in range(3):
+#                 ret, frame = cap.read()
+#             if ret:
+#                 try:
+#                     if len(area_Code['net']) > 0:
+#                         # 获取裁剪区域坐标
+#                         area = area_Code['net'][0]['coordinates']
+#                         x1, x2 = area[0][0], area[1][0]
+#                         y1, y2 = area[1][1], area[2][1]
+#                         frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
+#                         if ui.checkBox_Monitor_Horizontal.isChecked():
+#                             frame = cv2.flip(frame, 1)  # 水平翻转图片
+#                         if ui.checkBox_Monitor_Vertica.isChecked():
+#                             frame = cv2.flip(frame, 0)  # 垂直翻转图片
+#                     success, jpeg_data = cv2.imencode('.jpg', frame)
+#                     if success:
+#                         # 将 JPEG 数据转换为 Base64 字符串
+#                         jpg_base64 = base64.b64encode(jpeg_data).decode('ascii')
+#                         if os.path.exists(ui.lineEdit_end2_Path.text()):
+#                             img_file = '%s/rtsp_%s_%s.jpg' % (
+#                                 ui.lineEdit_end2_Path.text(), lottery_term[0], int(time.time()))
+#                             str2image_file(jpg_base64, img_file)  # 保存图片
+#
+#                         if ui.checkBox_Two_Color.isChecked():
+#                             form_data = {
+#                                 'CameraType': ['rtsp', 'Two_Color'],
+#                                 'img': jpg_base64,
+#                                 'sort': ui.lineEdit_monitor_sort.text(),
+#                             }
+#                         else:
+#                             form_data = {
+#                                 'CameraType': 'rtsp',
+#                                 'img': jpg_base64,
+#                                 'sort': ui.lineEdit_monitor_sort.text(),
+#                             }
+#                         res = requests.post(url=recognition_addr, data=form_data, timeout=8)
+#                         r_list = eval(res.text)  # 返回 [图片字节码，排名列表，截图标志]
+#                         r_img = r_list[0]
+#                         if os.path.exists(ui.lineEdit_end2_Path.text()):
+#                             image_json = open('%s/rtsp_%s_end.jpg' % (ui.lineEdit_end2_Path.text(), lottery_term[0]),
+#                                               'wb')
+#                             image_json.write(r_img)  # 将图片存到当前文件的fileimage文件中
+#                             image_json.close()
+#                         flg_start['ai_end'] = True
+#                         cap.release()
+#                         rtsp_res = copy.deepcopy(r_list)
+#                         return
+#                     else:
+#                         print("jpg_base64 转换错误！")
+#                         continue
+#                 except:
+#                     print("图片错误或识别服务器未开启！")
+#                     continue
+#             else:
+#                 print("无法读取视频帧")
+#                 continue
+#     else:
+#         print(f'无法打开摄像头')
+#     cap.release()
+#     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
 
 
 def rtsp_save_image():
@@ -8740,6 +8818,9 @@ if __name__ == '__main__':
     camera_list = []  # 上局结果
     obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
+    rtsp_frame = ''
+    get_flg = False
+    threading.Thread(target=connect_rtsp, daemon=True).start()
 
     if ui.lineEdit_source_end.text().isdigit():
         obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
