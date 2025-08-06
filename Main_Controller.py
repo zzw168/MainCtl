@@ -640,10 +640,10 @@ def get_rtsp():
     global rtsp_res
     global rtsp_frame
     global get_flg
-    rtsp_frame = ''
+    rtsp_frame = []
     get_flg = True
     t = 0
-    while rtsp_frame == '':
+    while len(rtsp_frame) == 0:
         t += 1
         if t > 20:
             rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
@@ -8819,7 +8819,7 @@ if __name__ == '__main__':
     camera_list = []  # 上局结果
     obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
-    rtsp_frame = ''
+    rtsp_frame = []
     get_flg = False
     threading.Thread(target=connect_rtsp, daemon=True).start()
 
