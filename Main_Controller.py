@@ -3144,7 +3144,7 @@ class ScreenShotThread(QThread):
                 continue
             print('截图结果识别运行！')
             self.signal.emit(succeed('截图结果识别运行！'))
-            time.sleep(1)
+            time.sleep(3)
             ObsEnd_Thread.screen_flg = False  # 结算页标志1
             obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
             rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
