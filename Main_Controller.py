@@ -622,8 +622,9 @@ def connect_rtsp():
     global get_flg
     get_flg = False
     while True:
-        os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp|timeout;5000000"  # 超时 5 秒
-        cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
+        # os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp|timeout;5000000"  # 超时 5 秒
+        # cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
+        cap = cv2.VideoCapture(rtsp_url)
         while cap.isOpened():
             cap.grab()  # 仅获取帧
             if get_flg:
@@ -631,8 +632,8 @@ def connect_rtsp():
                 if ret:
                     rtsp_frame = copy.deepcopy(frame)
                     get_flg = False
-            else:
-                time.sleep(1)  # 等待后重试
+            # else:
+            #     time.sleep(0.2)  # 等待后重试
         cap.release()
 
 # 获取网络摄像头图片
@@ -648,7 +649,7 @@ def get_rtsp():
         if t > 20:
             rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
             return
-        time.sleep(1)
+        time.sleep(0.1)
     frame = copy.deepcopy(rtsp_frame)
     for i in range(3):
         try:
