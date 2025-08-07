@@ -2890,7 +2890,7 @@ class ObsEndThread(QThread):
                     tcp_result_thread.send_type = 'updata'
                     tcp_result_thread.run_flg = True
                     cl_request.press_input_properties_button("浏览器", "refreshnocache")
-                    time.sleep(0.1)
+                    time.sleep(0.2)
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                       False)  # 关闭排名来源
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
