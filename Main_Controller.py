@@ -5508,8 +5508,8 @@ class MapLabel(QLabel):
                                 positions_temp[i], positions_temp[num] = positions_temp[num], positions_temp[i]
                                 # positions_temp[num][3] = ranking_temp[num][9]  # 圈数
                                 if (positions_temp[num][6] != abs(ranking_temp[num][8])
-                                        and ((positions_temp[num][4] < p - 30 and self.picture_size == 860)
-                                             or(positions_temp[num][4] < p - 28 and self.picture_size != 860))):
+                                        and ((positions_temp[num][0] > p - 30 and self.picture_size == 860)
+                                             or(positions_temp[num][0] > p - 30 and self.picture_size != 860))):
                                     positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
                                     positions_temp[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
                                 if positions_temp[num][4] != p:
