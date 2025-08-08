@@ -4965,29 +4965,55 @@ def net_camera():
 
 def activate_camera():
     global obs_cap
-    obs_cap.release()
-    time.sleep(1)
-    obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
-    obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
-    obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
-    if obs_cap.isOpened():
-        brightness = obs_cap.get(cv2.CAP_PROP_BRIGHTNESS)  # 获取当前亮度
-        ui.textBrowser_msg.append('当前亮度:%s' % brightness)
-        success = obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, float(ui.lineEdit_brightness.text()))
-        current = obs_cap.get(cv2.CAP_PROP_BRIGHTNESS)
-        ui.textBrowser_msg.append(f"尝试设置亮度为:%s, 实际亮度:%s, 设置成功:%s"
-                                       % (float(ui.lineEdit_brightness.text()), current, success))
-        ret, frame = obs_cap.read()
-        if ret:
-            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            h, w, ch = frame_rgb.shape
-            bytes_per_line = ch * w
-            q_image = QImage(frame_rgb.data, w, h, bytes_per_line, QImage.Format_RGB888)
-            pixmap = QPixmap.fromImage(q_image)
-            pixmap = pixmap.scaled(ui.label_main_picture.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            ui.label_main_picture.setPixmap(pixmap)
-    else:
-        ui.textBrowser_msg.append('摄像头打开失败！')
+    try:
+        # 释放现有摄像头（如果已定义）
+        if 'obs_cap' in globals() and isinstance(obs_cap, cv2.VideoCapture):
+            obs_cap.release()
+            time.sleep(1)  # 等待释放完成
+
+        # 初始化摄像头
+        obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
+        obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
+        obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
+
+        # 验证分辨率
+        actual_width = obs_cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+        actual_height = obs_cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        ui.textBrowser_msg.append(f"实际分辨率: {actual_width}x{actual_height}")
+
+        if obs_cap.isOpened():
+            # 获取当前亮度
+            brightness = obs_cap.get(cv2.CAP_PROP_BRIGHTNESS)
+            ui.textBrowser_msg.append(f'当前亮度: {brightness}')
+
+            # 尝试设置亮度
+            try:
+                target_brightness = float(ui.lineEdit_brightness.text())
+                success = obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, target_brightness)
+                current = obs_cap.get(cv2.CAP_PROP_BRIGHTNESS)
+                ui.textBrowser_msg.append(
+                    f"尝试设置亮度为: {target_brightness}, 实际亮度: {current}, 设置成功: {success}"
+                )
+            except ValueError:
+                ui.textBrowser_msg.append("错误: 请输入有效的亮度值！")
+
+            # 读取帧
+            ret, frame = obs_cap.read()
+            if ret:
+                # 转换为 RGB 并显示
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                h, w, ch = frame_rgb.shape
+                bytes_per_line = ch * w
+                q_image = QImage(frame_rgb.data, w, h, bytes_per_line, QImage.Format_RGB888)
+                pixmap = QPixmap.fromImage(q_image)
+                pixmap = pixmap.scaled(ui.label_main_picture.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                ui.label_main_picture.setPixmap(pixmap)
+            else:
+                ui.textBrowser_msg.append("错误: 无法读取摄像头帧")
+        else:
+            ui.textBrowser_msg.append("错误: 摄像头打开失败！")
+    except Exception as e:
+        ui.textBrowser_msg.append(f"错误: {str(e)}")
 
 def cmd_run():
     if not ui.checkBox_test.isChecked():
