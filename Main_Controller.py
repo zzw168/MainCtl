@@ -5006,8 +5006,8 @@ def activate_camera():
                 bytes_per_line = ch * w
                 q_image = QImage(frame_rgb.data, w, h, bytes_per_line, QImage.Format_RGB888)
                 pixmap = QPixmap.fromImage(q_image)
-                pixmap = pixmap.scaled(monitor_camera_ui.label_picture.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                monitor_camera_ui.label_picture.setPixmap(pixmap)
+                pixmap = pixmap.scaled(main_camera_ui.label_picture.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                main_camera_ui.label_picture.setPixmap(pixmap)
             else:
                 ui.textBrowser_msg.append("错误: 无法读取摄像头帧")
         else:
