@@ -5006,8 +5006,8 @@ def activate_camera():
                 bytes_per_line = ch * w
                 q_image = QImage(frame_rgb.data, w, h, bytes_per_line, QImage.Format_RGB888)
                 pixmap = QPixmap.fromImage(q_image)
-                pixmap = pixmap.scaled(ui.label_main_picture.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
-                ui.label_main_picture.setPixmap(pixmap)
+                pixmap = pixmap.scaled(monitor_camera_ui.label_picture.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+                monitor_camera_ui.label_picture.setPixmap(pixmap)
             else:
                 ui.textBrowser_msg.append("错误: 无法读取摄像头帧")
         else:
@@ -8398,7 +8398,7 @@ if __name__ == '__main__':
     main_camera_ui.label_picture.mouseDoubleClickEvent = main_doubleclick_event
     ui.label_main_picture.mouseDoubleClickEvent = main_doubleclick_event
     main_camera_ui.pushButton_net.hide()
-    main_camera_ui.pushButton_net.clicked.connect(activate_camera)
+    main_camera_ui.pushButton_activate.clicked.connect(activate_camera)
 
     monitor_camera_ui = CameraUi(z_window)
     monitor_camera_ui.hideEvent = monitor_hide_event
