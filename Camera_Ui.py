@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'Camera_Ui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.8.2
+## Created by: Qt User Interface Compiler version 6.9.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -36,16 +36,21 @@ class Ui_Camera_Dialog(object):
         self.groupBox_main_camera.setAlignment(Qt.AlignmentFlag.AlignLeading|Qt.AlignmentFlag.AlignLeft|Qt.AlignmentFlag.AlignVCenter)
         self.gridLayout_2 = QGridLayout(self.groupBox_main_camera)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
-        self.label_picture = QLabel(self.groupBox_main_camera)
-        self.label_picture.setObjectName(u"label_picture")
-        self.label_picture.setMinimumSize(QSize(300, 10))
-
-        self.gridLayout_2.addWidget(self.label_picture, 1, 0, 1, 2)
-
         self.pushButton_net = QPushButton(self.groupBox_main_camera)
         self.pushButton_net.setObjectName(u"pushButton_net")
 
         self.gridLayout_2.addWidget(self.pushButton_net, 0, 0, 1, 2)
+
+        self.label_picture = QLabel(self.groupBox_main_camera)
+        self.label_picture.setObjectName(u"label_picture")
+        self.label_picture.setMinimumSize(QSize(300, 10))
+
+        self.gridLayout_2.addWidget(self.label_picture, 2, 0, 1, 2)
+
+        self.pushButton_activate = QPushButton(self.groupBox_main_camera)
+        self.pushButton_activate.setObjectName(u"pushButton_activate")
+
+        self.gridLayout_2.addWidget(self.pushButton_activate, 1, 0, 1, 2)
 
 
         self.gridLayout.addWidget(self.groupBox_main_camera, 0, 0, 1, 1)
@@ -59,7 +64,8 @@ class Ui_Camera_Dialog(object):
     def retranslateUi(self, Camera_Dialog):
         Camera_Dialog.setWindowTitle(QCoreApplication.translate("Camera_Dialog", u"\u7ec8\u70b9\u8bc6\u522b", None))
         self.groupBox_main_camera.setTitle(QCoreApplication.translate("Camera_Dialog", u"\u7ec8\u70b9\u8bc6\u522b", None))
-        self.label_picture.setText("")
         self.pushButton_net.setText(QCoreApplication.translate("Camera_Dialog", u"\u7f51\u7edc\u6444\u50cf\u5934\u8bbe\u7f6e", None))
+        self.label_picture.setText("")
+        self.pushButton_activate.setText(QCoreApplication.translate("Camera_Dialog", u"\u91cd\u65b0\u6fc0\u6d3b\u6444\u50cf\u5934", None))
     # retranslateUi
 

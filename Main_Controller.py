@@ -4963,6 +4963,31 @@ def net_camera():
     ip_address = parsed_url.split(':')[0]
     webbrowser.open(ip_address)
 
+def activate_camera():
+    global obs_cap
+    obs_cap.release()
+    time.sleep(1)
+    obs_cap = cv2.VideoCapture(int(ui.lineEdit_source_end.text()), cv2.CAP_DSHOW)
+    obs_cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)  # 设置宽度
+    obs_cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)  # 设置高度
+    if obs_cap.isOpened():
+        brightness = obs_cap.get(cv2.CAP_PROP_BRIGHTNESS)  # 获取当前亮度
+        ui.textBrowser_msg.append('当前亮度:%s' % brightness)
+        success = obs_cap.set(cv2.CAP_PROP_BRIGHTNESS, float(ui.lineEdit_brightness.text()))
+        current = obs_cap.get(cv2.CAP_PROP_BRIGHTNESS)
+        ui.textBrowser_msg.append(f"尝试设置亮度为:%s, 实际亮度:%s, 设置成功:%s"
+                                       % (float(ui.lineEdit_brightness.text()), current, success))
+        ret, frame = obs_cap.read()
+        if ret:
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            h, w, ch = frame_rgb.shape
+            bytes_per_line = ch * w
+            q_image = QImage(frame_rgb.data, w, h, bytes_per_line, QImage.Format_RGB888)
+            pixmap = QPixmap.fromImage(q_image)
+            pixmap = pixmap.scaled(ui.label_main_picture.size(), Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            ui.label_main_picture.setPixmap(pixmap)
+    else:
+        ui.textBrowser_msg.append('摄像头打开失败！')
 
 def cmd_run():
     if not ui.checkBox_test.isChecked():
@@ -8347,12 +8372,14 @@ if __name__ == '__main__':
     main_camera_ui.label_picture.mouseDoubleClickEvent = main_doubleclick_event
     ui.label_main_picture.mouseDoubleClickEvent = main_doubleclick_event
     main_camera_ui.pushButton_net.hide()
+    main_camera_ui.pushButton_net.clicked.connect(activate_camera)
 
     monitor_camera_ui = CameraUi(z_window)
     monitor_camera_ui.hideEvent = monitor_hide_event
     monitor_camera_ui.groupBox_main_camera.setTitle('网络摄像头')
     monitor_camera_ui.label_picture.mouseDoubleClickEvent = monitor_doubleclick_event
     ui.label_monitor_picture.mouseDoubleClickEvent = monitor_doubleclick_event
+    monitor_camera_ui.pushButton_activate.hide()
     monitor_camera_ui.pushButton_net.clicked.connect(net_camera)
 
     sc = SportCard()  # 运动卡
