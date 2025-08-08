@@ -617,6 +617,8 @@ def obs_script_request():
 "******************************OBS结束*************************************"
 
 "******************************网络摄像头*************************************"
+
+
 def connect_rtsp():
     global rtsp_frame
     global get_flg
@@ -635,6 +637,7 @@ def connect_rtsp():
             # else:
             #     time.sleep(0.2)  # 等待后重试
         cap.release()
+
 
 # 获取网络摄像头图片
 def get_rtsp():
@@ -698,6 +701,7 @@ def get_rtsp():
         except:
             pass
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
+
 
 # 获取网络摄像头图片
 # def get_rtsp():
@@ -2890,7 +2894,7 @@ class ObsEndThread(QThread):
                     tcp_result_thread.send_type = 'updata'
                     tcp_result_thread.run_flg = True
                     cl_request.press_input_properties_button("浏览器", "refreshnocache")
-                    time.sleep(0.2)
+                    time.sleep(0.1)
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                       False)  # 关闭排名来源
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
@@ -5469,8 +5473,8 @@ class MapLabel(QLabel):
         self.flash_time = flash_time
         self.positions = []  # 每个球的当前位置索引
         for num in range(balls_count):
-            self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0, 0, 0])
-            # [位置索引, 顔色, 號碼, 圈數, 实际位置, 停留时间, 路线, 方向, x, y]
+            self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0, 0, 0, [0, 0]])
+            # [位置索引, 顔色, 號碼, 圈數, 实际位置, 停留时间, 路线, 方向, x, y,[路线改变位置, 新路线]]
         # 创建定时器，用于定时更新球的位置
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_positions)  # 定时触发更新
@@ -5486,9 +5490,10 @@ class MapLabel(QLabel):
         global balls_final
         # 更新每个小球的位置
         if len(self.positions) != balls_count:
-            self.positions = []  # 每个球的当前位置索引[位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间, 路线, 方向, x, y]
+            self.positions = []  # 每个球的当前位置索引
+            # [位置索引，球颜色，球号码, 圈數, 实际位置, 停留时间, 路线, 方向, x, y,[路线改变位置, 新路线]]
             for num in range(balls_count):
-                self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0, 0, 0])
+                self.positions.append([num * self.ball_space, init_array[num][5], 0, 0, 0, 0, 0, 0, 0, 0, [0, 0]])
         ranking_temp = copy.deepcopy(ranking_array)
         if not ball_stop:
             positions_temp = copy.deepcopy(self.positions)
@@ -5507,11 +5512,16 @@ class MapLabel(QLabel):
                             if positions_temp[i][1] == ranking_temp[num][5]:
                                 positions_temp[i], positions_temp[num] = positions_temp[num], positions_temp[i]
                                 # positions_temp[num][3] = ranking_temp[num][9]  # 圈数
-                                if (positions_temp[num][6] != abs(ranking_temp[num][8])
-                                        and ((positions_temp[num][0] > p - 30 and self.picture_size == 860)
-                                             or(positions_temp[num][0] > p - 30 and self.picture_size != 860))):
-                                    positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
-                                    positions_temp[num][7] = self.path_direction[abs(ranking_temp[num][8])]  # 方向标志
+                                # if (positions_temp[num][6] != abs(ranking_temp[num][8])
+                                #         and ((positions_temp[num][0] > p - 30 and self.picture_size == 860)
+                                #              or (positions_temp[num][0] > p - 30 and self.picture_size != 860))):
+                                if positions_temp[num][6] != abs(ranking_temp[num][8]):
+                                    if positions_temp[num][10][1] != abs(ranking_temp[num][8]):
+                                        positions_temp[num][10] = [p, abs(ranking_temp[num][8])]
+                                    if (positions_temp[num][10][1] != positions_temp[num][6]
+                                            and positions_temp[num][0] >= int(positions_temp[num][10][0]) - 30):
+                                        positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
+                                        positions_temp[num][7] = self.path_direction[int(positions_temp[num][10][1])]  # 方向标志
                                 if positions_temp[num][4] != p:
                                     positions_temp[num][4] = p
                                     positions_temp[num][5] = round(time.time(), 2)
