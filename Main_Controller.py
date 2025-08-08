@@ -5511,10 +5511,6 @@ class MapLabel(QLabel):
                         for i in range(len(positions_temp)):  # 排序
                             if positions_temp[i][1] == ranking_temp[num][5]:
                                 positions_temp[i], positions_temp[num] = positions_temp[num], positions_temp[i]
-                                # positions_temp[num][3] = ranking_temp[num][9]  # 圈数
-                                # if (positions_temp[num][6] != abs(ranking_temp[num][8])
-                                #         and ((positions_temp[num][0] > p - 30 and self.picture_size == 860)
-                                #              or (positions_temp[num][0] > p - 30 and self.picture_size != 860))):
                                 if positions_temp[num][6] != abs(ranking_temp[num][8]):
                                     if positions_temp[num][10][1] != abs(ranking_temp[num][8]):
                                         positions_temp[num][10] = [p, abs(ranking_temp[num][8])]
