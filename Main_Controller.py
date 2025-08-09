@@ -486,9 +486,9 @@ def get_obs():
                         x1, x2 = area[0][0], area[1][0]
                         y1, y2 = area[1][1], area[2][1]
                         frame = frame[y1:y2, x1:x2]  # OpenCV 采用 (height, width) 方式裁剪
-                        if ui.checkBox_Monitor_Horizontal.isChecked():
+                        if ui.checkBox_Main_Horizontal.isChecked():
                             frame = cv2.flip(frame, 1)  # 水平翻转图片
-                        if ui.checkBox_Monitor_Vertica.isChecked():
+                        if ui.checkBox_Main_Vertica.isChecked():
                             frame = cv2.flip(frame, 0)  # 垂直翻转图片
                     success, jpeg_data = cv2.imencode('.jpg', frame)
                     if success:
