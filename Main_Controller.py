@@ -1661,6 +1661,8 @@ def deal_area_simple(ball_array):  # 找出该摄像头内所有球的区域
         cap_num = int(ball[6])
         if cap_num in area_Code.keys():
             for area in area_Code[cap_num]:
+                if lottery_term[3] != '进行中' and area['area_code'] != 1:  # 防止起点和终点区域冲突
+                    continue
                 if (map_label_big and map_label_big.map_action and map_label_big.path_points
                         and area['area_code'] == 1  # 防止起点和终点区域冲突
                         and ui.checkBox_end_2.isChecked()
@@ -4963,6 +4965,7 @@ def net_camera():
     ip_address = parsed_url.split(':')[0]
     webbrowser.open(ip_address)
 
+
 def activate_camera():
     global obs_cap
     try:
@@ -5014,6 +5017,7 @@ def activate_camera():
             ui.textBrowser_msg.append("错误: 摄像头打开失败！")
     except Exception as e:
         ui.textBrowser_msg.append(f"错误: {str(e)}")
+
 
 def cmd_run():
     if not ui.checkBox_test.isChecked():
@@ -5568,7 +5572,8 @@ class MapLabel(QLabel):
                                     if (positions_temp[num][10][1] != positions_temp[num][6]
                                             and positions_temp[num][0] >= int(positions_temp[num][10][0]) - 30):
                                         positions_temp[num][6] = abs(ranking_temp[num][8])  # 路线标志
-                                        positions_temp[num][7] = self.path_direction[int(positions_temp[num][10][1])]  # 方向标志
+                                        positions_temp[num][7] = self.path_direction[
+                                            int(positions_temp[num][10][1])]  # 方向标志
                                 if positions_temp[num][4] != p:
                                     positions_temp[num][4] = p
                                     positions_temp[num][5] = round(time.time(), 2)
