@@ -788,155 +788,157 @@ class Ui_MainWindow(object):
         self.frame_7.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_7 = QGridLayout(self.frame_7)
         self.gridLayout_7.setObjectName(u"gridLayout_7")
-        self.pushButton_TRAP = QPushButton(self.frame_7)
-        self.pushButton_TRAP.setObjectName(u"pushButton_TRAP")
-
-        self.gridLayout_7.addWidget(self.pushButton_TRAP, 0, 0, 1, 1)
-
-        self.pushButton_TRAP_1 = QPushButton(self.frame_7)
-        self.pushButton_TRAP_1.setObjectName(u"pushButton_TRAP_1")
-        self.pushButton_TRAP_1.setMinimumSize(QSize(20, 0))
-        self.pushButton_TRAP_1.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_TRAP_1, 0, 1, 1, 1)
-
-        self.pushButton_TRAP_2 = QPushButton(self.frame_7)
-        self.pushButton_TRAP_2.setObjectName(u"pushButton_TRAP_2")
-        self.pushButton_TRAP_2.setMinimumSize(QSize(20, 0))
-        self.pushButton_TRAP_2.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_TRAP_2, 0, 2, 1, 1)
-
-        self.pushButton_TRAP_3 = QPushButton(self.frame_7)
-        self.pushButton_TRAP_3.setObjectName(u"pushButton_TRAP_3")
-        self.pushButton_TRAP_3.setMinimumSize(QSize(20, 0))
-        self.pushButton_TRAP_3.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_TRAP_3, 0, 3, 1, 1)
-
-        self.pushButton_TRAP_4 = QPushButton(self.frame_7)
-        self.pushButton_TRAP_4.setObjectName(u"pushButton_TRAP_4")
-        self.pushButton_TRAP_4.setMinimumSize(QSize(20, 0))
-        self.pushButton_TRAP_4.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_TRAP_4, 0, 4, 1, 1)
-
         self.pushButton_TRAP_5 = QPushButton(self.frame_7)
         self.pushButton_TRAP_5.setObjectName(u"pushButton_TRAP_5")
         self.pushButton_TRAP_5.setMinimumSize(QSize(20, 0))
         self.pushButton_TRAP_5.setMaximumSize(QSize(20, 16777215))
 
-        self.gridLayout_7.addWidget(self.pushButton_TRAP_5, 0, 5, 1, 1)
-
-        self.pushButton_TRAP_6 = QPushButton(self.frame_7)
-        self.pushButton_TRAP_6.setObjectName(u"pushButton_TRAP_6")
-        self.pushButton_TRAP_6.setMinimumSize(QSize(20, 0))
-        self.pushButton_TRAP_6.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_TRAP_6, 0, 6, 1, 1)
-
-        self.pushButton_TRAP_7 = QPushButton(self.frame_7)
-        self.pushButton_TRAP_7.setObjectName(u"pushButton_TRAP_7")
-        self.pushButton_TRAP_7.setMinimumSize(QSize(20, 0))
-        self.pushButton_TRAP_7.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_TRAP_7, 0, 7, 1, 1)
-
-        self.pushButton_TRAP_8 = QPushButton(self.frame_7)
-        self.pushButton_TRAP_8.setObjectName(u"pushButton_TRAP_8")
-        self.pushButton_TRAP_8.setMinimumSize(QSize(20, 0))
-        self.pushButton_TRAP_8.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_TRAP_8, 0, 8, 1, 1)
-
-        self.pushButton_TRAP_9 = QPushButton(self.frame_7)
-        self.pushButton_TRAP_9.setObjectName(u"pushButton_TRAP_9")
-        self.pushButton_TRAP_9.setMinimumSize(QSize(20, 0))
-        self.pushButton_TRAP_9.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_TRAP_9, 0, 9, 1, 1)
-
-        self.pushButton_TRAP_10 = QPushButton(self.frame_7)
-        self.pushButton_TRAP_10.setObjectName(u"pushButton_TRAP_10")
-        self.pushButton_TRAP_10.setMinimumSize(QSize(30, 0))
-        self.pushButton_TRAP_10.setMaximumSize(QSize(30, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_TRAP_10, 0, 10, 1, 1)
-
-        self.pushButton_OUT = QPushButton(self.frame_7)
-        self.pushButton_OUT.setObjectName(u"pushButton_OUT")
-
-        self.gridLayout_7.addWidget(self.pushButton_OUT, 1, 0, 1, 1)
-
-        self.pushButton_OUT_1 = QPushButton(self.frame_7)
-        self.pushButton_OUT_1.setObjectName(u"pushButton_OUT_1")
-        self.pushButton_OUT_1.setMinimumSize(QSize(20, 0))
-        self.pushButton_OUT_1.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_OUT_1, 1, 1, 1, 1)
-
-        self.pushButton_OUT_2 = QPushButton(self.frame_7)
-        self.pushButton_OUT_2.setObjectName(u"pushButton_OUT_2")
-        self.pushButton_OUT_2.setMinimumSize(QSize(20, 0))
-        self.pushButton_OUT_2.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_OUT_2, 1, 2, 1, 1)
+        self.gridLayout_7.addWidget(self.pushButton_TRAP_5, 1, 5, 1, 1)
 
         self.pushButton_OUT_3 = QPushButton(self.frame_7)
         self.pushButton_OUT_3.setObjectName(u"pushButton_OUT_3")
         self.pushButton_OUT_3.setMinimumSize(QSize(20, 0))
         self.pushButton_OUT_3.setMaximumSize(QSize(20, 16777215))
 
-        self.gridLayout_7.addWidget(self.pushButton_OUT_3, 1, 3, 1, 1)
-
-        self.pushButton_OUT_4 = QPushButton(self.frame_7)
-        self.pushButton_OUT_4.setObjectName(u"pushButton_OUT_4")
-        self.pushButton_OUT_4.setMinimumSize(QSize(20, 0))
-        self.pushButton_OUT_4.setMaximumSize(QSize(20, 16777215))
-
-        self.gridLayout_7.addWidget(self.pushButton_OUT_4, 1, 4, 1, 1)
+        self.gridLayout_7.addWidget(self.pushButton_OUT_3, 2, 3, 1, 1)
 
         self.pushButton_OUT_5 = QPushButton(self.frame_7)
         self.pushButton_OUT_5.setObjectName(u"pushButton_OUT_5")
         self.pushButton_OUT_5.setMinimumSize(QSize(20, 0))
         self.pushButton_OUT_5.setMaximumSize(QSize(20, 16777215))
 
-        self.gridLayout_7.addWidget(self.pushButton_OUT_5, 1, 5, 1, 1)
+        self.gridLayout_7.addWidget(self.pushButton_OUT_5, 2, 5, 1, 1)
 
-        self.pushButton_OUT_6 = QPushButton(self.frame_7)
-        self.pushButton_OUT_6.setObjectName(u"pushButton_OUT_6")
-        self.pushButton_OUT_6.setMinimumSize(QSize(20, 0))
-        self.pushButton_OUT_6.setMaximumSize(QSize(20, 16777215))
+        self.pushButton_OUT_4 = QPushButton(self.frame_7)
+        self.pushButton_OUT_4.setObjectName(u"pushButton_OUT_4")
+        self.pushButton_OUT_4.setMinimumSize(QSize(20, 0))
+        self.pushButton_OUT_4.setMaximumSize(QSize(20, 16777215))
 
-        self.gridLayout_7.addWidget(self.pushButton_OUT_6, 1, 6, 1, 1)
+        self.gridLayout_7.addWidget(self.pushButton_OUT_4, 2, 4, 1, 1)
 
         self.pushButton_OUT_7 = QPushButton(self.frame_7)
         self.pushButton_OUT_7.setObjectName(u"pushButton_OUT_7")
         self.pushButton_OUT_7.setMinimumSize(QSize(20, 0))
         self.pushButton_OUT_7.setMaximumSize(QSize(20, 16777215))
 
-        self.gridLayout_7.addWidget(self.pushButton_OUT_7, 1, 7, 1, 1)
+        self.gridLayout_7.addWidget(self.pushButton_OUT_7, 2, 7, 1, 1)
 
         self.pushButton_OUT_8 = QPushButton(self.frame_7)
         self.pushButton_OUT_8.setObjectName(u"pushButton_OUT_8")
         self.pushButton_OUT_8.setMinimumSize(QSize(20, 0))
         self.pushButton_OUT_8.setMaximumSize(QSize(20, 16777215))
 
-        self.gridLayout_7.addWidget(self.pushButton_OUT_8, 1, 8, 1, 1)
+        self.gridLayout_7.addWidget(self.pushButton_OUT_8, 2, 8, 1, 1)
+
+        self.pushButton_TRAP_10 = QPushButton(self.frame_7)
+        self.pushButton_TRAP_10.setObjectName(u"pushButton_TRAP_10")
+        self.pushButton_TRAP_10.setMinimumSize(QSize(30, 0))
+        self.pushButton_TRAP_10.setMaximumSize(QSize(30, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_TRAP_10, 1, 10, 1, 1)
+
+        self.pushButton_TRAP_6 = QPushButton(self.frame_7)
+        self.pushButton_TRAP_6.setObjectName(u"pushButton_TRAP_6")
+        self.pushButton_TRAP_6.setMinimumSize(QSize(20, 0))
+        self.pushButton_TRAP_6.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_TRAP_6, 1, 6, 1, 1)
+
+        self.pushButton_TRAP_8 = QPushButton(self.frame_7)
+        self.pushButton_TRAP_8.setObjectName(u"pushButton_TRAP_8")
+        self.pushButton_TRAP_8.setMinimumSize(QSize(20, 0))
+        self.pushButton_TRAP_8.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_TRAP_8, 1, 8, 1, 1)
+
+        self.pushButton_TRAP_9 = QPushButton(self.frame_7)
+        self.pushButton_TRAP_9.setObjectName(u"pushButton_TRAP_9")
+        self.pushButton_TRAP_9.setMinimumSize(QSize(20, 0))
+        self.pushButton_TRAP_9.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_TRAP_9, 1, 9, 1, 1)
 
         self.pushButton_OUT_9 = QPushButton(self.frame_7)
         self.pushButton_OUT_9.setObjectName(u"pushButton_OUT_9")
         self.pushButton_OUT_9.setMinimumSize(QSize(20, 0))
         self.pushButton_OUT_9.setMaximumSize(QSize(20, 16777215))
 
-        self.gridLayout_7.addWidget(self.pushButton_OUT_9, 1, 9, 1, 1)
+        self.gridLayout_7.addWidget(self.pushButton_OUT_9, 2, 9, 1, 1)
+
+        self.pushButton_OUT_2 = QPushButton(self.frame_7)
+        self.pushButton_OUT_2.setObjectName(u"pushButton_OUT_2")
+        self.pushButton_OUT_2.setMinimumSize(QSize(20, 0))
+        self.pushButton_OUT_2.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_OUT_2, 2, 2, 1, 1)
+
+        self.pushButton_TRAP_4 = QPushButton(self.frame_7)
+        self.pushButton_TRAP_4.setObjectName(u"pushButton_TRAP_4")
+        self.pushButton_TRAP_4.setMinimumSize(QSize(20, 0))
+        self.pushButton_TRAP_4.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_TRAP_4, 1, 4, 1, 1)
+
+        self.pushButton_TRAP_7 = QPushButton(self.frame_7)
+        self.pushButton_TRAP_7.setObjectName(u"pushButton_TRAP_7")
+        self.pushButton_TRAP_7.setMinimumSize(QSize(20, 0))
+        self.pushButton_TRAP_7.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_TRAP_7, 1, 7, 1, 1)
+
+        self.pushButton_OUT = QPushButton(self.frame_7)
+        self.pushButton_OUT.setObjectName(u"pushButton_OUT")
+
+        self.gridLayout_7.addWidget(self.pushButton_OUT, 2, 0, 1, 1)
+
+        self.pushButton_OUT_6 = QPushButton(self.frame_7)
+        self.pushButton_OUT_6.setObjectName(u"pushButton_OUT_6")
+        self.pushButton_OUT_6.setMinimumSize(QSize(20, 0))
+        self.pushButton_OUT_6.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_OUT_6, 2, 6, 1, 1)
+
+        self.pushButton_OUT_1 = QPushButton(self.frame_7)
+        self.pushButton_OUT_1.setObjectName(u"pushButton_OUT_1")
+        self.pushButton_OUT_1.setMinimumSize(QSize(20, 0))
+        self.pushButton_OUT_1.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_OUT_1, 2, 1, 1, 1)
+
+        self.pushButton_TRAP_2 = QPushButton(self.frame_7)
+        self.pushButton_TRAP_2.setObjectName(u"pushButton_TRAP_2")
+        self.pushButton_TRAP_2.setMinimumSize(QSize(20, 0))
+        self.pushButton_TRAP_2.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_TRAP_2, 1, 2, 1, 1)
+
+        self.pushButton_TRAP_1 = QPushButton(self.frame_7)
+        self.pushButton_TRAP_1.setObjectName(u"pushButton_TRAP_1")
+        self.pushButton_TRAP_1.setMinimumSize(QSize(20, 0))
+        self.pushButton_TRAP_1.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_TRAP_1, 1, 1, 1, 1)
 
         self.pushButton_OUT_10 = QPushButton(self.frame_7)
         self.pushButton_OUT_10.setObjectName(u"pushButton_OUT_10")
         self.pushButton_OUT_10.setMinimumSize(QSize(30, 0))
         self.pushButton_OUT_10.setMaximumSize(QSize(30, 16777215))
 
-        self.gridLayout_7.addWidget(self.pushButton_OUT_10, 1, 10, 1, 1)
+        self.gridLayout_7.addWidget(self.pushButton_OUT_10, 2, 10, 1, 1)
+
+        self.pushButton_TRAP_3 = QPushButton(self.frame_7)
+        self.pushButton_TRAP_3.setObjectName(u"pushButton_TRAP_3")
+        self.pushButton_TRAP_3.setMinimumSize(QSize(20, 0))
+        self.pushButton_TRAP_3.setMaximumSize(QSize(20, 16777215))
+
+        self.gridLayout_7.addWidget(self.pushButton_TRAP_3, 1, 3, 1, 1)
+
+        self.checkBox_trap = QCheckBox(self.frame_7)
+        self.checkBox_trap.setObjectName(u"checkBox_trap")
+        self.checkBox_trap.setMaximumSize(QSize(16777215, 16777215))
+        self.checkBox_trap.setFont(font1)
+
+        self.gridLayout_7.addWidget(self.checkBox_trap, 1, 0, 1, 1)
 
 
         self.gridLayout_10.addWidget(self.frame_7, 3, 0, 1, 1)
@@ -3965,28 +3967,28 @@ class Ui_MainWindow(object):
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"\u540e\u5907\u6444\u50cf\u673a\uff1a", None))
         self.pushButton_Test_End.setText(QCoreApplication.translate("MainWindow", u"\u7ed3\u7b97\u9875", None))
         self.pushButton_screenshot.setText(QCoreApplication.translate("MainWindow", u"\u8bc6\u522b\u6d4b\u8bd5", None))
-        self.pushButton_TRAP.setText(QCoreApplication.translate("MainWindow", u"\u5361\u73e0", None))
-        self.pushButton_TRAP_1.setText(QCoreApplication.translate("MainWindow", u"1", None))
-        self.pushButton_TRAP_2.setText(QCoreApplication.translate("MainWindow", u"2", None))
-        self.pushButton_TRAP_3.setText(QCoreApplication.translate("MainWindow", u"3", None))
-        self.pushButton_TRAP_4.setText(QCoreApplication.translate("MainWindow", u"4", None))
         self.pushButton_TRAP_5.setText(QCoreApplication.translate("MainWindow", u"5", None))
-        self.pushButton_TRAP_6.setText(QCoreApplication.translate("MainWindow", u"6", None))
-        self.pushButton_TRAP_7.setText(QCoreApplication.translate("MainWindow", u"7", None))
-        self.pushButton_TRAP_8.setText(QCoreApplication.translate("MainWindow", u"8", None))
-        self.pushButton_TRAP_9.setText(QCoreApplication.translate("MainWindow", u"9", None))
-        self.pushButton_TRAP_10.setText(QCoreApplication.translate("MainWindow", u"10", None))
-        self.pushButton_OUT.setText(QCoreApplication.translate("MainWindow", u"\u98de\u73e0", None))
-        self.pushButton_OUT_1.setText(QCoreApplication.translate("MainWindow", u"1", None))
-        self.pushButton_OUT_2.setText(QCoreApplication.translate("MainWindow", u"2", None))
         self.pushButton_OUT_3.setText(QCoreApplication.translate("MainWindow", u"3", None))
-        self.pushButton_OUT_4.setText(QCoreApplication.translate("MainWindow", u"4", None))
         self.pushButton_OUT_5.setText(QCoreApplication.translate("MainWindow", u"5", None))
-        self.pushButton_OUT_6.setText(QCoreApplication.translate("MainWindow", u"6", None))
+        self.pushButton_OUT_4.setText(QCoreApplication.translate("MainWindow", u"4", None))
         self.pushButton_OUT_7.setText(QCoreApplication.translate("MainWindow", u"7", None))
         self.pushButton_OUT_8.setText(QCoreApplication.translate("MainWindow", u"8", None))
+        self.pushButton_TRAP_10.setText(QCoreApplication.translate("MainWindow", u"10", None))
+        self.pushButton_TRAP_6.setText(QCoreApplication.translate("MainWindow", u"6", None))
+        self.pushButton_TRAP_8.setText(QCoreApplication.translate("MainWindow", u"8", None))
+        self.pushButton_TRAP_9.setText(QCoreApplication.translate("MainWindow", u"9", None))
         self.pushButton_OUT_9.setText(QCoreApplication.translate("MainWindow", u"9", None))
+        self.pushButton_OUT_2.setText(QCoreApplication.translate("MainWindow", u"2", None))
+        self.pushButton_TRAP_4.setText(QCoreApplication.translate("MainWindow", u"4", None))
+        self.pushButton_TRAP_7.setText(QCoreApplication.translate("MainWindow", u"7", None))
+        self.pushButton_OUT.setText(QCoreApplication.translate("MainWindow", u"\u98de\u73e0", None))
+        self.pushButton_OUT_6.setText(QCoreApplication.translate("MainWindow", u"6", None))
+        self.pushButton_OUT_1.setText(QCoreApplication.translate("MainWindow", u"1", None))
+        self.pushButton_TRAP_2.setText(QCoreApplication.translate("MainWindow", u"2", None))
+        self.pushButton_TRAP_1.setText(QCoreApplication.translate("MainWindow", u"1", None))
         self.pushButton_OUT_10.setText(QCoreApplication.translate("MainWindow", u"10", None))
+        self.pushButton_TRAP_3.setText(QCoreApplication.translate("MainWindow", u"3", None))
+        self.checkBox_trap.setText(QCoreApplication.translate("MainWindow", u"\u5361\u73e0", None))
         self.groupBox_39.setTitle("")
         self.pushButton_Organ.setText(QCoreApplication.translate("MainWindow", u"\u673a\u5173\u63a7\u5236", None))
         self.pushButton_kaj789.setText(QCoreApplication.translate("MainWindow", u"\u8d5b\u4e8b\u8bb0\u5f55", None))

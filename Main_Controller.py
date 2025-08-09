@@ -2348,6 +2348,7 @@ def restartsignal_accept(msg):
         ui.lineEdit_Main_Camera.setText('')
         ui.lineEdit_Backup_Camera.setText('')
         ui.lineEdit_Send_Result.setText('')
+        ui.checkBox_trap.setChecked(False)
     elif isinstance(msg, int):
         if int(msg) == 1:
             plan_refresh()
@@ -8317,7 +8318,8 @@ class TrapPushButton(QPushButton):
         print(items)
         if items[2].isdigit():
             num = int(items[2])
-            if z_ranking_time[num - 1] in ['TRAP', 'OUT', '']:
+            if ((z_ranking_time[num - 1] in ['TRAP', 'OUT', ''])
+                    and ui.checkBox_trap.isChecked()):
                 z_ranking_time[num - 1] = items[1]
                 term_comment = items[1]
 
