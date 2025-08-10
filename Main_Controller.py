@@ -5504,18 +5504,20 @@ class MapLabel(QLabel):
         self.setMaximumSize(picture_size, picture_size)
         self.setPixmap(pixmap)
         self.setScaledContents(True)
+        self.color_names = {'red': QColor(255, 0, 0), 'green': QColor(0, 255, 0), 'blue': QColor(0, 0, 255),
+                            'pink': QColor(255, 0, 255), 'yellow': QColor(255, 255, 0), 'black': QColor(0, 0, 0),
+                            'purple': QColor(128, 0, 128), 'orange': QColor(255, 165, 0),
+                            'White': QColor(248, 248, 255),
+                            'Brown': QColor(139, 69, 19)}
         if ui.checkBox_Two_Color.isChecked():
-            self.color_names = {'red': QColor(255, 0, 0), 'green': QColor(0, 255, 0), 'blue': QColor(255, 0, 0),
-                                'pink': QColor(0, 255, 0), 'yellow': QColor(255, 0, 0), 'black': QColor(0, 255, 0),
-                                'purple': QColor(255, 0, 0), 'orange': QColor(255, 0, 0),
-                                'White': QColor(0, 255, 0),
-                                'Brown': QColor(0, 255, 0)}
-        else:
-            self.color_names = {'red': QColor(255, 0, 0), 'green': QColor(0, 255, 0), 'blue': QColor(0, 0, 255),
-                                'pink': QColor(255, 0, 255), 'yellow': QColor(255, 255, 0), 'black': QColor(0, 0, 0),
-                                'purple': QColor(128, 0, 128), 'orange': QColor(255, 165, 0),
-                                'White': QColor(248, 248, 255),
+            one_color = self.color_names[ui.lineEdit_color_one.text()]
+            two_color = self.color_names[ui.lineEdit_color_two.text()]
+            self.color_names = {'red': one_color, 'green': two_color, 'blue': one_color,
+                                'pink': two_color, 'yellow': one_color, 'black': two_color,
+                                'purple': one_color, 'orange': QColor(255, 165, 0),
+                                'White': two_color,
                                 'Brown': QColor(139, 69, 19)}
+
         self.path_points = []
         self.path_direction = []
         if os.path.exists(map_data[1]):
