@@ -3382,11 +3382,13 @@ def ScreenShotsignal_accept(msg):
                 if ui.checkBox_Two_Color.isChecked():
                     balls_num = math.ceil(balls_count / 2)
                     if main_Camera[index] <= balls_num:
-                        getattr(ui, 'lineEdit_result_%s' % index).setText('3')
-                        getattr(result_ui, 'lineEdit_result_%s' % index).setText('3')
+                        one_num = color_number[ui.lineEdit_color_one.text()]
+                        getattr(ui, 'lineEdit_result_%s' % index).setText(one_num)
+                        getattr(result_ui, 'lineEdit_result_%s' % index).setText(one_num)
                     else:
-                        getattr(ui, 'lineEdit_result_%s' % index).setText('6')
-                        getattr(result_ui, 'lineEdit_result_%s' % index).setText('6')
+                        two_num = color_number[ui.lineEdit_color_two.text()]
+                        getattr(ui, 'lineEdit_result_%s' % index).setText(two_num)
+                        getattr(result_ui, 'lineEdit_result_%s' % index).setText(two_num)
                 else:
                     getattr(ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
                     getattr(result_ui, 'lineEdit_result_%s' % index).setText(str(main_Camera[index]))
