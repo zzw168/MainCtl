@@ -847,14 +847,15 @@ def set_camera_color(array_temp_, color_num='red'):
             color_two_[0].append(i)
         else:
             color_two_[1].append(i)
-    if len(color_two_[0]) > int(balls_count / 2):
-        for i in range(int(balls_count / 2)):  # 着色
+    balls_num = math.ceil(balls_count / 2)
+    if len(color_two_[0]) >= balls_num:
+        for i in range(balls_num):  # 着色
             res_array[color_two_[0][i]] = color_set[0][i]
     else:
         for i in range(len(color_two_[0])):  # 着色
             res_array[color_two_[0][i]] = color_set[0][i]
-    if len(color_two_[1]) > int(balls_count / 2):
-        for i in range(int(balls_count / 2)):  # 着色
+    if len(color_two_[1]) >= balls_num:
+        for i in range(balls_num):  # 着色
             res_array[color_two_[1][i]] = color_set[1][i]
     else:
         for i in range(len(color_two_[1])):
@@ -3236,8 +3237,9 @@ class ScreenShotThread(QThread):
                     Send_Result_End = False
                     if ui.checkBox_Two_Color.isChecked():
                         temp_two = [[], []]
+                        balls_num = math.ceil(balls_count / 2)
                         for i in range(balls_count):
-                            if send_list[i] <= balls_count / 2:
+                            if send_list[i] <= balls_num:
                                 temp_two[0].append(i)
                             else:
                                 temp_two[1].append(i)
@@ -3252,8 +3254,9 @@ class ScreenShotThread(QThread):
                 # lottery_term[5] = str(z_ranking_end[0:balls_count])  # 排名
                 if ui.checkBox_Two_Color.isChecked():
                     temp = []
+                    balls_num = math.ceil(balls_count / 2)
                     for i in range(len(z_ranking_end)):
-                        if z_ranking_end[i] <= balls_count / 2:
+                        if z_ranking_end[i] <= balls_num:
                             temp.append(int(color_number[ui.lineEdit_color_one.text()]))
                         else:
                             temp.append(int(color_number[ui.lineEdit_color_two.text()]))
@@ -6421,7 +6424,7 @@ def set_result(msg):
     if ui.checkBox_Two_Color.isChecked():
         temp = []
         for i in range(balls_count):
-            if msg[:balls_count][i] <= balls_count / 2:
+            if msg[:balls_count][i] <= math.ceil(balls_count / 2):
                 temp.append(int(color_number[ui.lineEdit_color_one.text()]))
             else:
                 temp.append(int(color_number[ui.lineEdit_color_two.text()]))
