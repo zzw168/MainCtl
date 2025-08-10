@@ -3300,8 +3300,9 @@ class ScreenShotThread(QThread):
                 # lottery_term[4] = str(z_ranking_end[0:balls_count])  # 排名
                 if ui.checkBox_Two_Color.isChecked():
                     temp = []
+                    balls_num = math.ceil(balls_count / 2)
                     for i in range(len(z_ranking_end)):
-                        if z_ranking_end[i] <= balls_count / 2:
+                        if z_ranking_end[i] <= balls_num:
                             temp.append(int(color_number[ui.lineEdit_color_one.text()]))
                         else:
                             temp.append(int(color_number[ui.lineEdit_color_two.text()]))
@@ -3334,8 +3335,9 @@ def ScreenShotsignal_accept(msg):
             painter.end()  # 结束绘制
             if ui.checkBox_Two_Color.isChecked():
                 temp = []
+                balls_num = math.ceil(balls_count / 2)
                 for i in range(balls_count):
-                    if main_Camera[:balls_count][i] <= balls_count / 2:
+                    if main_Camera[:balls_count][i] <= balls_num:
                         temp.append(int(color_number[ui.lineEdit_color_one.text()]))
                     else:
                         temp.append(int(color_number[ui.lineEdit_color_two.text()]))
@@ -3357,8 +3359,9 @@ def ScreenShotsignal_accept(msg):
             painter.end()  # 结束绘制
             if ui.checkBox_Two_Color.isChecked():
                 temp = []
+                balls_num = math.ceil(balls_count / 2)
                 for i in range(balls_count):
-                    if monitor_Camera[:balls_count][i] <= balls_count / 2:
+                    if monitor_Camera[:balls_count][i] <= balls_num:
                         temp.append(int(color_number[ui.lineEdit_color_one.text()]))
                     else:
                         temp.append(int(color_number[ui.lineEdit_color_two.text()]))
@@ -3377,7 +3380,8 @@ def ScreenShotsignal_accept(msg):
             fit_Camera[index] = (main_Camera[index] == monitor_Camera[index])
             if fit_Camera[index]:
                 if ui.checkBox_Two_Color.isChecked():
-                    if main_Camera[index] <= balls_count / 2:
+                    balls_num = math.ceil(balls_count / 2)
+                    if main_Camera[index] <= balls_num:
                         getattr(ui, 'lineEdit_result_%s' % index).setText('3')
                         getattr(result_ui, 'lineEdit_result_%s' % index).setText('3')
                     else:
