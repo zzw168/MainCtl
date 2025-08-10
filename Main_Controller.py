@@ -939,9 +939,9 @@ def deal_rank_two_color(integration_qiu_array):
     array_temp.sort(key=lambda x: x[6], reverse=True)
     if array_temp[0][6] > max_area_count - balls_count:
         array_temp = filtrate_color(array_temp)
-        array_temp = set_color(array_temp)
+        array_temp = set_color(array_temp, ui.lineEdit_color_one.text())
     else:
-        array_temp = set_color(array_temp)
+        array_temp = set_color(array_temp, ui.lineEdit_color_one.text())
         if len(array_temp) < balls_count:
             array_temp = set_color_ranking(array_temp)
     deal_rank(array_temp)
