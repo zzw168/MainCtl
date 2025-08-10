@@ -870,14 +870,15 @@ def set_color(array_temp_, color_num='red'):
             color_two[0].append(i)
         else:
             color_two[1].append(i)
-    if len(color_two[0]) > int(balls_count / 2):
-        for i in range(int(balls_count / 2)):  # 着色
+    balls_num = math.ceil(balls_count / 2)
+    if len(color_two[0]) > balls_num:
+        for i in range(balls_num):  # 着色
             array_temp_[color_two[0][i]][5] = color_set[0][i]
     else:
         for i in range(len(color_two[0])):  # 着色
             array_temp_[color_two[0][i]][5] = color_set[0][i]
-    if len(color_two[1]) > int(balls_count / 2):
-        for i in range(int(balls_count / 2)):  # 着色
+    if len(color_two[1]) > balls_num:
+        for i in range(balls_num):  # 着色
             array_temp_[color_two[1][i]][5] = color_set[1][i]
     else:
         for i in range(len(color_two[1])):
