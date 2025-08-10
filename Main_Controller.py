@@ -4919,7 +4919,7 @@ def load_main_json():
             getattr(ui, 'lineEdit_Color_Ch_%s' % index).setText(ch)
             getattr(ui, 'lineEdit_Color_No_%s' % index).setText(number)
         for i in range(balls_count):
-            if i < balls_count / 2:
+            if i < math.ceil(balls_count / 2):
                 color_set[0].append(init_array[i][5])
                 color_set_num[0].append(int(color_number[init_array[i][5]]))
             else:
