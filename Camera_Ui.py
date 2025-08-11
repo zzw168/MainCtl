@@ -39,18 +39,23 @@ class Ui_Camera_Dialog(object):
         self.pushButton_net = QPushButton(self.groupBox_main_camera)
         self.pushButton_net.setObjectName(u"pushButton_net")
 
-        self.gridLayout_2.addWidget(self.pushButton_net, 0, 0, 1, 2)
+        self.gridLayout_2.addWidget(self.pushButton_net, 0, 0, 1, 1)
+
+        self.pushButton_net_reset = QPushButton(self.groupBox_main_camera)
+        self.pushButton_net_reset.setObjectName(u"pushButton_net_reset")
+
+        self.gridLayout_2.addWidget(self.pushButton_net_reset, 0, 1, 1, 1)
+
+        self.pushButton_activate = QPushButton(self.groupBox_main_camera)
+        self.pushButton_activate.setObjectName(u"pushButton_activate")
+
+        self.gridLayout_2.addWidget(self.pushButton_activate, 1, 0, 1, 2)
 
         self.label_picture = QLabel(self.groupBox_main_camera)
         self.label_picture.setObjectName(u"label_picture")
         self.label_picture.setMinimumSize(QSize(300, 10))
 
         self.gridLayout_2.addWidget(self.label_picture, 2, 0, 1, 2)
-
-        self.pushButton_activate = QPushButton(self.groupBox_main_camera)
-        self.pushButton_activate.setObjectName(u"pushButton_activate")
-
-        self.gridLayout_2.addWidget(self.pushButton_activate, 1, 0, 1, 2)
 
 
         self.gridLayout.addWidget(self.groupBox_main_camera, 0, 0, 1, 1)
@@ -65,7 +70,8 @@ class Ui_Camera_Dialog(object):
         Camera_Dialog.setWindowTitle(QCoreApplication.translate("Camera_Dialog", u"\u7ec8\u70b9\u8bc6\u522b", None))
         self.groupBox_main_camera.setTitle(QCoreApplication.translate("Camera_Dialog", u"\u7ec8\u70b9\u8bc6\u522b", None))
         self.pushButton_net.setText(QCoreApplication.translate("Camera_Dialog", u"\u7f51\u7edc\u6444\u50cf\u5934\u8bbe\u7f6e", None))
-        self.label_picture.setText("")
+        self.pushButton_net_reset.setText(QCoreApplication.translate("Camera_Dialog", u"\u91cd\u542f\u7f51\u7edc\u6444\u50cf\u5934", None))
         self.pushButton_activate.setText(QCoreApplication.translate("Camera_Dialog", u"\u91cd\u65b0\u6fc0\u6d3b\u6444\u50cf\u5934", None))
+        self.label_picture.setText("")
     # retranslateUi
 

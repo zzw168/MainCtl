@@ -621,7 +621,7 @@ def obs_script_request():
 
 def connect_rtsp():
     global rtsp_frame
-    global rtsp_restart
+    global rtsp_reset
     global get_flg
     get_flg = False
     while True:
@@ -635,8 +635,8 @@ def connect_rtsp():
                 if ret:
                     rtsp_frame = copy.deepcopy(frame)
                     get_flg = False
-            if rtsp_restart:
-                rtsp_restart = False
+            if rtsp_reset:
+                rtsp_reset = False
                 break
         cap.release()
 
@@ -4980,6 +4980,10 @@ def net_camera():
     ip_address = parsed_url.split(':')[0]
     webbrowser.open(ip_address)
 
+def net_reset():
+    global rtsp_reset
+    rtsp_reset = True
+
 
 def activate_camera():
     global obs_cap
@@ -8421,6 +8425,7 @@ if __name__ == '__main__':
     main_camera_ui.label_picture.mouseDoubleClickEvent = main_doubleclick_event
     ui.label_main_picture.mouseDoubleClickEvent = main_doubleclick_event
     main_camera_ui.pushButton_net.hide()
+    main_camera_ui.pushButton_net_reset.hide()
     main_camera_ui.pushButton_activate.clicked.connect(activate_camera)
 
     monitor_camera_ui = CameraUi(z_window)
@@ -8430,6 +8435,7 @@ if __name__ == '__main__':
     ui.label_monitor_picture.mouseDoubleClickEvent = monitor_doubleclick_event
     monitor_camera_ui.pushButton_activate.hide()
     monitor_camera_ui.pushButton_net.clicked.connect(net_camera)
+    monitor_camera_ui.pushButton_net_reset.clicked.connect(net_camera)
 
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
@@ -8904,7 +8910,7 @@ if __name__ == '__main__':
     obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
     rtsp_frame = []
-    rtsp_restart = False
+    rtsp_reset = False
     get_flg = False
     threading.Thread(target=connect_rtsp, daemon=True).start()
 
