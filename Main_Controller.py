@@ -622,19 +622,19 @@ def obs_script_request():
 def connect_rtsp():
     global rtsp_frame
     global rtsp_reset
-    global get_flg
-    get_flg = False
+    global rtsp_flg
+    rtsp_flg = False
     while True:
         os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp|timeout;5000000"  # 超时 5 秒
         cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
         # cap = cv2.VideoCapture(rtsp_url)
         while cap.isOpened():
             cap.grab()  # 仅获取帧
-            if get_flg:
+            if rtsp_flg:
                 ret, frame = cap.retrieve()  # 解码帧
                 if ret:
                     rtsp_frame = copy.deepcopy(frame)
-                    get_flg = False
+                    rtsp_flg = False
             if rtsp_reset:
                 rtsp_reset = False
                 break
@@ -645,9 +645,9 @@ def connect_rtsp():
 def get_rtsp():
     global rtsp_res
     global rtsp_frame
-    global get_flg
+    global rtsp_flg
     rtsp_frame = []
-    get_flg = True
+    rtsp_flg = True
     t = 0
     while len(rtsp_frame) == 0:
         t += 1
@@ -8911,7 +8911,7 @@ if __name__ == '__main__':
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
     rtsp_frame = []
     rtsp_reset = False
-    get_flg = False
+    rtsp_flg = False
     threading.Thread(target=connect_rtsp, daemon=True).start()
 
     if ui.lineEdit_source_end.text().isdigit():
