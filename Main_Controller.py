@@ -621,12 +621,13 @@ def obs_script_request():
 
 def connect_rtsp():
     global rtsp_frame
+    global rtsp_restart
     global get_flg
     get_flg = False
     while True:
-        # os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp|timeout;5000000"  # 超时 5 秒
-        # cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
-        cap = cv2.VideoCapture(rtsp_url)
+        os.environ["OPENCV_FFMPEG_CAPTURE_OPTIONS"] = "rtsp_transport;udp|timeout;5000000"  # 超时 5 秒
+        cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
+        # cap = cv2.VideoCapture(rtsp_url)
         while cap.isOpened():
             cap.grab()  # 仅获取帧
             if get_flg:
@@ -634,8 +635,9 @@ def connect_rtsp():
                 if ret:
                     rtsp_frame = copy.deepcopy(frame)
                     get_flg = False
-            # else:
-            #     time.sleep(0.2)  # 等待后重试
+            if rtsp_restart:
+                rtsp_restart = False
+                break
         cap.release()
 
 
@@ -8902,6 +8904,7 @@ if __name__ == '__main__':
     obs_res = ['', '["%s"]' % init_array[0][5], 'obs']
     rtsp_res = ['', '["%s"]' % init_array[0][5], 'rtsp']
     rtsp_frame = []
+    rtsp_restart = False
     get_flg = False
     threading.Thread(target=connect_rtsp, daemon=True).start()
 
