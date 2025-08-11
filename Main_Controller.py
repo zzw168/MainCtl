@@ -8435,7 +8435,7 @@ if __name__ == '__main__':
     ui.label_monitor_picture.mouseDoubleClickEvent = monitor_doubleclick_event
     monitor_camera_ui.pushButton_activate.hide()
     monitor_camera_ui.pushButton_net.clicked.connect(net_camera)
-    monitor_camera_ui.pushButton_net_reset.clicked.connect(net_camera)
+    monitor_camera_ui.pushButton_net_reset.clicked.connect(net_reset)
 
     sc = SportCard()  # 运动卡
     s485 = Serial485()  # 摄像头
