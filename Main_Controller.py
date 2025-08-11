@@ -5696,12 +5696,12 @@ class MapLabel(QLabel):
                 with z_lock:
                     z_ranking_res = copy.deepcopy(pos_temp)
         # 各个珠子一圈时间
-        if ranking_temp and max_lap_count > 1:
+        if max_lap_count > 1:
             for i in range(balls_count):
                 # if (ranking_temp[i][9] == 0  # 第0圈
                 #         and (ranking_temp[i][6] >= max_area_count - balls_count
                 #              or self.positions[i][0] >= len(self.path_points[0]) - 100)):
-                if (ranking_temp[i][9] == 0  # 第0圈
+                if (self.positions[i][3] == 0  # 第0圈
                         and (self.positions[i][0] >= len(self.path_points[0]) - 50)):
                     if lapTimes[0][i] == 0:
                         lapTimes[0][i] = round(time.time() - ranking_time_start, 2)
