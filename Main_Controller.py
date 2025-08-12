@@ -4989,6 +4989,7 @@ def net_camera():
     ip_address = parsed_url.split(':')[0]
     webbrowser.open(ip_address)
 
+
 def net_reset():
     global rtsp_reset
     rtsp_reset = True
@@ -5701,10 +5702,15 @@ class MapLabel(QLabel):
                 # if (ranking_temp[i][9] == 0  # 第0圈
                 #         and (ranking_temp[i][6] >= max_area_count - balls_count
                 #              or self.positions[i][0] >= len(self.path_points[0]) - 100)):
-                if (self.positions[i][3] == 0  # 第0圈
-                        and (self.positions[i][0] >= len(self.path_points[0]) - 50)):
+                if ((self.positions[i][3] == 0  # 第0圈
+                     and (self.positions[i][0] >= len(self.path_points[0]) - 30))
+                        or (self.positions[i][3] > 0  # 第1圈
+                            and (self.positions[i][0] <= 200))):
                     if lapTimes[0][i] == 0:
-                        lapTimes[0][i] = round(time.time() - ranking_time_start, 2)
+                        if (0 < i < balls_count - 2) and lapTimes[0][i + 1] != 0:
+                            lapTimes[0][i] = round((lapTimes[0][i] + lapTimes[0][i]) / 2, 2)
+                        else:
+                            lapTimes[0][i] = round(time.time() - ranking_time_start, 2)
                         lapTimes_thread[0][i] = threading.Thread(target=post_lap_time,
                                                                  args=(i + 1, lapTimes[0][i]),
                                                                  daemon=True)
