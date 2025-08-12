@@ -4760,6 +4760,7 @@ def save_main_json():
             main_all['lineEdit_background_Path'] = ui.lineEdit_background_Path.text()
             main_all['lineEdit_Start_Path'] = ui.lineEdit_Start_Path.text()
             main_all['lineEdit_Map_Action'] = ui.lineEdit_Map_Action.text()
+            main_all['lineEdit_first_time'] = ui.lineEdit_first_time.text()
             main_all['lineEdit_GPS_Num'] = ui.lineEdit_GPS_Num.text()
             main_all['lineEdit_Reserve_time'] = ui.lineEdit_Reserve_time.text()
             main_all['lineEdit_End_Num'] = ui.lineEdit_End_Num.text()
@@ -4890,6 +4891,7 @@ def load_main_json():
         ui.lineEdit_volume_2.setText(main_all['lineEdit_volume_2'])
         ui.lineEdit_volume_3.setText(main_all['lineEdit_volume_3'])
         ui.lineEdit_Map_Action.setText(str(main_all['lineEdit_Map_Action']))
+        ui.lineEdit_first_time.setText(str(main_all['lineEdit_first_time']))
         ui.lineEdit_GPS_Num.setText(main_all['lineEdit_GPS_Num'])
         ui.lineEdit_Reserve_time.setText(main_all['lineEdit_Reserve_time'])
         ui.lineEdit_End_Num.setText(main_all['lineEdit_End_Num'])
@@ -5703,7 +5705,7 @@ class MapLabel(QLabel):
                 #         and (ranking_temp[i][6] >= max_area_count - balls_count
                 #              or self.positions[i][0] >= len(self.path_points[0]) - 100)):
                 if ((self.positions[i][3] == 0  # 第0圈
-                     and (self.positions[i][0] >= len(self.path_points[0]) - 30))
+                     and (self.positions[i][0] >= len(self.path_points[0]) - int(ui.lineEdit_first_time.text())))
                         or (self.positions[i][3] > 0  # 第1圈
                             and (self.positions[i][0] <= 200))):
                     if lapTimes[0][i] == 0:
@@ -9032,6 +9034,7 @@ if __name__ == '__main__':
     ui.lineEdit_volume_2.editingFinished.connect(save_main_json)
     ui.lineEdit_volume_3.editingFinished.connect(save_main_json)
     ui.lineEdit_Map_Action.editingFinished.connect(save_main_json)
+    ui.lineEdit_first_time.editingFinished.connect(save_main_json)
     ui.lineEdit_End_Num.editingFinished.connect(save_main_json)
     ui.lineEdit_GPS_Num.editingFinished.connect(save_main_json)
     ui.lineEdit_Reserve_time.editingFinished.connect(save_main_json)

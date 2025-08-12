@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1326</width>
+    <width>1315</width>
     <height>973</height>
    </rect>
   </property>
@@ -5093,13 +5093,13 @@
                   <property name="minimumSize">
                    <size>
                     <width>0</width>
-                    <height>10</height>
+                    <height>180</height>
                    </size>
                   </property>
                   <property name="maximumSize">
                    <size>
                     <width>16777215</width>
-                    <height>16777215</height>
+                    <height>235</height>
                    </size>
                   </property>
                   <property name="font">
@@ -5668,34 +5668,8 @@
                    <string>排名参数设置</string>
                   </property>
                   <layout class="QGridLayout" name="gridLayout_30">
-                   <item row="0" column="0" colspan="2">
-                    <widget class="QCheckBox" name="checkBox_First_Check">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>头名侦测</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="2" colspan="3">
-                    <widget class="QCheckBox" name="checkBox_Start_Flash">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>20</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>起点刷新</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_13">
+                   <item row="3" column="0">
+                    <widget class="QLabel" name="label_15">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -5703,25 +5677,12 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>最大区域:</string>
+                      <string>循环时间:</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="1" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_area_Ranking">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>10</height>
-                      </size>
-                     </property>
-                     <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="3" colspan="2">
-                    <widget class="QLabel" name="label_14">
+                   <item row="2" column="8">
+                    <widget class="QLabel" name="label_75">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -5729,20 +5690,7 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>重置圈数:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_66">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>10</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>同色范围:</string>
+                      <string>秒</string>
                      </property>
                     </widget>
                    </item>
@@ -5771,7 +5719,33 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="2" colspan="2">
+                   <item row="3" column="4" colspan="2">
+                    <widget class="QLabel" name="label_72">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>计球位置:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_13">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>最大区域:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="2" colspan="3">
                     <widget class="QLabel" name="label_71">
                      <property name="minimumSize">
                       <size>
@@ -5784,7 +5758,59 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="4" colspan="2">
+                   <item row="1" column="4" colspan="2">
+                    <widget class="QLabel" name="label_14">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>重置圈数:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0" colspan="2">
+                    <widget class="QCheckBox" name="checkBox_First_Check">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>头名侦测</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1" colspan="3">
+                    <widget class="QLineEdit" name="lineEdit_area_Ranking">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大区域数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_66">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>同色范围:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="5" colspan="2">
                     <widget class="QLabel" name="label_74">
                      <property name="minimumSize">
                       <size>
@@ -5797,7 +5823,20 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="6">
+                   <item row="4" column="5" colspan="4">
+                    <widget class="QPushButton" name="pushButton_save_Ranking">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>保存</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="7">
                     <widget class="QLineEdit" name="lineEdit_lost">
                      <property name="minimumSize">
                       <size>
@@ -5822,8 +5861,8 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="7">
-                    <widget class="QLabel" name="label_75">
+                   <item row="3" column="8">
+                    <widget class="QLabel" name="label_73">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -5831,25 +5870,25 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>秒</string>
+                      <string>/10圈</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="0">
-                    <widget class="QLabel" name="label_15">
+                   <item row="0" column="6" colspan="3">
+                    <widget class="QCheckBox" name="checkBox_road">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
-                       <height>10</height>
+                       <height>20</height>
                       </size>
                      </property>
                      <property name="text">
-                      <string>循环时间:</string>
+                      <string>分岔路方案1</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="1" colspan="2">
-                    <widget class="QLineEdit" name="lineEdit_Time_Restart_Ranking">
+                   <item row="1" column="6" colspan="3">
+                    <widget class="QLineEdit" name="lineEdit_lap_Ranking">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -5857,24 +5896,11 @@
                       </size>
                      </property>
                      <property name="toolTip">
-                      <string/>
+                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大圈数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="3" colspan="2">
-                    <widget class="QLabel" name="label_72">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>10</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>计球位置:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="3" column="5" colspan="2">
+                   <item row="3" column="6" colspan="2">
                     <widget class="QLineEdit" name="lineEdit_Map_Action">
                      <property name="minimumSize">
                       <size>
@@ -5890,34 +5916,8 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="7">
-                    <widget class="QLabel" name="label_73">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>10</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>/10圈</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0" colspan="8">
-                    <widget class="QPushButton" name="pushButton_save_Ranking">
-                     <property name="minimumSize">
-                      <size>
-                       <width>0</width>
-                       <height>10</height>
-                      </size>
-                     </property>
-                     <property name="text">
-                      <string>保存</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="5" colspan="3">
-                    <widget class="QLineEdit" name="lineEdit_lap_Ranking">
+                   <item row="3" column="1" colspan="3">
+                    <widget class="QLineEdit" name="lineEdit_Time_Restart_Ranking">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -5925,12 +5925,31 @@
                       </size>
                      </property>
                      <property name="toolTip">
-                      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;设置最大圈数&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                      <string/>
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="5" colspan="3">
-                    <widget class="QCheckBox" name="checkBox_road">
+                   <item row="4" column="0" colspan="3">
+                    <widget class="QLabel" name="label_106">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>85</width>
+                       <height>16777215</height>
+                      </size>
+                     </property>
+                     <property name="text">
+                      <string>首圈计时位置:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="2" colspan="4">
+                    <widget class="QCheckBox" name="checkBox_Start_Flash">
                      <property name="minimumSize">
                       <size>
                        <width>0</width>
@@ -5938,7 +5957,23 @@
                       </size>
                      </property>
                      <property name="text">
-                      <string>分岔路方案1</string>
+                      <string>起点刷新</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="3" colspan="2">
+                    <widget class="QLineEdit" name="lineEdit_first_time">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>10</height>
+                      </size>
+                     </property>
+                     <property name="toolTip">
+                      <string/>
+                     </property>
+                     <property name="text">
+                      <string>30</string>
                      </property>
                     </widget>
                    </item>
