@@ -5708,7 +5708,7 @@ class MapLabel(QLabel):
                             and (self.positions[i][0] <= 200))):
                     if lapTimes[0][i] == 0:
                         if (0 < i < balls_count - 2) and lapTimes[0][i + 1] != 0:
-                            lapTimes[0][i] = round((lapTimes[0][i] + lapTimes[0][i]) / 2, 2)
+                            lapTimes[0][i] = round((lapTimes[0][i - 1] + lapTimes[0][i + 1]) / 2, 2)
                         else:
                             lapTimes[0][i] = round(time.time() - ranking_time_start, 2)
                         lapTimes_thread[0][i] = threading.Thread(target=post_lap_time,
