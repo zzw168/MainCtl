@@ -639,6 +639,7 @@ def connect_rtsp():
                 rtsp_reset = False
                 break
         cap.release()
+        time.sleep(1)
 
 
 # 获取网络摄像头图片
@@ -8346,6 +8347,7 @@ class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
     def showEvent(self, event: QEvent):
         ui.checkBox_trap.setChecked(True)
         super().showEvent(event)  # 调用父类的 showEvent
+
 
 class TrapPushButton(QPushButton):
     def __init__(self, text, parent=None):
