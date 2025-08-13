@@ -7058,7 +7058,8 @@ class ResetRankingThread(QThread):
             tcp_ranking_thread.sleep_time = 0.1  # 重置排名数据包发送时间
             tcp_ranking_thread.run_flg = True  # 打开排名线程
             print('tcp_ranking_thread.run_flg = True~~~~~~~~~~~~')
-            map_label_big.map_action = 0
+            if map_label_big:
+                map_label_big.map_action = 0
             term_comment = ''
             lapTimes = [[0.0] * balls_count, [0.0] * balls_count]
             balls_ranking_time = [0] * balls_count  # 每个球的比赛进行时间
@@ -7777,9 +7778,7 @@ def my_test():
     global ranking_array
     global wakeup_addr
     print('~~~~~~~~~~~~~~~~~~~')
-    cl_request.press_input_properties_button("终点1", "activate")  # 刷新终点摄像头
-    time.sleep(0.1)
-    cl_request.press_input_properties_button("终点1", "activate")  # 刷新终点摄像头
+    TrapBall_ui.show()
     # tcp_result_thread.send_type = ''
     # tcp_result_thread.run_flg = True
     # my_def()
@@ -8344,6 +8343,9 @@ class TrapBallUi(QDialog, Ui_Dialog_TrapBall):
     def setupUi(self, z_dialog):
         super(TrapBallUi, self).setupUi(z_dialog)
 
+    def showEvent(self, event: QEvent):
+        ui.checkBox_trap.setChecked(True)
+        super().showEvent(event)  # 调用父类的 showEvent
 
 class TrapPushButton(QPushButton):
     def __init__(self, text, parent=None):
