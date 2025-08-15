@@ -2911,9 +2911,9 @@ class ObsEndThread(QThread):
                     tcp_result_thread.send_type = 'updata'
                     tcp_result_thread.run_flg = True
                     cl_request.press_input_properties_button("浏览器", "refreshnocache")
-                    time.sleep(0.1)
                     cl_request.press_input_properties_button("浏览器", "refreshnocache")
                     time.sleep(0.1)
+                    cl_request.press_input_properties_button("浏览器", "refreshnocache")
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                       False)  # 关闭排名来源
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
@@ -3896,6 +3896,18 @@ class PlanCmdThread(QThread):
                                         for i in range(balls_count):
                                             map_label_big.bet_running[i] = True  # 开启每个球的计时
                                         ranking_time_start = time.time()  # 每个球的起跑时间
+
+                                    if ui.checkBox_Ai.isChecked():
+                                        self.signal.emit('发送Ai解说信号！%s~~~' % ui.lineEdit_Ai_addr.text())
+                                        udp_text = json.dumps({term: 'open'})
+                                        t = threading.Thread(target=z_udp, args=(str(udp_text),
+                                                                                 tuple(ui.lineEdit_Ai_addr.text().split(
+                                                                                     ':')[0:1]
+                                                                                       + [int(
+                                                                                     ui.lineEdit_Ai_addr.text().split(
+                                                                                         ':')[1])])),
+                                                             daemon=True)
+                                        t.start()
 
                             if (plan_list[plan_index][15][0].isdigit()
                                     and int(plan_list[plan_index][15][0]) > 0):  # 播放音效
