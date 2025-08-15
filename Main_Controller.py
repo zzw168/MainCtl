@@ -4772,6 +4772,8 @@ def save_main_json():
             main_all['lineEdit_volume_3'] = ui.lineEdit_volume_3.text()
             main_all['lineEdit_background_Path'] = ui.lineEdit_background_Path.text()
             main_all['lineEdit_Start_Path'] = ui.lineEdit_Start_Path.text()
+            main_all['lineEdit_record_path'] = ui.lineEdit_record_path.text()
+            main_all['lineEdit_record_num'] = ui.lineEdit_record_num.text()
             main_all['lineEdit_Map_Action'] = ui.lineEdit_Map_Action.text()
             main_all['lineEdit_first_time'] = ui.lineEdit_first_time.text()
             main_all['lineEdit_GPS_Num'] = ui.lineEdit_GPS_Num.text()
@@ -4910,6 +4912,8 @@ def load_main_json():
         ui.lineEdit_End_Num.setText(main_all['lineEdit_End_Num'])
         ui.lineEdit_background_Path.setText(main_all['lineEdit_background_Path'])
         ui.lineEdit_Start_Path.setText(main_all['lineEdit_Start_Path'])
+        ui.lineEdit_record_path.setText(main_all['lineEdit_record_path'])
+        ui.lineEdit_record_num.setText(main_all['lineEdit_record_num'])
         ui.lineEdit_lost.setText(main_all['lineEdit_lost'])
         ui.comboBox_plan.setCurrentIndex(int(main_all['comboBox_plan']))
         ui.checkBox_Cycle.setChecked(main_all['checkBox_Cycle'])
@@ -7165,7 +7169,7 @@ class CheckFileThread(QThread):
                     self.signal.emit('停止录图')
                 limit_folder_size(folder_path, max_files=gps_num)  # 限制GPS文件夹数量
             if os.path.exists(path2):
-                limit_folder_size(path2, max_files=gps_num)  # 限制上报文件夹数量
+                limit_folder_size(path2, max_files=800)  # 限制上报文件夹数量
             if os.path.exists(path3):
                 limit_folder_size(path3, max_files=end_num)  # 限制终点1文件夹数量
             if os.path.exists(path4):
@@ -7176,8 +7180,11 @@ class CheckFileThread(QThread):
             data_part = os.path.join(os.path.dirname(path2), '复盘').replace("\\", "/")
             if os.path.exists(data_part):
                 limit_folder_size(data_part, max_files=800)  # 限制文件夹数量
-            if os.path.exists('D:/ApowerREC'):
-                limit_folder_size('D:/ApowerREC', max_files=30)  # 限制文件夹数量
+            if os.path.exists(ui.lineEdit_record_path.text()):
+                if ui.lineEdit_record_path.text().isdigit():
+                    limit_folder_size(ui.lineEdit_record_path.text(), max_files=int(ui.lineEdit_record_path.text()))
+                else:
+                    limit_folder_size(ui.lineEdit_record_path.text(), max_files=30)  # 限制文件夹数量
             # if os.path.exists(path_mark):
             #     limit_folder_count(path_mark, max_folders=60)  # 限制文件夹数量
 
@@ -9056,6 +9063,8 @@ if __name__ == '__main__':
     ui.lineEdit_Reserve_time.editingFinished.connect(save_main_json)
     ui.lineEdit_background_Path.editingFinished.connect(save_main_json)
     ui.lineEdit_Start_Path.editingFinished.connect(save_main_json)
+    ui.lineEdit_record_path.editingFinished.connect(save_main_json)
+    ui.lineEdit_record_num.editingFinished.connect(save_main_json)
     ui.lineEdit_lost.editingFinished.connect(save_main_json)
 
     ui.checkBox_Cycle.checkStateChanged.connect(save_main_json)

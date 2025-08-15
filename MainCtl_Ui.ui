@@ -9787,35 +9787,26 @@
                </layout>
               </widget>
              </item>
-             <item row="0" column="0">
-              <widget class="QGroupBox" name="groupBox_5">
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>30</height>
-                </size>
+             <item row="5" column="0">
+              <widget class="QGroupBox" name="groupBox_28">
+               <property name="font">
+                <font>
+                 <family>微软雅黑</family>
+                 <pointsize>10</pointsize>
+                 <bold>true</bold>
+                </font>
                </property>
                <property name="title">
-                <string>摄像机控制</string>
+                <string>操作信息</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_64">
-                <property name="topMargin">
-                 <number>3</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>9</number>
-                </property>
-                <item row="0" column="0">
-                 <widget class="QCheckBox" name="checkBox_Flip_Horizontal">
-                  <property name="text">
-                   <string>水平翻转</string>
+               <layout class="QGridLayout" name="gridLayout_59">
+                <item row="0" column="2">
+                 <widget class="QTextBrowser" name="textBrowser_save_msg">
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
                   </property>
-                 </widget>
-                </item>
-                <item row="0" column="1">
-                 <widget class="QCheckBox" name="checkBox_Flip_Vertica">
-                  <property name="text">
-                   <string>对角翻转</string>
+                  <property name="readOnly">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
@@ -9879,7 +9870,42 @@
                </layout>
               </widget>
              </item>
-             <item row="6" column="0">
+             <item row="0" column="0">
+              <widget class="QGroupBox" name="groupBox_5">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="title">
+                <string>摄像机控制</string>
+               </property>
+               <layout class="QGridLayout" name="gridLayout_64">
+                <property name="topMargin">
+                 <number>3</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>9</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QCheckBox" name="checkBox_Flip_Horizontal">
+                  <property name="text">
+                   <string>水平翻转</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QCheckBox" name="checkBox_Flip_Vertica">
+                  <property name="text">
+                   <string>对角翻转</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="7" column="0">
               <widget class="QTextBrowser" name="textBrowser_total_msg">
                <property name="font">
                 <font>
@@ -9953,8 +9979,20 @@
                </layout>
               </widget>
              </item>
-             <item row="5" column="0">
-              <widget class="QGroupBox" name="groupBox_28">
+             <item row="6" column="0">
+              <widget class="QGroupBox" name="groupBox_41">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>80</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>600</width>
+                 <height>80</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
@@ -9963,13 +10001,89 @@
                 </font>
                </property>
                <property name="title">
-                <string>操作信息</string>
+                <string>视频保存设置</string>
                </property>
-               <layout class="QGridLayout" name="gridLayout_59">
-                <item row="0" column="2">
-                 <widget class="QTextBrowser" name="textBrowser_save_msg">
-                  <property name="focusPolicy">
-                   <enum>Qt::FocusPolicy::NoFocus</enum>
+               <layout class="QGridLayout" name="gridLayout_75">
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>9</number>
+                </property>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_108">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>视频目录:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEdit_record_path">
+                  <property name="minimumSize">
+                   <size>
+                    <width>30</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>D:/ApowerREC</string>
+                  </property>
+                  <property name="readOnly">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_107">
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>12</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>视频数量：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="lineEdit_record_num">
+                  <property name="minimumSize">
+                   <size>
+                    <width>30</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="font">
+                   <font>
+                    <family>微软雅黑</family>
+                    <pointsize>10</pointsize>
+                    <bold>false</bold>
+                   </font>
+                  </property>
+                  <property name="toolTip">
+                   <string/>
+                  </property>
+                  <property name="text">
+                   <string>100</string>
                   </property>
                   <property name="readOnly">
                    <bool>false</bool>

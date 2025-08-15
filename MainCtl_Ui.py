@@ -3751,24 +3751,20 @@ class Ui_MainWindow(object):
 
         self.gridLayout_66.addWidget(self.groupBox_38, 4, 0, 1, 1)
 
-        self.groupBox_5 = QGroupBox(self.groupBox_27)
-        self.groupBox_5.setObjectName(u"groupBox_5")
-        self.groupBox_5.setMinimumSize(QSize(0, 30))
-        self.gridLayout_64 = QGridLayout(self.groupBox_5)
-        self.gridLayout_64.setObjectName(u"gridLayout_64")
-        self.gridLayout_64.setContentsMargins(-1, 3, -1, 9)
-        self.checkBox_Flip_Horizontal = QCheckBox(self.groupBox_5)
-        self.checkBox_Flip_Horizontal.setObjectName(u"checkBox_Flip_Horizontal")
+        self.groupBox_28 = QGroupBox(self.groupBox_27)
+        self.groupBox_28.setObjectName(u"groupBox_28")
+        self.groupBox_28.setFont(font1)
+        self.gridLayout_59 = QGridLayout(self.groupBox_28)
+        self.gridLayout_59.setObjectName(u"gridLayout_59")
+        self.textBrowser_save_msg = QTextBrowser(self.groupBox_28)
+        self.textBrowser_save_msg.setObjectName(u"textBrowser_save_msg")
+        self.textBrowser_save_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+        self.textBrowser_save_msg.setReadOnly(False)
 
-        self.gridLayout_64.addWidget(self.checkBox_Flip_Horizontal, 0, 0, 1, 1)
-
-        self.checkBox_Flip_Vertica = QCheckBox(self.groupBox_5)
-        self.checkBox_Flip_Vertica.setObjectName(u"checkBox_Flip_Vertica")
-
-        self.gridLayout_64.addWidget(self.checkBox_Flip_Vertica, 0, 1, 1, 1)
+        self.gridLayout_59.addWidget(self.textBrowser_save_msg, 0, 2, 1, 1)
 
 
-        self.gridLayout_66.addWidget(self.groupBox_5, 0, 0, 1, 1)
+        self.gridLayout_66.addWidget(self.groupBox_28, 5, 0, 1, 1)
 
         self.groupBox_13 = QGroupBox(self.groupBox_27)
         self.groupBox_13.setObjectName(u"groupBox_13")
@@ -3793,13 +3789,32 @@ class Ui_MainWindow(object):
 
         self.gridLayout_66.addWidget(self.groupBox_13, 3, 0, 1, 1)
 
+        self.groupBox_5 = QGroupBox(self.groupBox_27)
+        self.groupBox_5.setObjectName(u"groupBox_5")
+        self.groupBox_5.setMinimumSize(QSize(0, 30))
+        self.gridLayout_64 = QGridLayout(self.groupBox_5)
+        self.gridLayout_64.setObjectName(u"gridLayout_64")
+        self.gridLayout_64.setContentsMargins(-1, 3, -1, 9)
+        self.checkBox_Flip_Horizontal = QCheckBox(self.groupBox_5)
+        self.checkBox_Flip_Horizontal.setObjectName(u"checkBox_Flip_Horizontal")
+
+        self.gridLayout_64.addWidget(self.checkBox_Flip_Horizontal, 0, 0, 1, 1)
+
+        self.checkBox_Flip_Vertica = QCheckBox(self.groupBox_5)
+        self.checkBox_Flip_Vertica.setObjectName(u"checkBox_Flip_Vertica")
+
+        self.gridLayout_64.addWidget(self.checkBox_Flip_Vertica, 0, 1, 1, 1)
+
+
+        self.gridLayout_66.addWidget(self.groupBox_5, 0, 0, 1, 1)
+
         self.textBrowser_total_msg = QTextBrowser(self.groupBox_27)
         self.textBrowser_total_msg.setObjectName(u"textBrowser_total_msg")
         self.textBrowser_total_msg.setFont(font7)
         self.textBrowser_total_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.textBrowser_total_msg.setReadOnly(False)
 
-        self.gridLayout_66.addWidget(self.textBrowser_total_msg, 6, 0, 1, 1)
+        self.gridLayout_66.addWidget(self.textBrowser_total_msg, 7, 0, 1, 1)
 
         self.groupBox_12 = QGroupBox(self.groupBox_27)
         self.groupBox_12.setObjectName(u"groupBox_12")
@@ -3824,20 +3839,44 @@ class Ui_MainWindow(object):
 
         self.gridLayout_66.addWidget(self.groupBox_12, 2, 0, 1, 1)
 
-        self.groupBox_28 = QGroupBox(self.groupBox_27)
-        self.groupBox_28.setObjectName(u"groupBox_28")
-        self.groupBox_28.setFont(font1)
-        self.gridLayout_59 = QGridLayout(self.groupBox_28)
-        self.gridLayout_59.setObjectName(u"gridLayout_59")
-        self.textBrowser_save_msg = QTextBrowser(self.groupBox_28)
-        self.textBrowser_save_msg.setObjectName(u"textBrowser_save_msg")
-        self.textBrowser_save_msg.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.textBrowser_save_msg.setReadOnly(False)
+        self.groupBox_41 = QGroupBox(self.groupBox_27)
+        self.groupBox_41.setObjectName(u"groupBox_41")
+        self.groupBox_41.setMinimumSize(QSize(0, 80))
+        self.groupBox_41.setMaximumSize(QSize(600, 80))
+        self.groupBox_41.setFont(font1)
+        self.gridLayout_75 = QGridLayout(self.groupBox_41)
+        self.gridLayout_75.setObjectName(u"gridLayout_75")
+        self.gridLayout_75.setContentsMargins(-1, 0, -1, 9)
+        self.label_108 = QLabel(self.groupBox_41)
+        self.label_108.setObjectName(u"label_108")
+        self.label_108.setFont(font7)
 
-        self.gridLayout_59.addWidget(self.textBrowser_save_msg, 0, 2, 1, 1)
+        self.gridLayout_75.addWidget(self.label_108, 0, 0, 1, 1)
+
+        self.lineEdit_record_path = QLineEdit(self.groupBox_41)
+        self.lineEdit_record_path.setObjectName(u"lineEdit_record_path")
+        self.lineEdit_record_path.setMinimumSize(QSize(30, 0))
+        self.lineEdit_record_path.setFont(font6)
+        self.lineEdit_record_path.setReadOnly(False)
+
+        self.gridLayout_75.addWidget(self.lineEdit_record_path, 0, 1, 1, 1)
+
+        self.label_107 = QLabel(self.groupBox_41)
+        self.label_107.setObjectName(u"label_107")
+        self.label_107.setFont(font7)
+
+        self.gridLayout_75.addWidget(self.label_107, 1, 0, 1, 1)
+
+        self.lineEdit_record_num = QLineEdit(self.groupBox_41)
+        self.lineEdit_record_num.setObjectName(u"lineEdit_record_num")
+        self.lineEdit_record_num.setMinimumSize(QSize(30, 0))
+        self.lineEdit_record_num.setFont(font6)
+        self.lineEdit_record_num.setReadOnly(False)
+
+        self.gridLayout_75.addWidget(self.lineEdit_record_num, 1, 1, 1, 1)
 
 
-        self.gridLayout_66.addWidget(self.groupBox_28, 5, 0, 1, 1)
+        self.gridLayout_66.addWidget(self.groupBox_41, 6, 0, 1, 1)
 
 
         self.gridLayout_36.addWidget(self.groupBox_27, 0, 2, 2, 1)
@@ -4695,16 +4734,27 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.lineEdit_login.setText("")
         self.label_96.setText(QCoreApplication.translate("MainWindow", u"\u7ba1\u7406\u8d26\u53f7:", None))
-        self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u673a\u63a7\u5236", None))
-        self.checkBox_Flip_Horizontal.setText(QCoreApplication.translate("MainWindow", u"\u6c34\u5e73\u7ffb\u8f6c", None))
-        self.checkBox_Flip_Vertica.setText(QCoreApplication.translate("MainWindow", u"\u5bf9\u89d2\u7ffb\u8f6c", None))
+        self.groupBox_28.setTitle(QCoreApplication.translate("MainWindow", u"\u64cd\u4f5c\u4fe1\u606f", None))
         self.groupBox_13.setTitle(QCoreApplication.translate("MainWindow", u"\u529f\u80fd\u6d4b\u8bd5", None))
         self.pushButton_RedLine.setText(QCoreApplication.translate("MainWindow", u"\u7ea2\u5916\u7ebf\u4f20\u611f\u5668", None))
         self.pushButton_test1.setText(QCoreApplication.translate("MainWindow", u"\u6d4b\u8bd51", None))
+        self.groupBox_5.setTitle(QCoreApplication.translate("MainWindow", u"\u6444\u50cf\u673a\u63a7\u5236", None))
+        self.checkBox_Flip_Horizontal.setText(QCoreApplication.translate("MainWindow", u"\u6c34\u5e73\u7ffb\u8f6c", None))
+        self.checkBox_Flip_Vertica.setText(QCoreApplication.translate("MainWindow", u"\u5bf9\u89d2\u7ffb\u8f6c", None))
         self.groupBox_12.setTitle(QCoreApplication.translate("MainWindow", u"\u5730\u56fe\u5212\u533a\u7f16\u8f91\u5236\u4f5c", None))
         self.pushButton_Draw.setText(QCoreApplication.translate("MainWindow", u"\u753b\u56fe\u5de5\u5177", None))
         self.pushButton_to_TXT.setText(QCoreApplication.translate("MainWindow", u"\u8f6c\u6362TXT", None))
-        self.groupBox_28.setTitle(QCoreApplication.translate("MainWindow", u"\u64cd\u4f5c\u4fe1\u606f", None))
+        self.groupBox_41.setTitle(QCoreApplication.translate("MainWindow", u"\u89c6\u9891\u4fdd\u5b58\u8bbe\u7f6e", None))
+        self.label_108.setText(QCoreApplication.translate("MainWindow", u"\u89c6\u9891\u76ee\u5f55:", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_record_path.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_record_path.setText(QCoreApplication.translate("MainWindow", u"D:/ApowerREC", None))
+        self.label_107.setText(QCoreApplication.translate("MainWindow", u"\u89c6\u9891\u6570\u91cf\uff1a", None))
+#if QT_CONFIG(tooltip)
+        self.lineEdit_record_num.setToolTip("")
+#endif // QT_CONFIG(tooltip)
+        self.lineEdit_record_num.setText(QCoreApplication.translate("MainWindow", u"100", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_4), QCoreApplication.translate("MainWindow", u"\u53c2\u6570\u8bbe\u7f6e", None))
     # retranslateUi
 

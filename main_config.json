@@ -147,6 +147,8 @@
         ]
     ],
     "lineEdit_alarm": "1",
+    "lineEdit_record_path": "D:/ApowerREC",
+    "lineEdit_record_num": "100",
     "lineEdit_first_time": "30",
     "lineEdit_Reserve_time": "0",
     "lineEdit_brightness": "100",
