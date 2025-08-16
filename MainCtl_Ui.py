@@ -971,12 +971,12 @@ class Ui_MainWindow(object):
 
         self.gridLayout_7.addWidget(self.checkBox_trap, 1, 0, 1, 1)
 
-        self.pushButton_OUT_11 = QPushButton(self.groupBox_71)
-        self.pushButton_OUT_11.setObjectName(u"pushButton_OUT_11")
-        self.pushButton_OUT_11.setMinimumSize(QSize(0, 0))
-        self.pushButton_OUT_11.setMaximumSize(QSize(16777215, 16777215))
+        self.pushButton_TRAP = QPushButton(self.groupBox_71)
+        self.pushButton_TRAP.setObjectName(u"pushButton_TRAP")
+        self.pushButton_TRAP.setMinimumSize(QSize(0, 0))
+        self.pushButton_TRAP.setMaximumSize(QSize(16777215, 16777215))
 
-        self.gridLayout_7.addWidget(self.pushButton_OUT_11, 1, 1, 1, 1)
+        self.gridLayout_7.addWidget(self.pushButton_TRAP, 1, 1, 1, 1)
 
 
         self.gridLayout_10.addWidget(self.groupBox_71, 3, 0, 1, 1)
@@ -4052,7 +4052,7 @@ class Ui_MainWindow(object):
         self.pushButton_OUT_10.setText(QCoreApplication.translate("MainWindow", u"10", None))
         self.pushButton_TRAP_3.setText(QCoreApplication.translate("MainWindow", u"3", None))
         self.checkBox_trap.setText("")
-        self.pushButton_OUT_11.setText(QCoreApplication.translate("MainWindow", u"\u5361\u73e0", None))
+        self.pushButton_TRAP.setText(QCoreApplication.translate("MainWindow", u"\u5361\u73e0", None))
         self.tabWidget_Ranking.setTabText(self.tabWidget_Ranking.indexOf(self.tab_0), QCoreApplication.translate("MainWindow", u"\u76f4\u64ad\u5927\u5385", None))
         self.label_23.setText(QCoreApplication.translate("MainWindow", u"\u65b9\u6848\u540d\u79f0\uff1a", None))
         self.label_84.setText(QCoreApplication.translate("MainWindow", u"\u5b9e\u65f6\u533a\u57df\uff1a", None))

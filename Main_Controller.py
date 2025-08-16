@@ -1364,6 +1364,7 @@ class TcpRankingThread(QThread):
         self.run_flg = False
         self.time_list = [''] * balls_count
         self.sleep_time = 0.5
+        self.clean_time = False
 
     def stop(self):
         self.run_flg = False
@@ -1386,7 +1387,11 @@ class TcpRankingThread(QThread):
                         try:
                             while self.run_flg:
                                 time.sleep(self.sleep_time)
-                                if z_ranking_time != self.time_list:
+                                if self.clean_time:
+                                    for i in range(balls_count):
+                                        d = {"mc": i + 1, 'data': '', 'type': 'time'}
+                                        ws.send(json.dumps(d))
+                                elif z_ranking_time != self.time_list:
                                     for i in range(balls_count):
                                         if self.time_list[i] != z_ranking_time[i]:
                                             if is_natural_num(z_ranking_time[i]):
@@ -1404,6 +1409,7 @@ class TcpRankingThread(QThread):
                                 else:
                                     d = {'data': z_ranking_res, 'type': 'pm'}
                                     ws.send(json.dumps(d))
+                                self.clean_time = False
                         except Exception as e:
                             print("pingpong_rank_1 错误：", e)
                             # self.signal.emit("pingpong 错误：%s" % e)
@@ -2910,10 +2916,9 @@ class ObsEndThread(QThread):
                 try:
                     tcp_result_thread.send_type = 'updata'
                     tcp_result_thread.run_flg = True
-                    cl_request.press_input_properties_button("浏览器", "refreshnocache")
-                    cl_request.press_input_properties_button("浏览器", "refreshnocache")
+                    tcp_ranking_thread.clean_time = True
                     time.sleep(0.1)
-                    cl_request.press_input_properties_button("浏览器", "refreshnocache")
+                    # cl_request.press_input_properties_button("浏览器", "refreshnocache")
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                       False)  # 关闭排名来源
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_settlement'],
@@ -8412,6 +8417,10 @@ def trap_cancel():
     PlanBallNum_Thread.run_flg = False
     TrapBall_ui.hide()
 
+def hide_time():
+    print('清空~~~~')
+    tcp_ranking_thread.clean_time = True
+
 
 "************************************ResultDlg_Ui*********************************************"
 
@@ -9088,6 +9097,8 @@ if __name__ == '__main__':
     ui.pushButton_Organ.clicked.connect(organ_show)
     ui.pushButton_NetCamera.clicked.connect(net_camera)
     ui.pushButton_test_brightness.clicked.connect(test_brightness)
+    ui.pushButton_TRAP.clicked.connect(hide_time)
+    ui.pushButton_OUT.clicked.connect(hide_time)
 
     ui.checkBox_Flip_Horizontal.clicked.connect(flip_horizontal)
     ui.checkBox_Flip_Vertica.clicked.connect(flip_vertica)

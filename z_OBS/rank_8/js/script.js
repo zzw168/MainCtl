@@ -163,22 +163,24 @@ function toRunSortRank(socArr,isTime){
                   
                     imgsrc='ka'
                 }
-            let qiuHtml =`<img class="kaImg" src="./img/${imgsrc}.png"    style="" />
-            <span class="kaTxt" style="margin-left:2px">${socArr.data}</span>` 
+                let qiuHtml =`<img class="kaImg" src="./img/${imgsrc}.png"    style="" />
+                <span class="kaTxt" style="margin-left:2px">${socArr.data}</span>`
 
+                timeDom.addClass('aniFont').find('div').addClass('kaBox').removeClass('center').html(qiuHtml)
+                timeDom.show()
+                timeDom.find('div').show()
+            }
+            else if (socArr.data === '') { console.log("clean~~~~")}
 
-
-            timeDom.addClass('aniFont').find('div').addClass('kaBox').removeClass('center').html(qiuHtml)
-            }else{
-
-
-
+            else{
                 timeDom.addClass('aniFont').find('div').addClass('center').html(socArr.data)
+                timeDom.show()
+                timeDom.find('div').show()
             }
     
             //  window.desyTime =  setTimeout(_=>{
-               timeDom.show()
-               timeDom.find('div').show()
+//                timeDom.show()
+//                timeDom.find('div').show()
                 // clearTimeout( window.desyTime)
         
                
