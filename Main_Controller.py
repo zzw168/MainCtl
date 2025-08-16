@@ -1363,7 +1363,7 @@ class TcpRankingThread(QThread):
         self.running = True
         self.run_flg = False
         self.time_list = [''] * balls_count
-        self.sleep_time = 0.5
+        self.sleep_time = 0.1
         self.clean_time = False
 
     def stop(self):
@@ -2917,7 +2917,7 @@ class ObsEndThread(QThread):
                     tcp_result_thread.send_type = 'updata'
                     tcp_result_thread.run_flg = True
                     tcp_ranking_thread.clean_time = True
-                    time.sleep(0.1)
+                    time.sleep(0.15)
                     # cl_request.press_input_properties_button("浏览器", "refreshnocache")
                     cl_request.set_scene_item_enabled(obs_data['obs_scene'], obs_data['source_ranking'],
                                                       False)  # 关闭排名来源
